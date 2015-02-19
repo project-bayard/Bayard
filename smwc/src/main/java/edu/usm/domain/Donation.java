@@ -22,6 +22,14 @@ public class Donation {
     @ManyToOne(fetch = FetchType.LAZY)
     private DonorInfo donorInfo;
 
+    public DonorInfo getDonorInfo() {
+        return donorInfo;
+    }
+
+    public void setDonorInfo(DonorInfo donorInfo) {
+        this.donorInfo = donorInfo;
+    }
+
     public long getId() {
         return id;
     }

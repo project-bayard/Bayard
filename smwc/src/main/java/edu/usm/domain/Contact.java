@@ -42,6 +42,7 @@ public class Contact {
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
     @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
     @Column
     private String interests;
@@ -52,6 +53,7 @@ public class Contact {
             inverseJoinColumns={@JoinColumn(name="event_id", referencedColumnName = "id")}
     )
     private List<Event> attendedEvents;
+
     @OneToMany(mappedBy = "contact")
     private List<Encounter> encounters;
 

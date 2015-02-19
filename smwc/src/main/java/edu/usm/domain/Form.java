@@ -1,22 +1,32 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
- * Created by justin on 2/19/15.
+ * Created by scottkimball on 2/19/15.
  */
-public class Organization {
+public class Form {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @OneToOne
+    private Encounter encounter;
+
     @Column
     private String name;
 
-    @ManyToMany(mappedBy = "organizations")
-    private List<Contact> members;
+    @Column
+    private String entry;
+
+    public Encounter getEncounter() {
+        return encounter;
+    }
+
+    public void setEncounter(Encounter encounter) {
+        this.encounter = encounter;
+    }
 
     public long getId() {
         return id;
@@ -34,11 +44,11 @@ public class Organization {
         this.name = name;
     }
 
-    public List<Contact> getMembers() {
-        return members;
+    public String getEntry() {
+        return entry;
     }
 
-    public void setMembers(List<Contact> members) {
-        this.members = members;
+    public void setEntry(String entry) {
+        this.entry = entry;
     }
 }
