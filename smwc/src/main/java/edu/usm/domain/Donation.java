@@ -3,6 +3,7 @@ package edu.usm.domain;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
 public class Donation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,15 +20,16 @@ public class Donation {
     private boolean isIrsLetterSent;
     @Column
     private boolean isThankYouLetterSent;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    private DonorInfo donorInfo;
+    private DonorInfo donor;
 
     public DonorInfo getDonorInfo() {
-        return donorInfo;
+        return donor;
     }
 
     public void setDonorInfo(DonorInfo donorInfo) {
-        this.donorInfo = donorInfo;
+        this.donor = donorInfo;
     }
 
     public long getId() {

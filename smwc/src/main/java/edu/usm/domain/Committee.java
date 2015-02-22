@@ -3,12 +3,15 @@ package edu.usm.domain;
 import javax.persistence.*;
 import java.util.List;
 
+@Entity
 public class Committee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @ManyToMany(mappedBy = "contacts")
+
+    @ManyToMany(mappedBy = "committees")
     private List<Contact> members;
+
     @Column
     private String name;
 

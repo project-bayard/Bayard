@@ -1,11 +1,13 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * Created by justin on 2/19/15.
  */
+@Entity
 public class Event {
 
     @Id

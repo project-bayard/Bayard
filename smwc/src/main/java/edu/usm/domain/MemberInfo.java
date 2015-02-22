@@ -5,6 +5,8 @@ import javax.persistence.*;
 /**
  * Created by justin on 2/19/15.
  */
+
+@Entity
 public class MemberInfo {
 
     public static int STATUS_GOOD = 1;

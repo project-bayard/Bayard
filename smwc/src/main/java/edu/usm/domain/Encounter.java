@@ -1,10 +1,12 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Created by justin on 2/19/15.
  */
+@Entity
 public class Encounter {
 
     @Id
@@ -20,7 +22,6 @@ public class Encounter {
     @Column
     private String notes;
 
-    @Column
     @ManyToOne(fetch = FetchType.LAZY)
     private Contact initiator;
 

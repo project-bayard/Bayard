@@ -5,6 +5,7 @@ import javax.persistence.*;
 /**
  * Created by scottkimball on 2/19/15.
  */
+@Entity
 public class Form {
 
     @Id

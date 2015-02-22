@@ -4,19 +4,24 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
 public class DonorInfo {
 
     //TODO: decide how to represent sustaining donorships vs a collection of one-time donations
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     @OneToOne(mappedBy = "donorInfo")
     private Contact contact;
+
     @Column
     private boolean isSustainer;
+
     @Column
     private LocalDateTime date;
-    @OneToMany(mappedBy="donorInfo")
+
+    @OneToMany(mappedBy="donor")
     private List<Donation> donations;
 
     public long getId() {

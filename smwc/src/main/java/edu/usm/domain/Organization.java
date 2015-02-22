@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Created by justin on 2/19/15.
  */
+@Entity
 public class Organization {
 
     @Id

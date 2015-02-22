@@ -22,6 +22,7 @@ public class Contact {
     private String email;
     @Column
     private String language;
+
     @ManyToMany
     @JoinTable(
             name="contact_committee",
@@ -29,6 +30,7 @@ public class Contact {
             inverseJoinColumns={@JoinColumn(name="committee_id", referencedColumnName = "id")}
     )
     private List<Committee> committees;
+
     @Column
     private String occupation;
     @ManyToMany
@@ -38,14 +40,18 @@ public class Contact {
             inverseJoinColumns={@JoinColumn(name="org_id", referencedColumnName = "id")}
     )
     private List<Organization> organizations;
+
     @OneToOne
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
+
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
+
     @Column
     private String interests;
+
     @ManyToMany
     @JoinTable(
             name="contact_events",
