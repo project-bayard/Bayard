@@ -1,17 +1,17 @@
 package edu.usm.dao;
 
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Donation;
-import edu.usm.domain.DonorInfo;
-import edu.usm.domain.Event;
+import edu.usm.domain.*;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.DonorInfoDao;
 import edu.usm.repository.EventDao;
+import edu.usm.repository.OrganizationDao;
+import org.aspectj.lang.annotation.Before;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,15 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Autowired
     DonorInfoDao donorInfoDao;
 
+    @Autowired
+    OrganizationDao organizationDao;
+
+
 
 
     @Test
-    public void testDaoSave () throws Exception {
+    @Transactional
+    public void testDaoSave() throws Exception {
 
 
         /*Basic info*/
@@ -82,12 +87,28 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         donorInfo.setDonations(donations);
         contact.setDonorInfo(donorInfo);
 
+        /*Member Info*/
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setContact(contact);
+        memberInfo.setStatus(0);
+        memberInfo.setPaidDues(true);
+        memberInfo.setSignedAgreement(true);
+        contact.setMemberInfo(memberInfo);
+
+        /*Organization*/
+        Organization organization = new Organization();
+        organization.setName("organization");
+        organization.setMembers(contacts);
+        List<Organization> organizations = new ArrayList<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
+
         contactDao.save(contact);
 
 
 
-
         Contact fromDb = contactDao.findOne(contact.getId());
+
 
         /*Basic contact info*/
         assertNotNull(fromDb);
@@ -104,9 +125,25 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         List<Contact> attendees = fromEventDao.getAttendees();
         assertNotNull(attendees);
 
+        Contact attendee = eventDao.findOne(event.getId()).getAttendees().get(0);
+        assertNotNull(attendee);
+        assertEquals(attendee.getId(),contact.getId());
 
         /*Donor Info*/
         assertEquals(donorInfoDao.findOne(contact.getDonorInfo().getId()).getId(),donorInfo.getId());
+        Donation fromDbDonation = donorInfoDao.findOne(donorInfo.getId()).getDonations().get(0);
+        assertEquals(fromDbDonation.getId(),donation.getId());
+
+        /*Member Info*/
+        assertEquals(contactDao.findOne(contact.getId()).getMemberInfo().getStatus(),memberInfo.getStatus());
+
+        /*Organization*/
+        Organization fromDbOrg = organizationDao.findOne(organization.getId());
+        assertNotNull(fromDbOrg);
+        assertEquals(organizationDao.findOne(organization.getId()).getId(),organization.getId());
+        assertEquals(organizationDao.findOne(organization.getId()).getMembers().get(0).getId(),contact.getId());
+
+        /*Committees*/
 
 
     }

@@ -16,7 +16,7 @@ public class Organization {
     @Column
     private String name;
 
-    @ManyToMany(mappedBy = "organizations")
+    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.ALL})
     private List<Contact> members;
 
     public long getId() {

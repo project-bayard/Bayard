@@ -33,7 +33,7 @@ public class Contact {
 
     @Column
     private String occupation;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
