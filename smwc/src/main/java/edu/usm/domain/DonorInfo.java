@@ -1,7 +1,7 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -19,7 +19,7 @@ public class DonorInfo {
     private boolean isSustainer;
 
     @Column
-    private LocalDateTime date;
+    private LocalDate date;
 
     @OneToMany(mappedBy="donor")
     private List<Donation> donations;
@@ -48,11 +48,11 @@ public class DonorInfo {
         this.isSustainer = isSustainer;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

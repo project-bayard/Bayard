@@ -41,18 +41,18 @@ public class Contact {
     )
     private List<Organization> organizations;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
     @Column
     private String interests;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

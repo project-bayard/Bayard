@@ -1,7 +1,7 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 public class Donation {
@@ -13,7 +13,7 @@ public class Donation {
     @Column
     private String type;
     @Column
-    private LocalDateTime date;
+    private LocalDate date;
     @Column
     private String comment;
     @Column
@@ -56,11 +56,11 @@ public class Donation {
         this.type = type;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

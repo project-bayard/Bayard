@@ -1,7 +1,7 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -20,11 +20,11 @@ public class Event {
     @Column
     private String location;
 
-    @ManyToMany(mappedBy = "attendedEvents")
+    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.ALL})
     private List<Contact> attendees;
 
     @Column
-    private LocalDateTime date;
+    private LocalDate date;
 
     //TODO: Need to ask about more attributes of Events
 
@@ -60,11 +60,11 @@ public class Event {
         this.attendees = attendees;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }
