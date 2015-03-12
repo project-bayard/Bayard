@@ -19,7 +19,7 @@
         <div class="form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error'">
             <label for="email" class="col-lg-2 control-label">Email</label>
             <div class="col-lg-10">
-                <input type="text" class="form-control" id="email" placeholder="Email address" th:field="*{email}" />
+                <input type="text" class="form-control" id="email" placeholder="Email streetAddress" th:field="*{email}" />
                 <span class="help-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Incorrect email</span>
             </div>
         </div>

@@ -15,9 +15,17 @@ public class Contact {
     @Column
     private String lastName;
     @Column
-    private String address;
+    private String streetAddress;
     @Column
-    private String phoneNumber;
+    private String aptNumber;
+    @Column
+    private String city;
+    @Column
+    private int zipCode;
+    @Column
+    private String phoneNumber1;
+    @Column
+    private String phoneNumber2;
     @Column
     private String email;
     @Column
@@ -33,6 +41,7 @@ public class Contact {
 
     @Column
     private String occupation;
+
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="contact_organization",
@@ -95,20 +104,20 @@ public class Contact {
         this.lastName = lastName;
     }
 
-    public String getAddress() {
-        return address;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhoneNumber1() {
+        return phoneNumber1;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhoneNumber1(String phoneNumber1) {
+        this.phoneNumber1 = phoneNumber1;
     }
 
     public String getEmail() {
@@ -189,6 +198,38 @@ public class Contact {
 
     public void setEncounters(List<Encounter> encounters) {
         this.encounters = encounters;
+    }
+
+    public String getAptNumber() {
+        return aptNumber;
+    }
+
+    public void setAptNumber(String aptNumber) {
+        this.aptNumber = aptNumber;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public int getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(int zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getPhoneNumber2() {
+        return phoneNumber2;
+    }
+
+    public void setPhoneNumber2(String phoneNumber2) {
+        this.phoneNumber2 = phoneNumber2;
     }
 }
 

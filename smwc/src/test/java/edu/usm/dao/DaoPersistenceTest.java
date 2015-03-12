@@ -6,8 +6,6 @@ import edu.usm.repository.ContactDao;
 import edu.usm.repository.DonorInfoDao;
 import edu.usm.repository.EventDao;
 import edu.usm.repository.OrganizationDao;
-import org.aspectj.lang.annotation.Before;
-import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,7 +50,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Contact contact = new Contact();
         contact.setFirstName("First");
         contact.setLastName("Last");
-        contact.setAddress("123 Fake St");
+        contact.setStreetAddress("123 Fake St");
+        contact.setAptNumber("# 4");
+        contact.setCity("Portland");
+        contact.setZipCode(04101);
         contact.setEmail("email@gmail.com");
 
         /*Event*/
@@ -116,6 +117,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertEquals(fromDb.getLastName(),contact.getLastName());
         assertEquals(fromDb.getFirstName(),contact.getFirstName());
         assertEquals(fromDb.getEmail(),contact.getEmail());
+        assertEquals(fromDb.getStreetAddress(), contact.getStreetAddress());
+        assertEquals(fromDb.getAptNumber(),contact.getAptNumber());
+        assertEquals(fromDb.getCity(),contact.getCity());
+        assertEquals(fromDb.getZipCode(),contact.getZipCode());
 
 
         /*Event info*/
