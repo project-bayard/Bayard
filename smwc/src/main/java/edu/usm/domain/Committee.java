@@ -1,10 +1,14 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Committee {
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+public class Committee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

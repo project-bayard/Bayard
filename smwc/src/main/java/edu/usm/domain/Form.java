@@ -1,12 +1,13 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by scottkimball on 2/19/15.
  */
 @Entity
-public class Form {
+public class Form  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

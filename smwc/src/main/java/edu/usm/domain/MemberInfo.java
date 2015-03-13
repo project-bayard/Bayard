@@ -1,13 +1,14 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by justin on 2/19/15.
  */
 
 @Entity
-public class MemberInfo {
+public class MemberInfo  implements Serializable {
 
     public static int STATUS_GOOD = 1;
     public static int STATUS_BAD = 2;

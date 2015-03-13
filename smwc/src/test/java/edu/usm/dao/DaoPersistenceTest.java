@@ -53,7 +53,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contact.setStreetAddress("123 Fake St");
         contact.setAptNumber("# 4");
         contact.setCity("Portland");
-        contact.setZipCode(04101);
+        contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
 
         /*Event*/

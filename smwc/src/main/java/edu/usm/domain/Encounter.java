@@ -1,13 +1,14 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Created by justin on 2/19/15.
  */
 @Entity
-public class Encounter {
+public class Encounter  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

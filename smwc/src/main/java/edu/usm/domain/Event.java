@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * Created by justin on 2/19/15.
  */
 @Entity
-public class Event {
+public class Event  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

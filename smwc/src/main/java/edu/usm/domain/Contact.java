@@ -1,10 +1,15 @@
 package edu.usm.domain;
 
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Contact {
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+public class Contact implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
@@ -21,7 +26,7 @@ public class Contact {
     @Column
     private String city;
     @Column
-    private int zipCode;
+    private String zipCode;
     @Column
     private String phoneNumber1;
     @Column
@@ -216,11 +221,11 @@ public class Contact {
         this.city = city;
     }
 
-    public int getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(int zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -230,6 +235,15 @@ public class Contact {
 
     public void setPhoneNumber2(String phoneNumber2) {
         this.phoneNumber2 = phoneNumber2;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Contact) {
+            Contact other = (Contact) obj;
+            return this.getId() == other.getId();
+        }
+        return false;
     }
 }
 

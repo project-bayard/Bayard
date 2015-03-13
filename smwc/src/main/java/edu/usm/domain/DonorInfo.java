@@ -1,11 +1,12 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-public class DonorInfo {
+public class DonorInfo  implements Serializable {
 
     //TODO: decide how to represent sustaining donorships vs a collection of one-time donations
     @Id
