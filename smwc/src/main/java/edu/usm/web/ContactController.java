@@ -1,4 +1,4 @@
-package edu.usm.Controller;
+package edu.usm.web;
 
 import edu.usm.domain.Contact;
 import edu.usm.service.ContactService;
@@ -28,8 +28,10 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}")
-    public Contact getContactById(@RequestParam(value = "id") long id) {
-        return contactService.findById(id);
+    public Contact getContactById(@PathVariable("id") long id) {
+
+        Contact contact = contactService.findById(id);
+        return contact;
     }
 
 }

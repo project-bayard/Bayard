@@ -3,14 +3,14 @@ package edu.usm.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
+
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -44,14 +44,14 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
         assertEquals(fromDb,contact);
-        Assert.assertEquals(fromDb.getId(), contact.getId());
-        Assert.assertEquals(fromDb.getLastName(), contact.getLastName());
-        Assert.assertEquals(fromDb.getFirstName(), contact.getFirstName());
-        Assert.assertEquals(fromDb.getEmail(), contact.getEmail());
-        Assert.assertEquals(fromDb.getStreetAddress(), contact.getStreetAddress());
-        Assert.assertEquals(fromDb.getAptNumber(), contact.getAptNumber());
-        Assert.assertEquals(fromDb.getCity(), contact.getCity());
-        Assert.assertEquals(fromDb.getZipCode(), contact.getZipCode());
+        assertEquals(fromDb.getId(), contact.getId());
+        assertEquals(fromDb.getLastName(), contact.getLastName());
+        assertEquals(fromDb.getFirstName(), contact.getFirstName());
+        assertEquals(fromDb.getEmail(), contact.getEmail());
+        assertEquals(fromDb.getStreetAddress(), contact.getStreetAddress());
+        assertEquals(fromDb.getAptNumber(), contact.getAptNumber());
+        assertEquals(fromDb.getCity(), contact.getCity());
+        assertEquals(fromDb.getZipCode(), contact.getZipCode());
 
 
         Contact contact2 = new Contact();

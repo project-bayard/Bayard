@@ -13,7 +13,7 @@
 <div class="container">
     <!-- /* Handle the flash message */-->
     <th:block th:if="${message != null}">
-        <!-- /* The message code is returned from the @Controller */ -->
+        <!-- /* The message code is returned from the @web */ -->
         <div th:replace="fragments/alert :: alert (type=${#strings.toLowerCase(message.type)}, message=#{${message.message}(${#authentication.name})})">&nbsp;</div>
     </th:block>
     <p>
