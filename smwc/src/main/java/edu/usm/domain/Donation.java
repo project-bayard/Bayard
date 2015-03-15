@@ -91,4 +91,6 @@ public class Donation implements Serializable {
     public void setThankYouLetterSent(boolean isThankYouLetterSent) {
         this.isThankYouLetterSent = isThankYouLetterSent;
     }
+
+
 }

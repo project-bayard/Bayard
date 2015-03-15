@@ -20,19 +20,21 @@ public class ContactController {
     private ContactService contactService;
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
     public List<Contact> getContacts() {
         return contactService.findAll();
     }
 
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}")
+    @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
     public Contact getContactById(@PathVariable("id") long id) {
 
         Contact contact = contactService.findById(id);
         return contact;
     }
+
+
 
 }
 

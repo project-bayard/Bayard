@@ -245,5 +245,7 @@ public class Contact implements Serializable {
         }
         return false;
     }
+
+
 }
 

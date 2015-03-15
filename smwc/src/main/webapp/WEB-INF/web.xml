@@ -6,4 +6,5 @@
 	<error-page>
     	<location>/generalError</location>
 	</error-page>
+    
 </web-app>
