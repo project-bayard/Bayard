@@ -1,14 +1,12 @@
 package edu.usm.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
+
 public class Contact implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -55,11 +53,11 @@ public class Contact implements Serializable {
     )
     private List<Organization> organizations;
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToOne(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
@@ -236,6 +234,8 @@ public class Contact implements Serializable {
     public void setPhoneNumber2(String phoneNumber2) {
         this.phoneNumber2 = phoneNumber2;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {

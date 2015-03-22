@@ -40,9 +40,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     }
 
 
-
-
-
     @Test
     @Transactional
     public void testGetAllContacts () throws Exception {

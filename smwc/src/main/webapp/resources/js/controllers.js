@@ -1,7 +1,15 @@
 var smwcControllers = angular.module('smwcControllers', []);
 
-smwcControllers.controller('ContactsController', ['$scope', function($scope) {
-    $scope.testMessage = "Look at all of our contacts!";
+smwcControllers.controller('ContactsController', ['$scope', '$http', function($scope, $http) {
+
+    $http.get('../contacts')
+        .success(function (response) {
+            $scope.contacts = response;
+        })
+        .error(function (response) {
+            //TODO
+        });
+
 }]);
 
 smwcControllers.controller('MainController', ['$scope', function($scope) {

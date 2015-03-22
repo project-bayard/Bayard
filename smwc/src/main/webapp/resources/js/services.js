@@ -1,3 +1,8 @@
-/**
- * Created by motech on 3/16/15.
- */
+(function () {
+    'use strict';
+
+    /* Services */
+
+    var services = angular.module('swmcServices', ['ngResource']);
+
+}());
