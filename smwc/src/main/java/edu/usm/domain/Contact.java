@@ -1,6 +1,8 @@
 package edu.usm.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -10,28 +12,40 @@ import java.util.List;
 public class Contact implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
+    @JsonView(Views.ContactList.class)
     private long id;
     @Column
+    @JsonView(Views.ContactList.class)
     private String firstName;
     @Column
+    @JsonView(Views.ContactList.class)
     private String middleName;
     @Column
+    @JsonView(Views.ContactList.class)
     private String lastName;
     @Column
+    @JsonView(Views.ContactList.class)
     private String streetAddress;
     @Column
+    @JsonView(Views.ContactList.class)
     private String aptNumber;
     @Column
+    @JsonView(Views.ContactList.class)
     private String city;
     @Column
+    @JsonView(Views.ContactList.class)
     private String zipCode;
     @Column
+    @JsonView(Views.ContactList.class)
     private String phoneNumber1;
     @Column
+    @JsonView(Views.ContactList.class)
     private String phoneNumber2;
     @Column
+    @JsonView(Views.ContactList.class)
     private String email;
     @Column
+    @JsonView(Views.ContactList.class)
     private String language;
 
     @ManyToMany

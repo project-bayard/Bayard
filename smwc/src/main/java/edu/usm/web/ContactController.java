@@ -1,6 +1,8 @@
 package edu.usm.web;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Views;
 import edu.usm.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
+    @JsonView(Views.ContactList.class)
     public List<Contact> getContacts() {
         return contactService.findAll();
     }
@@ -29,9 +32,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
     public Contact getContactById(@PathVariable("id") long id) {
-
-        Contact contact = contactService.findById(id);
-        return contact;
+        return contactService.findById(id);
     }
 
 
