@@ -14,5 +14,9 @@ smwcAngular.config(function($routeProvider) {
             templateUrl : 'resources/partials/newContact.html',
             controller : 'CreateContactController'
         })
+        .when('/contacts/contact/:id', {
+            templateUrl : 'resources/partials/details.html',
+            controller : 'DetailsCtrl'
+        })
         .otherwise({redirectTo : 'resources/partials/main.html'});
 });

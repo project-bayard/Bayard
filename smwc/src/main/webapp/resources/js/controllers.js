@@ -19,3 +19,13 @@ smwcControllers.controller('MainController', ['$scope', function($scope) {
 smwcControllers.controller('CreateContactController', ['$scope', function($scope) {
     $scope.testMessage = "Create a new Contact here!";
 }]);
+
+smwcControllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', function($scope, $http, $routeParams) {
+    $http.get('../contacts/contact/' + $routeParams.id)
+        .success(function (response) {
+            $scope.contact = response;
+        })
+        .error(function (response) {
+            //TODO
+        });
+}]);
