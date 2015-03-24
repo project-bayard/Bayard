@@ -1,0 +1,10 @@
+#submitButton {
+    width: 25%;
+    margin-left: 2.5em;
+    margin-top:  1.5em;
+    clear: both;
+}
+
+#newContactForm {
+    margin-left: 2.5em;
+}

@@ -18,6 +18,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        //TODO: reimplement Spring Security!
+        http.csrf().disable();
     }
 }

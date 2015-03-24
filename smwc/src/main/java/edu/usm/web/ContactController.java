@@ -6,8 +6,10 @@ import edu.usm.domain.Views;
 import edu.usm.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -26,6 +28,14 @@ public class ContactController {
     @JsonView(Views.ContactList.class)
     public List<Contact> getContacts() {
         return contactService.findAll();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
+    public void createContact(@RequestBody Contact contact) {
+
+        contactService.create(contact);
+
     }
 
 
