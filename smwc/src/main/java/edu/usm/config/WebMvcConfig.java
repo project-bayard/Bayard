@@ -1,5 +1,7 @@
 package edu.usm.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +54,13 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.defaultContentType(MediaType.APPLICATION_JSON);
+    }
+
+    public class HibernateAwareObjectMapper extends ObjectMapper {
+
+        public HibernateAwareObjectMapper() {
+            registerModule(new Hibernate4Module());
+        }
     }
 
 }

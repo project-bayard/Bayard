@@ -1,5 +1,7 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Organization  implements Serializable {
     private long id;
 
     @Column
+    @JsonView({Views.ContactDetails.class})
     private String name;
 
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.ALL})

@@ -2,7 +2,7 @@ package edu.usm.controller;
 
 
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Contact;
+import edu.usm.domain.*;
 import edu.usm.service.ContactService;
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,8 +67,8 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
     @Test
-    @Transactional
     public void testGetContact() throws Exception {
+        /*Basic info*/
         Contact contact = new Contact();
         contact.setFirstName("First");
         contact.setLastName("Last");
@@ -76,6 +77,54 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+
+        /*Event*/
+        Event event = new Event();
+        event.setDate(LocalDate.of(2015, 01, 01));
+        event.setLocation("location");
+        event.setNotes("notes");
+
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(contact);
+        event.setAttendees(contacts);
+
+        List<Event> eventList = new ArrayList<>();
+        eventList.add(event);
+        contact.setAttendedEvents(eventList);
+
+        /*Donations*/
+        Donation donation = new Donation();
+        donation.setDate(LocalDate.of(2015, 01, 01));
+        donation.setAmount(100);
+        donation.setComment("comment");
+        donation.setIrsLetterSent(true);
+
+
+        /*DonorInfo*/
+        DonorInfo donorInfo = new DonorInfo();
+        donorInfo.setContact(contact);
+        donorInfo.setDate(LocalDate.of(2015, 01, 01));
+
+        List<Donation> donations = new ArrayList<>();
+        donations.add(donation);
+        donorInfo.setDonations(donations);
+        contact.setDonorInfo(donorInfo);
+
+        /*Member Info*/
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setContact(contact);
+        memberInfo.setStatus(0);
+        memberInfo.setPaidDues(true);
+        memberInfo.setSignedAgreement(true);
+        contact.setMemberInfo(memberInfo);
+
+        /*Organization*/
+        Organization organization = new Organization();
+        organization.setName("organization");
+        organization.setMembers(contacts);
+        List<Organization> organizations = new ArrayList<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
 
         contactService.create(contact);
         long id = contact.getId();

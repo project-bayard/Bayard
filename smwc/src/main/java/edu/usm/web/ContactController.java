@@ -6,10 +6,8 @@ import edu.usm.domain.Views;
 import edu.usm.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -41,7 +39,9 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
+    @JsonView(Views.ContactDetails.class)
     public Contact getContactById(@PathVariable("id") long id) {
+
         return contactService.findById(id);
     }
 

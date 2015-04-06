@@ -1,5 +1,7 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,10 +18,16 @@ public class Event  implements Serializable {
     private long id;
 
     @Column
+    @JsonView({Views.ContactDetails.class})
+    private String name;
+
+
+    @Column
     private String notes;
 
     @Column
     private String location;
+
 
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.ALL})
     private List<Contact> attendees;
@@ -67,5 +75,13 @@ public class Event  implements Serializable {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

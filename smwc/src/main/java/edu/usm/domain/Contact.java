@@ -8,46 +8,105 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-
 public class Contact implements Serializable {
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private long id;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String firstName;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String middleName;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String lastName;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String streetAddress;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String aptNumber;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String city;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String zipCode;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String phoneNumber1;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String phoneNumber2;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String email;
+
+
+
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
     private String language;
 
+
+
+    @Column
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    private String occupation;
+
+
+
+    @Column
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    private String interests;
+
+    @Column
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    private boolean donor;
+
+    @Column
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    private boolean member;
+
+
+
+
+
+
+    @JsonView({Views.ContactDetails.class})
     @ManyToMany
     @JoinTable(
             name="contact_committee",
@@ -56,9 +115,10 @@ public class Contact implements Serializable {
     )
     private List<Committee> committees;
 
-    @Column
-    private String occupation;
 
+
+
+    @JsonView({Views.ContactDetails.class})
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="contact_organization",
@@ -67,17 +127,25 @@ public class Contact implements Serializable {
     )
     private List<Organization> organizations;
 
+
+
+
+    @JsonView({Views.ContactDetails.class})
     @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
+
+
+
+    @JsonView({Views.ContactDetails.class})
     @OneToOne(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
-    @Column
-    private String interests;
 
+
+    @JsonView({Views.ContactDetails.class})
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="contact_events",
@@ -86,8 +154,13 @@ public class Contact implements Serializable {
     )
     private List<Event> attendedEvents;
 
+
+
+    @JsonView({Views.ContactDetails.class})
     @OneToMany(mappedBy = "contact")
     private List<Encounter> encounters;
+
+
 
     public long getId() {
         return id;
@@ -182,6 +255,7 @@ public class Contact implements Serializable {
     }
 
     public void setDonorInfo(DonorInfo donorInfo) {
+        donor = donorInfo != null;
         this.donorInfo = donorInfo;
     }
 
@@ -190,6 +264,7 @@ public class Contact implements Serializable {
     }
 
     public void setMemberInfo(MemberInfo memberInfo) {
+        member = memberInfo != null;
         this.memberInfo = memberInfo;
     }
 
@@ -249,6 +324,14 @@ public class Contact implements Serializable {
         this.phoneNumber2 = phoneNumber2;
     }
 
+    public boolean isDonor() {
+        return donor;
+    }
+
+
+    public boolean isMember() {
+        return member;
+    }
 
 
     @Override

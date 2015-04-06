@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class Committee implements Serializable {
     private List<Contact> members;
 
     @Column
+    @JsonView({Views.ContactDetails.class})
     private String name;
 
     public long getId() {

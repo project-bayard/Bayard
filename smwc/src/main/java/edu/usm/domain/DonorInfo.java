@@ -22,7 +22,7 @@ public class DonorInfo  implements Serializable {
     @Column
     private LocalDate date;
 
-    @OneToMany(mappedBy="donor")
+    @OneToMany(mappedBy="donor", fetch = FetchType.EAGER)
     private List<Donation> donations;
 
     public long getId() {
