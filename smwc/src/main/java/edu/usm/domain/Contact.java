@@ -102,8 +102,9 @@ public class Contact implements Serializable {
     private boolean member;
 
 
-
-
+    @Column
+    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    private int assessment;
 
 
     @JsonView({Views.ContactDetails.class})
@@ -333,6 +334,14 @@ public class Contact implements Serializable {
         return member;
     }
 
+
+    public int getAssessment() {
+        return assessment;
+    }
+
+    public void setAssessment(int assessment) {
+        this.assessment = assessment;
+    }
 
     @Override
     public boolean equals(Object obj) {
