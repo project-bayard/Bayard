@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface ContactService {
 
-    Contact findById (long id);
+    Contact findById (String id);
     List<Contact> findAll();
-    void delete (long id);
+    void delete (String id);
     void update (Contact contact);
     void updateList (List<Contact> contacts);
     void create(Contact contact);

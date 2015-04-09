@@ -1,6 +1,8 @@
 package edu.usm.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.service.ContactService;
@@ -52,12 +54,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
-        contact.setId(1234);
         List<Contact> contacts = new ArrayList<>();
         contacts.add(contact);
 
         contactService.create(contact);
-        long id = contact.getId();
+        String id = contact.getId();
 
         mockMvc.perform(get("/contacts").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -127,7 +128,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setOrganizations(organizations);
 
         contactService.create(contact);
-        long id = contact.getId();
+        String id = contact.getId();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Hibernate4Module());
+
 
         mockMvc.perform(get("/contacts/contact/" + id).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 

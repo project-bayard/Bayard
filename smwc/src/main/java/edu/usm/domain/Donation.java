@@ -1,13 +1,10 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Donation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -114,7 +114,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact.setEmail("email@gmail.com");
 
         contactService.create(contact);
-        long id = contact.getId();
+        String id = contact.getId();
 
         contactService.delete(contact.getId());
 

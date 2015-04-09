@@ -20,7 +20,7 @@ public class Organization  implements Serializable {
     @JsonView({Views.ContactDetails.class})
     private String name;
 
-    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.ALL})
+    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.PERSIST})
     private List<Contact> members;
 
     public long getId() {
