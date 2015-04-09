@@ -1,14 +1,16 @@
 package edu.usm.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import java.util.List;
 
 
 @Configuration
@@ -16,12 +18,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @ComponentScan(basePackages = {"edu.usm.web"})
 class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-
-    private static final String MESSAGE_SOURCE = "/WEB-INF/i18n/messages";
-    private static final String VIEWS = "/WEB-INF/views/";
-
-    private static final String RESOURCES_LOCATION = "/resources/";
-    private static final String RESOURCES_HANDLER = RESOURCES_LOCATION + "**";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -56,14 +52,24 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
         configurer.defaultContentType(MediaType.APPLICATION_JSON);
     }
 
-    public class HibernateAwareObjectMapper extends ObjectMapper {
-
-        public HibernateAwareObjectMapper() {
-            registerModule(new Hibernate4Module());
-        }
+    @Override
+    public void configureMessageConverters( List<HttpMessageConverter<?>> converters ) {
+        converters.add(converter());
     }
 
+    @Bean
+    public MappingJackson2HttpMessageConverter converter() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(new HibernateAwareObjectMapper());
+        return converter;
+
+    }
+
+
+
 }
+
+
 
 
 

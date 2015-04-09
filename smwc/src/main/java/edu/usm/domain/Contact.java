@@ -1,19 +1,22 @@
 package edu.usm.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-@Entity
-public class Contact implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
-    private long id;
+@Entity(name = "contact")
+@SQLDelete(sql="UPDATE contact SET deleted = '1' WHERE id = ?")
+@Where(clause="deleted <> '1'")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
+public class Contact extends BasicEntity implements Serializable {
 
 
 
@@ -107,6 +110,7 @@ public class Contact implements Serializable {
     private int assessment;
 
 
+    @JsonIgnore
     @JsonView({Views.ContactDetails.class})
     @ManyToMany
     @JoinTable(
@@ -119,6 +123,7 @@ public class Contact implements Serializable {
 
 
 
+    @JsonIgnore
     @JsonView({Views.ContactDetails.class})
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
@@ -146,6 +151,7 @@ public class Contact implements Serializable {
 
 
 
+    @JsonIgnore
     @JsonView({Views.ContactDetails.class})
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
@@ -163,13 +169,6 @@ public class Contact implements Serializable {
 
 
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -347,10 +346,13 @@ public class Contact implements Serializable {
     public boolean equals(Object obj) {
         if(obj instanceof Contact) {
             Contact other = (Contact) obj;
-            return this.getId() == other.getId();
+            return this.getId().equals(other.getId());
         }
         return false;
     }
+
+
+
 
 
 }
