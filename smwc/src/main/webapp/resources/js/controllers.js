@@ -2,6 +2,8 @@ var smwcControllers = angular.module('smwcControllers', []);
 
 smwcControllers.controller('ContactsController', ['$scope', '$http', function($scope, $http) {
 
+
+
     $http.get('../contacts')
         .success(function (response) {
             console.log(response);
@@ -18,8 +20,8 @@ smwcControllers.controller('MainController', ['$scope', function($scope) {
     $scope.testMessage = "Check out our home!";
 }]);
 
-smwcControllers.controller('CreateContactController', ['$scope', '$http', '$location', function($scope, $http, $route) {
-    $scope.contact = "";
+smwcControllers.controller('CreateContactController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+
     $scope.errorMessage = "";
     $scope.success = null;
 
@@ -28,13 +30,15 @@ smwcControllers.controller('CreateContactController', ['$scope', '$http', '$loca
             .success(function (response) {
                 console.log(response);
                 $scope.success = true;
-                $route.reload()
+                $scope.newContact.$setPristine();
+                $scope.contact = "";
+                $location.path($location.path());
 
             }).error(function(response) {
                 console.log(response);
                 $scope.errorMessage = response;
                 $scope.success = false;
-                $route.reload()
+                $location.path($location.path());
             });
     };
 
@@ -49,3 +53,13 @@ smwcControllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', fun
             //TODO
         });
 }]);
+
+function queryParams() {
+    return {
+        type: 'owner',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: 100,
+        page: 1
+    };
+}
