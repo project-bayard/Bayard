@@ -98,7 +98,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         donation.setDate(LocalDate.of(2015, 01, 01));
         donation.setAmount(100);
         donation.setComment("comment");
-        donation.setIrsLetterSent(true);
+
 
 
         /*DonorInfo*/

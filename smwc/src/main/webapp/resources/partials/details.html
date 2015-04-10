@@ -1,7 +1,175 @@
-<div class="table-bordered">
-    <h1>Contact Details</h1>
-    <tr ng-repeat="(key, value) in contact">
-        <td> {{key}} </td> <td> {{ value }} </td>
-    </tr>
+
+<div class="container">
+
+    <div ng-if="success" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
+    <div ng-if="success===false" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
+    <div class="page-header">
+        <h1>Contact Details</h1>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Basic Details</h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label>ID:
+                    <input type="text" class="form-control input-sm" ng-model="contact.id" ng-readonly="true">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Assessment
+                    <input type="text" class="form-control input-sm" ng-model="contact.assessment" ng-readonly="true">
+                </label>
+            </div>
+
+
+            <div class="form-group">
+                <label>First Name
+                    <input type="text" class="form-control input-sm" ng-model="contact.firstName" ng-readonly="!edit">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Middle Name
+                    <input type="text" class="form-control input-sm" ng-model="contact.middleName" ng-readonly="!edit">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Last Name
+                    <input type="text" class="form-control input-sm" ng-model="contact.lastName" ng-readonly="!edit">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Street Address
+                    <input type="text" class="form-control input-sm" ng-model="contact.streetAddress" ng-readonly="!edit">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Apartment Number
+                    <input type="text" class="form-control input-sm" ng-model="contact.aptNumber" ng-readonly="!edit">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>City
+                    <input type="text" class="form-control input-sm" ng-model="contact.city" ng-readonly="!edit">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Zip Code
+                    <input type="text" class="form-control input-sm" ng-model="contact.zipCode" ng-readonly="!edit">
+                </label>
+            </div>
+
+
+            <div class="form-group">
+                <label>Preferred Language
+                    <input type="text" class="form-control input-sm" ng-model="contact.language" ng-readonly="!edit">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number 1
+                    <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1" ng-readonly="!edit">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Phone Number 2
+                    <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
+                </label>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Donor Information</h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label>Sustainer
+                    <input type="checkbox"  ng-model="contact.donorInfo.sustainer" ng-disabled="!edit">
+                </label>
+                <label>Thank you Letter Sent
+                    <input type="checkbox"  ng-model="contact.donorInfo.thankYouLetterSent" ng-disabled="!edit">
+                </label>
+                <label>IRS Letter Sent
+                    <input type="checkbox"  ng-model="contact.donorInfo.irsLetterSent" ng-disabled="!edit">
+                </label>
+            </div>
+            <div class="form-group" ng-if="contact.donorInfo.sustainer">
+                <label>Sustainer Since
+                    <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.date" ng-readonly="!edit">
+                </label>
+            </div>
+            <p><strong>Donations</strong></p>
+            <div ng-repeat="donation in contact.donorInfo.donations">
+                <div class="form-group">
+                    <label>Date
+                        <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.donations.date" ng-readonly="true">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Amount
+                        <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.donations.amount" ng-readonly="true">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Type
+                        <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.donations.type" ng-readonly="true">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Comments
+                        <textarea rows="5" cols="80" ng-model="contact.donorInfo.donations.comment" ng-readonly="true"></textarea>
+                    </label>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Membership Information</h3>
+        </div>
+        <div class="panel-body">
+            <form>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Encounters</h3>
+        </div>
+        <div class="panel-body">
+            <form>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Events Attended</h3>
+        </div>
+        <div class="panel-body">
+            <form>
+
+            </form>
+        </div>
+    </div>
+
+ <div>
+     <button class="button" ng-click="edit=!edit">Edit Contact</button>
+     <button class="button" ng-click="submit()">Submit</button>
+ </div>
 
 </div>

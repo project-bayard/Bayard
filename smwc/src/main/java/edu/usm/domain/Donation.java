@@ -17,10 +17,7 @@ public class Donation implements Serializable {
     private LocalDate date;
     @Column
     private String comment;
-    @Column
-    private boolean isIrsLetterSent;
-    @Column
-    private boolean isThankYouLetterSent;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     private DonorInfo donor;
@@ -73,21 +70,7 @@ public class Donation implements Serializable {
         this.comment = comment;
     }
 
-    public boolean isIrsLetterSent() {
-        return isIrsLetterSent;
-    }
 
-    public void setIrsLetterSent(boolean isIrsLetterSent) {
-        this.isIrsLetterSent = isIrsLetterSent;
-    }
-
-    public boolean isThankYouLetterSent() {
-        return isThankYouLetterSent;
-    }
-
-    public void setThankYouLetterSent(boolean isThankYouLetterSent) {
-        this.isThankYouLetterSent = isThankYouLetterSent;
-    }
 
 
 }

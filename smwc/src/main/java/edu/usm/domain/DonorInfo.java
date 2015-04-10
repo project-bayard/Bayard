@@ -17,10 +17,15 @@ public class DonorInfo  implements Serializable {
     private Contact contact;
 
     @Column
-    private boolean isSustainer;
+    private boolean sustainer;
 
     @Column
     private LocalDate date;
+
+    @Column
+    private boolean irsLetterSent;
+    @Column
+    private boolean thankYouLetterSent;
 
     @OneToMany(mappedBy="donor", fetch = FetchType.EAGER)
     private List<Donation> donations;
@@ -42,11 +47,11 @@ public class DonorInfo  implements Serializable {
     }
 
     public boolean isSustainer() {
-        return isSustainer;
+        return sustainer;
     }
 
     public void setSustainer(boolean isSustainer) {
-        this.isSustainer = isSustainer;
+        this.sustainer = isSustainer;
     }
 
     public LocalDate getDate() {
@@ -63,5 +68,21 @@ public class DonorInfo  implements Serializable {
 
     public void setDonations(List<Donation> donations) {
         this.donations = donations;
+    }
+
+    public boolean isIrsLetterSent() {
+        return irsLetterSent;
+    }
+
+    public void setIrsLetterSent(boolean irsLetterSent) {
+        this.irsLetterSent = irsLetterSent;
+    }
+
+    public boolean isThankYouLetterSent() {
+        return thankYouLetterSent;
+    }
+
+    public void setThankYouLetterSent(boolean thankYouLetterSent) {
+        this.thankYouLetterSent = thankYouLetterSent;
     }
 }

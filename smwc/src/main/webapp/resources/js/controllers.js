@@ -45,6 +45,10 @@ smwcControllers.controller('CreateContactController', ['$scope', '$http', '$loca
 }]);
 
 smwcControllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', function($scope, $http, $routeParams) {
+    $scope.edit = false;
+    $scope.success = null;
+    $scope.errorMessage = "";
+
     $http.get('../contacts/contact/' + $routeParams.id)
         .success(function (response) {
             $scope.contact = response;
@@ -52,14 +56,17 @@ smwcControllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', fun
         .error(function (response) {
             //TODO
         });
-}]);
 
-function queryParams() {
-    return {
-        type: 'owner',
-        sort: 'updated',
-        direction: 'desc',
-        per_page: 100,
-        page: 1
+    $scope.submit = function() {
+        $http.put("../contacts/" + $scope.contact.id, $scope.contact)
+            .success(function (response) {
+                console.log(response);
+                $scope.success = true;
+
+            }).error(function(response) {
+                console.log(response);
+                $scope.errorMessage = response;
+                $scope.success = false;
+            });
     };
-}
+}]);

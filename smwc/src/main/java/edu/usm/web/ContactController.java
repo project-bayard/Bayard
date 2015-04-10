@@ -44,6 +44,12 @@ public class ContactController {
         return contactService.findById(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT,value = "/contact/{id}", consumes={"application/json"})
+    public void getContactById(@PathVariable("id") String id, @RequestBody Contact contact) {
+        contactService.update(contact);
+    }
+
 
 
 }
