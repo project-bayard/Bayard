@@ -1,18 +1,20 @@
+(function () {
+    'use strict';
+
+
+
 var smwcControllers = angular.module('smwcControllers', []);
 
-smwcControllers.controller('ContactsController', ['$scope', '$http', function($scope, $http) {
+smwcControllers.controller('ContactsController', ['$scope', 'ContactService', function($scope, ContactService) {
 
 
+    $scope.contacts = ContactService.query(function () {
+        $scope.error = false;
+    }, function () {
+        $scope.error = true;
+    });
 
-    $http.get('../contacts')
-        .success(function (response) {
-            console.log(response);
-            $scope.contacts = response;
-        })
-        .error(function (response) {
-            console.log(response);
-            //TODO
-        });
+
 
 }]);
 
@@ -70,3 +72,6 @@ smwcControllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', fun
             });
     };
 }]);
+
+}());
+
