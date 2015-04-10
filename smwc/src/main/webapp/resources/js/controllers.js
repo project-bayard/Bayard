@@ -3,9 +3,9 @@
 
 
 
-var smwcControllers = angular.module('smwcControllers', []);
+var controllers = angular.module('controllers', []);
 
-smwcControllers.controller('ContactsController', ['$scope', 'ContactService', function($scope, ContactService) {
+controllers.controller('ContactsCtrl', ['$scope', 'ContactService', function($scope, ContactService) {
 
 
     $scope.contacts = ContactService.query(function () {
@@ -18,11 +18,11 @@ smwcControllers.controller('ContactsController', ['$scope', 'ContactService', fu
 
 }]);
 
-smwcControllers.controller('MainController', ['$scope', function($scope) {
+controllers.controller('MainCtrl', ['$scope', function($scope) {
     $scope.testMessage = "Check out our home!";
 }]);
 
-smwcControllers.controller('CreateContactController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+controllers.controller('CreateContactCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 
     $scope.errorMessage = "";
     $scope.success = null;
@@ -46,7 +46,7 @@ smwcControllers.controller('CreateContactController', ['$scope', '$http', '$loca
 
 }]);
 
-smwcControllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', function($scope, $http, $routeParams) {
+controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', function($scope, $http, $routeParams) {
     $scope.edit = false;
     $scope.success = null;
     $scope.errorMessage = "";

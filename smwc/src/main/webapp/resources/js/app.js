@@ -1,21 +1,21 @@
 (function () {
     'use strict';
 
-    var smwcAngular = angular.module('smwcAngular', ['ngRoute', 'smwcControllers','services']);
+    var app = angular.module('app', ['ngRoute', 'controllers','services']);
 
-    smwcAngular.config(function ($routeProvider) {
+    app.config(function ($routeProvider) {
         $routeProvider
             .when('/', {
                 templateUrl: 'resources/partials/main.html',
-                controller: 'MainController'
+                controller: 'MainCtrl'
             })
             .when('/contacts', {
                 templateUrl: 'resources/partials/contactList.html',
-                controller: 'ContactsController'
+                controller: 'ContactsCtrl'
             })
             .when('/newContact', {
                 templateUrl: 'resources/partials/newContact.html',
-                controller: 'CreateContactController'
+                controller: 'CreateContactCtrl'
             })
             .when('/contacts/contact/:id', {
                 templateUrl: 'resources/partials/details.html',
