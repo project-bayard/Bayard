@@ -2,7 +2,10 @@ package edu.usm.service;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Organization;
+import edu.usm.repository.OrganizationDao;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +23,41 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Autowired
     ContactService contactService;
 
+    @Autowired
+    OrganizationDao organizationDao;
+
+
+
+    private Contact contact;
+    private Contact contact2;
+    private Organization organization;
+
+    @Before
+    public void setup() {
+        contact = new Contact();
+        contact.setFirstName("First");
+        contact.setLastName("Last");
+        contact.setStreetAddress("123 Fake St");
+        contact.setAptNumber("# 4");
+        contact.setCity("Portland");
+        contact.setZipCode("04101");
+        contact.setEmail("email@gmail.com");
+
+        contact2 = new Contact();
+        contact2.setFirstName("FirstName");
+        contact2.setLastName("LastNAme");
+        contact2.setStreetAddress("456 Fake St");
+        contact2.setAptNumber("# 4");
+        contact2.setCity("Lewiston");
+        contact2.setZipCode("04108");
+        contact2.setEmail("email@gmail.com");
+
+        organization = new Organization();
+        organization.setName("organization");
+
+    }
+
+
     @After
     public void teardown () {
         contactService.deleteAll();
@@ -29,17 +67,10 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     public void testCreateAndFind () throws Exception {
 
-        /*Basic info*/
-        Contact contact = new Contact();
-        contact.setFirstName("First");
-        contact.setLastName("Last");
-        contact.setStreetAddress("123 Fake St");
-        contact.setAptNumber("# 4");
-        contact.setCity("Portland");
-        contact.setZipCode("04101");
-        contact.setEmail("email@gmail.com");
+
 
         contactService.create(contact);
+        contactService.create(contact2);
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
@@ -54,18 +85,11 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getZipCode(), contact.getZipCode());
 
 
-        Contact contact2 = new Contact();
-        contact2.setFirstName("FirstName");
-        contact2.setLastName("LastNAme");
-        contact2.setStreetAddress("456 Fake St");
-        contact2.setAptNumber("# 4");
-        contact2.setCity("Lewiston");
-        contact2.setZipCode("04108");
-        contact2.setEmail("email@gmail.com");
-
-        contactService.create(contact2);
-
         List<Contact> contacts = contactService.findAll();
+        assertEquals(contacts.size(),2);
+        assertTrue(contacts.contains(contact));
+        assertTrue(contacts.contains(contact2));
+
 
     }
 
@@ -102,26 +126,32 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contacts.size(),2);
     }
 
-    
-    public void testDelete() {
+    @Test
+    public void testDelete () {
 
-        Contact contact = new Contact();
-        contact.setFirstName("First");
-        contact.setLastName("Last");
-        contact.setStreetAddress("123 Fake St");
-        contact.setAptNumber("# 4");
-        contact.setCity("Portland");
-        contact.setZipCode("04101");
-        contact.setEmail("email@gmail.com");
+        /*Test deleted from Organization member list*/
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(contact);
+        contacts.add(contact2);
+        organization.setMembers(contacts);
+        organizationDao.save(organization);
 
-        contactService.create(contact);
-        String id = contact.getId();
+        List<Organization> organizations = new ArrayList<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
+        contactService.update(contact);
+        contactService.delete(contact);
 
-        contactService.delete(contact.getId());
+        Organization fromDb = organizationDao.findOne(organization.getId());
 
-        assertNull(contactService.findById(id));
-        assertEquals(contactService.findAll().size(),0);
+        assertNull(contactService.findById(contact.getId()));
+        assertNotNull(fromDb);
+        assertFalse(fromDb.getMembers().contains(contact));
+        assertTrue(fromDb.getMembers().contains(contact2));
 
     }
+
+
+
 
 }

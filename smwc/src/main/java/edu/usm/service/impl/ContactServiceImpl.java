@@ -2,7 +2,9 @@ package edu.usm.service.impl;
 
 import com.google.common.collect.Lists;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Organization;
 import edu.usm.repository.ContactDao;
+import edu.usm.repository.OrganizationDao;
 import edu.usm.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,9 @@ public class ContactServiceImpl implements ContactService {
 
     @Autowired
     private ContactDao dao;
+    @Autowired
+    private OrganizationDao organizationDao;
+
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
 
@@ -36,10 +41,20 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void delete(String id) {
-        logger.debug("Deleting contact with ID: " + id );
+    public void delete(Contact contact) {
+        logger.debug("Deleting contact with ID: " + contact.getId() );
         logger.debug("Time: " + LocalDateTime.now());
-        dao.delete(id);
+
+        /*Remove references to */
+        for(Organization organization : contact.getOrganizations()) {
+
+            organization.getMembers().remove(contact);
+            organization.setMembers(organization.getMembers());
+            organizationDao.save(organization);
+        }
+
+
+        dao.delete(contact);
     }
 
     @Override

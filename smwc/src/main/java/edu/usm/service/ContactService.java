@@ -12,7 +12,7 @@ public interface ContactService {
 
     Contact findById (String id);
     List<Contact> findAll();
-    void delete (String id);
+    void delete (Contact contact);
     void update (Contact contact);
     void updateList (List<Contact> contacts);
     void create(Contact contact);
