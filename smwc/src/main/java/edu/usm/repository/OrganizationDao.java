@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface OrganizationDao extends CrudRepository<Organization, Long> {
+public interface OrganizationDao extends CrudRepository<Organization, String> {
 }

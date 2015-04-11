@@ -38,14 +38,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Autowired
     OrganizationDao organizationDao;
 
-    @After
-    public void tearDown() {
-     //   contactDao.deleteAll();
-      //  eventDao.deleteAll();
-    //    donorInfoDao.deleteAll();
-  //      organizationDao.deleteAll();
 
-    }
 
 
 
@@ -64,6 +57,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+        contact.setAssessment(1);
+        contact.setPhoneNumber1("phone number");
+        contact.setInterests("interests");
+
 
         /*Event*/
         Event event = new Event();
@@ -109,6 +106,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
+        organizationDao.save(organization);
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
@@ -117,7 +115,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
 
 
-        Contact fromDb = contactDao.findById(contact.getId());
+        Contact fromDb = contactDao.findOne(contact.getId());
 
 
         /*Basic contact info*/
@@ -149,7 +147,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertEquals(fromDbDonation.getId(),donation.getId());
 
         /*Member Info*/
-        assertEquals(contactDao.findById(contact.getId()).getMemberInfo().getStatus(),memberInfo.getStatus());
+        assertEquals(contactDao.findOne(contact.getId()).getMemberInfo().getStatus(),memberInfo.getStatus());
 
         /*Organization*/
         Organization fromDbOrg = organizationDao.findOne(organization.getId());
@@ -229,7 +227,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contactDao.save(contact);
 
         organizationDao.delete(organization);
-        Contact fromDb = contactDao.findById(contact.getId());
+        Contact fromDb = contactDao.findOne(contact.getId());
 
 
 

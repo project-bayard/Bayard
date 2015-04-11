@@ -102,6 +102,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contacts.size(),2);
     }
 
+    
     public void testDelete() {
 
         Contact contact = new Contact();

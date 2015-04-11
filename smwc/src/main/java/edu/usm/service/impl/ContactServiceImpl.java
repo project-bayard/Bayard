@@ -26,7 +26,7 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public Contact findById(String id) {
         logger.debug("Finding contact with ID: " + id);
-        return dao.findById(id);
+        return dao.findOne(id);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ContactServiceImpl implements ContactService {
     public void delete(String id) {
         logger.debug("Deleting contact with ID: " + id );
         logger.debug("Time: " + LocalDateTime.now());
-        dao.deleteById(id);
+        dao.delete(id);
     }
 
     @Override

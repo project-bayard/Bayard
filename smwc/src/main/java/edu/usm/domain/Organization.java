@@ -10,26 +10,16 @@ import java.util.List;
  * Created by justin on 2/19/15.
  */
 @Entity
-public class Organization  implements Serializable {
+public class Organization extends BasicEntity  implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
     @Column
     @JsonView({Views.ContactDetails.class})
     private String name;
 
-    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.PERSIST})
+    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH})
     private List<Contact> members;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
