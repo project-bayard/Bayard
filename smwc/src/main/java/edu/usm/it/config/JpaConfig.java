@@ -1,4 +1,4 @@
-package edu.usm.config;
+package edu.usm.it.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

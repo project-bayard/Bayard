@@ -1,6 +1,6 @@
-package edu.usm.service;
+package edu.usm.it.service;
 
-import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.it.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import org.junit.Before;

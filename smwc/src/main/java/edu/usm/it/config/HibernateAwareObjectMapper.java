@@ -1,4 +1,4 @@
-package edu.usm.config;
+package edu.usm.it.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;

@@ -1,4 +1,4 @@
-package edu.usm.config;
+package edu.usm.it.config;
 
 import edu.usm.Application;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;

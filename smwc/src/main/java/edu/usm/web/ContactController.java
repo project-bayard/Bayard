@@ -3,7 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Views;
-import edu.usm.service.ContactService;
+import edu.usm.it.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

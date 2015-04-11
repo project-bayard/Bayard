@@ -1,11 +1,10 @@
-package edu.usm.dao;
+package edu.usm.it.dao;
 
-import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.it.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.OrganizationDao;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package edu.usm.config;
+package edu.usm.it.config;
 
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;

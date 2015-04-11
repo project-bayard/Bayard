@@ -1,13 +1,13 @@
-package edu.usm.controller;
+package edu.usm.it.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.it.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
-import edu.usm.service.ContactService;
-import edu.usm.service.OrganizationService;
+import edu.usm.it.service.ContactService;
+import edu.usm.it.service.OrganizationService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

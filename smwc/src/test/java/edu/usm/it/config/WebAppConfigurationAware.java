@@ -1,4 +1,4 @@
-package edu.usm.config;
+package edu.usm.it.config;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;

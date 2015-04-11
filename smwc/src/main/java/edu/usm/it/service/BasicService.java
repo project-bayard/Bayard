@@ -1,4 +1,4 @@
-package edu.usm.service;
+package edu.usm.it.service;
 
 import edu.usm.domain.BasicEntity;
 

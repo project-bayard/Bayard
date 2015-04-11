@@ -1,12 +1,12 @@
-package edu.usm.service.impl;
+package edu.usm.it.service.impl;
 
 import com.google.common.collect.Lists;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.OrganizationDao;
-import edu.usm.service.BasicService;
-import edu.usm.service.ContactService;
+import edu.usm.it.service.BasicService;
+import edu.usm.it.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
