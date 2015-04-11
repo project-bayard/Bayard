@@ -5,6 +5,7 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.OrganizationDao;
+import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import java.util.List;
  * Created by scottkimball on 3/12/15.
  */
 @Service
-public class ContactServiceImpl implements ContactService {
+public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Autowired
     private ContactDao dao;
@@ -45,11 +46,11 @@ public class ContactServiceImpl implements ContactService {
         logger.debug("Deleting contact with ID: " + contact.getId() );
         logger.debug("Time: " + LocalDateTime.now());
 
+        updateLastModified(contact);
+
         /*Remove references to */
         for(Organization organization : contact.getOrganizations()) {
-
             organization.getMembers().remove(contact);
-            organization.setMembers(organization.getMembers());
             organizationDao.save(organization);
         }
 
@@ -61,19 +62,17 @@ public class ContactServiceImpl implements ContactService {
     public void update(Contact contact) {
         logger.debug("Updating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
+        updateLastModified(contact);
         dao.save(contact);
     }
 
-    @Override
-    public void updateList(List<Contact> contacts) {
-        dao.save(contacts);
-    }
+
 
     @Override
     public void create(Contact contact) {
-        update(contact);
         logger.debug("Creating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
+        dao.save(contact);
 
     }
 
@@ -81,7 +80,7 @@ public class ContactServiceImpl implements ContactService {
     public void deleteAll() {
 
         logger.debug("Deleting all contacts.");
-        logger.debug("Time: " + LocalDateTime.now());
-        dao.deleteAll();
+        List<Contact> contacts = findAll();
+        contacts.stream().forEach(this::delete);
     }
 }

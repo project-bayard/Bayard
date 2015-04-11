@@ -14,7 +14,7 @@ public interface ContactService {
     List<Contact> findAll();
     void delete (Contact contact);
     void update (Contact contact);
-    void updateList (List<Contact> contacts);
+
     void create(Contact contact);
     void deleteAll();
 

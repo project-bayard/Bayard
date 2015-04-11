@@ -115,11 +115,9 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact2.setEmail("email@gmail.com");
 
         List<Contact> toDb = new ArrayList<>();
-        toDb.add(contact);
-        toDb.add(contact2);
 
-        contactService.updateList(toDb);
-
+        contactService.create(contact);
+        contactService.create(contact2);
         List<Contact> contacts = contactService.findAll();
 
         assertNotNull(contacts);

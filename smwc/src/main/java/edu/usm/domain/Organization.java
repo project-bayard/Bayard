@@ -6,9 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by justin on 2/19/15.
- */
+
 @Entity
 public class Organization extends BasicEntity  implements Serializable {
 
