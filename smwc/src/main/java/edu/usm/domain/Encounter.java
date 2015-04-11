@@ -1,16 +1,18 @@
 package edu.usm.domain;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
-@Entity
-public class Encounter  implements Serializable {
+@Entity(name = "encounter")
+@SQLDelete(sql="UPDATE encounter SET deleted = '1' WHERE id = ?")
+@Where(clause="deleted <> '1'")
+public class Encounter extends BasicEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Contact contact;
@@ -40,14 +42,6 @@ public class Encounter  implements Serializable {
 
     public void setForm(Form form) {
         this.form = form;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public Contact getContact() {

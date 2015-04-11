@@ -38,6 +38,13 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Autowired
     OrganizationDao organizationDao;
 
+    @After
+    public void teardown () {
+        contactDao.deleteAll();
+        eventDao.deleteAll();
+        donorInfoDao.deleteAll();
+        organizationDao.deleteAll();
+    }
 
 
 
@@ -120,7 +127,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*Basic contact info*/
         assertNotNull(fromDb);
-        assertEquals(fromDb.getId(),contact.getId());
+        assertEquals(fromDb.getId(), contact.getId());
         assertEquals(fromDb.getLastName(),contact.getLastName());
         assertEquals(fromDb.getFirstName(),contact.getFirstName());
         assertEquals(fromDb.getEmail(),contact.getEmail());
@@ -139,7 +146,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         Contact attendee = eventDao.findOne(event.getId()).getAttendees().get(0);
         assertNotNull(attendee);
-        assertEquals(attendee.getId(),contact.getId());
+        assertEquals(attendee.getId(), contact.getId());
 
         /*Donor Info*/
         assertEquals(donorInfoDao.findOne(contact.getDonorInfo().getId()).getId(),donorInfo.getId());

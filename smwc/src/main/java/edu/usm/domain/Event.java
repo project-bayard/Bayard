@@ -1,21 +1,18 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Created by justin on 2/19/15.
- */
-@Entity
-public class Event  implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+@Entity(name = "event")
+@SQLDelete(sql="UPDATE event SET deleted = '1' WHERE id = ?")
+@Where(clause="deleted <> '1'")
+public class Event extends BasicEntity  implements Serializable {
 
     @Column
     @JsonView({Views.ContactDetails.class})
@@ -37,13 +34,6 @@ public class Event  implements Serializable {
 
     //TODO: Need to ask about more attributes of Events
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getNotes() {
         return notes;

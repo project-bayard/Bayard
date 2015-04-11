@@ -1,5 +1,8 @@
 package edu.usm.domain;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -7,16 +10,16 @@ import java.io.Serializable;
  * Created by justin on 2/19/15.
  */
 
-@Entity
-public class MemberInfo  implements Serializable {
+@Entity(name = "member_info")
+@SQLDelete(sql="UPDATE member_info SET deleted = '1' WHERE id = ?")
+@Where(clause="deleted <> '1'")
+public class MemberInfo extends BasicEntity  implements Serializable {
 
     public static int STATUS_GOOD = 1;
     public static int STATUS_BAD = 2;
     public static int STATUS_OTHER = 3;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+
 
     @OneToOne(mappedBy = "memberInfo")
     private Contact contact;

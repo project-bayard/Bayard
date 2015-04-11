@@ -11,10 +11,8 @@ import java.util.List;
 
 @Entity
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="committee_id")
-public class Committee implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class Committee extends BasicEntity implements Serializable {
+
 
     @ManyToMany(mappedBy = "committees")
     @JsonIgnore
@@ -23,14 +21,6 @@ public class Committee implements Serializable {
     @Column
     @JsonView({Views.ContactDetails.class})
     private String name;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public List<Contact> getMembers() {
         return members;

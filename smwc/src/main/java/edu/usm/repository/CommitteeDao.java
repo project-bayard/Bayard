@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface CommitteeDao extends CrudRepository<Committee, Long> {
+public interface CommitteeDao extends CrudRepository<Committee, String> {
 
 }

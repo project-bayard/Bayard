@@ -22,7 +22,7 @@ import java.util.List;
 public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Autowired
-    private ContactDao dao;
+    private ContactDao contactDao;
     @Autowired
     private OrganizationDao organizationDao;
 
@@ -32,13 +32,13 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     public Contact findById(String id) {
         logger.debug("Finding contact with ID: " + id);
-        return dao.findOne(id);
+        return contactDao.findOne(id);
     }
 
     @Override
     public List<Contact> findAll() {
         logger.debug("Finding all Contacts");
-        return  Lists.newArrayList(dao.findAll());
+        return  Lists.newArrayList(contactDao.findAll());
     }
 
     @Override
@@ -49,13 +49,15 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         updateLastModified(contact);
 
         /*Remove references to */
-        for(Organization organization : contact.getOrganizations()) {
-            organization.getMembers().remove(contact);
-            organizationDao.save(organization);
+        if (contact.getOrganizations() != null) {
+            for(Organization organization : contact.getOrganizations()) {
+                organization.getMembers().remove(contact);
+                organizationDao.save(organization);
+            }
         }
 
 
-        dao.delete(contact);
+        contactDao.delete(contact);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         logger.debug("Updating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
         updateLastModified(contact);
-        dao.save(contact);
+        contactDao.save(contact);
     }
 
 
@@ -72,7 +74,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     public void create(Contact contact) {
         logger.debug("Creating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
-        dao.save(contact);
+        contactDao.save(contact);
 
     }
 

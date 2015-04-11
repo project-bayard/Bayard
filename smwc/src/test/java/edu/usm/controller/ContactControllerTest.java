@@ -4,8 +4,10 @@ package edu.usm.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.*;
+import edu.usm.domain.Contact;
+import edu.usm.domain.Organization;
 import edu.usm.service.ContactService;
+import edu.usm.service.OrganizationService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +32,22 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Autowired
     ContactService contactService;
 
+    @Autowired
+    OrganizationService organizationService;
+
+
+    private Contact contact;
 
     @Before
     public void setup() {
-
+        contact = new Contact();
+        contact.setFirstName("First");
+        contact.setLastName("Last");
+        contact.setStreetAddress("123 Fake St");
+        contact.setAptNumber("# 4");
+        contact.setCity("Portland");
+        contact.setZipCode("04101");
+        contact.setEmail("email@gmail.com");
     }
 
     @After
@@ -46,16 +59,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testGetAllContacts () throws Exception {
-        Contact contact = new Contact();
-        contact.setFirstName("First");
-        contact.setLastName("Last");
-        contact.setStreetAddress("123 Fake St");
-        contact.setAptNumber("# 4");
-        contact.setCity("Portland");
-        contact.setZipCode("04101");
-        contact.setEmail("email@gmail.com");
-        List<Contact> contacts = new ArrayList<>();
-        contacts.add(contact);
+
 
         contactService.create(contact);
         String id = contact.getId();
@@ -68,18 +72,15 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
     @Test
+    @Transactional
     public void testGetContact() throws Exception {
-        /*Basic info*/
-        Contact contact = new Contact();
-        contact.setFirstName("First");
-        contact.setLastName("Last");
-        contact.setStreetAddress("123 Fake St");
-        contact.setAptNumber("# 4");
-        contact.setCity("Portland");
-        contact.setZipCode("04101");
-        contact.setEmail("email@gmail.com");
 
-        /*Event*/
+
+        contactService.create(contact);
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(contact);
+
+        /*Event
         Event event = new Event();
         event.setDate(LocalDate.of(2015, 01, 01));
         event.setLocation("location");
@@ -93,25 +94,33 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         eventList.add(event);
         contact.setAttendedEvents(eventList);
 
-        /*Donations*/
+        */
+
+        /*Donations
         Donation donation = new Donation();
         donation.setDate(LocalDate.of(2015, 01, 01));
         donation.setAmount(100);
         donation.setComment("comment");
 
+        */
 
 
-        /*DonorInfo*/
+
+        /*DonorInfo
         DonorInfo donorInfo = new DonorInfo();
         donorInfo.setContact(contact);
         donorInfo.setDate(LocalDate.of(2015, 01, 01));
+
+
 
         List<Donation> donations = new ArrayList<>();
         donations.add(donation);
         donorInfo.setDonations(donations);
         contact.setDonorInfo(donorInfo);
 
-        /*Member Info*/
+        */
+
+        /*Member Info
         MemberInfo memberInfo = new MemberInfo();
         memberInfo.setContact(contact);
         memberInfo.setStatus(0);
@@ -119,15 +128,27 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         memberInfo.setSignedAgreement(true);
         contact.setMemberInfo(memberInfo);
 
+        */
+
         /*Organization*/
+
+
+
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
+
+        organizationService.create(organization);
+
+
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 
-        contactService.create(contact);
+
+        contactService.update(contact);
+
+
         String id = contact.getId();
 
         ObjectMapper mapper = new ObjectMapper();

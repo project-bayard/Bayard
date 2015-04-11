@@ -49,11 +49,15 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         updateLastModified(organization);
 
         /*Remove references to */
-        for(Contact contact : organization.getMembers()) {
 
-            contact.getOrganizations().remove(organization);
-            contactDao.save(contact);
+        if (organization.getMembers() != null) {
+            for(Contact contact : organization.getMembers()) {
+
+                contact.getOrganizations().remove(organization);
+                contactDao.save(contact);
+            }
         }
+
 
 
         organizationDao.delete(organization);

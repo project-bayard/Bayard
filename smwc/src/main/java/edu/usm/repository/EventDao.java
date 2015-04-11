@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface EventDao extends CrudRepository<Event, Long> {
+public interface EventDao extends CrudRepository<Event,String> {
 }

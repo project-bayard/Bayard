@@ -2,7 +2,6 @@ package edu.usm.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.SQLDelete;
@@ -150,7 +149,6 @@ public class Contact extends BasicEntity implements Serializable {
 
 
 
-    @JsonIgnore
     @JsonView({Views.ContactDetails.class})
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
@@ -165,9 +163,6 @@ public class Contact extends BasicEntity implements Serializable {
     @JsonView({Views.ContactDetails.class})
     @OneToMany(mappedBy = "contact")
     private List<Encounter> encounters;
-
-
-
 
     public String getFirstName() {
         return firstName;

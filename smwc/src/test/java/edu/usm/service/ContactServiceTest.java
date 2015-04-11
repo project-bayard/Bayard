@@ -3,12 +3,12 @@ package edu.usm.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
-import edu.usm.repository.OrganizationDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     ContactService contactService;
 
     @Autowired
-    OrganizationDao organizationDao;
+    OrganizationService organizationService;
 
 
 
@@ -65,6 +65,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
 
     @Test
+    @Transactional
     public void testCreateAndFind () throws Exception {
 
 
@@ -132,7 +133,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contacts.add(contact);
         contacts.add(contact2);
         organization.setMembers(contacts);
-        organizationDao.save(organization);
+        organizationService.create(organization);
 
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
@@ -140,7 +141,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.update(contact);
         contactService.delete(contact);
 
-        Organization fromDb = organizationDao.findOne(organization.getId());
+        Organization fromDb = organizationService.findById(organization.getId());
 
         assertNull(contactService.findById(contact.getId()));
         assertNotNull(fromDb);
