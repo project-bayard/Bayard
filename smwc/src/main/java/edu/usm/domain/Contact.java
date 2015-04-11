@@ -110,7 +110,6 @@ public class Contact extends BasicEntity implements Serializable {
     private int assessment;
 
 
-    @JsonIgnore
     @JsonView({Views.ContactDetails.class})
     @ManyToMany
     @JoinTable(
@@ -123,7 +122,7 @@ public class Contact extends BasicEntity implements Serializable {
 
 
 
-    @JsonIgnore
+
     @JsonView({Views.ContactDetails.class})
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(

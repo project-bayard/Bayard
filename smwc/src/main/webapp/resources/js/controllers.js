@@ -22,17 +22,19 @@ controllers.controller('MainCtrl', ['$scope', function($scope) {
     $scope.testMessage = "Check out our home!";
 }]);
 
-controllers.controller('CreateContactCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location','$http', function($scope, ContactService, $location, $http) {
 
     $scope.errorMessage = "";
     $scope.success = null;
 
+
     $scope.submit = function() {
+
         $http.post("../contacts", $scope.contact)
             .success(function (response) {
                 console.log(response);
                 $scope.success = true;
-                $scope.newContact.$setPristine();
+                $scope.newContactForm.$setPristine();
                 $scope.contact = "";
                 $location.path($location.path());
 
@@ -43,6 +45,25 @@ controllers.controller('CreateContactCtrl', ['$scope', '$http', '$location', fun
                 $location.path($location.path());
             });
     };
+
+
+/*
+    $scope.submit = function() {
+
+        ContactService.save(function(response) {
+            console.log(response);
+            $scope.success = true;
+            $scope.newContactForm.$setPristine();
+            $scope.contact = "";
+            $location.path($location.path());
+
+        }, function (response) {
+
+            $scope.success = false;
+            $scope.errorMessage = response;
+            console.log(response);
+        });
+    }*/
 
 }]);
 

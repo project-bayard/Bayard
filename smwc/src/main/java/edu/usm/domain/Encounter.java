@@ -4,9 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Created by justin on 2/19/15.
- */
+
 @Entity
 public class Encounter  implements Serializable {
 
@@ -32,8 +30,6 @@ public class Encounter  implements Serializable {
     @Column
     private String type;
 
-    @Column
-    private boolean requiresFollowup;
 
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
@@ -102,11 +98,5 @@ public class Encounter  implements Serializable {
         this.type = type;
     }
 
-    public boolean isRequiresFollowup() {
-        return requiresFollowup;
-    }
 
-    public void setRequiresFollowup(boolean requiresFollowup) {
-        this.requiresFollowup = requiresFollowup;
-    }
 }

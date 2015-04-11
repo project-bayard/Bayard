@@ -31,9 +31,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
     public void createContact(@RequestBody Contact contact) {
-
         contactService.create(contact);
-
     }
 
 

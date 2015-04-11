@@ -6,7 +6,7 @@
     var services = angular.module('services', ['ngResource']);
 
     services.factory('ContactService', function ($resource) {
-        return $resource('../contacts');
+        return $resource('../contacts/:id');
     });
 
 }());

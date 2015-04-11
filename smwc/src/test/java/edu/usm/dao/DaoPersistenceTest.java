@@ -40,10 +40,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
     @After
     public void tearDown() {
-        contactDao.deleteAll();
-        eventDao.deleteAll();
-        donorInfoDao.deleteAll();
-        organizationDao.deleteAll();
+     //   contactDao.deleteAll();
+      //  eventDao.deleteAll();
+    //    donorInfoDao.deleteAll();
+  //      organizationDao.deleteAll();
 
     }
 
@@ -223,6 +223,8 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
+
+        organizations.remove(organization);
 
         contactDao.save(contact);
 
