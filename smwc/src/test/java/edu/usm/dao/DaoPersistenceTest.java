@@ -38,13 +38,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Autowired
     OrganizationDao organizationDao;
 
-    @After
-    public void teardown () {
-        contactDao.deleteAll();
-        eventDao.deleteAll();
-        donorInfoDao.deleteAll();
-        organizationDao.deleteAll();
-    }
+
 
 
 

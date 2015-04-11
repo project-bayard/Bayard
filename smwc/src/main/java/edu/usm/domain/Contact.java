@@ -4,16 +4,12 @@ package edu.usm.domain;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity(name = "contact")
-@SQLDelete(sql="UPDATE contact SET deleted = '1' WHERE id = ?")
-@Where(clause="deleted <> '1'")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
 public class Contact extends BasicEntity implements Serializable {
 

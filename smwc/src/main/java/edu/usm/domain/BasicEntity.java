@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * Created by scottkimball on 4/7/15.
  */
 
-@Entity
+@Entity(name = "basic_entity")
 public abstract class BasicEntity {
 
 

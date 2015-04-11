@@ -3,7 +3,6 @@ package edu.usm.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,10 +57,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
 
-    @After
-    public void teardown () {
-        contactService.deleteAll();
-    }
+
+
 
 
     @Test
@@ -126,6 +123,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional
     public void testDelete () {
 
         /*Test deleted from Organization member list*/
@@ -138,7 +136,9 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
-        contactService.update(contact);
+        contactService.create(contact);
+        contactService.create(contact2);
+
         contactService.delete(contact);
 
         Organization fromDb = organizationService.findById(organization.getId());

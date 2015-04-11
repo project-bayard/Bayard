@@ -56,11 +56,7 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
 
     }
 
-    @After
-    public void tearDown() {
-        contactDao.deleteAll();
-        organizationDao.deleteAll();
-    }
+
 
     @Test
     @Transactional
