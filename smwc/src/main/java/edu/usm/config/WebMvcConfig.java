@@ -1,4 +1,4 @@
-package edu.usm.it.config;
+package edu.usm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

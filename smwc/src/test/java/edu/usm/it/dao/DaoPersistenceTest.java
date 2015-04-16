@@ -1,6 +1,6 @@
 package edu.usm.it.dao;
 
-import edu.usm.it.config.WebAppConfigurationAware;
+import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.DonorInfoDao;

@@ -1,4 +1,4 @@
-package edu.usm.it.service;
+package edu.usm.service;
 
 import edu.usm.domain.Contact;
 

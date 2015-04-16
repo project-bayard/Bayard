@@ -2,8 +2,7 @@ package edu.usm.it.dao;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
-import edu.usm.domain.Organization;
-import edu.usm.it.config.WebAppConfigurationAware;
+import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
 import org.junit.Before;

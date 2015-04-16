@@ -1,10 +1,10 @@
-package edu.usm.it.service.impl;
+package edu.usm.service.impl;
 
 import com.google.common.collect.Lists;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
-import edu.usm.it.service.BasicService;
-import edu.usm.it.service.CommitteeService;
+import edu.usm.service.BasicService;
+import edu.usm.service.CommitteeService;
 import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
 import org.slf4j.Logger;
