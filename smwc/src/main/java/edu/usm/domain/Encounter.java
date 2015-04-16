@@ -2,7 +2,7 @@ package edu.usm.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Entity(name = "encounter")
@@ -13,19 +13,20 @@ public class Encounter extends BasicEntity implements Serializable {
     private Contact contact;
 
     @Column
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column
     private String notes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @JoinColumn(name="initator_id")
     private Contact initiator;
 
     @Column
     private int assessment;
 
     @Column
-    private String type;
+    private EncounterType type;
 
 
     @OneToOne(fetch=FetchType.LAZY)
@@ -47,11 +48,11 @@ public class Encounter extends BasicEntity implements Serializable {
         this.contact = contact;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -79,11 +80,11 @@ public class Encounter extends BasicEntity implements Serializable {
         this.assessment = assessment;
     }
 
-    public String getType() {
+    public EncounterType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EncounterType type) {
         this.type = type;
     }
 

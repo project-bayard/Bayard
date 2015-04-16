@@ -1,8 +1,10 @@
-package edu.usm.service;
+package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.service.ContactService;
+import edu.usm.service.OrganizationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

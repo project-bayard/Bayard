@@ -157,7 +157,7 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @JsonView({Views.ContactDetails.class})
-    @OneToMany(mappedBy = "contact")
+    @OneToMany(mappedBy = "initiator", cascade = CascadeType.REFRESH)
     private List<Encounter> encounters;
 
     public String getFirstName() {

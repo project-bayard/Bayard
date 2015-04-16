@@ -1,8 +1,10 @@
-package edu.usm.service;
+package edu.usm.it.service;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.service.CommitteeService;
+import edu.usm.service.ContactService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

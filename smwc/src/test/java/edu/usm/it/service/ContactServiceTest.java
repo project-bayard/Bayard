@@ -1,8 +1,12 @@
-package edu.usm.service;
+package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.service.CommitteeService;
+import edu.usm.service.ContactService;
+import edu.usm.service.OrganizationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +29,15 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Autowired
     OrganizationService organizationService;
 
+    @Autowired
+    CommitteeService committeeService;
+
 
 
     private Contact contact;
     private Contact contact2;
     private Organization organization;
+    private Committee committee;
 
     @Before
     public void setup() {
@@ -53,19 +61,15 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         organization = new Organization();
         organization.setName("organization");
+        committee = new Committee();
+        committee.setName("committee");
 
     }
-
-
-
-
 
 
     @Test
     @Transactional
     public void testCreateAndFind () throws Exception {
-
-
 
         contactService.create(contact);
         contactService.create(contact2);
@@ -130,8 +134,12 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(contact);
         contacts.add(contact2);
+
         organization.setMembers(contacts);
         organizationService.create(organization);
+
+        committee.setMembers(contacts);
+        committeeService.create(committee);
 
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
@@ -143,12 +151,126 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         Organization fromDb = organizationService.findById(organization.getId());
 
+
         assertNull(contactService.findById(contact.getId()));
         assertNotNull(fromDb);
         assertFalse(fromDb.getMembers().contains(contact));
         assertTrue(fromDb.getMembers().contains(contact2));
 
+        Committee fromDbCommittee = committeeService.findById(committee.getId());
+        assertNotNull(fromDbCommittee);
+        assertFalse(fromDbCommittee.getMembers().contains(contact));
+        assertTrue(fromDbCommittee.getMembers().contains(contact2));
+
     }
+
+    @Test
+    @Transactional
+    public void testUpdateCommittees () {
+
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(contact);
+
+
+        List<Committee> committees = new ArrayList<>();
+        committees.add(committee);
+        contact.setCommittees(committees);
+        committee.setMembers(contacts);
+        committeeService.create(committee);
+
+        contactService.create(contact);
+
+        Contact contactFromDb = contactService.findById(contact.getId());
+
+        /*Before*/
+        assertEquals(contactFromDb.getCommittees().size(),committees.size());
+
+        /*Test add new committee*/
+        Committee newCommittee = new Committee();
+        newCommittee.setName("new_committee");
+        newCommittee.setMembers(contacts);
+        committeeService.create(newCommittee);
+
+        committees.add(newCommittee);
+
+        contactFromDb.setCommittees(committees);
+
+        contactService.update(contactFromDb);
+
+        contactFromDb = contactService.findById(contactFromDb.getId());
+
+        assertEquals(contactFromDb.getCommittees().size(),committees.size());
+
+        Committee committeeFromDb = committeeService.findById(committee.getId());
+        assertEquals(committeeFromDb.getMembers().get(0).getId(),contact.getId());
+
+        /*Test remove committee*/
+
+        committees.remove(newCommittee);
+
+        contactFromDb.setCommittees(committees);
+        contactService.update(contactFromDb);
+        contactFromDb = contactService.findById(contact.getId());
+
+        assertEquals(contactFromDb.getCommittees().size(), committees.size());
+        assertEquals(contactFromDb.getCommittees().get(0).getId(), committee.getId());
+
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateOrganizations () {
+
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(contact);
+
+
+        List<Organization> organizations = new ArrayList<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
+        organization.setMembers(contacts);
+        organizationService.create(organization);
+
+        contactService.create(contact);
+
+        Contact contactFromDb = contactService.findById(contact.getId());
+
+        /*Before*/
+        assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
+
+        /*Test add new organization*/
+        Organization newOrganization = new Organization();
+        newOrganization.setName("new_committee");
+        newOrganization.setMembers(contacts);
+        organizationService.create(newOrganization);
+
+        organizations.add(newOrganization);
+
+        contactFromDb.setOrganizations(organizations);
+
+        contactService.update(contactFromDb);
+
+        contactFromDb = contactService.findById(contactFromDb.getId());
+
+        assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
+
+        Organization organizationFromDb = organizationService.findById(organization.getId());
+        assertEquals(organizationFromDb.getMembers().get(0).getId(),contact.getId());
+
+        /*Test remove organization*/
+
+        organizations.remove(newOrganization);
+
+        contactFromDb.setOrganizations(organizations);
+        contactService.update(contactFromDb);
+        contactFromDb = contactService.findById(contact.getId());
+
+        assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
+        assertEquals(contactFromDb.getOrganizations().get(0).getId(), organization.getId());
+
+    }
+
+
 
 
 

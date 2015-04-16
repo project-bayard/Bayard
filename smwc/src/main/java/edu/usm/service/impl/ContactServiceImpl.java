@@ -1,8 +1,10 @@
 package edu.usm.service.impl;
 
 import com.google.common.collect.Lists;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
@@ -25,6 +27,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private ContactDao contactDao;
     @Autowired
     private OrganizationDao organizationDao;
+    @Autowired
+    private CommitteeDao committeeDao;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -43,16 +47,24 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Override
     public void delete(Contact contact) {
-        logger.debug("Deleting contact with ID: " + contact.getId() );
+        logger.debug("Deleting contact " + contact.getId() );
         logger.debug("Time: " + LocalDateTime.now());
 
         updateLastModified(contact);
 
-        /*Remove references to */
+        /*Remove from organizations */
         if (contact.getOrganizations() != null) {
             for(Organization organization : contact.getOrganizations()) {
                 organization.getMembers().remove(contact);
                 organizationDao.save(organization);
+            }
+        }
+
+        /*Remove from committees*/
+        if (contact.getCommittees() != null) {
+            for(Committee committee : contact.getCommittees()) {
+                committee.getMembers().remove(contact);
+                committeeDao.save(committee);
             }
         }
 

@@ -2,7 +2,6 @@ package edu.usm.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ public class Donation extends BasicEntity implements Serializable {
     private String comment;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private DonorInfo donor;
 
     public DonorInfo getDonorInfo() {

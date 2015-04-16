@@ -23,7 +23,7 @@ public class DonorInfo extends BasicEntity implements Serializable {
     @Column
     private boolean thankYouLetterSent;
 
-    @OneToMany(mappedBy="donor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="donor")
     private List<Donation> donations;
 
 
