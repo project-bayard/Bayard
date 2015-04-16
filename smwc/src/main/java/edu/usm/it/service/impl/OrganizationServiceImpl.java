@@ -32,19 +32,19 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     @Override
     public Organization findById(String id) {
-        logger.debug("Finding contact with ID: " + id);
+        logger.debug("Finding organization with ID: " + id);
         return organizationDao.findOne(id);
     }
 
     @Override
     public List<Organization> findAll() {
-        logger.debug("Finding all Contacts");
+        logger.debug("Finding all organizations");
         return  Lists.newArrayList(organizationDao.findAll());
     }
 
     @Override
     public void delete(Organization organization) {
-        logger.debug("Deleting contact with ID: " + organization.getId());
+        logger.debug("Deleting organization with ID: " + organization.getId());
         logger.debug("Time: " + LocalDateTime.now());
         updateLastModified(organization);
 
@@ -52,20 +52,16 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
         if (organization.getMembers() != null) {
             for(Contact contact : organization.getMembers()) {
-
                 contact.getOrganizations().remove(organization);
                 contactDao.save(contact);
             }
         }
-
-
-
         organizationDao.delete(organization);
     }
 
     @Override
     public void update(Organization organization) {
-        logger.debug("Updating contact with ID: " + organization.getId());
+        logger.debug("Updating organization with ID: " + organization.getId());
         logger.debug("Time: " + LocalDateTime.now());
         updateLastModified(organization);
         organizationDao.save(organization);
@@ -75,7 +71,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     @Override
     public void create(Organization organization) {
         update(organization);
-        logger.debug("Creating contact with ID: " + organization.getId());
+        logger.debug("Creating organization with ID: " + organization.getId());
         logger.debug("Time: " + LocalDateTime.now());
 
     }
@@ -83,7 +79,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     @Override
     public void deleteAll() {
 
-        logger.debug("Deleting all contacts.");
+        logger.debug("Deleting all Organizations");
         logger.debug("Time: " + LocalDateTime.now());
         List<Organization> organizations = findAll();
         organizations.stream().forEach(this::delete);

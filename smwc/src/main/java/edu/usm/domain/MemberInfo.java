@@ -1,9 +1,8 @@
 package edu.usm.domain;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 
 /**
@@ -11,8 +10,6 @@ import java.io.Serializable;
  */
 
 @Entity(name = "member_info")
-@SQLDelete(sql="UPDATE member_info SET deleted = '1' WHERE id = ?")
-@Where(clause="deleted <> '1'")
 public class MemberInfo extends BasicEntity  implements Serializable {
 
     public static int STATUS_GOOD = 1;

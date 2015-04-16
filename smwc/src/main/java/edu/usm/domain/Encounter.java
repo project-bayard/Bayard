@@ -1,16 +1,11 @@
 package edu.usm.domain;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
 @Entity(name = "encounter")
-@SQLDelete(sql="UPDATE encounter SET deleted = '1' WHERE id = ?")
-@Where(clause="deleted <> '1'")
 public class Encounter extends BasicEntity implements Serializable {
 
 

@@ -1,17 +1,16 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity(name = "event")
-@SQLDelete(sql="UPDATE event SET deleted = '1' WHERE id = ?")
-@Where(clause="deleted <> '1'")
 public class Event extends BasicEntity  implements Serializable {
 
     @Column

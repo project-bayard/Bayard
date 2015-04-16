@@ -1,7 +1,5 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +13,6 @@ public class Organization extends BasicEntity  implements Serializable {
 
 
     @Column
-    @JsonView({Views.ContactDetails.class})
     private String name;
 
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH})

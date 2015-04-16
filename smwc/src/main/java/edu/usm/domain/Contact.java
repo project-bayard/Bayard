@@ -106,7 +106,7 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @JsonView({Views.ContactDetails.class})
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(
             name="contact_committee",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

@@ -1,16 +1,11 @@
 package edu.usm.domain;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity(name = "donor_info")
-@SQLDelete(sql="UPDATE donor_info SET deleted = '1' WHERE id = ?")
-@Where(clause="deleted <> '1'")
 public class DonorInfo extends BasicEntity implements Serializable {
 
 
