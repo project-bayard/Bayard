@@ -24,8 +24,6 @@ import static org.junit.Assert.*;
 
 public class DaoPersistenceTest extends WebAppConfigurationAware{
 
-
-
     @Autowired
     ContactDao contactDao;
 
@@ -227,6 +225,8 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         organizations.remove(organization);
 
         contactDao.save(contact);
+
+
 
         organizationDao.delete(organization);
         Contact fromDb = contactDao.findById(contact.getId());

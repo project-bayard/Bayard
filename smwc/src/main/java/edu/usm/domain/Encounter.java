@@ -30,7 +30,6 @@ public class Encounter  implements Serializable {
     @Column
     private String type;
 
-
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
 

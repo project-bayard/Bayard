@@ -5,16 +5,15 @@
 
 var controllers = angular.module('controllers', []);
 
-controllers.controller('ContactsCtrl', ['$scope', 'ContactService', function($scope, ContactService) {
+controllers.controller('ContactsCtrl', ['$scope', '$http', function($scope, $http) {
 
-
-    $scope.contacts = ContactService.query(function () {
-        $scope.error = false;
-    }, function () {
-        $scope.error = true;
-    });
-
-
+    $http.get('../contacts')
+        .success(function (response) {
+            $scope.contacts = response;
+        })
+        .error(function (response) {
+            console.log(response)
+        });
 
 }]);
 
@@ -46,31 +45,13 @@ controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$locat
             });
     };
 
-
-/*
-    $scope.submit = function() {
-
-        ContactService.save(function(response) {
-            console.log(response);
-            $scope.success = true;
-            $scope.newContactForm.$setPristine();
-            $scope.contact = "";
-            $location.path($location.path());
-
-        }, function (response) {
-
-            $scope.success = false;
-            $scope.errorMessage = response;
-            console.log(response);
-        });
-    }*/
-
 }]);
 
-controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', function($scope, $http, $routeParams) {
+controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', 'ContactService', function($scope, $http, $routeParams, ContactService) {
     $scope.edit = false;
     $scope.success = null;
     $scope.errorMessage = "";
+    $scope.addingEncounter = false;
 
     $http.get('../contacts/contact/' + $routeParams.id)
         .success(function (response) {
@@ -80,8 +61,40 @@ controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', functio
             //TODO
         });
 
+    $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
+
+    $scope.addEncounter = function() {
+
+        //TODO: use a selected initiator
+        $scope.newEncounter.initiator = null;
+        $scope.newEncounter.form = null;
+
+        if (null === $scope.contact.encounters) {
+            $scope.contact.encounters = $scope.newEncounter;
+        } else {
+            var encounterList = $scope.contact.encounters;
+            encounterList.concat($scope.newEncounter);
+            $scope.contact.encounters = encounterList;
+        }
+
+        ContactService.update({id: $scope.contact.id}, $scope.contact);
+
+        //$http.put("../contacts/contact/" + $scope.contact.contact_id, $scope.contact)
+        //    .success(function (response) {
+        //        console.log(response);
+        //        $scope.success = true;
+        //        $scope.newEncounterForm.$setPristine();
+        //
+        //    }).error(function(response) {
+        //        console.log(response);
+        //        $scope.errorMessage = response;
+        //        $scope.success = false;
+        //    });
+
+    };
+
     $scope.submit = function() {
-        $http.put("../contacts/" + $scope.contact.id, $scope.contact)
+        $http.put("../contacts/contact/" + $scope.contact.id, $scope.contact)
             .success(function (response) {
                 console.log(response);
                 $scope.success = true;

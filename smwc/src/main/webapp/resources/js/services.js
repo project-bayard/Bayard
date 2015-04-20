@@ -5,8 +5,15 @@
 
     var services = angular.module('services', ['ngResource']);
 
-    services.factory('ContactService', function ($resource) {
-        return $resource('../contacts/:id');
-    });
+    services.factory('ContactService',[ '$resource', function ($resource) {
+        return $resource('../contacts/contact/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
 
 }());

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Entity
 public abstract class BasicEntity {
 
-
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")

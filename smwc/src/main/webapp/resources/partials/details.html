@@ -127,9 +127,7 @@
                         <textarea rows="5" cols="80" ng-model="contact.donorInfo.donations.comment" ng-readonly="true"></textarea>
                     </label>
                 </div>
-
             </div>
-
         </div>
     </div>
     
@@ -150,9 +148,47 @@
             <h3 class="panel-title">Encounters</h3>
         </div>
         <div class="panel-body">
+            <label>Add an Encounter
+                <input type="checkbox" ng-click="addingEncounter=!addingEncounter">
+            </label>
             <form>
-
+                <div class="form-group" ng-model="newEncounterForm">
+                        <label>Initiator:
+                            <input type="text" ng-model="newEncounter.initiator" ng-disabled="!addingEncounter">
+                        </label>
+                    <label>Date
+                        <input type="date"  ng-model="newEncounter.date" ng-disabled="!addingEncounter">
+                    </label>
+                    <label>Assessment
+                        <select class="form-control input-small" ng-model="newEncounter.assessment" ng-disabled="!addingEncounter">
+                            <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
+                        </select>
+                    </label>
+                    <label>Notes
+                        <input type="text"  ng-model="newEncounter.notes" ng-disabled="!addingEncounter">
+                    </label>
+                    <button class="btn btn-primary" ng-click="addEncounter()" ng-disabled="!addingEncounter">Complete Encounter</button>
+                </div>
             </form>
+
+            <table class="bootstrap-table table table-striped table-hover"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true">
+
+                <th>Date</th>
+                <th>Type</th>
+                <th>Initiator</th>
+                <th>Assessment</th>
+
+                <tr ng-repeat="encounter in contact.encounters">
+                    <td>{{encounter.date}}</td>
+                    <td>{{encounter.type}}</td>
+                    <td>{{encounter.initiator}}</td>
+                    <td>{{encounter.assessment}}</td>
+                </tr>
+            </table>
+
         </div>
     </div>
 

@@ -18,7 +18,7 @@ import java.util.List;
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
 public class Contact extends BasicEntity implements Serializable {
 
-
+    public Contact(){}
 
     @Column
     @JsonView({Views.ContactList.class,Views.ContactDetails.class})

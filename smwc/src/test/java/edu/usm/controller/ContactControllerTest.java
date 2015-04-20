@@ -9,15 +9,20 @@ import edu.usm.service.ContactService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,6 +36,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Autowired
     ContactService contactService;
 
+    private Logger logger = LoggerFactory.getLogger(ContactControllerTest.class);
 
     @Before
     public void setup() {
@@ -40,6 +46,40 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @After
     public void teardown () {
         contactService.deleteAll();
+    }
+
+    @Test
+    public void testSerialization() throws Exception {
+        Contact testContact = createTestContact();
+        ObjectMapper mapper = new ObjectMapper();
+        String result = mapper.writeValueAsString(testContact);
+        assertTrue(!result.isEmpty());
+    }
+
+    @Test
+    public void testPostContact() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String postData = mapper.writeValueAsString(createTestContact());
+        logger.debug("Performing POST test");
+        mockMvc.perform(post("/contacts")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(postData.getBytes())).andExpect(status().isOk());
+    }
+
+
+    private Contact createTestContact() {
+        Contact c = new Contact();
+        c.setFirstName("First");
+        c.setMiddleName("Middle");
+        c.setLastName("Last");
+        c.setStreetAddress("123 Fake St");
+        c.setAptNumber("# 4");
+        c.setCity("Portland");
+        c.setZipCode("04101");
+        c.setEmail("email@gmail.com");
+        return c;
+
     }
 
 
