@@ -77,7 +77,35 @@ controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', 'Contac
             $scope.contact.encounters = encounterList;
         }
 
-        ContactService.update({id: $scope.contact.id}, $scope.contact);
+        var dtoContact = {
+            contact_id : $scope.contact_id,
+            id : $scope.contact.id,
+            interests : $scope.contact.interests,
+            firstName : $scope.contact.firstName,
+            phoneNumber1 : $scope.contact.phoneNumber1,
+            phoneNumber2 : $scope.contact.phoneNumber2,
+            assessment : $scope.contact.assessment,
+            middleName : $scope.contact.middleName,
+            lastName : $scope.contact.lastName,
+            streetAddress : $scope.contact.streetAddress,
+            aptNumber : $scope.contact.aptNumber,
+            city : $scope.contact.city,
+            zipCode : $scope.contact.zipCode,
+            language : $scope.contact.language,
+            donor : $scope.contact.donor,
+            member : $scope.contact.member,
+            committees : $scope.contact.committees,
+            donorInfo : $scope.contact.donorInfo,
+            memberInfo : $scope.contact.memberInfo,
+            encounters : $scope.contact.encounters,
+            email : $scope.contact.email,
+            occupation : $scope.contact.occupation,
+            organizations : $scope.contact.organizations,
+            attendedEvents : $scope.contact.attendedEvents
+
+        }
+
+        ContactService.update({id: dtoContact.id}, dtoContact);
 
         //$http.put("../contacts/contact/" + $scope.contact.contact_id, $scope.contact)
         //    .success(function (response) {

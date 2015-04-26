@@ -31,7 +31,7 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.ContactList.class)
     public List<Contact> getContacts() {
-        logger.debug("PUT request to /contacts");
+        logger.debug("GET request to /contacts");
         return contactService.findAll();
     }
 
