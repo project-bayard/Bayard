@@ -170,8 +170,8 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         contactDao.save(fromDb);
 
         fromDb = contactDao.findOne(contact.getId());
-        assertTrue(fromDb.getOrganizations().contains(organization));
-        assertNotNull(organizationDao.findOne(organization.getId()));
+        assertEquals(fromDb.getOrganizations().iterator().next().getName(), organization.getName());
+        assertEquals(organizationDao.findAll().size(), 1);
 
     }
 

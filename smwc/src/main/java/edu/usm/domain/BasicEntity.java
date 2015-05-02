@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 public abstract class BasicEntity {
 
     private static final int ID_SIZE = 10;
+    private static int counter = 0;
 
 
 
@@ -68,5 +69,19 @@ public abstract class BasicEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BasicEntity) {
+            BasicEntity other = (BasicEntity) obj;
+            if (this.getId() != null && other.getId() != null)
+                return this.getId().equals(other.getId());
+            else
+                return this.getCreated().isEqual( (other.getCreated() ));
+        }
+
+        return false;
+
     }
 }

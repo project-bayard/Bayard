@@ -38,4 +38,11 @@ public class Organization extends BasicEntity  implements Serializable {
     public void setMembers(Set<Contact> members) {
         this.members = members;
     }
+
+    @Override
+    public boolean equals(Object o) {
+       return super.equals(o);
+    }
+
+
 }
