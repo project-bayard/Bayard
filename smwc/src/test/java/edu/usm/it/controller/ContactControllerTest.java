@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -77,7 +77,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
         contactService.create(contact);
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
 
         /*Event
@@ -141,7 +141,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         organizationService.create(organization);
 
 
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 

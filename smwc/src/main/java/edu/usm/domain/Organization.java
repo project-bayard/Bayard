@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 
 @Entity(name = "organization")
@@ -16,7 +16,7 @@ public class Organization extends BasicEntity  implements Serializable {
     private String name;
 
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH})
-    private List<Contact> members;
+    private Set<Contact> members;
 
 
     public String getName() {
@@ -27,11 +27,11 @@ public class Organization extends BasicEntity  implements Serializable {
         this.name = name;
     }
 
-    public List<Contact> getMembers() {
+    public Set<Contact> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Contact> members) {
+    public void setMembers(Set<Contact> members) {
         this.members = members;
     }
 }

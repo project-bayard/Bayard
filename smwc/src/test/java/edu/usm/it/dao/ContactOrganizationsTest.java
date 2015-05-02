@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by scottkimball on 4/11/15.
@@ -65,13 +65,13 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         organizationDao.save(organization);
 
         /*Add organization to contact organization list and save*/
-        List<Organization> organizationList = new ArrayList<>();
+        Set<Organization> organizationList = new HashSet<>();
         organizationList.add(organization);
         contact.setOrganizations(organizationList);
         contactDao.save(contact);
 
         /*Add contact to organization member list and save*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         organization.setMembers(contacts);
         organizationDao.save(organization);
@@ -97,13 +97,13 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         organizationDao.save(organization);
 
         /*Add organization to contact organization list and save*/
-        List<Organization> organizationList = new ArrayList<>();
+        Set<Organization> organizationList = new HashSet<>();
         organizationList.add(organization);
         contact.setOrganizations(organizationList);
         contactDao.save(contact);
 
         /*Add contact to organization member list and save*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         organization.setMembers(contacts);
         organizationDao.save(organization);
@@ -131,13 +131,13 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         organizationDao.save(organization);
 
         /*Add organization to contact organization list and save*/
-        List<Organization> organizationList = new ArrayList<>();
+        Set<Organization> organizationList = new HashSet<>();
         organizationList.add(organization);
         contact.setOrganizations(organizationList);
         contactDao.save(contact);
 
         /*Add contact to organization member list and save*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         organization.setMembers(contacts);
         organizationDao.save(organization);
@@ -152,6 +152,13 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         assertEquals(orgFromDb.getMembers().size(),0);
         assertNull(contactDao.findOne(contact.getId()));
 
+
+    }
+
+    public void testUpdate() {
+        contactDao.save(contact);
+
+        Contact fromDb = contactDao.findOne(contact.getId());
 
     }
 

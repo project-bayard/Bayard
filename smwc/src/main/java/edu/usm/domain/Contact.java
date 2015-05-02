@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "contact")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
@@ -112,20 +113,20 @@ public class Contact extends BasicEntity implements Serializable {
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="committee_id", referencedColumnName = "id")}
     )
-    private List<Committee> committees;
+    private Set<Committee> committees;
 
 
 
 
 
     @JsonView({Views.ContactDetails.class})
-    @ManyToMany(cascade = {CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="org_id", referencedColumnName = "id")}
     )
-    private List<Organization> organizations;
+    private Set<Organization> organizations;
 
 
 
@@ -146,7 +147,7 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @JsonView({Views.ContactDetails.class})
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -216,11 +217,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.language = language;
     }
 
-    public List<Committee> getCommittees() {
+    public Set<Committee> getCommittees() {
         return committees;
     }
 
-    public void setCommittees(List<Committee> committees) {
+    public void setCommittees(Set<Committee> committees) {
         this.committees = committees;
     }
 
@@ -232,11 +233,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.occupation = occupation;
     }
 
-    public List<Organization> getOrganizations() {
+    public Set<Organization> getOrganizations() {
         return organizations;
     }
 
-    public void setOrganizations(List<Organization> organizations) {
+    public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
     }
 

@@ -1,6 +1,5 @@
 package edu.usm.service.impl;
 
-import com.google.common.collect.Lists;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.repository.ContactDao;
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 4/11/15.
@@ -37,9 +36,9 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public List<Organization> findAll() {
+    public Set<Organization> findAll() {
         logger.debug("Finding all organizations");
-        return  Lists.newArrayList(organizationDao.findAll());
+        return  (Set<Organization> )organizationDao.findAll();
     }
 
     @Override
@@ -81,7 +80,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
         logger.debug("Deleting all Organizations");
         logger.debug("Time: " + LocalDateTime.now());
-        List<Organization> organizations = findAll();
+        Set<Organization> organizations = findAll();
         organizations.stream().forEach(this::delete);
     }
 }

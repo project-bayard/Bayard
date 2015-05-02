@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Entity(name = "event")
 public class Event extends BasicEntity  implements Serializable {
@@ -26,7 +26,7 @@ public class Event extends BasicEntity  implements Serializable {
 
 
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.ALL})
-    private List<Contact> attendees;
+    private Set<Contact> attendees;
 
     @Column
     private LocalDate date;
@@ -50,11 +50,11 @@ public class Event extends BasicEntity  implements Serializable {
         this.location = location;
     }
 
-    public List<Contact> getAttendees() {
+    public Set<Contact> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(List<Contact> attendees) {
+    public void setAttendees(Set<Contact> attendees) {
         this.attendees = attendees;
     }
 

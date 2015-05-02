@@ -10,8 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -63,13 +62,13 @@ public class ContactCommitteesTest extends WebAppConfigurationAware {
         committeeDao.save(committee);
 
         /*Add committee to contact committee list and save*/
-        List<Committee> committees = new ArrayList<>();
+        Set<Committee> committees = new HashSet<>();
         committees.add(committee);
         contact.setCommittees(committees);
         contactDao.save(contact);
 
         /*Add contact to committee member list and save*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         committee.setMembers(contacts);
         committeeDao.save(committee);
@@ -95,13 +94,13 @@ public class ContactCommitteesTest extends WebAppConfigurationAware {
         committeeDao.save(committee);
 
         /*Add committee to contact committee list and save*/
-        List<Committee> committees = new ArrayList<>();
+        Set<Committee> committees = new HashSet<>();
         committees.add(committee);
         contact.setCommittees(committees);
         contactDao.save(contact);
 
         /*Add contact to committee member list and save*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         committee.setMembers(contacts);
         committeeDao.save(committee);
@@ -129,13 +128,13 @@ public class ContactCommitteesTest extends WebAppConfigurationAware {
         committeeDao.save(committee);
 
         /*Add committee to contact committee list and save*/
-        List<Committee> committees = new ArrayList<>();
+        Set<Committee> committees = new HashSet<>();
         committees.add(committee);
         contact.setCommittees(committees);
         contactDao.save(contact);
 
         /*Add contact to committee member list and save*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         committee.setMembers(contacts);
         committeeDao.save(committee);

@@ -2,7 +2,7 @@ package edu.usm.service;
 
 import edu.usm.domain.Contact;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -11,7 +11,7 @@ import java.util.List;
 public interface ContactService {
 
     Contact findById (String id);
-    List<Contact> findAll();
+    Set<Contact> findAll();
     void delete (Contact contact);
     void update (Contact contact);
     void create(Contact contact);

@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -61,7 +61,7 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testSave () throws Exception {
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
 
@@ -77,14 +77,14 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testDelete () throws Exception {
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
 
         organization.setMembers(contacts);
         organizationService.create(organization);
 
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
 
         contact.setOrganizations(organizations);

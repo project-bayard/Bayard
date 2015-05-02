@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -24,7 +24,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.ContactList.class)
-    public List<Contact> getContacts() {
+    public Set<Contact> getContacts() {
         return contactService.findAll();
     }
 

@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by scottkimball on 2/22/15.
@@ -67,8 +67,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         event.setDate(LocalDate.of(2015, 01, 01));
         event.setLocation("location");
         event.setNotes("notes");
+        event.setName("name");
+        eventDao.save(event);
 
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         event.setAttendees(contacts);
 
@@ -107,7 +109,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         organization.setName("organization");
         organization.setMembers(contacts);
         organizationDao.save(organization);
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 
@@ -134,10 +136,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertNotNull(fromDb.getAttendedEvents());
         Event fromEventDao = eventDao.findOne(event.getId());
         assertEquals(fromEventDao.getId(),event.getId());
-        List<Contact> attendees = fromEventDao.getAttendees();
+        Set<Contact> attendees = fromEventDao.getAttendees();
         assertNotNull(attendees);
 
-        Contact attendee = eventDao.findOne(event.getId()).getAttendees().get(0);
+        Contact attendee = eventDao.findOne(event.getId()).getAttendees().iterator().next();
         assertNotNull(attendee);
         assertEquals(attendee.getId(), contact.getId());
 
@@ -153,7 +155,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization fromDbOrg = organizationDao.findOne(organization.getId());
         assertNotNull(fromDbOrg);
         assertEquals(organizationDao.findOne(organization.getId()).getId(),organization.getId());
-        assertEquals(organizationDao.findOne(organization.getId()).getMembers().get(0).getId(),contact.getId());
+        assertEquals(organizationDao.findOne(organization.getId()).getMembers().iterator().next().getId(),contact.getId());
 
         /*Committees*/
 
@@ -180,7 +182,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         event.setLocation("location");
         event.setNotes("notes");
 
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         event.setAttendees(contacts);
 
@@ -218,7 +220,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 

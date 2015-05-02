@@ -1,18 +1,17 @@
 package edu.usm.service.impl;
 
-import com.google.common.collect.Lists;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
-import edu.usm.service.BasicService;
-import edu.usm.service.CommitteeService;
 import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
+import edu.usm.service.BasicService;
+import edu.usm.service.CommitteeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 4/15/15.
@@ -36,9 +35,9 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
-    public List<Committee> findAll() {
+    public Set<Committee> findAll() {
         logger.debug("Finding all Committees");
-        return Lists.newArrayList(committeeDao.findAll());
+        return (Set<Committee>) committeeDao.findAll();
     }
 
     @Override
@@ -69,7 +68,7 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     @Override
     public void deleteAll() {
-        List<Committee> committees = findAll();
+        Set<Committee> committees = findAll();
         committees.stream().forEach(this::delete);
     }
 }

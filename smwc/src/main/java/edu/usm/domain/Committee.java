@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="committee_id")
@@ -16,17 +16,17 @@ public class Committee extends BasicEntity implements Serializable {
 
     @ManyToMany(mappedBy = "committees")
     @JsonIgnore
-    private List<Contact> members;
+    private Set<Contact> members;
 
     @Column
     @JsonView({Views.ContactDetails.class})
     private String name;
 
-    public List<Contact> getMembers() {
+    public Set<Contact> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Contact> members) {
+    public void setMembers(Set<Contact> members) {
         this.members = members;
     }
 

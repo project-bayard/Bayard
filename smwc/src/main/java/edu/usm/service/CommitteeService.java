@@ -2,7 +2,7 @@ package edu.usm.service;
 
 import edu.usm.domain.Committee;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 4/15/15.
@@ -10,7 +10,7 @@ import java.util.List;
 public interface CommitteeService {
 
     Committee findById (String id);
-    List<Committee> findAll();
+    Set<Committee> findAll();
     void delete (Committee committee);
     void update (Committee committee);
     void create (Committee committee);

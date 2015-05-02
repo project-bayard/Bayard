@@ -1,6 +1,5 @@
 package edu.usm.service.impl;
 
-import com.google.common.collect.Lists;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
@@ -15,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -40,9 +39,9 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public List<Contact> findAll() {
+    public Set<Contact> findAll() {
         logger.debug("Finding all Contacts");
-        return  Lists.newArrayList(contactDao.findAll());
+        return (Set<Contact>) contactDao.findAll();
     }
 
     @Override
@@ -94,7 +93,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     public void deleteAll() {
 
         logger.debug("Deleting all contacts.");
-        List<Contact> contacts = findAll();
+        Set<Contact> contacts = findAll();
         contacts.stream().forEach(this::delete);
     }
 }

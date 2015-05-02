@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -87,7 +89,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getZipCode(), contact.getZipCode());
 
 
-        List<Contact> contacts = contactService.findAll();
+        Set<Contact> contacts = contactService.findAll();
         assertEquals(contacts.size(),2);
         assertTrue(contacts.contains(contact));
         assertTrue(contacts.contains(contact2));
@@ -120,7 +122,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         contactService.create(contact);
         contactService.create(contact2);
-        List<Contact> contacts = contactService.findAll();
+        Set<Contact> contacts = contactService.findAll();
 
         assertNotNull(contacts);
         assertEquals(contacts.size(),2);
@@ -131,7 +133,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     public void testDelete () {
 
         /*Test deleted from Organization member list*/
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
 
@@ -141,7 +143,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         committee.setMembers(contacts);
         committeeService.create(committee);
 
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
         contactService.create(contact);
@@ -168,11 +170,11 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Transactional
     public void testUpdateCommittees () {
 
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
 
 
-        List<Committee> committees = new ArrayList<>();
+        Set<Committee> committees = new HashSet<>();
         committees.add(committee);
         contact.setCommittees(committees);
         committee.setMembers(contacts);
@@ -202,7 +204,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contactFromDb.getCommittees().size(),committees.size());
 
         Committee committeeFromDb = committeeService.findById(committee.getId());
-        assertEquals(committeeFromDb.getMembers().get(0).getId(),contact.getId());
+        assertEquals(committeeFromDb.getMembers().iterator().next().getId(),contact.getId());
 
         /*Test remove committee*/
 
@@ -213,7 +215,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactFromDb = contactService.findById(contact.getId());
 
         assertEquals(contactFromDb.getCommittees().size(), committees.size());
-        assertEquals(contactFromDb.getCommittees().get(0).getId(), committee.getId());
+        assertEquals(contactFromDb.getCommittees().iterator().next().getId(), committee.getId());
 
     }
 
@@ -221,11 +223,11 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Transactional
     public void testUpdateOrganizations () {
 
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
 
 
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
         organization.setMembers(contacts);
@@ -255,7 +257,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
 
         Organization organizationFromDb = organizationService.findById(organization.getId());
-        assertEquals(organizationFromDb.getMembers().get(0).getId(),contact.getId());
+        assertEquals(organizationFromDb.getMembers().iterator().next().getId(),contact.getId());
 
         /*Test remove organization*/
 
@@ -266,7 +268,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactFromDb = contactService.findById(contact.getId());
 
         assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
-        assertEquals(contactFromDb.getOrganizations().get(0).getId(), organization.getId());
+        assertEquals(contactFromDb.getOrganizations().iterator().next().getId(), organization.getId());
 
     }
 
