@@ -2,6 +2,8 @@ package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +16,8 @@ import java.time.LocalDateTime;
  */
 
 @Entity(name = "basic_entity")
+@SQLDelete(sql="UPDATE basic_entity SET deleted = 1 WHERE id = ?")
+@Where(clause="deleted <> 1 ")
 public abstract class BasicEntity {
 
 
