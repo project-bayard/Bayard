@@ -62,6 +62,8 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testSave () throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
@@ -78,6 +80,8 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testDelete () throws Exception {
+
+
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);

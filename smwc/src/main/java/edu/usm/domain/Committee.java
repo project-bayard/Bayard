@@ -14,7 +14,7 @@ import java.util.Set;
 public class Committee extends BasicEntity implements Serializable {
 
 
-    @ManyToMany(mappedBy = "committees")
+    @ManyToMany(mappedBy = "committees" , cascade = CascadeType.REFRESH)
     @JsonIgnore
     private Set<Contact> members;
 

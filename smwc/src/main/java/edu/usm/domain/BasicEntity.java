@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 @Where(clause="deleted <> 1 ")
 public abstract class BasicEntity {
 
+    private static final int ID_SIZE = 10;
+
+
 
     @Id
     @GeneratedValue(generator="system-uuid")
@@ -45,16 +48,10 @@ public abstract class BasicEntity {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+
 
     public LocalDateTime getCreated() {
         return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
     }
 
     public LocalDateTime getLastModified() {

@@ -155,10 +155,23 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
 
     }
 
+    @Test
+    @Transactional
     public void testUpdate() {
         contactDao.save(contact);
 
         Contact fromDb = contactDao.findOne(contact.getId());
+
+        /*Create new organization*/
+        fromDb.setOrganizations(new HashSet<Organization>());
+        fromDb.getOrganizations().add(organization);
+        organization.setMembers(new HashSet<>());
+        organization.getMembers().add(contact);
+        contactDao.save(fromDb);
+
+        fromDb = contactDao.findOne(contact.getId());
+        assertTrue(fromDb.getOrganizations().contains(organization));
+        assertNotNull(organizationDao.findOne(organization.getId()));
 
     }
 
