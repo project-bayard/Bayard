@@ -1,24 +1,17 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
-/**
- * Created by justin on 2/19/15.
- */
-@Entity
-public class Event  implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+@Entity(name = "event")
+public class Event extends BasicEntity  implements Serializable {
 
     @Column
-    @JsonView({Views.ContactDetails.class})
     private String name;
 
 
@@ -30,20 +23,13 @@ public class Event  implements Serializable {
 
 
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.ALL})
-    private List<Contact> attendees;
+    private Set<Contact> attendees;
 
     @Column
     private LocalDate date;
 
     //TODO: Need to ask about more attributes of Events
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getNotes() {
         return notes;
@@ -61,11 +47,11 @@ public class Event  implements Serializable {
         this.location = location;
     }
 
-    public List<Contact> getAttendees() {
+    public Set<Contact> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(List<Contact> attendees) {
+    public void setAttendees(Set<Contact> attendees) {
         this.attendees = attendees;
     }
 

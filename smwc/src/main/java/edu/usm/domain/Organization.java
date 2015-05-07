@@ -1,35 +1,27 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
-/**
- * Created by justin on 2/19/15.
- */
-@Entity
-public class Organization  implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+@Entity(name = "organization")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="organization_id")
+public class Organization extends BasicEntity  implements Serializable {
+
 
     @Column
-    @JsonView({Views.ContactDetails.class})
     private String name;
 
-    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.PERSIST})
-    private List<Contact> members;
+    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH})
+    private Set<Contact> members;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -39,11 +31,18 @@ public class Organization  implements Serializable {
         this.name = name;
     }
 
-    public List<Contact> getMembers() {
+    public Set<Contact> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Contact> members) {
+    public void setMembers(Set<Contact> members) {
         this.members = members;
     }
+
+    @Override
+    public boolean equals(Object o) {
+       return super.equals(o);
+    }
+
+
 }

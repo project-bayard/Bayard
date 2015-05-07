@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -30,8 +30,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.ContactList.class)
-    public List<Contact> getContacts() {
-        logger.debug("GET request to /contacts");
+    public Set<Contact> getContacts() {
         return contactService.findAll();
     }
 
@@ -45,7 +44,6 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
-    @JsonView(Views.ContactDetails.class)
     public Contact getContactById(@PathVariable("id") String id) {
         logger.debug("GET request to /contacts/contact/"+id);
         return contactService.findById(id);

@@ -2,33 +2,31 @@ package edu.usm.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
-@Entity
-public class Encounter  implements Serializable {
+@Entity(name = "encounter")
+public class Encounter extends BasicEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Contact contact;
 
     @Column
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column
     private String notes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @JoinColumn(name="initator_id")
     private Contact initiator;
 
     @Column
     private int assessment;
 
     @Column
-    private String type;
+    private EncounterType type;
 
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
@@ -41,14 +39,6 @@ public class Encounter  implements Serializable {
         this.form = form;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Contact getContact() {
         return contact;
     }
@@ -57,11 +47,11 @@ public class Encounter  implements Serializable {
         this.contact = contact;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -89,11 +79,11 @@ public class Encounter  implements Serializable {
         this.assessment = assessment;
     }
 
-    public String getType() {
+    public EncounterType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EncounterType type) {
         this.type = type;
     }
 

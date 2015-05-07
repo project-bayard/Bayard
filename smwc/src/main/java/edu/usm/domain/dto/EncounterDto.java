@@ -6,13 +6,13 @@ import java.io.Serializable;
 
 public class EncounterDto implements Serializable {
 
-    private long id;
+    private String id;
     private String subjectId;
     private String initiatorId;
     private String notes;
     private int assessment;
     private String type;
-    private long formId;
+    private String formId;
 
     public static EncounterDto fromEncounter(Encounter encounter) {
         EncounterDto dto = new EncounterDto();
@@ -21,16 +21,16 @@ public class EncounterDto implements Serializable {
         dto.setInitiatorId(encounter.getInitiator().getId());
         dto.setNotes(encounter.getNotes());
         dto.setAssessment(encounter.getAssessment());
-        dto.setType(encounter.getType());
+        dto.setType(encounter.getType().toString());
         dto.setFormId(encounter.getForm().getId());
         return dto;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -74,11 +74,11 @@ public class EncounterDto implements Serializable {
         this.type = type;
     }
 
-    public long getFormId() {
+    public String getFormId() {
         return formId;
     }
 
-    public void setFormId(long formId) {
+    public void setFormId(String formId) {
         this.formId = formId;
     }
 }

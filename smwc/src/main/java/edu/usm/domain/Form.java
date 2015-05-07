@@ -6,12 +6,8 @@ import java.io.Serializable;
 /**
  * Created by scottkimball on 2/19/15.
  */
-@Entity
-public class Form  implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+@Entity(name = "form")
+public class Form extends BasicEntity  implements Serializable {
 
     @OneToOne
     private Encounter encounter;
@@ -28,14 +24,6 @@ public class Form  implements Serializable {
 
     public void setEncounter(Encounter encounter) {
         this.encounter = encounter;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {

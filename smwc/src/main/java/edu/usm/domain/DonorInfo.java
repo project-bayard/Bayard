@@ -5,16 +5,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity
-public class DonorInfo  implements Serializable {
+@Entity(name = "donor_info")
+public class DonorInfo extends BasicEntity implements Serializable {
 
-    //TODO: decide how to represent sustaining donorships vs a collection of one-time donations
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
-    @OneToOne(mappedBy = "donorInfo")
-    private Contact contact;
 
     @Column
     private boolean sustainer;
@@ -27,24 +21,9 @@ public class DonorInfo  implements Serializable {
     @Column
     private boolean thankYouLetterSent;
 
-    @OneToMany(mappedBy="donor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="donor")
     private List<Donation> donations;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
 
     public boolean isSustainer() {
         return sustainer;

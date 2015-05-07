@@ -2,6 +2,8 @@ package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,13 +15,16 @@ import java.time.LocalDateTime;
  * Created by scottkimball on 4/7/15.
  */
 
-@Entity
+@Entity(name = "basic_entity")
+@SQLDelete(sql="UPDATE basic_entity SET deleted = 1 WHERE id = ?")
+@Where(clause="deleted <> 1 ")
 public abstract class BasicEntity {
+
 
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String id;
 
     @Column
@@ -40,16 +45,10 @@ public abstract class BasicEntity {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+
 
     public LocalDateTime getCreated() {
         return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
     }
 
     public LocalDateTime getLastModified() {
@@ -66,5 +65,19 @@ public abstract class BasicEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BasicEntity) {
+            BasicEntity other = (BasicEntity) obj;
+            if (this.getId() != null && other.getId() != null)
+                return this.getId().equals(other.getId());
+            else
+                return this.getCreated().isEqual( (other.getCreated() ));
+        }
+
+        return false;
+
     }
 }

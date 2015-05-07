@@ -1,4 +1,4 @@
-package edu.usm.dao;
+package edu.usm.it.dao;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
@@ -6,16 +6,15 @@ import edu.usm.repository.ContactDao;
 import edu.usm.repository.DonorInfoDao;
 import edu.usm.repository.EventDao;
 import edu.usm.repository.OrganizationDao;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by scottkimball on 2/22/15.
@@ -36,14 +35,8 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Autowired
     OrganizationDao organizationDao;
 
-    @After
-    public void tearDown() {
-     //   contactDao.deleteAll();
-      //  eventDao.deleteAll();
-    //    donorInfoDao.deleteAll();
-  //      organizationDao.deleteAll();
 
-    }
+
 
 
 
@@ -62,14 +55,20 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+        contact.setAssessment(1);
+        contact.setPhoneNumber1("phone number");
+        contact.setInterests("interests");
+
 
         /*Event*/
         Event event = new Event();
         event.setDate(LocalDate.of(2015, 01, 01));
         event.setLocation("location");
         event.setNotes("notes");
+        event.setName("name");
+        eventDao.save(event);
 
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         event.setAttendees(contacts);
 
@@ -87,7 +86,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*DonorInfo*/
         DonorInfo donorInfo = new DonorInfo();
-        donorInfo.setContact(contact);
         donorInfo.setDate(LocalDate.of(2015, 01, 01));
 
         List<Donation> donations = new ArrayList<>();
@@ -97,7 +95,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*Member Info*/
         MemberInfo memberInfo = new MemberInfo();
-        memberInfo.setContact(contact);
         memberInfo.setStatus(0);
         memberInfo.setPaidDues(true);
         memberInfo.setSignedAgreement(true);
@@ -107,7 +104,8 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
-        List<Organization> organizations = new ArrayList<>();
+        organizationDao.save(organization);
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 
@@ -115,12 +113,12 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
 
 
-        Contact fromDb = contactDao.findById(contact.getId());
+        Contact fromDb = contactDao.findOne(contact.getId());
 
 
         /*Basic contact info*/
         assertNotNull(fromDb);
-        assertEquals(fromDb.getId(),contact.getId());
+        assertEquals(fromDb.getId(), contact.getId());
         assertEquals(fromDb.getLastName(),contact.getLastName());
         assertEquals(fromDb.getFirstName(),contact.getFirstName());
         assertEquals(fromDb.getEmail(),contact.getEmail());
@@ -134,12 +132,12 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertNotNull(fromDb.getAttendedEvents());
         Event fromEventDao = eventDao.findOne(event.getId());
         assertEquals(fromEventDao.getId(),event.getId());
-        List<Contact> attendees = fromEventDao.getAttendees();
+        Set<Contact> attendees = fromEventDao.getAttendees();
         assertNotNull(attendees);
 
-        Contact attendee = eventDao.findOne(event.getId()).getAttendees().get(0);
+        Contact attendee = eventDao.findOne(event.getId()).getAttendees().iterator().next();
         assertNotNull(attendee);
-        assertEquals(attendee.getId(),contact.getId());
+        assertEquals(attendee.getId(), contact.getId());
 
         /*Donor Info*/
         assertEquals(donorInfoDao.findOne(contact.getDonorInfo().getId()).getId(),donorInfo.getId());
@@ -147,13 +145,13 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertEquals(fromDbDonation.getId(),donation.getId());
 
         /*Member Info*/
-        assertEquals(contactDao.findById(contact.getId()).getMemberInfo().getStatus(),memberInfo.getStatus());
+        assertEquals(contactDao.findOne(contact.getId()).getMemberInfo().getStatus(),memberInfo.getStatus());
 
         /*Organization*/
         Organization fromDbOrg = organizationDao.findOne(organization.getId());
         assertNotNull(fromDbOrg);
         assertEquals(organizationDao.findOne(organization.getId()).getId(),organization.getId());
-        assertEquals(organizationDao.findOne(organization.getId()).getMembers().get(0).getId(),contact.getId());
+        assertEquals(organizationDao.findOne(organization.getId()).getMembers().iterator().next().getId(),contact.getId());
 
         /*Committees*/
 
@@ -180,7 +178,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         event.setLocation("location");
         event.setNotes("notes");
 
-        List<Contact> contacts = new ArrayList<>();
+        Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         event.setAttendees(contacts);
 
@@ -198,7 +196,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*DonorInfo*/
         DonorInfo donorInfo = new DonorInfo();
-        donorInfo.setContact(contact);
         donorInfo.setDate(LocalDate.of(2015, 01, 01));
 
         List<Donation> donations = new ArrayList<>();
@@ -208,7 +205,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*Member Info*/
         MemberInfo memberInfo = new MemberInfo();
-        memberInfo.setContact(contact);
         memberInfo.setStatus(0);
         memberInfo.setPaidDues(true);
         memberInfo.setSignedAgreement(true);
@@ -218,7 +214,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
-        List<Organization> organizations = new ArrayList<>();
+        Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 
@@ -229,7 +225,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
 
         organizationDao.delete(organization);
-        Contact fromDb = contactDao.findById(contact.getId());
+        Contact fromDb = contactDao.findOne(contact.getId());
 
 
 

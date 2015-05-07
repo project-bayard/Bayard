@@ -1,25 +1,21 @@
 package edu.usm.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * Created by justin on 2/19/15.
  */
 
-@Entity
-public class MemberInfo  implements Serializable {
+@Entity(name = "member_info")
+public class MemberInfo extends BasicEntity  implements Serializable {
 
     public static int STATUS_GOOD = 1;
     public static int STATUS_BAD = 2;
     public static int STATUS_OTHER = 3;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
-    @OneToOne(mappedBy = "memberInfo")
-    private Contact contact;
 
     @Column
     private boolean paidDues;
@@ -29,14 +25,6 @@ public class MemberInfo  implements Serializable {
 
     @Column
     private int status;
-
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
 
     public boolean hasPaidDues() {
         return paidDues;

@@ -2,140 +2,133 @@ package edu.usm.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "contact")
-@SQLDelete(sql="UPDATE contact SET deleted = '1' WHERE id = ?")
-@Where(clause="deleted <> '1'")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
 public class Contact extends BasicEntity implements Serializable {
 
     public Contact(){}
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String firstName;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String middleName;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String lastName;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String streetAddress;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String aptNumber;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String city;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String zipCode;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String phoneNumber1;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String phoneNumber2;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String email;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String language;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String occupation;
 
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private String interests;
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private boolean donor;
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private boolean member;
 
 
     @Column
-    @JsonView({Views.ContactList.class,Views.ContactDetails.class})
+    @JsonView(Views.ContactList.class)
     private int assessment;
 
 
-    @JsonView({Views.ContactDetails.class})
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(
             name="contact_committee",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="committee_id", referencedColumnName = "id")}
     )
-    private List<Committee> committees;
+    private Set<Committee> committees;
 
 
 
 
 
-    @JsonView({Views.ContactDetails.class})
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="org_id", referencedColumnName = "id")}
     )
-    private List<Organization> organizations;
+    private Set<Organization> organizations;
 
 
 
 
-    @JsonView({Views.ContactDetails.class})
     @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
@@ -143,16 +136,14 @@ public class Contact extends BasicEntity implements Serializable {
 
 
 
-    @JsonView({Views.ContactDetails.class})
     @OneToOne(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
 
 
-    @JsonIgnore
-    @JsonView({Views.ContactDetails.class})
-    @ManyToMany(cascade = {CascadeType.ALL})
+
+    @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -162,12 +153,9 @@ public class Contact extends BasicEntity implements Serializable {
 
 
 
-    @JsonView({Views.ContactDetails.class})
-    @OneToMany(mappedBy = "contact")
+
+    @OneToMany(mappedBy = "initiator", cascade = CascadeType.REFRESH)
     private List<Encounter> encounters;
-
-
-
 
     public String getFirstName() {
         return firstName;
@@ -225,11 +213,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.language = language;
     }
 
-    public List<Committee> getCommittees() {
+    public Set<Committee> getCommittees() {
         return committees;
     }
 
-    public void setCommittees(List<Committee> committees) {
+    public void setCommittees(Set<Committee> committees) {
         this.committees = committees;
     }
 
@@ -241,11 +229,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.occupation = occupation;
     }
 
-    public List<Organization> getOrganizations() {
+    public Set<Organization> getOrganizations() {
         return organizations;
     }
 
-    public void setOrganizations(List<Organization> organizations) {
+    public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
     }
 

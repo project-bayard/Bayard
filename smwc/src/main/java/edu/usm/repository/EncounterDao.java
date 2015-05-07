@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface EncounterDao extends CrudRepository<Encounter, Long> {
+public interface EncounterDao extends CrudRepository<Encounter, String> {
 }

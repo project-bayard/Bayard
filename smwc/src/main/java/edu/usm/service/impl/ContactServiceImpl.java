@@ -1,8 +1,12 @@
 package edu.usm.service.impl;
 
-import com.google.common.collect.Lists;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Organization;
+import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
+import edu.usm.repository.OrganizationDao;
+import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,55 +14,78 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 3/12/15.
  */
 @Service
-public class ContactServiceImpl implements ContactService {
+public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Autowired
-    private ContactDao dao;
+    private ContactDao contactDao;
+    @Autowired
+    private OrganizationDao organizationDao;
+    @Autowired
+    private CommitteeDao committeeDao;
+
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
 
     @Override
     public Contact findById(String id) {
         logger.debug("Finding contact with ID: " + id);
-        return dao.findById(id);
+        return contactDao.findOne(id);
     }
 
     @Override
-    public List<Contact> findAll() {
+    public Set<Contact> findAll() {
         logger.debug("Finding all Contacts");
-        return  Lists.newArrayList(dao.findAll());
+        return (Set<Contact>) contactDao.findAll();
     }
 
     @Override
-    public void delete(String id) {
-        logger.debug("Deleting contact with ID: " + id );
+    public void delete(Contact contact) {
+        logger.debug("Deleting contact " + contact.getId() );
         logger.debug("Time: " + LocalDateTime.now());
-        dao.deleteById(id);
+
+        updateLastModified(contact);
+
+        /*Remove from organizations */
+        if (contact.getOrganizations() != null) {
+            for(Organization organization : contact.getOrganizations()) {
+                organization.getMembers().remove(contact);
+                organizationDao.save(organization);
+            }
+        }
+
+        /*Remove from committees*/
+        if (contact.getCommittees() != null) {
+            for(Committee committee : contact.getCommittees()) {
+                committee.getMembers().remove(contact);
+                committeeDao.save(committee);
+            }
+        }
+
+
+        contactDao.delete(contact);
     }
 
     @Override
     public void update(Contact contact) {
         logger.debug("Updating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
-        dao.save(contact);
+        updateLastModified(contact);
+        contactDao.save(contact);
     }
 
-    @Override
-    public void updateList(List<Contact> contacts) {
-        dao.save(contacts);
-    }
+
 
     @Override
     public void create(Contact contact) {
-        update(contact);
         logger.debug("Creating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
+        contactDao.save(contact);
 
     }
 
@@ -66,7 +93,7 @@ public class ContactServiceImpl implements ContactService {
     public void deleteAll() {
 
         logger.debug("Deleting all contacts.");
-        logger.debug("Time: " + LocalDateTime.now());
-        dao.deleteAll();
+        Set<Contact> contacts = findAll();
+        contacts.stream().forEach(this::delete);
     }
 }

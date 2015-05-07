@@ -1,42 +1,31 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="committee_id")
-public class Committee implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class Committee extends BasicEntity implements Serializable {
 
-    @ManyToMany(mappedBy = "committees")
-    @JsonIgnore
-    private List<Contact> members;
+
+    @ManyToMany(mappedBy = "committees" , cascade = CascadeType.REFRESH)
+    private Set<Contact> members;
 
     @Column
-    @JsonView({Views.ContactDetails.class})
     private String name;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public List<Contact> getMembers() {
+    public Set<Contact> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Contact> members) {
+    public void setMembers(Set<Contact> members) {
         this.members = members;
     }
 

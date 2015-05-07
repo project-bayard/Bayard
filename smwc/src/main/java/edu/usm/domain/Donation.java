@@ -1,14 +1,14 @@
 package edu.usm.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Entity
-public class Donation implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+@Entity(name = "donation")
+public class Donation extends BasicEntity implements Serializable {
+
     @Column
     private int amount;
     @Column
@@ -19,7 +19,7 @@ public class Donation implements Serializable {
     private String comment;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private DonorInfo donor;
 
     public DonorInfo getDonorInfo() {
@@ -28,14 +28,6 @@ public class Donation implements Serializable {
 
     public void setDonorInfo(DonorInfo donorInfo) {
         this.donor = donorInfo;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public int getAmount() {
