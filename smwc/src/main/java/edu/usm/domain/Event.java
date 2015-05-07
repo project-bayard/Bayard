@@ -1,7 +1,5 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +12,6 @@ import java.util.Set;
 public class Event extends BasicEntity  implements Serializable {
 
     @Column
-    @JsonView({Views.ContactDetails.class})
     private String name;
 
 

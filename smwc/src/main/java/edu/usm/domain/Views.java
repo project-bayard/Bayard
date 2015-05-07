@@ -5,5 +5,4 @@ package edu.usm.domain;
  */
 public class Views {
     public static class ContactList {}
-    public static class ContactDetails {}
 }

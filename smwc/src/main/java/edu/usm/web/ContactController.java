@@ -37,7 +37,6 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
-    @JsonView(Views.ContactDetails.class)
     public Contact getContactById(@PathVariable("id") String id) {
         return contactService.findById(id);
     }

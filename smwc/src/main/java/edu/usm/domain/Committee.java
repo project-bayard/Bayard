@@ -1,11 +1,12 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -15,11 +16,9 @@ public class Committee extends BasicEntity implements Serializable {
 
 
     @ManyToMany(mappedBy = "committees" , cascade = CascadeType.REFRESH)
-    @JsonIgnore
     private Set<Contact> members;
 
     @Column
-    @JsonView({Views.ContactDetails.class})
     private String name;
 
     public Set<Contact> getMembers() {
