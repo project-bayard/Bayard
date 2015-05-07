@@ -1,12 +1,10 @@
 package edu.usm.it.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Organization;
+import edu.usm.domain.*;
 import edu.usm.service.ContactService;
+import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
 import org.junit.Before;
@@ -15,11 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -34,6 +37,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Autowired
     OrganizationService organizationService;
+
+    @Autowired
+    EventService eventService;
 
 
     private Contact contact;
@@ -75,52 +81,41 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Transactional
     public void testGetContact() throws Exception {
 
-
         contactService.create(contact);
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
 
-        /*Event
+        /*Event*/
         Event event = new Event();
         event.setDate(LocalDate.of(2015, 01, 01));
         event.setLocation("location");
         event.setNotes("notes");
 
-        List<Contact> contacts = new ArrayList<>();
-        contacts.add(contact);
         event.setAttendees(contacts);
+        eventService.create(event);
 
         List<Event> eventList = new ArrayList<>();
         eventList.add(event);
         contact.setAttendedEvents(eventList);
 
-        */
-
-        /*Donations
+        /*Donations*/
         Donation donation = new Donation();
         donation.setDate(LocalDate.of(2015, 01, 01));
         donation.setAmount(100);
         donation.setComment("comment");
 
-        */
 
-
-
-        /*DonorInfo
+        /*DonorInfo */
         DonorInfo donorInfo = new DonorInfo();
         donorInfo.setContact(contact);
         donorInfo.setDate(LocalDate.of(2015, 01, 01));
-
-
 
         List<Donation> donations = new ArrayList<>();
         donations.add(donation);
         donorInfo.setDonations(donations);
         contact.setDonorInfo(donorInfo);
 
-        */
-
-        /*Member Info
+        /*Member Info */
         MemberInfo memberInfo = new MemberInfo();
         memberInfo.setContact(contact);
         memberInfo.setStatus(0);
@@ -128,36 +123,35 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         memberInfo.setSignedAgreement(true);
         contact.setMemberInfo(memberInfo);
 
-        */
+
 
         /*Organization*/
-
-
-
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
-
         organizationService.create(organization);
-
-
         Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
 
-
         contactService.update(contact);
 
 
-        String id = contact.getId();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new Hibernate4Module());
-
-
-        mockMvc.perform(get("/contacts/contact/" + id).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mockMvc.perform(get("/contacts/contact/" + contact.getId())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(contact.getId())))
+                .andExpect(jsonPath("$.lastName", is(contact.getLastName())))
+                .andExpect(jsonPath("$.streetAddress", is(contact.getStreetAddress())))
+                .andExpect(jsonPath("$.aptNumber", is(contact.getAptNumber())))
+                .andExpect(jsonPath("$.city", is(contact.getCity())))
+                .andExpect(jsonPath("$.zipCode", is(contact.getZipCode())))
+                .andExpect(jsonPath("$.email", is(contact.getEmail())))
+                .andExpect(jsonPath("$.attendedEvents[0].id", is(contact.getAttendedEvents().get(0).getId())))
+                .andExpect(jsonPath("$.donorInfo.donations[0].id", is(contact.getDonorInfo().getDonations().get(0).getId())))
+                .andExpect(jsonPath("$.memberInfo.id", is(contact.getMemberInfo().getId())))
+                .andExpect(jsonPath("$.organizations[0].id", is(contact.getOrganizations().iterator().next().getId())));
 
     }
-
 
 }
