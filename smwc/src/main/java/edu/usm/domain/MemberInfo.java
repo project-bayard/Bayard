@@ -2,7 +2,6 @@ package edu.usm.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 import java.io.Serializable;
 
 /**
@@ -18,9 +17,6 @@ public class MemberInfo extends BasicEntity  implements Serializable {
 
 
 
-    @OneToOne(mappedBy = "memberInfo")
-    private Contact contact;
-
     @Column
     private boolean paidDues;
 
@@ -29,14 +25,6 @@ public class MemberInfo extends BasicEntity  implements Serializable {
 
     @Column
     private int status;
-
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
 
     public boolean hasPaidDues() {
         return paidDues;

@@ -107,7 +107,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         /*DonorInfo */
         DonorInfo donorInfo = new DonorInfo();
-        donorInfo.setContact(contact);
         donorInfo.setDate(LocalDate.of(2015, 01, 01));
 
         List<Donation> donations = new ArrayList<>();
@@ -117,7 +116,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         /*Member Info */
         MemberInfo memberInfo = new MemberInfo();
-        memberInfo.setContact(contact);
         memberInfo.setStatus(0);
         memberInfo.setPaidDues(true);
         memberInfo.setSignedAgreement(true);

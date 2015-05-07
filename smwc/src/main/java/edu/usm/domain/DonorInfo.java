@@ -9,8 +9,6 @@ import java.util.List;
 public class DonorInfo extends BasicEntity implements Serializable {
 
 
-    @OneToOne(mappedBy = "donorInfo")
-    private Contact contact;
 
     @Column
     private boolean sustainer;
@@ -26,14 +24,6 @@ public class DonorInfo extends BasicEntity implements Serializable {
     @OneToMany(mappedBy="donor")
     private List<Donation> donations;
 
-
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
 
     public boolean isSustainer() {
         return sustainer;
