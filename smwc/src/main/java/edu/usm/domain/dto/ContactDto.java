@@ -1,7 +1,12 @@
 package edu.usm.domain.dto;
 
+import edu.usm.domain.*;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ContactDto implements Serializable {
 
@@ -14,7 +19,7 @@ public class ContactDto implements Serializable {
     private String city;
     private String zipCode;
     private String phoneNumber1;
-    private String getPhoneNumber2;
+    private String phoneNumber2;
     private String email;
     private String language;
     private String occupation;
@@ -22,10 +27,13 @@ public class ContactDto implements Serializable {
     private boolean donor;
     private boolean member;
     private int assessment;
-    private List<CommitteeDto> comittees;
-    private List<OrganizationDto> organizations;
+    private Set<CommitteeDto> committees;
+    private Set<OrganizationDto> organizations;
     private List<EventDto> attendedEvents;
     private List<EncounterDto> encounters;
+    private DonorInfoDto donorInfo;
+    private MemberInfoDto memberInfo;
+
 
     public String getId() {
         return id;
@@ -99,12 +107,12 @@ public class ContactDto implements Serializable {
         this.phoneNumber1 = phoneNumber1;
     }
 
-    public String getGetPhoneNumber2() {
-        return getPhoneNumber2;
+    public String getPhoneNumber2() {
+        return phoneNumber2;
     }
 
-    public void setGetPhoneNumber2(String getPhoneNumber2) {
-        this.getPhoneNumber2 = getPhoneNumber2;
+    public void setPhoneNumber2(String phoneNumber2) {
+        this.phoneNumber2 = phoneNumber2;
     }
 
     public String getEmail() {
@@ -163,19 +171,19 @@ public class ContactDto implements Serializable {
         this.assessment = assessment;
     }
 
-    public List<CommitteeDto> getComittees() {
-        return comittees;
+    public Set<CommitteeDto> getCommittees() {
+        return committees;
     }
 
-    public void setComittees(List<CommitteeDto> comittees) {
-        this.comittees = comittees;
+    public void setCommittees(Set<CommitteeDto> committees) {
+        this.committees = committees;
     }
 
-    public List<OrganizationDto> getOrganizations() {
+    public Set<OrganizationDto> getOrganizations() {
         return organizations;
     }
 
-    public void setOrganizations(List<OrganizationDto> organizations) {
+    public void setOrganizations(Set<OrganizationDto> organizations) {
         this.organizations = organizations;
     }
 
@@ -194,4 +202,114 @@ public class ContactDto implements Serializable {
     public void setEncounters(List<EncounterDto> encounters) {
         this.encounters = encounters;
     }
+
+    public DonorInfoDto getDonorInfo() {
+        return donorInfo;
+    }
+
+    public void setDonorInfo(DonorInfoDto donorInfo) {
+        this.donorInfo = donorInfo;
+    }
+
+    public MemberInfoDto getMemberInfo() {
+        return memberInfo;
+    }
+
+    public void setMemberInfo(MemberInfoDto memberInfo) {
+        this.memberInfo = memberInfo;
+    }
+
+    public Contact convertToContact () {
+        Contact contact = new Contact();
+        contact.setId(this.getId());
+
+        contact.setFirstName(this.getFirstName());
+        contact.setLastName(this.getLastName());
+        contact.setMiddleName(this.getMiddleName());
+        contact.setStreetAddress(this.getStreetAddress());
+        contact.setAptNumber(this.getAptNumber());
+        contact.setCity(this.getCity());
+        contact.setZipCode(this.getZipCode());
+        contact.setLanguage(this.getLanguage());
+        contact.setOccupation(this.getOccupation());
+
+        contact.setAssessment(this.getAssessment());
+        contact.setEmail(this.getEmail());
+        contact.setInterests(this.getInterests());
+        contact.setPhoneNumber1(this.getPhoneNumber1());
+        contact.setPhoneNumber2(this.getPhoneNumber2());
+
+
+        contact.setCommittees(convertCommittees());
+
+        contact.setAttendedEvents(convertEvents());
+        contact.setOrganizations(convertOrganizations());
+        contact.setEncounters(convertEncounters());
+
+        if (this.getDonorInfo() != null)
+            contact.setDonorInfo(this.getDonorInfo().convertToDonorInfo());
+        if (this.getMemberInfo() != null)
+            contact.setMemberInfo(this.getMemberInfo().convertToMemberInfo());
+
+        return contact;
+    }
+
+    private Set<Committee> convertCommittees () {
+
+        if (this.getCommittees() != null) {
+            Set<Committee> committeeSet = new HashSet<>();
+
+            for (CommitteeDto committeeDto : this.getCommittees()) {
+                committeeSet.add(committeeDto.convertToCommittee());
+            }
+
+            return committeeSet;
+        }
+
+        return null;
+
+    }
+
+    private List<Event> convertEvents() {
+        if (this.getAttendedEvents() != null) {
+            List<Event> eventList = new ArrayList<>();
+            for (EventDto eventDto : this.getAttendedEvents()) {
+                eventList.add(eventDto.convertToEvent());
+            }
+
+            return eventList;
+        }
+
+        return null;
+
+    }
+
+    private Set<Organization> convertOrganizations() {
+        if (this.getOrganizations() != null) {
+            Set<Organization> organizationSet = new HashSet<>();
+            for (OrganizationDto organizationDto : this.getOrganizations()) {
+                organizationSet.add(organizationDto.convertToOrganization());
+            }
+
+            return organizationSet;
+        }
+
+        return null;
+
+    }
+
+    private List<Encounter> convertEncounters () {
+
+        if (this.getEncounters() != null) {
+            List<Encounter> encounterList = new ArrayList<>();
+            for (EncounterDto encounterDto : this.getEncounters()) {
+                encounterList.add(encounterDto.convertToEncounter());
+            }
+            return encounterList;
+        }
+
+        return null;
+
+    }
+
 }

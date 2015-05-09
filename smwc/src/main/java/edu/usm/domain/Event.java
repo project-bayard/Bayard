@@ -28,6 +28,14 @@ public class Event extends BasicEntity  implements Serializable {
     @Column
     private LocalDate date;
 
+    public Event(String id) {
+        setId(id);
+    }
+
+    public Event() {
+        super();
+    }
+
     //TODO: Need to ask about more attributes of Events
 
 

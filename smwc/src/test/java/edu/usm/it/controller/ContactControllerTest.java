@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -64,39 +64,17 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contactService.deleteAll();
     }
 
-    @Test
-    public void testSerialization() throws Exception {
-        Contact testContact = createTestContact();
-        ObjectMapper mapper = new ObjectMapper();
-        String result = mapper.writeValueAsString(testContact);
-        assertTrue(!result.isEmpty());
-    }
-
 
     @Test
+    @Transactional
     public void testPostContact() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        String postData = mapper.writeValueAsString(createTestContact());
-        logger.debug("Performing POST test");
+        String json = new ObjectMapper().writeValueAsString(contact);
 
+        mockMvc.perform(post("/contacts").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk());
     }
 
 
 
-
-    private Contact createTestContact() {
-        Contact c = new Contact();
-        c.setFirstName("First");
-        c.setMiddleName("Middle");
-        c.setLastName("Last");
-        c.setStreetAddress("123 Fake St");
-        c.setAptNumber("# 4");
-        c.setCity("Portland");
-        c.setZipCode("04101");
-        c.setEmail("email@gmail.com");
-        return c;
-
-    }
 
 
     @Test

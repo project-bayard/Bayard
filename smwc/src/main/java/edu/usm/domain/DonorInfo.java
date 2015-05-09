@@ -24,6 +24,13 @@ public class DonorInfo extends BasicEntity implements Serializable {
     @OneToMany(mappedBy="donor")
     private List<Donation> donations;
 
+    public DonorInfo (String id) {
+        setId(id);
+    }
+
+    public DonorInfo() {
+        super();
+    }
 
     public boolean isSustainer() {
         return sustainer;

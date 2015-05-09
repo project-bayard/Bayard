@@ -18,6 +18,13 @@ public class Donation extends BasicEntity implements Serializable {
     @Column
     private String comment;
 
+    public Donation(String id) {
+        setId(id);
+    }
+
+    public Donation() {
+        super();
+    }
 
     @ManyToOne
     private DonorInfo donor;

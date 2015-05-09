@@ -31,6 +31,14 @@ public class Encounter extends BasicEntity implements Serializable {
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
 
+    public Encounter (String id) {
+        setId(id);
+    }
+
+    public Encounter() {
+        super();
+    }
+
     public Form getForm() {
         return form;
     }

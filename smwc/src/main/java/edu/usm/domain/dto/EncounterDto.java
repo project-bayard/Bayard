@@ -26,6 +26,10 @@ public class EncounterDto implements Serializable {
         return dto;
     }
 
+    public Encounter convertToEncounter () {
+        return new Encounter();
+    }
+
     public String getId() {
         return id;
     }

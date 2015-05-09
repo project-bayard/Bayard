@@ -14,12 +14,19 @@ import java.util.Set;
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="committee_id")
 public class Committee extends BasicEntity implements Serializable {
 
-
     @ManyToMany(mappedBy = "committees" , cascade = CascadeType.REFRESH)
     private Set<Contact> members;
 
     @Column
     private String name;
+
+    public Committee (String id) {
+        setId(id);
+    }
+
+    public Committee() {
+        super();
+    }
 
     public Set<Contact> getMembers() {
         return members;

@@ -1,37 +1,34 @@
-package edu.usm.domain;
+package edu.usm.domain.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import edu.usm.domain.MemberInfo;
+
 import java.io.Serializable;
 
 /**
- * Created by justin on 2/19/15.
+ * Created by scottkimball on 5/9/15.
  */
+public class MemberInfoDto implements Serializable {
 
-@Entity(name = "member_info")
-public class MemberInfo extends BasicEntity  implements Serializable {
-
-    public static int STATUS_GOOD = 1;
-    public static int STATUS_BAD = 2;
-    public static int STATUS_OTHER = 3;
-
-
-
-    @Column
+    private String id;
     private boolean paidDues;
-
-    @Column
     private boolean signedAgreement;
-
-    @Column
     private int status;
 
-    public MemberInfo(String id) {
-        setId(id);
+    public MemberInfo convertToMemberInfo () {
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setId(this.getId());
+        memberInfo.setPaidDues(this.hasPaidDues());
+        memberInfo.setSignedAgreement(this.hasSignedAgreement());
+        memberInfo.setStatus(this.getStatus());
+        return memberInfo;
     }
 
-    public MemberInfo() {
-        super();
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public boolean hasPaidDues() {

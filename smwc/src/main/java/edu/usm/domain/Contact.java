@@ -14,7 +14,6 @@ import java.util.Set;
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
 public class Contact extends BasicEntity implements Serializable {
 
-    public Contact(){}
 
     @Column
     @JsonView(Views.ContactList.class)
@@ -114,9 +113,13 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Committee> committees;
 
+    public Contact (String id) {
+        setId(id);
+    }
 
-
-
+    public Contact() {
+        super();
+    }
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -337,6 +340,8 @@ public class Contact extends BasicEntity implements Serializable {
         }
         return false;
     }
+
+
 
 
 

@@ -22,6 +22,13 @@ public class Organization extends BasicEntity  implements Serializable {
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH})
     private Set<Contact> members;
 
+    public Organization(String id) {
+        setId(id);
+    }
+
+    public Organization() {
+        super();
+    }
 
     public String getName() {
         return name;

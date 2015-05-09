@@ -41,11 +41,14 @@ public abstract class BasicEntity {
         this.lastModified = this.created;
     }
 
+
     public String getId() {
         return id;
     }
 
-
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public LocalDateTime getCreated() {
         return created;
