@@ -3,12 +3,13 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Views;
+import edu.usm.domain.builder.ContactBuilder;
+import edu.usm.domain.dto.ContactDto;
 import edu.usm.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -24,6 +25,9 @@ public class ContactController {
     @Autowired
     private ContactService contactService;
 
+    @Autowired
+    private ContactBuilder contactBuilder;
+
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
@@ -36,8 +40,9 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
-    public void createContact(@RequestBody Contact contact) {
+    public void createContact(@RequestBody ContactDto contactDto) {
         logger.debug("POST request to /contacts");
+        Contact contact = contactBuilder.buildContact(contactDto);
         contactService.create(contact);
     }
 

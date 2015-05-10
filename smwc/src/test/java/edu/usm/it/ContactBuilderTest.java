@@ -1,19 +1,44 @@
-package edu.usm.unit;
+package edu.usm.it;
 
+import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.Contact;
+import edu.usm.domain.builder.ContactBuilder;
+import edu.usm.domain.dto.CommitteeDto;
+import edu.usm.domain.dto.ContactDto;
+import edu.usm.domain.dto.MemberInfoDto;
+import edu.usm.domain.dto.OrganizationDto;
+import edu.usm.service.OrganizationService;
+import org.junit.After;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by scottkimball on 5/9/15.
+ * Created by scottkimball on 5/10/15.
  */
+public class ContactBuilderTest extends WebAppConfigurationAware {
 
+    @Autowired
+    ContactBuilder contactBuilder;
 
-public class DtoTest {
+    @Autowired
+    OrganizationService organizationService;
+
+    @After
+    public void teardown() {
+        organizationService.deleteAll();
+    }
 
     @Test
+    @Transactional
     public void testConvertToContact () throws Exception {
-
-         /*basic fields
+         /*basic fields*/
         ContactDto contactDto = new ContactDto();
         contactDto.setFirstName("firstName");
         contactDto.setMiddleName("middleName");
@@ -30,7 +55,7 @@ public class DtoTest {
         contactDto.setAssessment(0);
         contactDto.setOccupation("occupation");
 
-        /*collections and objects
+        /*collections and objects*/
         CommitteeDto committeeDto = new CommitteeDto();
         committeeDto.setId("committeeID");
         committeeDto.setName("committee");
@@ -40,7 +65,6 @@ public class DtoTest {
 
         OrganizationDto organizationDto = new OrganizationDto();
         organizationDto.setName("organizationName");
-        organizationDto.setId("organizationID");
         Set<OrganizationDto> organizationDtoSet = new HashSet<>();
         organizationDtoSet.add(organizationDto);
         contactDto.setOrganizations(organizationDtoSet);
@@ -53,9 +77,9 @@ public class DtoTest {
         contactDto.setMemberInfo(memberInfoDto);
 
 
-        Contact contact = contactDto.convertToContact();
+        Contact contact = contactBuilder.buildContact(contactDto);
 
-        /*basic fields
+        /*basic fields*/
         assertNotNull(contact);
         assertEquals(contact.getId(), contactDto.getId());
         assertEquals(contact.getFirstName(), contactDto.getFirstName());
@@ -72,7 +96,7 @@ public class DtoTest {
         assertEquals(contact.getAssessment(), contactDto.getAssessment());
         assertEquals(contact.getOccupation(), contactDto.getOccupation());
 
-        /*collections and objects
+        /*collections and objects*/
         assertNotNull(contact.getCommittees());
         assertEquals(contact.getCommittees().size(), 1);
         assertEquals(contact.getCommittees().iterator().next().getName(), committeeDto.getName());
@@ -84,7 +108,6 @@ public class DtoTest {
         assertEquals(contact.getMemberInfo().getStatus(),memberInfoDto.getStatus());
         assertEquals(contact.getMemberInfo().hasPaidDues(), contactDto.getMemberInfo().hasPaidDues());
         assertEquals(contact.getMemberInfo().hasSignedAgreement(),contactDto.getMemberInfo().hasSignedAgreement());
-        */
 
     }
 }

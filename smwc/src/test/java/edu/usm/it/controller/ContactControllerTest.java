@@ -4,6 +4,8 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
+import edu.usm.domain.dto.ContactDto;
+import edu.usm.domain.dto.OrganizationDto;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
@@ -17,12 +19,10 @@ import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -46,6 +46,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
     private Contact contact;
+    private Organization organization;
 
     @Before
     public void setup() {
@@ -68,9 +69,31 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testPostContact() throws Exception {
-        String json = new ObjectMapper().writeValueAsString(contact);
+        ContactDto contactDto = new ContactDto();
 
-        mockMvc.perform(post("/contacts").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk());
+        contactDto.setFirstName("firstName");
+        contactDto.setLastName("lastName");
+
+        OrganizationDto organizationDto = new OrganizationDto();
+        organizationDto.setName("newOrganization");
+        Set<String> members = new HashSet<>();
+        members.add(contactDto.getId());
+        organizationDto.setMembers(members);
+
+        Set<OrganizationDto> organizationDtoSet = new HashSet<>();
+        organizationDtoSet.add(organizationDto);
+        contactDto.setOrganizations(organizationDtoSet);
+
+        String json = new ObjectMapper().writeValueAsString(contactDto);
+
+        mockMvc.perform(post("/contacts").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated());
+
+        Set<Contact> fromDb = contactService.findAll();
+        assertEquals(fromDb.size(), 1);
+
+
+
     }
 
 
@@ -97,6 +120,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     public void testGetContact() throws Exception {
 
         contactService.create(contact);
+
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
 

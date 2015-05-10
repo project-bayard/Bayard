@@ -83,6 +83,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Override
     public void create(Contact contact) {
+
         logger.debug("Creating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
         contactDao.save(contact);
@@ -96,4 +97,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         Set<Contact> contacts = findAll();
         contacts.stream().forEach(this::delete);
     }
+
+
 }
