@@ -4,7 +4,7 @@ import edu.usm.domain.Committee;
 
 import java.io.Serializable;
 
-public class CommitteeDto implements Serializable {
+public class CommitteeDto extends BasicEntityDto implements Serializable {
 
     private String id;
     private String name;
@@ -28,6 +28,8 @@ public class CommitteeDto implements Serializable {
     public Committee convertToCommittee () {
         Committee committee = new Committee(this.getId());
         committee.setName(this.getName());
+        committee.setLastModified(getLastModified());
+        committee.setCreated(getCreated());
         return committee;
     }
 }

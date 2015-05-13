@@ -2,18 +2,20 @@ package edu.usm.it.mapper;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
+import edu.usm.domain.EncounterType;
+import edu.usm.dto.*;
 import edu.usm.mapper.ContactMapper;
-import edu.usm.dto.CommitteeDto;
-import edu.usm.dto.ContactDto;
-import edu.usm.dto.MemberInfoDto;
-import edu.usm.dto.OrganizationDto;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -54,6 +56,8 @@ public class ContactMapperTest extends WebAppConfigurationAware {
         contactDto.setId("id");
         contactDto.setAssessment(0);
         contactDto.setOccupation("occupation");
+        contactDto.setCreated(LocalDateTime.now().toString());
+        contactDto.setLastModified(LocalDateTime.now().toString());
 
         /*collections and objects*/
         CommitteeDto committeeDto = new CommitteeDto();
@@ -74,10 +78,25 @@ public class ContactMapperTest extends WebAppConfigurationAware {
         memberInfoDto.setSignedAgreement(true);
         memberInfoDto.setPaidDues(true);
         memberInfoDto.setStatus(1);
+        memberInfoDto.setLastModified(LocalDateTime.now().toString());
+        memberInfoDto.setCreated(LocalDateTime.now().toString());
+
         contactDto.setMemberInfo(memberInfoDto);
 
+        /*Encounters*/
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setAssessment(0);
+        encounterDto.setNotes("notes");
+        encounterDto.setEncounterDate(LocalDate.now().toString());
+        encounterDto.setType(EncounterType.EVENT);
+        encounterDto.setCreated(LocalDateTime.now().toString());
+        encounterDto.setLastModified(LocalDateTime.now().toString());
+        List<EncounterDto> encounterList = new ArrayList<>();
+        encounterList.add(encounterDto);
+        contactDto.setEncounters(encounterList);
 
-        Contact contact = contactMapper.buildContact(contactDto);
+
+        Contact contact = contactMapper.convertDtoToContact(contactDto);
 
         /*basic fields*/
         assertNotNull(contact);
@@ -95,6 +114,8 @@ public class ContactMapperTest extends WebAppConfigurationAware {
         assertEquals(contact.getPhoneNumber2(), contactDto.getPhoneNumber2());
         assertEquals(contact.getAssessment(), contactDto.getAssessment());
         assertEquals(contact.getOccupation(), contactDto.getOccupation());
+        assertEquals(contact.getLastModified(),contactDto.getLastModified());
+        assertEquals(contact.getCreated(), contactDto.getCreated());
 
         /*collections and objects*/
         assertNotNull(contact.getCommittees());
@@ -108,6 +129,18 @@ public class ContactMapperTest extends WebAppConfigurationAware {
         assertEquals(contact.getMemberInfo().getStatus(),memberInfoDto.getStatus());
         assertEquals(contact.getMemberInfo().hasPaidDues(), contactDto.getMemberInfo().hasPaidDues());
         assertEquals(contact.getMemberInfo().hasSignedAgreement(),contactDto.getMemberInfo().hasSignedAgreement());
+        assertEquals(contact.getMemberInfo().getLastModified(),contactDto.getMemberInfo().getLastModified());
+        assertEquals(contact.getMemberInfo().getCreated(), contactDto.getMemberInfo().getCreated());
+
+
+        /*Encounters*/
+        assertEquals(contact.getEncounters().get(0).getContact().getId(),contact.getId());
+        assertEquals(contact.getEncounters().get(0).getAssessment(),encounterDto.getAssessment());
+        assertEquals(contact.getEncounters().get(0).getEncounterDate(),encounterDto.getEncounterDate());
+        assertEquals(contact.getEncounters().get(0).getNotes(),encounterDto.getNotes());
+        assertEquals(contact.getEncounters().get(0).getType(),encounterDto.getType());
+        assertEquals(contact.getEncounters().get(0).getLastModified(), contactDto.getEncounters().get(0).getLastModified());
+        assertEquals(contact.getEncounters().get(0).getCreated(), contactDto.getEncounters().get(0).getCreated());
 
     }
 }

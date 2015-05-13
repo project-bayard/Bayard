@@ -42,7 +42,7 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
     public void createContact(@RequestBody ContactDto contactDto) {
         logger.debug("POST request to /contacts");
-        Contact contact = contactMapper.buildContact(contactDto);
+        Contact contact = contactMapper.convertDtoToContact(contactDto);
         contactService.create(contact);
     }
 

@@ -2,9 +2,9 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
-import edu.usm.repository.ContactDao;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
+import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import java.util.Set;
 public class OrganizationServiceImpl extends BasicService implements OrganizationService {
 
     @Autowired
-    private ContactDao contactDao;
+    private ContactService contactService;
     @Autowired
     private OrganizationDao organizationDao;
 
@@ -52,7 +52,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         if (organization.getMembers() != null) {
             for(Contact contact : organization.getMembers()) {
                 contact.getOrganizations().remove(organization);
-                contactDao.save(contact);
+                contactService.update(contact);
             }
         }
         organizationDao.delete(organization);

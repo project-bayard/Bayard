@@ -11,11 +11,11 @@ import java.util.List;
 public abstract class BasicService {
 
     protected void updateLastModified ( BasicEntity entity) {
-        entity.setLastModified(LocalDateTime.now());
+        entity.setLastModified(LocalDateTime.now().toString());
 
     }
 
     protected void updateLastModifiedCollection ( List<? extends BasicEntity> entities) {
-        entities.stream().forEach(e -> e.setLastModified(LocalDateTime.now()));
+        entities.stream().forEach(e -> e.setLastModified(LocalDateTime.now().toString()));
     }
 }

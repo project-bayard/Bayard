@@ -1,23 +1,43 @@
 package edu.usm.dto;
 
 import edu.usm.domain.Encounter;
-import edu.usm.domain.EncounterType;
 
 import java.io.Serializable;
 
-public class EncounterDto implements Serializable {
+public class EncounterDto extends BasicEntityDto implements Serializable {
 
+    private String id;
     private ContactDto contact;
-    private String date;
+    private String encounterDate;
     private String notes;
     private ContactDto initiator;
     private int assessment;
-    private EncounterType type;
+    private String type;
 
 
 
     public Encounter convertToEncounter () {
-        return new Encounter();
+        Encounter encounter;
+
+        if (getId() == null) {
+            encounter = new Encounter();
+        } else {
+            encounter = new Encounter(getId());
+            encounter.setCreated(getCreated());
+            encounter.setLastModified(getLastModified());
+
+        }
+
+
+        encounter.setType(getType());
+        encounter.setEncounterDate(getEncounterDate());
+        encounter.setNotes(getNotes());
+        encounter.setAssessment(getAssessment());
+
+        //TODO add contact, initiator, and form
+
+        return encounter;
+
     }
 
     public ContactDto getContact() {
@@ -28,12 +48,12 @@ public class EncounterDto implements Serializable {
         this.contact = contact;
     }
 
-    public String getDate() {
-        return date;
+    public String getEncounterDate() {
+        return encounterDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setEncounterDate(String encounterDate) {
+        this.encounterDate = encounterDate;
     }
 
     public String getNotes() {
@@ -60,11 +80,19 @@ public class EncounterDto implements Serializable {
         this.assessment = assessment;
     }
 
-    public EncounterType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(EncounterType type) {
+    public void setType(String type) {
         this.type = type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

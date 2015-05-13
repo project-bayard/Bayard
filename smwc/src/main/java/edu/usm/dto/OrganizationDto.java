@@ -5,7 +5,7 @@ import edu.usm.domain.Organization;
 import java.io.Serializable;
 import java.util.Set;
 
-public class OrganizationDto implements Serializable {
+public class OrganizationDto extends BasicEntityDto implements Serializable {
 
     private String id;
     private String name;
@@ -19,6 +19,9 @@ public class OrganizationDto implements Serializable {
             organization = new Organization();
 
         organization.setName(this.getName());
+        organization.setCreated(getCreated());
+        organization.setLastModified(getLastModified());
+
         return organization;
     }
 

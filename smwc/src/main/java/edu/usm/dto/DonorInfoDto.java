@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by scottkimball on 5/9/15.
  */
-public class DonorInfoDto implements Serializable {
+public class DonorInfoDto extends BasicEntityDto implements Serializable {
 
     public DonorInfo convertToDonorInfo () {
         return new DonorInfo();

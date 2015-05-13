@@ -28,13 +28,16 @@ public class ContactMapper {
 
 
 
-    public Contact buildContact(ContactDto contactDto) {
+    public Contact convertDtoToContact(ContactDto contactDto) {
 
         /*Basic Fields*/
         Contact contact = convertToContact(contactDto);
 
         /*Organization*/
         updateOrganizations(contactDto.getOrganizations(), contact);
+
+        /*Encounters*/
+        updateEncounters(contactDto,contact);
 
         return contact;
     }
@@ -75,8 +78,12 @@ public class ContactMapper {
     private Contact convertToContact (ContactDto contactDto) {
         Contact contact;
 
-        if (contactDto.getId() != null)
+        if (contactDto.getId() != null) {
             contact = new Contact(contactDto.getId());
+            contact.setLastModified(contactDto.getLastModified());
+            contact.setCreated(contactDto.getCreated());
+        }
+
         else
             contact = new Contact();
 
@@ -101,7 +108,8 @@ public class ContactMapper {
         contact.setCommittees(convertCommittees(contactDto));
 
         contact.setAttendedEvents(convertEvents(contactDto));
-        contact.setEncounters(convertEncounters(contactDto));
+
+
 
         if (contactDto.getDonorInfo() != null)
             contact.setDonorInfo(contactDto.getDonorInfo().convertToDonorInfo());
@@ -143,12 +151,18 @@ public class ContactMapper {
     }
 
 
-    private List<Encounter> convertEncounters (ContactDto contactDto) {
+    private List<Encounter> updateEncounters(ContactDto contactDto, Contact contact) {
 
+        List<Encounter> encounterList = new ArrayList<>();
+        contact.setEncounters(encounterList);
         if (contactDto.getEncounters() != null) {
-            List<Encounter> encounterList = new ArrayList<>();
+
+
             for (EncounterDto encounterDto : contactDto.getEncounters()) {
-                encounterList.add(encounterDto.convertToEncounter());
+                Encounter encounter = encounterDto.convertToEncounter();
+                encounter.setContact(contact);
+                encounterList.add(encounter);
+
             }
             return encounterList;
         }

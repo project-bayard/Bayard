@@ -38,6 +38,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
     @After
     public void tearDown() {
+        encounterDao.deleteAll();
         contactDao.deleteAll();
         eventDao.deleteAll();
         organizationDao.deleteAll();
@@ -122,7 +123,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Encounter encounter = new Encounter();
         encounter.setAssessment(0);
         encounter.setContact(contact);
-        encounter.setDate(LocalDate.now());
+        encounter.setEncounterDate(LocalDate.now().toString());
         encounter.setNotes("Notes");
         encounter.setType(EncounterType.EVENT);
 

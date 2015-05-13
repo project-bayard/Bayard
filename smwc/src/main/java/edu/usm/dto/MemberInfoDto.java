@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by scottkimball on 5/9/15.
  */
-public class MemberInfoDto implements Serializable {
+public class MemberInfoDto extends BasicEntityDto implements Serializable {
 
     private String id;
     private boolean paidDues;
@@ -20,6 +20,8 @@ public class MemberInfoDto implements Serializable {
         memberInfo.setPaidDues(this.hasPaidDues());
         memberInfo.setSignedAgreement(this.hasSignedAgreement());
         memberInfo.setStatus(this.getStatus());
+        memberInfo.setLastModified(getLastModified());
+        memberInfo.setCreated(getCreated());
         return memberInfo;
     }
 

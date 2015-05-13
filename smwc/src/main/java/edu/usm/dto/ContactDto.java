@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public class ContactDto implements Serializable {
+public class ContactDto extends BasicEntityDto implements Serializable {
 
     private String id;
     private String firstName;

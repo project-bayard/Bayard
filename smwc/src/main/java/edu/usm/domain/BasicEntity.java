@@ -28,16 +28,16 @@ public abstract class BasicEntity {
     private String id;
 
     @Column
-    private LocalDateTime created;
+    private String created;
 
     @Column
-    private LocalDateTime lastModified;
+    private String lastModified;
 
     @Column
     private boolean deleted;
 
     public BasicEntity() {
-        this.created = LocalDateTime.now();
+        this.created = LocalDateTime.now().toString();
         this.lastModified = this.created;
     }
 
@@ -50,15 +50,15 @@ public abstract class BasicEntity {
         this.id = id;
     }
 
-    public LocalDateTime getCreated() {
+    public String getCreated() {
         return created;
     }
 
-    public LocalDateTime getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(LocalDateTime lastModified) {
+    public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
 
@@ -70,6 +70,10 @@ public abstract class BasicEntity {
         this.deleted = deleted;
     }
 
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof BasicEntity) {
@@ -77,7 +81,7 @@ public abstract class BasicEntity {
             if (this.getId() != null && other.getId() != null)
                 return this.getId().equals(other.getId());
             else
-                return this.getCreated().isEqual( (other.getCreated() ));
+                return this.getCreated().equals((other.getCreated()));
         }
 
         return false;

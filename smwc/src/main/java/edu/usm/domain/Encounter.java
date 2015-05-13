@@ -2,7 +2,6 @@ package edu.usm.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 
 
 @Entity(name = "encounter")
@@ -14,7 +13,7 @@ public class Encounter extends BasicEntity implements Serializable {
     private Contact contact;
 
     @Column
-    private LocalDate date;
+    private String encounterDate;
 
     @Column
     private String notes;
@@ -27,7 +26,7 @@ public class Encounter extends BasicEntity implements Serializable {
     private int assessment;
 
     @Column
-    private EncounterType type;
+    private String type;
 
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
@@ -56,12 +55,12 @@ public class Encounter extends BasicEntity implements Serializable {
         this.contact = contact;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public String getEncounterDate() {
+        return encounterDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setEncounterDate(String encounterDate) {
+        this.encounterDate = encounterDate;
     }
 
     public String getNotes() {
@@ -88,11 +87,11 @@ public class Encounter extends BasicEntity implements Serializable {
         this.assessment = assessment;
     }
 
-    public EncounterType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(EncounterType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
