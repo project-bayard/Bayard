@@ -1,12 +1,12 @@
-package edu.usm.it;
+package edu.usm.it.mapper;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
-import edu.usm.domain.builder.ContactBuilder;
-import edu.usm.domain.dto.CommitteeDto;
-import edu.usm.domain.dto.ContactDto;
-import edu.usm.domain.dto.MemberInfoDto;
-import edu.usm.domain.dto.OrganizationDto;
+import edu.usm.mapper.ContactMapper;
+import edu.usm.dto.CommitteeDto;
+import edu.usm.dto.ContactDto;
+import edu.usm.dto.MemberInfoDto;
+import edu.usm.dto.OrganizationDto;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
 import org.junit.Test;
@@ -22,10 +22,10 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by scottkimball on 5/10/15.
  */
-public class ContactBuilderTest extends WebAppConfigurationAware {
+public class ContactMapperTest extends WebAppConfigurationAware {
 
     @Autowired
-    ContactBuilder contactBuilder;
+    ContactMapper contactMapper;
 
     @Autowired
     OrganizationService organizationService;
@@ -77,7 +77,7 @@ public class ContactBuilderTest extends WebAppConfigurationAware {
         contactDto.setMemberInfo(memberInfoDto);
 
 
-        Contact contact = contactBuilder.buildContact(contactDto);
+        Contact contact = contactMapper.buildContact(contactDto);
 
         /*basic fields*/
         assertNotNull(contact);

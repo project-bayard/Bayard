@@ -3,8 +3,8 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Views;
-import edu.usm.domain.builder.ContactBuilder;
-import edu.usm.domain.dto.ContactDto;
+import edu.usm.mapper.ContactMapper;
+import edu.usm.dto.ContactDto;
 import edu.usm.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class ContactController {
     private ContactService contactService;
 
     @Autowired
-    private ContactBuilder contactBuilder;
+    private ContactMapper contactMapper;
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -42,7 +42,7 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
     public void createContact(@RequestBody ContactDto contactDto) {
         logger.debug("POST request to /contacts");
-        Contact contact = contactBuilder.buildContact(contactDto);
+        Contact contact = contactMapper.buildContact(contactDto);
         contactService.create(contact);
     }
 

@@ -1,10 +1,6 @@
-package edu.usm.domain.dto;
-
-import edu.usm.domain.*;
+package edu.usm.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

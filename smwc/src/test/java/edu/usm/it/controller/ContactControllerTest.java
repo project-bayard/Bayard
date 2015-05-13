@@ -4,8 +4,8 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
-import edu.usm.domain.dto.ContactDto;
-import edu.usm.domain.dto.OrganizationDto;
+import edu.usm.dto.ContactDto;
+import edu.usm.dto.OrganizationDto;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
@@ -46,7 +46,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
     private Contact contact;
-    private Organization organization;
 
     @Before
     public void setup() {

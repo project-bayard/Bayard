@@ -1,4 +1,4 @@
-package edu.usm.domain.dto;
+package edu.usm.dto;
 
 import edu.usm.domain.Event;
 

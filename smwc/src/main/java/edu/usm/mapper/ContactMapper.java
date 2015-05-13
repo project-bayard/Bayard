@@ -1,7 +1,7 @@
-package edu.usm.domain.builder;
+package edu.usm.mapper;
 
 import edu.usm.domain.*;
-import edu.usm.domain.dto.*;
+import edu.usm.dto.*;
 import edu.usm.repository.OrganizationDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +20,11 @@ import java.util.Set;
 
 @Component
 @Scope("singleton")
-public class ContactBuilder {
+public class ContactMapper {
 
     @Autowired
     private OrganizationDao organizationDao;
-    private Logger logger = LoggerFactory.getLogger(ContactBuilder.class);
+    private Logger logger = LoggerFactory.getLogger(ContactMapper.class);
 
 
 
@@ -66,7 +66,7 @@ public class ContactBuilder {
                 members.add(contact);
                 organization.setMembers(members);
                 organizations.add(organization);
-                
+
             }
         }
 
