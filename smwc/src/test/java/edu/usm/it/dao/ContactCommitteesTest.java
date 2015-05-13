@@ -5,6 +5,7 @@ import edu.usm.domain.Contact;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,12 @@ public class ContactCommitteesTest extends WebAppConfigurationAware {
 
 
 
+    }
+
+    @After
+    public void tearDown() {
+        contactDao.deleteAll();
+        committeeDao.deleteAll();
     }
 
 

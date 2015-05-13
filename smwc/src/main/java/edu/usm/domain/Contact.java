@@ -159,8 +159,11 @@ public class Contact extends BasicEntity implements Serializable {
 
 
 
-    @OneToMany(mappedBy = "initiator", cascade = CascadeType.REFRESH)
+    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL)
     private List<Encounter> encounters;
+
+    @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH)
+    private List<Encounter> encountersInitiated;
 
     public String getFirstName() {
         return firstName;
@@ -332,6 +335,14 @@ public class Contact extends BasicEntity implements Serializable {
 
     public void setAssessment(int assessment) {
         this.assessment = assessment;
+    }
+
+    public List<Encounter> getEncountersInitiated() {
+        return encountersInitiated;
+    }
+
+    public void setEncountersInitiated(List<Encounter> encountersInitiated) {
+        this.encountersInitiated = encountersInitiated;
     }
 
     @Override

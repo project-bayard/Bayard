@@ -2,10 +2,8 @@ package edu.usm.it.dao;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
-import edu.usm.repository.ContactDao;
-import edu.usm.repository.DonorInfoDao;
-import edu.usm.repository.EventDao;
-import edu.usm.repository.OrganizationDao;
+import edu.usm.repository.*;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +32,17 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
     @Autowired
     OrganizationDao organizationDao;
+
+    @Autowired
+    EncounterDao encounterDao;
+
+    @After
+    public void tearDown() {
+        contactDao.deleteAll();
+        eventDao.deleteAll();
+        organizationDao.deleteAll();
+
+    }
 
 
 
@@ -109,6 +118,19 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         organizations.add(organization);
         contact.setOrganizations(organizations);
 
+         /*Encounters*/
+        Encounter encounter = new Encounter();
+        encounter.setAssessment(0);
+        encounter.setContact(contact);
+        encounter.setDate(LocalDate.now());
+        encounter.setNotes("Notes");
+        encounter.setType(EncounterType.EVENT);
+
+        List<Encounter> encounters = new ArrayList<>();
+        encounters.add(encounter);
+        contact.setEncounters(encounters);
+
+
         contactDao.save(contact);
 
 
@@ -153,88 +175,19 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertEquals(organizationDao.findOne(organization.getId()).getId(),organization.getId());
         assertEquals(organizationDao.findOne(organization.getId()).getMembers().iterator().next().getId(),contact.getId());
 
+        /*Encounters*/
+        assertNotNull(contact.getEncounters());
+        assertEquals(contact.getEncounters().get(0).getAssessment(), encounter.getAssessment());
+
         /*Committees*/
 
 
-    }
-
-    @Test
-    @Transactional
-    public void testCascadingDelete () throws Exception {
-
-        /*Basic info*/
-        Contact contact = new Contact();
-        contact.setFirstName("First");
-        contact.setLastName("Last");
-        contact.setStreetAddress("123 Fake St");
-        contact.setAptNumber("# 4");
-        contact.setCity("Portland");
-        contact.setZipCode("04101");
-        contact.setEmail("email@gmail.com");
-
-        /*Event*/
-        Event event = new Event();
-        event.setDate(LocalDate.of(2015, 01, 01));
-        event.setLocation("location");
-        event.setNotes("notes");
-
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        event.setAttendees(contacts);
-
-        List<Event> eventList = new ArrayList<>();
-        eventList.add(event);
-        contact.setAttendedEvents(eventList);
-
-        /*Donations*/
-        Donation donation = new Donation();
-        donation.setDate(LocalDate.of(2015, 01, 01));
-        donation.setAmount(100);
-        donation.setComment("comment");
 
 
 
-        /*DonorInfo*/
-        DonorInfo donorInfo = new DonorInfo();
-        donorInfo.setDate(LocalDate.of(2015, 01, 01));
 
-        List<Donation> donations = new ArrayList<>();
-        donations.add(donation);
-        donorInfo.setDonations(donations);
-        contact.setDonorInfo(donorInfo);
-
-        /*Member Info*/
-        MemberInfo memberInfo = new MemberInfo();
-        memberInfo.setStatus(0);
-        memberInfo.setPaidDues(true);
-        memberInfo.setSignedAgreement(true);
-        contact.setMemberInfo(memberInfo);
-
-        /*Organization*/
-        Organization organization = new Organization();
-        organization.setName("organization");
-        organization.setMembers(contacts);
-        Set<Organization> organizations = new HashSet<>();
-        organizations.add(organization);
-        contact.setOrganizations(organizations);
-
-        organizations.remove(organization);
-
-        contactDao.save(contact);
-
-
-
-        organizationDao.delete(organization);
-        Contact fromDb = contactDao.findOne(contact.getId());
-
-
-
-        assertEquals(fromDb.getOrganizations().size(), 0);
 
     }
-
-
-
 
 
 }

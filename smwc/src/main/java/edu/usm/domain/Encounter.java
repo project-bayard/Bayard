@@ -10,6 +10,7 @@ public class Encounter extends BasicEntity implements Serializable {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contact_id")
     private Contact contact;
 
     @Column
@@ -18,8 +19,8 @@ public class Encounter extends BasicEntity implements Serializable {
     @Column
     private String notes;
 
-    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name="initator_id")
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "initiator_id")
     private Contact initiator;
 
     @Column
