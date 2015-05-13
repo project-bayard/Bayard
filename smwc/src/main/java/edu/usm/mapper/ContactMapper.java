@@ -34,15 +34,15 @@ public class ContactMapper {
         Contact contact = convertToContact(contactDto);
 
         /*Organization*/
-        updateOrganizations(contactDto.getOrganizations(), contact);
+        convertOrganizations(contactDto.getOrganizations(), contact);
 
         /*Encounters*/
-        updateEncounters(contactDto,contact);
+        convertEncounters(contactDto, contact);
 
         return contact;
     }
 
-    private void updateOrganizations (Set<OrganizationDto> organizationDtos, Contact contact) {
+    private void convertOrganizations(Set<OrganizationDto> organizationDtos, Contact contact) {
 
         Set<Organization> organizations = new HashSet<>();
         contact.setOrganizations(organizations);
@@ -151,7 +151,7 @@ public class ContactMapper {
     }
 
 
-    private List<Encounter> updateEncounters(ContactDto contactDto, Contact contact) {
+    private List<Encounter> convertEncounters(ContactDto contactDto, Contact contact) {
 
         List<Encounter> encounterList = new ArrayList<>();
         contact.setEncounters(encounterList);

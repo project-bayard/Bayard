@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.dto.ContactDto;
+import edu.usm.dto.EncounterDto;
 import edu.usm.dto.OrganizationDto;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
@@ -82,6 +83,15 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Set<OrganizationDto> organizationDtoSet = new HashSet<>();
         organizationDtoSet.add(organizationDto);
         contactDto.setOrganizations(organizationDtoSet);
+
+        /*Encounters*/
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setType(EncounterType.EVENT);
+        encounterDto.setEncounterDate(LocalDate.now().toString());
+        encounterDto.setNotes("notes");
+        List<EncounterDto> encounterDtos = new ArrayList<>();
+        encounterDtos.add(encounterDto);
+        contactDto.setEncounters(encounterDtos);
 
         String json = new ObjectMapper().writeValueAsString(contactDto);
 
