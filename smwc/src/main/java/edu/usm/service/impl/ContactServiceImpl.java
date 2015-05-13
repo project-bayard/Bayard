@@ -3,11 +3,11 @@ package edu.usm.service.impl;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
-import edu.usm.repository.CommitteeDao;
 import edu.usm.repository.ContactDao;
-import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
+import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Autowired
     private ContactDao contactDao;
     @Autowired
-    private OrganizationDao organizationDao;
+    private OrganizationService organizationService;
     @Autowired
-    private CommitteeDao committeeDao;
+    private CommitteeService committeeService;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -55,7 +55,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getOrganizations() != null) {
             for(Organization organization : contact.getOrganizations()) {
                 organization.getMembers().remove(contact);
-                organizationDao.save(organization);
+                organizationService.update(organization);
             }
         }
 
@@ -63,7 +63,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getCommittees() != null) {
             for(Committee committee : contact.getCommittees()) {
                 committee.getMembers().remove(contact);
-                committeeDao.save(committee);
+                committeeService.update(committee);
             }
         }
 
