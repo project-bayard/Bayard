@@ -2,7 +2,9 @@ package edu.usm.mapper;
 
 import edu.usm.domain.*;
 import edu.usm.dto.*;
-import edu.usm.repository.OrganizationDao;
+import edu.usm.service.CommitteeService;
+import edu.usm.service.ContactService;
+import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +25,33 @@ import java.util.Set;
 public class ContactMapper {
 
     @Autowired
-    private OrganizationDao organizationDao;
+    private OrganizationService organizationService;
+
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private CommitteeService committeeService;
+
+
     private Logger logger = LoggerFactory.getLogger(ContactMapper.class);
 
 
 
     public Contact convertDtoToContact(ContactDto contactDto) {
 
-        /*Basic Fields*/
         Contact contact = convertToContact(contactDto);
 
-        /*Organization*/
-        convertOrganizations(contactDto.getOrganizations(), contact);
+        if (contactDto.getOrganizations() != null)
+            convertOrganizations(contactDto.getOrganizations(), contact);
 
-        /*Encounters*/
-        convertEncounters(contactDto, contact);
+        if (contactDto.getCommittees() != null)
+            convertCommittees(contactDto.getCommittees(), contact);
+
+        if (contactDto.getEncounters() != null)
+            convertEncounters(contactDto, contact);
+
+        //TODO events, etc
 
         return contact;
     }
@@ -52,11 +66,14 @@ public class ContactMapper {
             /*organization already exists*/
             if (organizationDto.getId() != null) {
 
-                Organization organization = organizationDao.findOne(organizationDto.getId());
+                Organization organization = organizationService.findById(organizationDto.getId());
                 if (organization == null) {
                     logger.error("Could not find organization with ID: " + organizationDto.getId());
 
                 } else {
+                    if (organization.getMembers() == null)
+                        organization.setMembers(new HashSet<>());
+
                     organization.getMembers().add(contact);
                     organizations.add(organization);
                 }
@@ -105,9 +122,6 @@ public class ContactMapper {
         contact.setPhoneNumber2(contactDto.getPhoneNumber2());
 
 
-        contact.setCommittees(convertCommittees(contactDto));
-
-        contact.setAttendedEvents(convertEvents(contactDto));
 
 
 
@@ -120,38 +134,11 @@ public class ContactMapper {
     }
 
 
-    private Set<Committee> convertCommittees (ContactDto contactDto) {
-
-        if (contactDto.getCommittees() != null) {
-            Set<Committee> committeeSet = new HashSet<>();
-
-            for (CommitteeDto committeeDto : contactDto.getCommittees()) {
-                committeeSet.add(committeeDto.convertToCommittee());
-            }
-
-            return committeeSet;
-        }
-
-        return null;
-
-    }
-
-    private List<Event> convertEvents(ContactDto contactDto) {
-        if (contactDto.getAttendedEvents() != null) {
-            List<Event> eventList = new ArrayList<>();
-            for (EventDto eventDto : contactDto.getAttendedEvents()) {
-                eventList.add(eventDto.convertToEvent());
-            }
-
-            return eventList;
-        }
-
-        return null;
-
-    }
 
 
-    private List<Encounter> convertEncounters(ContactDto contactDto, Contact contact) {
+
+
+    private void convertEncounters(ContactDto contactDto, Contact contact) {
 
         List<Encounter> encounterList = new ArrayList<>();
         contact.setEncounters(encounterList);
@@ -160,14 +147,47 @@ public class ContactMapper {
 
             for (EncounterDto encounterDto : contactDto.getEncounters()) {
                 Encounter encounter = encounterDto.convertToEncounter();
+                Contact initiator = contactService.findById(encounterDto.getInitiator());
+
+                if (initiator == null) {
+                    logger.error("Could not find initiator for encounter.");
+                } else {
+                    encounter.setInitiator(initiator);
+                }
+
                 encounter.setContact(contact);
                 encounterList.add(encounter);
 
             }
-            return encounterList;
         }
 
-        return null;
+    }
+
+    private void convertCommittees(Set<CommitteeDto> committeeDtos, Contact contact) {
+
+        Set<Committee> committees = new HashSet<>();
+        contact.setCommittees(committees);
+
+        for (CommitteeDto committeeDto : committeeDtos) {
+
+            /*organization already exists*/
+            if (committeeDto.getId() != null) {
+
+                Committee committee = committeeService.findById(committeeDto.getId());
+                if (committee == null) {
+                    logger.error("Could not find committe with ID: " + committeeDto.getId());
+
+                } else {
+                    if (committee.getMembers() == null)
+                        committee.setMembers(new HashSet<>());
+                    committee.getMembers().add(contact);
+                    committees.add(committee);
+                }
+
+            } else {
+                logger.error("Committee '%s' has no ID", committeeDto.getName());
+            }
+        }
 
     }
 }

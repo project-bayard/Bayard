@@ -5,6 +5,7 @@ import edu.usm.it.dao.ContactCommitteesTest;
 import edu.usm.it.dao.ContactEncountersTest;
 import edu.usm.it.dao.ContactOrganizationsTest;
 import edu.usm.it.dao.DaoPersistenceTest;
+import edu.usm.it.mapper.ContactDtoMapperTest;
 import edu.usm.it.mapper.ContactMapperTest;
 import edu.usm.it.service.CommitteeServiceTest;
 import edu.usm.it.service.ContactServiceTest;
@@ -26,7 +27,8 @@ import org.junit.runners.Suite;
         ContactCommitteesTest.class,
         CommitteeServiceTest.class,
         ContactEncountersTest.class,
-        ContactMapperTest.class
+        ContactMapperTest.class,
+        ContactDtoMapperTest.class
 })
 public class TestSuite {
 }

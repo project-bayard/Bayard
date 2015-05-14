@@ -1,12 +1,16 @@
 package edu.usm.it.mapper;
 
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.EncounterType;
 import edu.usm.dto.*;
 import edu.usm.mapper.ContactMapper;
+import edu.usm.service.CommitteeService;
+import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,9 +36,40 @@ public class ContactMapperTest extends WebAppConfigurationAware {
     @Autowired
     OrganizationService organizationService;
 
+    @Autowired
+    ContactService contactService;
+
+    @Autowired
+    private CommitteeService committeeService;
+
+    private Contact initiator;
+    private Contact original;
+    private Committee committee;
+
+
+    @Before
+    public void setup() {
+        initiator = new Contact();
+        initiator.setFirstName("first");
+        initiator.setLastName("last");
+        contactService.create(initiator);
+
+        original = new Contact();
+        original.setFirstName("firstName");
+        original.setLastName("lastName");
+        contactService.create(original);
+
+        committee = new Committee();
+        committee.setName("committeeName");
+
+        committeeService.create(committee);
+    }
+
     @After
     public void teardown() {
+        contactService.deleteAll();
         organizationService.deleteAll();
+        committeeService.deleteAll();
     }
 
     @Test
@@ -53,16 +88,16 @@ public class ContactMapperTest extends WebAppConfigurationAware {
         contactDto.setEmail("email");
         contactDto.setPhoneNumber1("phone1");
         contactDto.setPhoneNumber2("phone2");
-        contactDto.setId("id");
         contactDto.setAssessment(0);
         contactDto.setOccupation("occupation");
-        contactDto.setCreated(LocalDateTime.now().toString());
-        contactDto.setLastModified(LocalDateTime.now().toString());
+        contactDto.setId(original.getId());
+        contactDto.setCreated(original.getCreated());
+        contactDto.setLastModified(original.getLastModified());
 
         /*collections and objects*/
         CommitteeDto committeeDto = new CommitteeDto();
-        committeeDto.setId("committeeID");
-        committeeDto.setName("committee");
+        committeeDto.setId(committee.getId());
+        committeeDto.setName(committee.getName());
         Set<CommitteeDto> committeeDtoSet = new HashSet<>();
         committeeDtoSet.add(committeeDto);
         contactDto.setCommittees(committeeDtoSet);
@@ -85,12 +120,14 @@ public class ContactMapperTest extends WebAppConfigurationAware {
 
         /*Encounters*/
         EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setInitiator(initiator.getId());
         encounterDto.setAssessment(0);
         encounterDto.setNotes("notes");
         encounterDto.setEncounterDate(LocalDate.now().toString());
         encounterDto.setType(EncounterType.EVENT);
-        encounterDto.setCreated(LocalDateTime.now().toString());
-        encounterDto.setLastModified(LocalDateTime.now().toString());
+        encounterDto.setId("encounterID");
+        encounterDto.setCreated(LocalDate.now().toString());
+        encounterDto.setLastModified(encounterDto.getCreated());
         List<EncounterDto> encounterList = new ArrayList<>();
         encounterList.add(encounterDto);
         contactDto.setEncounters(encounterList);
@@ -117,13 +154,17 @@ public class ContactMapperTest extends WebAppConfigurationAware {
         assertEquals(contact.getLastModified(),contactDto.getLastModified());
         assertEquals(contact.getCreated(), contactDto.getCreated());
 
-        /*collections and objects*/
+        /*Committees*/
         assertNotNull(contact.getCommittees());
         assertEquals(contact.getCommittees().size(), 1);
         assertEquals(contact.getCommittees().iterator().next().getName(), committeeDto.getName());
+
+        /*Organizations*/
         assertNotNull(contact.getOrganizations());
         assertEquals(contact.getOrganizations().size(), 1);
         assertEquals(contact.getOrganizations().iterator().next().getName(), organizationDto.getName());
+
+        /*MemberInfo*/
         assertNotNull(contact.getMemberInfo());
         assertNotNull(contact.getMemberInfo().getId(),memberInfoDto.getId());
         assertEquals(contact.getMemberInfo().getStatus(),memberInfoDto.getStatus());
@@ -134,7 +175,8 @@ public class ContactMapperTest extends WebAppConfigurationAware {
 
 
         /*Encounters*/
-        assertEquals(contact.getEncounters().get(0).getContact().getId(),contact.getId());
+        assertEquals(contact.getEncounters().get(0).getContact().getId(),contactDto.getId());
+        assertEquals(contact.getEncounters().get(0).getInitiator().getId(), initiator.getId());
         assertEquals(contact.getEncounters().get(0).getAssessment(),encounterDto.getAssessment());
         assertEquals(contact.getEncounters().get(0).getEncounterDate(),encounterDto.getEncounterDate());
         assertEquals(contact.getEncounters().get(0).getNotes(),encounterDto.getNotes());

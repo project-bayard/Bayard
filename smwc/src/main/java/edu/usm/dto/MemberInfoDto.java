@@ -15,13 +15,19 @@ public class MemberInfoDto extends BasicEntityDto implements Serializable {
     private int status;
 
     public MemberInfo convertToMemberInfo () {
-        MemberInfo memberInfo = new MemberInfo();
+        MemberInfo memberInfo;
+        if (getId() == null) {
+            memberInfo = new MemberInfo();
+
+        } else {
+            memberInfo = new MemberInfo(getId());
+            memberInfo.setCreated(getCreated());
+            memberInfo.setLastModified(getLastModified());
+        }
         memberInfo.setId(this.getId());
         memberInfo.setPaidDues(this.hasPaidDues());
         memberInfo.setSignedAgreement(this.hasSignedAgreement());
         memberInfo.setStatus(this.getStatus());
-        memberInfo.setLastModified(getLastModified());
-        memberInfo.setCreated(getCreated());
         return memberInfo;
     }
 

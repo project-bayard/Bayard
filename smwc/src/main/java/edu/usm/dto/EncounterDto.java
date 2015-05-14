@@ -7,10 +7,10 @@ import java.io.Serializable;
 public class EncounterDto extends BasicEntityDto implements Serializable {
 
     private String id;
-    private ContactDto contact;
+    private String contact;
     private String encounterDate;
     private String notes;
-    private ContactDto initiator;
+    private String initiator;
     private int assessment;
     private String type;
 
@@ -40,11 +40,11 @@ public class EncounterDto extends BasicEntityDto implements Serializable {
 
     }
 
-    public ContactDto getContact() {
+    public String getContact() {
         return contact;
     }
 
-    public void setContact(ContactDto contact) {
+    public void setContact(String contact) {
         this.contact = contact;
     }
 
@@ -64,11 +64,11 @@ public class EncounterDto extends BasicEntityDto implements Serializable {
         this.notes = notes;
     }
 
-    public ContactDto getInitiator() {
+    public String getInitiator() {
         return initiator;
     }
 
-    public void setInitiator(ContactDto initiator) {
+    public void setInitiator(String initiator) {
         this.initiator = initiator;
     }
 

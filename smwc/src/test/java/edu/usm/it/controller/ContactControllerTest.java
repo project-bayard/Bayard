@@ -102,11 +102,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(fromDb.size(), 1);
 
 
-
     }
-
-
-
 
 
     @Test
@@ -146,21 +142,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         eventList.add(event);
         contact.setAttendedEvents(eventList);
 
-        /*Donations*/
-        Donation donation = new Donation();
-        donation.setDate(LocalDate.of(2015, 01, 01));
-        donation.setAmount(100);
-        donation.setComment("comment");
-
-
-        /*DonorInfo */
-        DonorInfo donorInfo = new DonorInfo();
-        donorInfo.setDate(LocalDate.of(2015, 01, 01));
-
-        List<Donation> donations = new ArrayList<>();
-        donations.add(donation);
-        donorInfo.setDonations(donations);
-        contact.setDonorInfo(donorInfo);
 
         /*Member Info */
         MemberInfo memberInfo = new MemberInfo();
@@ -194,7 +175,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.zipCode", is(contact.getZipCode())))
                 .andExpect(jsonPath("$.email", is(contact.getEmail())))
                 .andExpect(jsonPath("$.attendedEvents[0].id", is(contact.getAttendedEvents().get(0).getId())))
-                .andExpect(jsonPath("$.donorInfo.donations[0].id", is(contact.getDonorInfo().getDonations().get(0).getId())))
                 .andExpect(jsonPath("$.memberInfo.id", is(contact.getMemberInfo().getId())))
                 .andExpect(jsonPath("$.organizations[0].id", is(contact.getOrganizations().iterator().next().getId())));
 
