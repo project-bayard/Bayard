@@ -47,6 +47,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
     private Contact contact;
+    private Contact initiator;
 
     @Before
     public void setup() {
@@ -58,10 +59,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+
+        initiator = new Contact();
+        initiator.setFirstName("initiatorFirst");
+        contactService.create(initiator);
     }
 
     @After
     public void teardown () {
+
+        organizationService.deleteAll();
         contactService.deleteAll();
     }
 
@@ -89,6 +96,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         encounterDto.setType(EncounterType.EVENT);
         encounterDto.setEncounterDate(LocalDate.now().toString());
         encounterDto.setNotes("notes");
+        encounterDto.setInitiator(initiator.getId());
         List<EncounterDto> encounterDtos = new ArrayList<>();
         encounterDtos.add(encounterDto);
         contactDto.setEncounters(encounterDtos);
@@ -99,7 +107,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isCreated());
 
         Set<Contact> fromDb = contactService.findAll();
-        assertEquals(fromDb.size(), 1);
+        assertEquals(fromDb.size(), 2);
 
 
     }

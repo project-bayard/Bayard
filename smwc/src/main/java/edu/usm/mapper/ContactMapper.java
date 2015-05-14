@@ -147,6 +147,9 @@ public class ContactMapper {
 
             for (EncounterDto encounterDto : contactDto.getEncounters()) {
                 Encounter encounter = encounterDto.convertToEncounter();
+
+                if (encounter.getInitiator() == null)
+                    logger.error("Encounter doesn't have an initiator");
                 Contact initiator = contactService.findById(encounterDto.getInitiator());
 
                 if (initiator == null) {

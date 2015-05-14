@@ -15,10 +15,7 @@ import java.util.Set;
 
 public class ContactDtoMapper {
 
-
     private ContactDto contactDto;
-
-
 
     public ContactDto convertToContactDto (Contact contact) {
 
