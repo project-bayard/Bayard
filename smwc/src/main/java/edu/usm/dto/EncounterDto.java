@@ -14,32 +14,6 @@ public class EncounterDto extends BasicEntityDto implements Serializable {
     private int assessment;
     private String type;
 
-
-
-    public Encounter convertToEncounter () {
-        Encounter encounter;
-
-        if (getId() == null) {
-            encounter = new Encounter();
-        } else {
-            encounter = new Encounter(getId());
-            encounter.setCreated(getCreated());
-            encounter.setLastModified(getLastModified());
-
-        }
-
-
-        encounter.setType(getType());
-        encounter.setEncounterDate(getEncounterDate());
-        encounter.setNotes(getNotes());
-        encounter.setAssessment(getAssessment());
-
-        //TODO add contact, initiator, and form
-
-        return encounter;
-
-    }
-
     public String getContact() {
         return contact;
     }
