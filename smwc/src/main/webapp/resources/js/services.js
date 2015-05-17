@@ -12,6 +12,21 @@
                 params: {
                     id: "@id"
                 }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                url : "../contacts",
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url : "../contacts"
             }
         });
     }]);

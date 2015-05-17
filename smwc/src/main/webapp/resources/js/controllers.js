@@ -1,19 +1,15 @@
 (function () {
     'use strict';
 
-
-
 var controllers = angular.module('controllers', []);
 
-controllers.controller('ContactsCtrl', ['$scope', '$http', function($scope, $http) {
+controllers.controller('ContactsCtrl', ['$scope', 'ContactService', function($scope, ContactService) {
 
-    $http.get('../contacts')
-        .success(function (response) {
-            $scope.contacts = response;
-        })
-        .error(function (response) {
-            console.log(response)
-        });
+    ContactService.findAll({}, function(data) {
+        $scope.contacts = data;
+    }, function(err) {
+        console.log(err);
+    });
 
 }]);
 
@@ -21,51 +17,51 @@ controllers.controller('MainCtrl', ['$scope', function($scope) {
     $scope.testMessage = "Check out our home!";
 }]);
 
-controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location','$http', function($scope, ContactService, $location, $http) {
+controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', function($scope, ContactService, $location) {
 
     $scope.errorMessage = "";
     $scope.success = null;
 
-
     $scope.submit = function() {
 
-        $http.post("../contacts", $scope.contact)
-            .success(function (response) {
-                console.log(response);
-                $scope.success = true;
-                $scope.newContactForm.$setPristine();
-                $scope.contact = "";
-                $location.path($location.path());
-
-            }).error(function(response) {
-                console.log(response);
-                $scope.errorMessage = response;
-                $scope.success = false;
-                $location.path($location.path());
-            });
+        ContactService.create({}, $scope.contact, function(data) {
+            console.log(data);
+            $scope.success = true;
+            $scope.newContactForm.$setPristine();
+            $scope.contact = "";
+            $location.path($location.path());
+        }, function (err) {
+            console.log(err);
+            $scope.errorMessage = err;
+            $scope.success = false;
+            $location.path($location.path());
+        });
     };
 
 }]);
 
-controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', 'ContactService', function($scope, $http, $routeParams, ContactService) {
-    $scope.edit = false;
-    $scope.success = null;
-    $scope.errorMessage = "";
-    $scope.addingEncounter = false;
+controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', function($scope, $routeParams, ContactService) {
 
-    //TODO: decouple this knowledge
-    $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
+    var setup = function() {
+        $scope.edit = false;
+        $scope.success = null;
+        $scope.errorMessage = "";
+        $scope.addingEncounter = false;
 
-    //TODO: decouple this knowledge
-    $scope.encounterTypes = ["", "Call"];
+        //TODO: decouple this knowledge
+        $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
 
-    $http.get('../contacts/contact/' + $routeParams.id)
-        .success(function (response) {
-            $scope.contact = response;
-        })
-        .error(function (response) {
-            console.log(response);
+        //TODO: decouple this knowledge
+        $scope.encounterTypes = ["Call", "Other"];
+
+        ContactService.find({id : $routeParams.id}, function(data) {
+            $scope.contact = data;
+        }, function(err) {
+            console.log(err);
         });
+    };
+
+    setup();
 
     $scope.addEncounter = function() {
 
@@ -77,23 +73,26 @@ controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', 'Contac
         if (null === $scope.contact.encounters) {
             $scope.contact.encounters = [];
         }
-
         $scope.contact.encounters.push($scope.newEncounter);
-        ContactService.update({id: $scope.contact.id}, $scope.contact);
+
+        ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
+            $scope.encounterSuccess = true;
+            $scope.newEncounterForm.$setPristine();
+        }, function(err) {
+            console.log(err);
+        });
+
 
     };
 
-    $scope.submit = function() {
-        $http.put("../contacts/contact/" + $scope.contact.id, $scope.contact)
-            .success(function (response) {
-                console.log(response);
-                $scope.success = true;
+    $scope.updateBasicDetails = function() {
 
-            }).error(function(response) {
-                console.log(response);
-                $scope.errorMessage = response;
-                $scope.success = false;
-            });
+        ContactService.update({id : $scope.contact.id}, $scope.contact, function(data) {
+            //indicate success
+            $scope.contactUpdated = true;
+        }, function(err) {
+            console.log(err);
+        });
     };
 }]);
 
