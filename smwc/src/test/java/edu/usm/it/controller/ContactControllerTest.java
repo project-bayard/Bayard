@@ -7,7 +7,9 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.dto.ContactDto;
 import edu.usm.dto.EncounterDto;
+import edu.usm.dto.EventDto;
 import edu.usm.dto.OrganizationDto;
+import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
@@ -25,8 +27,10 @@ import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -48,6 +52,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Autowired
     DateFormatConfig dateFormatConfig;
+
+    @Autowired
+    ContactDtoMapper contactDtoMapper;
 
 
     private Contact contact;
@@ -128,6 +135,43 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         mockMvc.perform(get("/contacts").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+    }
+
+    @Test
+    @Transactional
+    public void testPutContact() throws Exception {
+        contactService.create(contact);
+
+        ContactDto contactDto = contactDtoMapper.convertToContactDto(contactService.findById(contact.getId()));
+        assertNotNull(contactDto);
+
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setNotes("Notes for a new encounter");
+        encounterDto.setAssessment(9);
+        encounterDto.setContact(contactDto.getId());
+        encounterDto.setInitiator(contactDto.getId());
+        encounterDto.setType("Form");
+        encounterDto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+
+        List<EncounterDto> encounters = new ArrayList<>();
+        encounters.add(encounterDto);
+        contactDto.setEncounters(encounters);
+
+        String json = new ObjectMapper().writeValueAsString(contactDto);
+
+        mockMvc.perform(put("/contacts/contact/" + contactDto.getId())
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
+
+        Contact fromDb = contactService.findById(contactDto.getId());
+        assertNotNull(fromDb.getEncounters());
+        assertNotNull(fromDb.getEncounters().get(0));
+
+        Encounter persistedEncounter = fromDb.getEncounters().get(0);
+        assertEquals(9, persistedEncounter.getAssessment());
+        assertEquals(contactDto.getId(), persistedEncounter.getInitiator().getId());
+        assertEquals("Form", persistedEncounter.getType());
 
     }
 

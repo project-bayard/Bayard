@@ -52,7 +52,7 @@ public class ContactController {
 
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
+    @RequestMapping(method = RequestMethod.GET, value = "/contact/{id}", produces={"application/json"})
     public ContactDto getContactById(@PathVariable("id") String id) {
         logger.debug("GET request to /contacts/contact/"+id);
         Contact contact = contactService.findById(id);
@@ -60,14 +60,12 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT,value = "/contact/{id}", consumes={"application/json"})
+    @RequestMapping(method = RequestMethod.PUT, value = "/contact/{id}", consumes={"application/json"})
     public void updateContactById(@PathVariable("id") String id, @RequestBody ContactDto dto) {
         logger.debug("PUT request to /contacts/contact/"+id);
         Contact contact = contactMapper.convertDtoToContact(dto);
         contactService.update(contact);
     }
-
-
 
 }
 

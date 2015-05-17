@@ -104,7 +104,6 @@ public class ContactMapper {
         else
             contact = new Contact();
 
-
         contact.setFirstName(contactDto.getFirstName());
         contact.setLastName(contactDto.getLastName());
         contact.setMiddleName(contactDto.getMiddleName());
@@ -120,11 +119,7 @@ public class ContactMapper {
         contact.setInterests(contactDto.getInterests());
         contact.setPhoneNumber1(contactDto.getPhoneNumber1());
         contact.setPhoneNumber2(contactDto.getPhoneNumber2());
-
-
-
-
-
+        
         if (contactDto.getDonorInfo() != null)
             contact.setDonorInfo(contactDto.getDonorInfo().convertToDonorInfo());
         if (contactDto.getMemberInfo() != null)
@@ -133,28 +128,29 @@ public class ContactMapper {
         return contact;
     }
 
-
-
-
-
-
     private void convertEncounters(ContactDto contactDto, Contact contact) {
 
         List<Encounter> encounterList = new ArrayList<>();
         contact.setEncounters(encounterList);
         if (contactDto.getEncounters() != null) {
 
-
             for (EncounterDto encounterDto : contactDto.getEncounters()) {
-                Encounter encounter = encounterDto.convertToEncounter();
-
-                if (encounter.getInitiator() == null)
-                    logger.error("Encounter doesn't have an initiator");
-                Contact initiator = contactService.findById(encounterDto.getInitiator());
-
-                if (initiator == null) {
-                    logger.error("Could not find initiator for encounter.");
+                Encounter encounter;
+                if (encounterDto.getId() == null) {
+                    encounter = new Encounter();
                 } else {
+                    encounter = new Encounter(encounterDto.getId());
+                    encounter.setCreated(encounterDto.getCreated());
+                    encounter.setLastModified(encounterDto.getLastModified());
+                }
+
+                encounter.setType(encounterDto.getType());
+                encounter.setNotes(encounterDto.getNotes());
+                encounter.setEncounterDate(encounterDto.getEncounterDate());
+                encounter.setAssessment(encounterDto.getAssessment());
+
+                if (null != encounterDto.getInitiator()) {
+                    Contact initiator = contactService.findById(encounterDto.getInitiator());
                     encounter.setInitiator(initiator);
                 }
 

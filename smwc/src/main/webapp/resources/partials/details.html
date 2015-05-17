@@ -157,11 +157,16 @@
                             <input type="text" ng-model="newEncounter.initiator" ng-disabled="!addingEncounter">
                         </label>
                     <label>Date
-                        <input type="date"  ng-model="newEncounter.date" ng-disabled="!addingEncounter">
+                        <input type="date"  ng-model="newEncounter.encounterDate" ng-disabled="!addingEncounter">
                     </label>
                     <label>Assessment
                         <select class="form-control input-small" ng-model="newEncounter.assessment" ng-disabled="!addingEncounter">
                             <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
+                        </select>
+                    </label>
+                    <label>Type
+                        <select class="form-control input-small" ng-model="newEncounter.type" ng-disabled="!addingEncounter">
+                            <option ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
                         </select>
                     </label>
                     <label>Notes
@@ -178,13 +183,11 @@
 
                 <th>Date</th>
                 <th>Type</th>
-                <th>Initiator</th>
                 <th>Assessment</th>
 
                 <tr ng-repeat="encounter in contact.encounters">
-                    <td>{{encounter.date}}</td>
+                    <td>{{encounter.encounterDate}}</td>
                     <td>{{encounter.type}}</td>
-                    <td>{{encounter.initiator}}</td>
                     <td>{{encounter.assessment}}</td>
                 </tr>
             </table>
