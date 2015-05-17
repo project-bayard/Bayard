@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Set;
 
 @Entity(name = "event")
@@ -28,7 +27,7 @@ public class Event extends BasicEntity  implements Serializable {
     private Set<Contact> attendees;
 
     @Column
-    private String date;
+    private String dateHeld;
 
     public Event(String id) {
         setId(id);
@@ -72,11 +71,11 @@ public class Event extends BasicEntity  implements Serializable {
         this.name = name;
     }
 
-    public String getDate() {
-        return date;
+    public String getDateHeld() {
+        return dateHeld;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateHeld(String dateHeld) {
+        this.dateHeld = dateHeld;
     }
 }
