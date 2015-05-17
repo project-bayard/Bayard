@@ -53,71 +53,33 @@ controllers.controller('DetailsCtrl', ['$scope', '$http','$routeParams', 'Contac
     $scope.errorMessage = "";
     $scope.addingEncounter = false;
 
+    //TODO: decouple this knowledge
+    $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
+
+    //TODO: decouple this knowledge
+    $scope.encounterTypes = ["", "Call"];
+
     $http.get('../contacts/contact/' + $routeParams.id)
         .success(function (response) {
             $scope.contact = response;
         })
         .error(function (response) {
-            //TODO
+            console.log(response);
         });
-
-    $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
 
     $scope.addEncounter = function() {
 
         //TODO: use a selected initiator
         $scope.newEncounter.initiator = null;
-        $scope.newEncounter.form = null;
+
+        $scope.newEncounter.contact = $scope.contact.id;
 
         if (null === $scope.contact.encounters) {
-            $scope.contact.encounters = $scope.newEncounter;
-        } else {
-            var encounterList = $scope.contact.encounters;
-            encounterList.concat($scope.newEncounter);
-            $scope.contact.encounters = encounterList;
+            $scope.contact.encounters = [];
         }
 
-        var dtoContact = {
-            contact_id : $scope.contact_id,
-            id : $scope.contact.id,
-            interests : $scope.contact.interests,
-            firstName : $scope.contact.firstName,
-            phoneNumber1 : $scope.contact.phoneNumber1,
-            phoneNumber2 : $scope.contact.phoneNumber2,
-            assessment : $scope.contact.assessment,
-            middleName : $scope.contact.middleName,
-            lastName : $scope.contact.lastName,
-            streetAddress : $scope.contact.streetAddress,
-            aptNumber : $scope.contact.aptNumber,
-            city : $scope.contact.city,
-            zipCode : $scope.contact.zipCode,
-            language : $scope.contact.language,
-            donor : $scope.contact.donor,
-            member : $scope.contact.member,
-            committees : $scope.contact.committees,
-            donorInfo : $scope.contact.donorInfo,
-            memberInfo : $scope.contact.memberInfo,
-            encounters : $scope.contact.encounters,
-            email : $scope.contact.email,
-            occupation : $scope.contact.occupation,
-            organizations : $scope.contact.organizations,
-            attendedEvents : $scope.contact.attendedEvents
-
-        }
-
-        ContactService.update({id: dtoContact.id}, dtoContact);
-
-        //$http.put("../contacts/contact/" + $scope.contact.contact_id, $scope.contact)
-        //    .success(function (response) {
-        //        console.log(response);
-        //        $scope.success = true;
-        //        $scope.newEncounterForm.$setPristine();
-        //
-        //    }).error(function(response) {
-        //        console.log(response);
-        //        $scope.errorMessage = response;
-        //        $scope.success = false;
-        //    });
+        $scope.contact.encounters.push($scope.newEncounter);
+        ContactService.update({id: $scope.contact.id}, $scope.contact);
 
     };
 
