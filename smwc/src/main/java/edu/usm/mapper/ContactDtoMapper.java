@@ -151,7 +151,8 @@ public class ContactDtoMapper {
 
         for (Event event : contact.getAttendedEvents()) {
             EventDto dto = new EventDto();
-            dto.setDate(event.getDate());
+            dto.setId(event.getId());
+            dto.setDate(event.getDateHeld());
             dto.setLocation(event.getLocation());
             dto.setName(event.getName());
             dto.setNotes(event.getNotes());
