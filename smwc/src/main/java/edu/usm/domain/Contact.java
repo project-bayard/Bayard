@@ -81,7 +81,7 @@ public class Contact extends BasicEntity implements Serializable {
     @JsonView(Views.ContactList.class)
     private int assessment;
 
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_committee",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -97,7 +97,7 @@ public class Contact extends BasicEntity implements Serializable {
         super();
     }
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -113,7 +113,7 @@ public class Contact extends BasicEntity implements Serializable {
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
-    @ManyToMany(cascade = {CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -121,10 +121,10 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private List<Event> attendedEvents;
 
-    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Encounter> encounters;
 
-    @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH)
+    @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private List<Encounter> encountersInitiated;
 
     public String getFirstName() {
