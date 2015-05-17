@@ -2,6 +2,7 @@ package edu.usm.it.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.dto.ContactDto;
@@ -44,6 +45,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Autowired
     EventService eventService;
+
+    @Autowired
+    DateFormatConfig dateFormatConfig;
 
 
     private Contact contact;
@@ -94,7 +98,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         /*Encounters*/
         EncounterDto encounterDto = new EncounterDto();
         encounterDto.setType(EncounterType.EVENT);
-        encounterDto.setEncounterDate(LocalDate.now().toString());
+        encounterDto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
         encounterDto.setNotes("notes");
         encounterDto.setInitiator(initiator.getId());
         List<EncounterDto> encounterDtos = new ArrayList<>();
@@ -139,6 +143,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         /*Event*/
         Event event = new Event();
+        event.setDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
         event.setLocation("location");
         event.setNotes("notes");
 

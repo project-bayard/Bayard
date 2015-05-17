@@ -21,73 +21,49 @@ public class Contact extends BasicEntity implements Serializable {
     @JsonView(Views.ContactList.class)
     private String firstName;
 
-
-
     @Column
     @JsonView(Views.ContactList.class)
     private String middleName;
-
-
 
     @Column
     @JsonView(Views.ContactList.class)
     private String lastName;
 
-
-
     @Column
     @JsonView(Views.ContactList.class)
     private String streetAddress;
-
-
 
     @Column
     @JsonView(Views.ContactList.class)
     private String aptNumber;
 
-
-
     @Column
     @JsonView(Views.ContactList.class)
     private String city;
-
-
 
     @Column
     @JsonView(Views.ContactList.class)
     private String zipCode;
 
-
-
     @Column
     @JsonView(Views.ContactList.class)
     private String phoneNumber1;
-
-
 
     @Column
     @JsonView(Views.ContactList.class)
     private String phoneNumber2;
 
-
-
     @Column
     @JsonView(Views.ContactList.class)
     private String email;
-
-
 
     @Column
     @JsonView(Views.ContactList.class)
     private String language;
 
-
-
     @Column
     @JsonView(Views.ContactList.class)
     private String occupation;
-
-
 
     @Column
     @JsonView(Views.ContactList.class)
@@ -101,11 +77,9 @@ public class Contact extends BasicEntity implements Serializable {
     @JsonView(Views.ContactList.class)
     private boolean member;
 
-
     @Column
     @JsonView(Views.ContactList.class)
     private int assessment;
-
 
     @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(
@@ -131,22 +105,13 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Organization> organizations;
 
-
-
-
     @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
-
-
-
     @OneToOne(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
-
-
-
 
     @ManyToMany(cascade = {CascadeType.REFRESH})
     @JoinTable(
@@ -155,9 +120,6 @@ public class Contact extends BasicEntity implements Serializable {
             inverseJoinColumns={@JoinColumn(name="event_id", referencedColumnName = "id")}
     )
     private List<Event> attendedEvents;
-
-
-
 
     @OneToMany(mappedBy="contact", cascade = CascadeType.ALL)
     private List<Encounter> encounters;

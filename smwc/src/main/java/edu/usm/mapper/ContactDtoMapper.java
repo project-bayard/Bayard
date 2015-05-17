@@ -166,7 +166,7 @@ public class ContactDtoMapper {
         }
 
         contactDto.setAttendedEvents(attendedEvents);
-        
+
     }
 
 

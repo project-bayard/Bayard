@@ -1,5 +1,8 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity(name = "event")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="event_id")
 public class Event extends BasicEntity  implements Serializable {
 
     @Column

@@ -1,5 +1,6 @@
 package edu.usm.it.dao;
 
+import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.repository.*;
@@ -36,6 +37,9 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Autowired
     EncounterDao encounterDao;
 
+    @Autowired
+    DateFormatConfig dateFormatConfig;
+
     @After
     public void tearDown() {
         encounterDao.deleteAll();
@@ -44,12 +48,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         organizationDao.deleteAll();
 
     }
-
-
-
-
-
-
 
     @Test
     @Transactional
@@ -72,7 +70,8 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*Event*/
         Event event = new Event();
-        event.setDate(LocalDate.of(2015, 01, 01));
+        String date = dateFormatConfig.formatDomainDate(LocalDate.of(2015, 01, 01));
+        event.setDate(date);
         event.setLocation("location");
         event.setNotes("notes");
         event.setName("name");
@@ -91,8 +90,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         donation.setDate(LocalDate.of(2015, 01, 01));
         donation.setAmount(100);
         donation.setComment("comment");
-
-
 
         /*DonorInfo*/
         DonorInfo donorInfo = new DonorInfo();
@@ -131,13 +128,9 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         encounters.add(encounter);
         contact.setEncounters(encounters);
 
-
         contactDao.save(contact);
 
-
-
         Contact fromDb = contactDao.findOne(contact.getId());
-
 
         /*Basic contact info*/
         assertNotNull(fromDb);
@@ -149,7 +142,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertEquals(fromDb.getAptNumber(),contact.getAptNumber());
         assertEquals(fromDb.getCity(),contact.getCity());
         assertEquals(fromDb.getZipCode(),contact.getZipCode());
-
 
         /*Event info*/
         assertNotNull(fromDb.getAttendedEvents());
