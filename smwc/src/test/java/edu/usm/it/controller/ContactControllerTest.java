@@ -143,7 +143,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         /*Event*/
         Event event = new Event();
-        event.setDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+        event.setDateHeld(dateFormatConfig.formatDomainDate(LocalDate.now()));
         event.setLocation("location");
         event.setNotes("notes");
 

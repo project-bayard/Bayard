@@ -71,7 +71,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         /*Event*/
         Event event = new Event();
         String date = dateFormatConfig.formatDomainDate(LocalDate.of(2015, 01, 01));
-        event.setDate(date);
+        event.setDateHeld(date);
         event.setLocation("location");
         event.setNotes("notes");
         event.setName("name");
