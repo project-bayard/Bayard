@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Views;
+import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.mapper.ContactMapper;
 import edu.usm.dto.ContactDto;
 import edu.usm.service.ContactService;
@@ -28,6 +29,9 @@ public class ContactController {
     @Autowired
     private ContactMapper contactMapper;
 
+    @Autowired
+    private ContactDtoMapper dtoMapper;
+
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
@@ -49,15 +53,17 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,value = "/contact/{id}", produces={"application/json"})
-    public Contact getContactById(@PathVariable("id") String id) {
+    public ContactDto getContactById(@PathVariable("id") String id) {
         logger.debug("GET request to /contacts/contact/"+id);
-        return contactService.findById(id);
+        Contact contact = contactService.findById(id);
+        return dtoMapper.convertToContactDto(contact);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT,value = "/contact/{id}", consumes={"application/json"})
-    public void updateContactById(@PathVariable("id") String id, @RequestBody Contact contact) {
+    public void updateContactById(@PathVariable("id") String id, @RequestBody ContactDto dto) {
         logger.debug("PUT request to /contacts/contact/"+id);
+        Contact contact = contactMapper.convertDtoToContact(dto);
         contactService.update(contact);
     }
 
