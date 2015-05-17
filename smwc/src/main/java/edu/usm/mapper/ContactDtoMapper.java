@@ -2,6 +2,7 @@ package edu.usm.mapper;
 
 import edu.usm.domain.*;
 import edu.usm.dto.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,12 +13,16 @@ import java.util.Set;
  * Created by scottkimball on 5/13/15.
  */
 
-
+@Component
 public class ContactDtoMapper {
 
     private ContactDto contactDto;
 
     public ContactDto convertToContactDto (Contact contact) {
+
+        if (null == contact) {
+            return null;
+        }
 
         convertContactToDto(contact);
 
@@ -32,6 +37,10 @@ public class ContactDtoMapper {
 
         if (contact.getMemberInfo() != null)
             convertMemberInfo(contact);
+
+        if (contact.getAttendedEvents() != null) {
+            convertAttendedEvents(contact);
+        }
 
         //TODO the rest of the contact
 
@@ -135,6 +144,29 @@ public class ContactDtoMapper {
 
         contactDto.setMemberInfo(memberInfoDto);
 
+    }
+
+    private void convertAttendedEvents(Contact contact) {
+        List<EventDto> attendedEvents = new ArrayList<>();
+
+        for (Event event : contact.getAttendedEvents()) {
+            EventDto dto = new EventDto();
+            dto.setDate(event.getDate());
+            dto.setLocation(event.getLocation());
+            dto.setName(event.getName());
+            dto.setNotes(event.getNotes());
+
+            Set<String> attendees = new HashSet<>();
+            for (Contact c : event.getAttendees()) {
+                attendees.add(c.getId());
+            }
+            dto.setAttendees(attendees);
+
+            attendedEvents.add(dto);
+        }
+
+        contactDto.setAttendedEvents(attendedEvents);
+        
     }
 
 
