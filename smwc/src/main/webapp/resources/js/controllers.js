@@ -17,7 +17,7 @@ controllers.controller('MainCtrl', ['$scope', function($scope) {
     $scope.testMessage = "Check out our home!";
 }]);
 
-controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', function($scope, ContactService, $location) {
+controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', function($scope, ContactService, $location, $timeout) {
 
     $scope.errorMessage = "";
     $scope.success = null;
@@ -26,21 +26,27 @@ controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$locat
 
         ContactService.create({}, $scope.contact, function(data) {
             console.log(data);
-            $scope.success = true;
             $scope.newContactForm.$setPristine();
             $scope.contact = "";
-            $location.path($location.path());
+
+            $scope.requestSuccess = true;
+            $timeout(function() {
+                $scope.requestSuccess = false;
+            }, 3000)
         }, function (err) {
             console.log(err);
             $scope.errorMessage = err;
-            $scope.success = false;
-            $location.path($location.path());
+
+            $scope.requestError = true;
+            $timeout(function() {
+                $scope.requestError = false;
+            }, 3000)
         });
     };
 
 }]);
 
-controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', function($scope, $routeParams, ContactService) {
+controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout', function($scope, $routeParams, ContactService, $timeout) {
 
     var setup = function() {
         $scope.edit = false;
@@ -75,9 +81,14 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
         }
         $scope.contact.encounters.push($scope.newEncounter);
 
+
         ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
-            $scope.encounterSuccess = true;
             $scope.newEncounterForm.$setPristine();
+            $scope.newEncounter.requestSuccess = true;
+            $timeout(function() {
+                $scope.newEncounter.requestSuccess = false;
+            }, 3000);
+
         }, function(err) {
             console.log(err);
         });

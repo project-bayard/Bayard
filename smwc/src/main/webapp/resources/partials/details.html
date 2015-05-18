@@ -7,10 +7,10 @@
         <h1>Contact Details</h1>
     </div>
     <div class="panel panel-default">
-        <div class="panel-heading">
+        <div class="panel-heading" ng-click="hideBasicDetails=!hideBasicDetails">
             <h3 class="panel-title">Basic Details</h3>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" ng-show="!hideBasicDetails">
             <div class="form-group">
                 <label>ID:
                     <input type="text" class="form-control input-sm" ng-model="contact.id" ng-readonly="true">
@@ -77,8 +77,12 @@
                     <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
                 </label>
             </div>
-
+            <div>
+                <button class="btn btn-primary" ng-click="edit=!edit">Edit Basic Details</button>
+                <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="edit">Submit</button>
+            </div>
         </div>
+
     </div>
 
 
@@ -144,35 +148,35 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Encounters</h3>
+        <div class="panel-heading" ng-click="showingEncounters=!showingEncounters">
+            <h3 class="panel-title">Encounters ({{contact.encounters.length}})</h3>
         </div>
-        <div class="panel-body">
-            <label>Add an Encounter
-                <input type="checkbox" ng-click="addingEncounter=!addingEncounter">
-            </label>
-            <form>
-                <div class="form-group" ng-model="newEncounterForm">
+        <div class="panel-body" ng-show="showingEncounters">
+            <div ng-show="newEncounter.requestSuccess" class="alert alert-success alert-dismissable" role="alert">Encounter Added</div>
+            <button class="btn btn-primary" ng-click="addingEncounter=!addingEncounter">Add Encounter</button>
+
+            <form name="newEncounterForm" id="newEncounterForm">
+                <div class="form-group" ng-show="addingEncounter">
                         <label>Initiator:
-                            <input type="text" ng-model="newEncounter.initiator" ng-disabled="!addingEncounter">
+                            <input type="text" ng-model="newEncounter.initiator">
                         </label>
                     <label>Date
-                        <input type="date"  ng-model="newEncounter.encounterDate" ng-disabled="!addingEncounter">
+                        <input type="date"  ng-model="newEncounter.encounterDate">
                     </label>
                     <label>Assessment
-                        <select class="form-control input-small" ng-model="newEncounter.assessment" ng-disabled="!addingEncounter">
+                        <select class="form-control input-small" ng-model="newEncounter.assessment">
                             <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
                         </select>
                     </label>
                     <label>Type
-                        <select class="form-control input-small" ng-model="newEncounter.type" ng-disabled="!addingEncounter">
+                        <select class="form-control input-small" ng-model="newEncounter.type">
                             <option ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
                         </select>
                     </label>
                     <label>Notes
-                        <input type="text"  ng-model="newEncounter.notes" ng-disabled="!addingEncounter">
+                        <input type="text"  ng-model="newEncounter.notes">
                     </label>
-                    <button class="btn btn-primary" ng-click="addEncounter()" ng-disabled="!addingEncounter">Complete Encounter</button>
+                    <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
                 </div>
             </form>
 
@@ -196,19 +200,14 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Events Attended</h3>
+        <div class="panel-heading" ng-click="showingEvents=!showingEvents">
+            <h3 class="panel-title">Events Attended ({{contact.attendedEvents.length}})</h3>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" ng-show="showingEvents">
             <form>
 
             </form>
         </div>
     </div>
-
- <div>
-     <button class="btn btn-primary" ng-click="edit=!edit">Edit Contact</button>
-     <button class="btn btn-primary" ng-click="updateBasicDetails()">Submit</button>
- </div>
 
 </div>
