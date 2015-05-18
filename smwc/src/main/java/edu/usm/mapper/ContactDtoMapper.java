@@ -125,7 +125,13 @@ public class ContactDtoMapper {
             encounterDto.setAssessment(encounter.getAssessment());
             encounterDto.setEncounterDate(encounter.getEncounterDate());
             encounterDto.setContact(encounter.getContact().getId());
-            encounterDto.setInitiator(encounter.getInitiator().getId());
+
+            if (null == encounter.getInitiator()) {
+                encounterDto.setInitiator(null);
+            } else {
+                encounterDto.setInitiator(encounter.getInitiator().getId());
+            }
+
             encounterDtos.add(encounterDto);
         }
 
