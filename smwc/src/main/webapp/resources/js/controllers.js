@@ -85,6 +85,9 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
         ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
             $scope.newEncounterForm.$setPristine();
             $scope.newEncounter.requestSuccess = true;
+            $scope.newEncounter = null;
+            $scope.addingEncounter = false;
+
             $timeout(function() {
                 $scope.newEncounter.requestSuccess = false;
             }, 3000);
@@ -92,6 +95,7 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
         }, function(err) {
             console.log(err);
         });
+
 
 
     };

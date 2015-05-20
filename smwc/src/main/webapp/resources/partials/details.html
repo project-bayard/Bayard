@@ -174,23 +174,25 @@
                         </select>
                     </label>
                     <label>Notes
-                        <input type="text"  ng-model="newEncounter.notes">
+                        <textarea  rows="3" cols="50" ng-model="newEncounter.notes" ></textarea>
                     </label>
                     <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
                 </div>
             </form>
 
-            <table class="bootstrap-table table table-striped table-hover"
+            <table class="bootstrap-table table table-striped table-hover table-responsive"
                    data-toggle="table"
                    data-pagination="true"
                    data-search="true">
 
                 <th>Date</th>
+                <th>Initiator</th>
                 <th>Type</th>
                 <th>Assessment</th>
 
                 <tr ng-repeat="encounter in contact.encounters">
                     <td>{{encounter.encounterDate}}</td>
+                    <td>{{encounter.initiator}}</td>
                     <td>{{encounter.type}}</td>
                     <td>{{encounter.assessment}}</td>
                 </tr>
