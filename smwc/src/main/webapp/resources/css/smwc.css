@@ -8,3 +8,7 @@
 #newContactForm {
     margin-left: 2.5em;
 }
+
+.modal-backdrop {
+    z-index: -1;
+}

@@ -2,10 +2,11 @@ package edu.usm.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 
 @Entity(name = "encounter")
-public class Encounter extends BasicEntity implements Serializable {
+public class Encounter extends BasicEntity implements Serializable, Comparable<Encounter>{
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -93,6 +94,25 @@ public class Encounter extends BasicEntity implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    /*
+     * by most recent date
+     */
+    public int compareTo(Encounter o) {
+        if (this.getEncounterDate() == null && o.getEncounterDate() == null) {
+            return 0;
+        } else if (this.getEncounterDate() == null) {
+            return 1;
+        } else if (o.getEncounterDate() == null) {
+            return -1;
+        } else {
+            LocalDate thisDate = LocalDate.parse(this.getEncounterDate());
+            LocalDate otherDate = LocalDate.parse(o.getEncounterDate());
+
+            return otherDate.compareTo(thisDate);
+        }
     }
 
 

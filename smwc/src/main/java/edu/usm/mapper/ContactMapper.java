@@ -131,7 +131,6 @@ public class ContactMapper {
     private void convertEncounters(ContactDto contactDto, Contact contact) {
 
         List<Encounter> encounterList = new ArrayList<>();
-        contact.setEncounters(encounterList);
         if (contactDto.getEncounters() != null) {
 
             for (EncounterDto encounterDto : contactDto.getEncounters()) {
@@ -159,6 +158,9 @@ public class ContactMapper {
 
             }
         }
+
+        contact.setEncounters(encounterList);
+
 
     }
 

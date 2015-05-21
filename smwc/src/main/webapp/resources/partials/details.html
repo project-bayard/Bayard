@@ -1,5 +1,5 @@
 
-<div class="container">
+<div class="container-fluid">
 
     <div ng-if="success" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
     <div ng-if="success===false" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
@@ -178,6 +178,7 @@
                     </label>
                     <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
                 </div>
+                <div ng-if="!encounterSuccess" class="alert alert-danger" role="alert">Failed to add encounter...</div>
             </form>
 
             <table class="bootstrap-table table table-striped table-hover table-responsive"
@@ -189,12 +190,32 @@
                 <th>Initiator</th>
                 <th>Type</th>
                 <th>Assessment</th>
+                <th>Notes</th>
 
                 <tr ng-repeat="encounter in contact.encounters">
                     <td>{{encounter.encounterDate}}</td>
                     <td>{{encounter.initiator}}</td>
                     <td>{{encounter.type}}</td>
                     <td>{{encounter.assessment}}</td>
+                    <td>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#encounterModal">
+                            View Notes
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="encounterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="encounterModalLabel">Notes</h4>
+                                    </div>
+                                    <div class="modal-body">{{encounter.notes}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </table>
 

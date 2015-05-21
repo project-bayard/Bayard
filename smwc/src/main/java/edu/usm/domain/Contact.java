@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -246,6 +247,11 @@ public class Contact extends BasicEntity implements Serializable {
     }
 
     public void setEncounters(List<Encounter> encounters) {
+        if (encounters != null && encounters.size() > 0) {
+            Collections.sort(encounters);
+            setAssessment(encounters.get(0).getAssessment());
+
+        }
         this.encounters = encounters;
     }
 

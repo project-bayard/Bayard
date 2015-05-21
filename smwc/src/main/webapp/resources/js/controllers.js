@@ -53,6 +53,7 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
         $scope.success = null;
         $scope.errorMessage = "";
         $scope.addingEncounter = false;
+        $scope.encounterSuccess = true;
 
         //TODO: decouple this knowledge
         $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
@@ -71,6 +72,8 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
 
     $scope.addEncounter = function() {
 
+
+
         //TODO: use a selected initiator
         $scope.newEncounter.initiator = null;
 
@@ -87,12 +90,13 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
             $scope.newEncounter.requestSuccess = true;
             $scope.newEncounter = null;
             $scope.addingEncounter = false;
-
+            $scope.encounterSuccess = true;
             $timeout(function() {
                 $scope.newEncounter.requestSuccess = false;
             }, 3000);
 
         }, function(err) {
+            $scope.encounterSuccess = false;
             console.log(err);
         });
 
