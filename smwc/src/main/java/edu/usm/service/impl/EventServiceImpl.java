@@ -1,6 +1,7 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.Event;
+import edu.usm.domain.Organization;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.EventService;
@@ -21,7 +22,10 @@ public class EventServiceImpl extends BasicService implements EventService {
 
     private Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
 
-
+    @Override
+    public Event findById(String id) {
+        return eventDao.findOne(id);
+    }
 
     @Override
     public void create(Event event) {

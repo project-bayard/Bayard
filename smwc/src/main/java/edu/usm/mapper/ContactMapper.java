@@ -4,6 +4,7 @@ import edu.usm.domain.*;
 import edu.usm.dto.*;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
+import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class ContactMapper {
     @Autowired
     private CommitteeService committeeService;
 
+    @Autowired
+    private EventService eventService;
+
 
     private Logger logger = LoggerFactory.getLogger(ContactMapper.class);
 
@@ -51,9 +55,37 @@ public class ContactMapper {
         if (contactDto.getEncounters() != null)
             convertEncounters(contactDto, contact);
 
+        if (contactDto.getAttendedEvents() != null) {
+            convertEvents(contactDto, contact);
+        }
+
         //TODO events, etc
 
         return contact;
+    }
+
+    private void convertEvents(ContactDto dto, Contact contact) {
+
+        List<Event> events = new ArrayList<>();
+        contact.setAttendedEvents(events);
+
+        for (EventDto eventDto : dto.getAttendedEvents()) {
+
+            /*Event already exists*/
+            if (eventDto.getId() != null) {
+                Event event = eventService.findById(eventDto.getId());
+                if (event == null) {
+                    logger.error("Could not find event with ID: "+eventDto.getId());
+                } else {
+                    if (null == event.getAttendees()) {
+                        event.setAttendees(new HashSet<>());
+                    }
+                    event.getAttendees().add(contact);
+                    events.add(event);
+                }
+            }
+        }
+
     }
 
     private void convertOrganizations(Set<OrganizationDto> organizationDtos, Contact contact) {
