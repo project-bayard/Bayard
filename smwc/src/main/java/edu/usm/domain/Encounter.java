@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class Encounter extends BasicEntity implements Serializable, Comparable<Encounter>{
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "contact_id")
     private Contact contact;
 

@@ -3,9 +3,9 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Views;
+import edu.usm.dto.ContactDto;
 import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.mapper.ContactMapper;
-import edu.usm.dto.ContactDto;
 import edu.usm.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,8 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.ContactList.class)
     public Set<Contact> getContacts() {
-        return contactService.findAll();
+        Set<Contact> contacts =  contactService.findAll();
+        return contacts;
     }
 
     @ResponseStatus(HttpStatus.CREATED)

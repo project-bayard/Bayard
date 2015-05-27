@@ -1,10 +1,8 @@
 package edu.usm.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity(name = "contact")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="contact_id")
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Contact extends BasicEntity implements Serializable {
 

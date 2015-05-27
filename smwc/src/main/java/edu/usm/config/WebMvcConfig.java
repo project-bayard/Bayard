@@ -1,5 +1,6 @@
 package edu.usm.config;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -61,6 +62,7 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
     public MappingJackson2HttpMessageConverter converter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(new HibernateAwareObjectMapper());
+        converter.getObjectMapper().disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
         return converter;
 
     }

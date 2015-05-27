@@ -54,6 +54,7 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
         $scope.errorMessage = "";
         $scope.addingEncounter = false;
         $scope.encounterSuccess = true;
+        $scope.initiator = null;
 
         //TODO: decouple this knowledge
         $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
@@ -66,6 +67,13 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
         }, function(err) {
             console.log(err);
         });
+
+
+        ContactService.findAll({}, function(data) {
+            $scope.contacts = data;
+        }, function(err) {
+            console.log(err);
+        });
     };
 
     setup();
@@ -73,34 +81,29 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
     $scope.addEncounter = function() {
 
 
-
-        //TODO: use a selected initiator
-        $scope.newEncounter.initiator = null;
-
         $scope.newEncounter.contact = $scope.contact.id;
+
 
         if (null === $scope.contact.encounters) {
             $scope.contact.encounters = [];
         }
         $scope.contact.encounters.push($scope.newEncounter);
 
-
         ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
             $scope.newEncounterForm.$setPristine();
-            $scope.newEncounter.requestSuccess = true;
+            $scope.requestSuccess = true;
             $scope.newEncounter = null;
             $scope.addingEncounter = false;
             $scope.encounterSuccess = true;
+
             $timeout(function() {
-                $scope.newEncounter.requestSuccess = false;
+                $scope.requestSuccess = false;
             }, 3000);
 
         }, function(err) {
             $scope.encounterSuccess = false;
             console.log(err);
         });
-
-
 
     };
 
@@ -113,7 +116,19 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
             console.log(err);
         });
     };
+
+
+    $scope.setEncounterInitiator = function(id) {
+        $scope.initiator = {firstName: "" , lastName: ""};
+
+        angular.forEach($scope.contacts, function(value, key, obj) {
+            if (value.id == id) {
+                $scope.initiator = value;
+            }
+        });
+    };
 }]);
+
 
 }());
 
