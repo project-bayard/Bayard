@@ -36,7 +36,7 @@ public class ContactController {
 
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, produces={"application/json"})
+    @RequestMapping(method = RequestMethod.GET, produces="application/json")
     @JsonView(Views.ContactList.class)
     public Set<Contact> getContacts() {
         Set<Contact> contacts =  contactService.findAll();

@@ -67,9 +67,10 @@ public class ContactMapperTest extends WebAppConfigurationAware {
 
     @After
     public void teardown() {
-        contactService.deleteAll();
         organizationService.deleteAll();
         committeeService.deleteAll();
+        contactService.deleteAll();
+
     }
 
     @Test

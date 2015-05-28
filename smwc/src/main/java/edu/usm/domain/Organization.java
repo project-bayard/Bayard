@@ -1,12 +1,10 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -16,10 +14,12 @@ import java.util.Set;
 public class Organization extends BasicEntity  implements Serializable {
 
 
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     @Column
     private String name;
 
-    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Contact> members;
 
     public Organization(String id) {

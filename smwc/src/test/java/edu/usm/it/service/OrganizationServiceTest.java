@@ -64,6 +64,8 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
+        contactService.create(contact);
+        contactService.create(contact2);
 
         organization.setMembers(contacts);
         organizationService.create(organization);

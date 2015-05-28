@@ -86,8 +86,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         logger.debug("Creating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
-        contactDao.save(contact);
 
+        contactDao.save(contact);
     }
 
     @Override

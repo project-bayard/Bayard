@@ -16,67 +16,67 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String firstName;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String middleName;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String lastName;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String streetAddress;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String aptNumber;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String city;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String zipCode;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String phoneNumber1;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String phoneNumber2;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String email;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String language;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String occupation;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private String interests;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private boolean donor;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private boolean member;
 
     @Column
-    @JsonView(Views.ContactList.class)
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     private int assessment;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
@@ -95,7 +95,7 @@ public class Contact extends BasicEntity implements Serializable {
         super();
     }
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

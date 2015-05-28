@@ -5,4 +5,5 @@ package edu.usm.domain;
  */
 public class Views {
     public static interface ContactList {}
+    public static interface OrganizationList {}
 }
