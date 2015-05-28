@@ -46,7 +46,7 @@ controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$locat
 
 }]);
 
-controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout', function($scope, $routeParams, ContactService, $timeout) {
+controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location', function($scope, $routeParams, ContactService, $timeout, $location) {
 
     var setup = function() {
         $scope.edit = false;
@@ -121,12 +121,18 @@ controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService'
     $scope.setEncounterInitiator = function(id) {
         $scope.initiator = {firstName: "" , lastName: ""};
 
-        angular.forEach($scope.contacts, function(value, key, obj) {
-            if (value.id == id) {
-                $scope.initiator = value;
-            }
+        ContactService.find({id :id}, function(data) {
+            $scope.initiator = data;
+        }, function(err) {
+            console.log(err);
         });
     };
+
+    $scope.viewDetails = function (id) {
+        var path = "/contacts/contact/" + id ;
+        $location.path(path);
+        $window.location.href;
+    }
 }]);
 
 

@@ -204,7 +204,7 @@
                         </button>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="encounterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="encounterModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -213,7 +213,8 @@
                                     </div>
                                     <div class="modal-body">
                                         <h4>Initiator</h4>
-                                        <a href="#/contacts/contact/{{initiator.id}}">{{initiator.firstName + " " + initiator.lastName}}</a>
+                                        <p>{{initiator.firstName + initiator.lastName}}</p>
+                                        <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(initiator.id)">View Details</button>
                                         <hr>
                                         <h4>Notes</h4>
                                         <div>{{encounter.notes}}</div>

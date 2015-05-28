@@ -19,7 +19,7 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     @Column
     private String notes;
 
-    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.REFRESH)
     @JoinColumn(name = "initiator_id")
     private Contact initiator;
 

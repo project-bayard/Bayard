@@ -4,9 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.io.Serializable;
 
-/**
- * Created by justin on 2/19/15.
- */
 
 @Entity(name = "member_info")
 public class MemberInfo extends BasicEntity  implements Serializable {
