@@ -7,5 +7,6 @@ import edu.usm.domain.Event;
  */
 public interface EventService {
 
+    Event findById(String id);
     void create (Event event);
 }
