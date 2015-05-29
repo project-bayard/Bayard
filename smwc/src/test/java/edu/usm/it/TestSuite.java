@@ -1,6 +1,7 @@
 package edu.usm.it;
 
 import edu.usm.it.controller.ContactControllerTest;
+import edu.usm.it.controller.OrganizationControllerTest;
 import edu.usm.it.dao.ContactCommitteesTest;
 import edu.usm.it.dao.ContactEncountersTest;
 import edu.usm.it.dao.ContactOrganizationsTest;
@@ -28,7 +29,8 @@ import org.junit.runners.Suite;
         CommitteeServiceTest.class,
         ContactEncountersTest.class,
         ContactMapperTest.class,
-        ContactDtoMapperTest.class
+        ContactDtoMapperTest.class,
+        OrganizationControllerTest.class
 })
 public class TestSuite {
 }

@@ -6,10 +6,7 @@ import edu.usm.domain.Views;
 import edu.usm.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -29,5 +26,11 @@ public class OrganizationController {
     @JsonView(Views.OrganizationList.class)
     public Set<Organization> getAllOrganizations() {
       return organizationService.findAll();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+    public void createOrganization(@RequestBody Organization organization) {
+        organizationService.create(organization);
     }
 }

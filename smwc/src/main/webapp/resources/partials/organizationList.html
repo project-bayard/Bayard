@@ -1,0 +1,19 @@
+<div class="container-fluid">
+    <h1>Organizations</h1>
+    <button class="btn btn-md btn-primary"ng-model="addOrganization.hidden" ng-click="addOrganization.hidden = !addOrganization.hidden">Create Organization</button>
+    <div ng-if="addOrganization.hidden == false">
+        <label>Name:
+            <input type="text" class="form-control input-sm" ng-model="addOrganization.name">
+        </label>
+        <button class="btn btn-md btn-success" ng-click="createOrganization(addOrganization.name)">Submit</button>
+    </div>
+    <br><br>
+    <table>
+        <tr>
+            <th>Name</th>
+        </tr>
+        <tr ng-repeat="organization in Organizations">
+            <td>{{organization.name}}</td>
+        </tr>
+    </table>
+</div>

@@ -21,6 +21,10 @@
                 templateUrl: 'resources/partials/details.html',
                 controller: 'DetailsCtrl'
             })
+            .when('/organizations' , {
+                templateUrl:'resources/partials/organizationList.html',
+                controller: 'OrganizationsCtrl'
+            })
             .otherwise({redirectTo: 'resources/partials/main.html'});
     });
 

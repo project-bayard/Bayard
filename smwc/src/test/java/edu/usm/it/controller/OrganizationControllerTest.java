@@ -6,20 +6,21 @@ import edu.usm.domain.Encounter;
 import edu.usm.domain.Organization;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -37,12 +38,15 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     private Contact contact;
     private Contact initiator;
 
+    @After
+    public void teardown() {
+        organizationService.deleteAll();
+    }
 
-    @Before
-    @Transactional
-    public void setup() {
 
-        /*Initiator*/
+    @Test
+    public void testGetAllOrganizations() throws Exception {
+         /*Initiator*/
         initiator = new Contact();
         initiator.setFirstName("initiatorFirst");
         initiator.setLastName("initiatorLast");
@@ -77,10 +81,6 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         contactService.create(contact);
 
 
-    }
-
-    @Test
-    public void testGetAllOrganizations() throws Exception {
         MvcResult result = mockMvc.perform(get("/organizations").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -92,4 +92,16 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
                 .andReturn();
 
     }
+
+    @Test
+    public void testCreateOrganization() throws Exception {
+
+        String json = "{\"name\" : \"orgName\", \"members\" : []}";
+        mockMvc.perform(post("/organizations").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated());
+        Set<Organization> organizations = organizationService.findAll();
+        assertEquals(organizations.size(),1);
+    }
+
+
 }
