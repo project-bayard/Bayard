@@ -25,7 +25,7 @@ public class OrganizationController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.OrganizationList.class)
     public Set<Organization> getAllOrganizations() {
-      return organizationService.findAll();
+        return organizationService.findAll();
     }
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -46,7 +46,7 @@
 
     }]);
 
-    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location', function($scope, $routeParams, ContactService, $timeout, $location) {
+    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService) {
 
         var setup = function() {
             $scope.edit = false;
@@ -55,6 +55,8 @@
             $scope.addingEncounter = false;
             $scope.encounterSuccess = true;
             $scope.initiator = null;
+            $scope.organizations = null;
+            $scope.addOrganization = {hidden : true};
 
             //TODO: decouple this knowledge
             $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
@@ -117,7 +119,6 @@
             });
         };
 
-
         $scope.setEncounterInitiator = function(id) {
             $scope.initiator = {firstName: "" , lastName: ""};
 
@@ -131,7 +132,50 @@
         $scope.viewDetails = function (id) {
             var path = "/contacts/contact/" + id ;
             $location.path(path);
-        }
+        };
+
+        $scope.getOrganizations = function() {
+            $scope.addOrganization.hidden = false;
+
+            if ($scope.organizations == null) {
+                OrganizationService.findAll({}, function(data) {
+                    $scope.organizations = data;
+                }, function(err) {
+                    console.log(err);
+                });
+
+            }
+        };
+
+        $scope.addToOrganization = function (index) {
+            //TODO transform organization to dto
+            var organization = $scope.organizations[index];
+
+            if ($scope.contact.organizations == null) {
+                $scope.contact.organizations = [];
+
+            }
+
+            var members = [$scope.contact.id];
+            for (var i = 0; i < organization.members.length; i++) {
+                members.push(organization.members[i].id);
+            }
+
+            $scope.contact.organizations.push({id : organization.id, name: organization.name, members: members });
+
+            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
+                $scope.addOrganization.hidden = true;
+
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+
+            }, function(err) {
+                console.log(err);
+            });
+
+        };
+
     }]);
 
 

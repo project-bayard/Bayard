@@ -1,0 +1,32 @@
+<div class="panel panel-default">
+    <div class="panel-heading" ng-click="showingOrganizations=!showingOrganizations">
+        <h3 class="panel-title">Organizations ({{contact.organizations.length}})</h3>
+    </div>
+    <div class="panel-body" ng-show="showingOrganizations">
+        <button class="btn btn-md btn-primary" ng-click="getOrganizations()">Add Organization</button>
+
+        <div class="form-group" ng-if="addOrganization.hidden == false">
+            <label>Organization:
+                <select class="form-control input-small" ng-model="addOrganization.index">
+                    <option ng-repeat="organization in organizations | byAlreadyMemberOf:contact.organizations" value="{{$index}}">{{organization.name}}</option>
+                </select>
+            </label>
+            <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
+        </div>
+
+        <table class="bootstrap-table table table-striped table-hover table-responsive"
+               data-toggle="table"
+               data-pagination="true"
+               data-search="true">
+            <tr>
+                <th>Name</th>
+                <th>Details</th>
+            </tr>
+
+            <tr ng-repeat="organization in contact.organizations">
+                <td>{{organization.name}}</td>
+                <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View Details</a></td>
+            </tr>
+        </table>
+    </div>
+</div>

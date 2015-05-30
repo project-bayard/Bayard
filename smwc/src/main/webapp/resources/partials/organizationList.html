@@ -1,19 +1,31 @@
 <div class="container-fluid">
     <h1>Organizations</h1>
     <button class="btn btn-md btn-primary"ng-model="addOrganization.hidden" ng-click="addOrganization.hidden = !addOrganization.hidden">Create Organization</button>
-    <div ng-if="addOrganization.hidden == false">
-        <label>Name:
+
+    <div class="form-group" ng-if="addOrganization.hidden == false">
+        <label>Name
             <input type="text" class="form-control input-sm" ng-model="addOrganization.name">
         </label>
         <button class="btn btn-md btn-success" ng-click="createOrganization(addOrganization.name)">Submit</button>
     </div>
+
     <br><br>
-    <table>
+
+    <table class="bootstrap-table table table-striped table-hover table-responsive"
+           data-toggle="table"
+           data-pagination="true"
+           data-search="true">
         <tr>
             <th>Name</th>
+            <th># Contacts</th>
+            <th># Members</th>
+            <th>Details</th>
         </tr>
-        <tr ng-repeat="organization in Organizations">
+        <tr ng-repeat="organization in organizations">
             <td>{{organization.name}}</td>
+            <td>{{organization.members.length}}</td>
+            <td>{{(organization.members | byMembers).length}}</td>
+            <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View Details</a></td>
         </tr>
     </table>
 </div>
