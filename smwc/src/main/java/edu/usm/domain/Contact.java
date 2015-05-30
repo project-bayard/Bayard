@@ -111,13 +111,13 @@ public class Contact extends BasicEntity implements Serializable {
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
-    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="event_id", referencedColumnName = "id")}
     )
-    private List<Event> attendedEvents;
+    private Set<Event> attendedEvents;
 
     @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Encounter> encounters;
@@ -231,11 +231,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.interests = interests;
     }
 
-    public List<Event> getAttendedEvents() {
+    public Set<Event> getAttendedEvents() {
         return attendedEvents;
     }
 
-    public void setAttendedEvents(List<Event> attendedEvents) {
+    public void setAttendedEvents(Set<Event> attendedEvents) {
         this.attendedEvents = attendedEvents;
     }
 

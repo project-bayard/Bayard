@@ -3,10 +3,7 @@ package edu.usm.domain;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -23,7 +20,7 @@ public class Event extends BasicEntity  implements Serializable {
     @Column
     private String location;
 
-    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.ALL})
+    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Contact> attendees;
 
     @Column

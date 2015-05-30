@@ -81,7 +81,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contacts.add(contact);
         event.setAttendees(contacts);
 
-        List<Event> eventList = new ArrayList<>();
+        Set<Event> eventList = new HashSet<>();
         eventList.add(event);
         contact.setAttendedEvents(eventList);
 

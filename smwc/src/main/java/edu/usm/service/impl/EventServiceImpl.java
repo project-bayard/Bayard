@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 /**
  * Created by scottkimball on 5/7/15.
  */
@@ -21,6 +23,11 @@ public class EventServiceImpl extends BasicService implements EventService {
     private EventDao eventDao;
 
     private Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
+
+    @Override
+    public Set<Event> findAll() {
+        return (Set<Event>) eventDao.findAll();
+    }
 
     @Override
     public Event findById(String id) {

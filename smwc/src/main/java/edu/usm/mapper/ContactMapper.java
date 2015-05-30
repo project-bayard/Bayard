@@ -66,7 +66,7 @@ public class ContactMapper {
 
     private void convertEvents(ContactDto dto, Contact contact) {
 
-        List<Event> events = new ArrayList<>();
+        Set<Event> events = new HashSet<>();
         contact.setAttendedEvents(events);
 
         for (EventDto eventDto : dto.getAttendedEvents()) {
