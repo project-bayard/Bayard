@@ -194,7 +194,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         event.setAttendees(contacts);
         eventService.create(event);
 
-        List<Event> eventList = new ArrayList<>();
+        Set<Event> eventList = new HashSet<>();
         eventList.add(event);
         contact.setAttendedEvents(eventList);
 
@@ -230,7 +230,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.city", is(contact.getCity())))
                 .andExpect(jsonPath("$.zipCode", is(contact.getZipCode())))
                 .andExpect(jsonPath("$.email", is(contact.getEmail())))
-                .andExpect(jsonPath("$.attendedEvents[0].id", is(contact.getAttendedEvents().get(0).getId())))
+                .andExpect(jsonPath("$.attendedEvents[0].id", is(contact.getAttendedEvents().iterator().next().getId())))
                 .andExpect(jsonPath("$.memberInfo.id", is(contact.getMemberInfo().getId())))
                 .andExpect(jsonPath("$.organizations[0].id", is(contact.getOrganizations().iterator().next().getId())));
 
