@@ -57,4 +57,30 @@
         });
     }]);
 
+    services.factory('EventService',[ '$resource', function ($resource) {
+        return $resource('../events/event/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                url : "../events",
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url : "../events"
+            }
+        });
+    }]);
+
 }());
