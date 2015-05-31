@@ -1,7 +1,5 @@
 package edu.usm.dto;
 
-import edu.usm.domain.Event;
-
 import java.io.Serializable;
 import java.util.Set;
 
@@ -12,7 +10,7 @@ public class EventDto extends BasicEntityDto implements Serializable {
     private String notes;
     private String location;
     private Set<String> attendees;
-    private String date;
+    private String dateHeld;
 
     public String getId() {
         return id;
@@ -54,11 +52,11 @@ public class EventDto extends BasicEntityDto implements Serializable {
         this.attendees = attendees;
     }
 
-    public String getDate() {
-        return date;
+    public String getDateHeld() {
+        return dateHeld;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateHeld(String dateHeld) {
+        this.dateHeld = dateHeld;
     }
 }
