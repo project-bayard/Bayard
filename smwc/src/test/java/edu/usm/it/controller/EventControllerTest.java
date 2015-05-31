@@ -1,5 +1,7 @@
 package edu.usm.it.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
@@ -17,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,10 +36,23 @@ public class EventControllerTest extends WebAppConfigurationAware {
     @Autowired
     EventService eventService;
 
+    ObjectWriter writer;
+
     @Before
     @Transactional
     public void setup() {
+        writer = new ObjectMapper().writer();
+    }
 
+    private Event constructEvent(String name, String location, String date) {
+        Event event = new Event();
+        event.setName(name);
+        event.setLocation(location);
+        event.setDateHeld(date);
+        return event;
+    }
+
+    private void persistDummyEvent() {
         //Attendee
         Contact attendee = new Contact();
         attendee.setFirstName("Test");
@@ -45,10 +60,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         contactService.create(attendee);
 
         //Event
-        Event event = new Event();
-        event.setDateHeld("2012-01-01");
-        event.setLocation("Headquarters");
-        event.setName("Rally");
+        Event event = constructEvent("Rally", "Headquarters", "2012-01-01");
 
         Set<Contact> attendees = new HashSet<>();
         attendees.add(attendee);
@@ -59,16 +71,19 @@ public class EventControllerTest extends WebAppConfigurationAware {
         events.add(event);
         attendee.setAttendedEvents(events);
         contactService.update(attendee);
+    }
 
+    private void wipeData(){
+        eventService.deleteAll();
     }
 
     @Test
     public void testGetAllEvents() throws Exception {
 
+        wipeData();
+        persistDummyEvent();
 
         Contact persistedAttendee = contactService.findAll().iterator().next();
-        assertEquals(1, persistedAttendee.getAttendedEvents().size());
-
         Event event = eventService.findAll().iterator().next();
 
         MvcResult result = mockMvc.perform(get("/events").accept(MediaType.APPLICATION_JSON))
@@ -82,6 +97,17 @@ public class EventControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.[0].attendees.[0].firstName", is(persistedAttendee.getFirstName())))
                 .andExpect(jsonPath("$.[0].attendees.[0].lastName", is(persistedAttendee.getLastName())))
                 .andReturn();
+
+    }
+
+    @Test
+    public void testCreateEvent() throws Exception {
+
+        Event newEvent = constructEvent("Test", "Church", "2012-01-01");
+        String json = writer.writeValueAsString(newEvent);
+
+        mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated());
 
     }
 
