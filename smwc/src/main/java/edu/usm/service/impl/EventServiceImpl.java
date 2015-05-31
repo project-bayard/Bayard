@@ -1,5 +1,6 @@
 package edu.usm.service.impl;
 
+import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
 import edu.usm.repository.EventDao;
@@ -38,5 +39,17 @@ public class EventServiceImpl extends BasicService implements EventService {
     public void create(Event event) {
         logger.debug("creating event with ID: " + event.getId());
         eventDao.save(event);
+    }
+
+    @Override
+    public void delete(Event event) {
+        eventDao.delete(event);
+    }
+
+    @Override
+    public void deleteAll() {
+        logger.debug("Deleting all events!");
+        Set<Event> events = findAll();
+        events.stream().forEach(this::delete);
     }
 }
