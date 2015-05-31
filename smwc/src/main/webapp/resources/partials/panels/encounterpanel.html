@@ -45,7 +45,7 @@
             <th>Notes</th>
 
             <tr ng-repeat="encounter in contact.encounters">
-                <td>{{encounter.encounterDate}}</td>
+                <td>{{encounter.encounterDate | date: 'MMMM d, y'}}</td>
                 <td>{{encounter.type}}</td>
                 <td>{{encounter.assessment}}</td>
                 <td>
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <h4>Initiator</h4>
-                                    <p>{{initiator.firstName + initiator.lastName}}</p>
+                                    <p>{{initiator.firstName + " " + initiator.lastName}}</p>
                                     <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(initiator.id)">View Details</button>
                                     <hr>
                                     <h4>Notes</h4>
