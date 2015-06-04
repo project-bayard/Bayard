@@ -82,10 +82,7 @@
         setup();
 
         $scope.addEncounter = function() {
-
-
             $scope.newEncounter.contact = $scope.contact.id;
-
 
             if (null === $scope.contact.encounters) {
                 $scope.contact.encounters = [];
@@ -106,7 +103,6 @@
                 $scope.encounterSuccess = false;
                 console.log(err);
             });
-
         };
 
         $scope.updateBasicDetails = function() {
@@ -143,12 +139,11 @@
                 }, function(err) {
                     console.log(err);
                 });
-
             }
         };
 
         $scope.addToOrganization = function (index) {
-            //TODO transform organization to dto
+            $scope.organizationSuccess = true;
             var organization = $scope.organizations[index];
 
             if ($scope.contact.organizations == null) {
@@ -168,13 +163,31 @@
 
                 $timeout(function() {
                     $scope.requestSuccess = false;
+
                 }, 3000);
 
             }, function(err) {
                 console.log(err);
+                $scope.organizationSuccess = false;
+
             });
 
         };
+
+        $scope.addToNewOrganization = function(name) {
+            var organization = {name: name, members : [$scope.contact.id]};
+
+            OrganizationService.create( organization, function(data) {
+                $scope.contactUpdated = true;
+                $scope.contact.organizations.push(organization);
+            }, function(err) {
+                console.log(err);
+                $scope.organizationSuccess = false;
+            });
+
+        }
+
+
 
     }]);
 
@@ -192,8 +205,6 @@
         $scope.createOrganization = function(name) {
             var organization = {name: name, members: []};
             OrganizationService.create( organization, function(data) {
-                //indicate success
-                $scope.contactUpdated = true;
                 $scope.organizations.push(organization);
                 $scope.addOrganization = {hidden: true};
             }, function(err) {

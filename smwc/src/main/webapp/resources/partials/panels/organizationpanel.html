@@ -6,13 +6,21 @@
         <button class="btn btn-md btn-primary" ng-click="getOrganizations()">Add Organization</button>
 
         <div class="form-group" ng-if="addOrganization.hidden == false">
-            <label>Organization:
+            <label>Existing Organizations:
                 <select class="form-control input-small" ng-model="addOrganization.index">
                     <option ng-repeat="organization in organizations | byAlreadyMemberOf:contact.organizations" value="{{$index}}">{{organization.name}}</option>
                 </select>
             </label>
             <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
         </div>
+        <div class="form-group">
+            <label>New Organization:
+                <input type="text"ng-model="orgName">
+            </label>
+            <button class="btn btn-md btn-success"ng-click="addToNewOrganization(orgName)">Add to New Organization</button>
+        </div>
+        <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">Unable to add Organization</div>
+
 
         <table class="bootstrap-table table table-striped table-hover table-responsive"
                data-toggle="table"
