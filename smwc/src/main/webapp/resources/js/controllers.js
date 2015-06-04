@@ -178,6 +178,33 @@
 
     }]);
 
+    controllers.controller('EventsCtrl', ['$scope', 'EventService', function($scope, EventService) {
+
+        $scope.addEvent = {hidden: true};
+        $scope.newEvent = {};
+
+        EventService.findAll({}, function(response) {
+            $scope.events = response;
+        }, function(err) {
+            console.log(err);
+        });
+
+        $scope.createEvent = function() {
+
+            $scope.newEvent.attendees = [];
+
+            EventService.create({}, $scope.newEvent, function(response) {
+                $scope.addEvent = {hidden : true};
+                $scope.newEventForm.$setPristine();
+                $scope.events.push($scope.newEvent);
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+
+    }]);
+
 
     controllers.controller('OrganizationsCtrl', ['$scope', 'OrganizationService', function($scope, OrganizationService) {
 

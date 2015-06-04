@@ -1,0 +1,43 @@
+<div class="container-fluid">
+    <h1>Events</h1>
+    <button class="btn btn-md btn-primary" ng-model="addEvent.hidden" ng-click="addEvent.hidden = !addEvent.hidden">Create Event</button>
+
+    <form id="newEventForm" name="newEventForm">
+        <div class="form-group" ng-if="addEvent.hidden == false">
+            <label>Name of Event
+                <input type="text" class="form-control input-sm" ng-model="newEvent.name">
+            </label>
+            <label>Location
+                <input type="text" class="form-control input-sm" ng-model="newEvent.location">
+            </label>
+            <label>Date
+                <input type="date"  ng-model="newEvent.dateHeld">
+            </label>
+            <label>Additional Notes
+                <input type="text" class="form-control input-sm" ng-model="newEvent.notes">
+            </label>
+            <button class="btn btn-md btn-success" ng-click="createEvent()">Submit</button>
+        </div>
+    </form>
+
+    <br><br>
+
+    <table class="bootstrap-table table table-striped table-hover table-responsive"
+           data-toggle="table"
+           data-pagination="true"
+           data-search="true">
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Date</th>
+            <th># Attendees</th>
+        </tr>
+        <tr ng-repeat="event in events">
+            <td>{{event.name}}</td>
+            <td>{{event.location}}</td>
+            <td>{{event.date}}</td>
+            <td>{{event.attendees.length}}</td>
+            <td><a class="btn btn-md btn-info" href="#/events/event/{{event.id}}">View Details</a></td>
+        </tr>
+    </table>
+</div>
