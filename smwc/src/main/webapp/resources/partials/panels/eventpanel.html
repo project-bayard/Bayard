@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+    <div class="panel-heading" ng-click="toggleShowingEvents()">
+        <h3 class="panel-title">Events ({{contact.attendedEvents.length}})</h3>
+    </div>
+    <div class="panel-body" ng-show="showingEvents">
+        <button class="btn btn-md btn-primary" ng-click="getEvents()">Add Event</button>
+
+        <div class="form-group" ng-if="addEvent.hidden == false">
+            <label>Event:
+                <select class="form-control input-small" ng-model="addEvent.index">
+                    <option ng-repeat="event in events" value="{{$index}}">{{event.name}}</option>
+                </select>
+            </label>
+            <button class="btn btn-md btn-success" ng-click="attendEvent(addEvent.index)">Submit</button>
+        </div>
+
+        <div ng-include src=" 'resources/partials/tables/eventsTable.html' "></div>
+    </div>
+
+</div>

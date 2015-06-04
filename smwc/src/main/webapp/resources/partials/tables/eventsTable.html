@@ -1,0 +1,18 @@
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Date</th>
+        <th># Attendees</th>
+    </tr>
+    <tr ng-repeat="event in eventsTable">
+        <td>{{event.name}}</td>
+        <td>{{event.location}}</td>
+        <td>{{event.date}}</td>
+        <td>{{event.attendees.length}}</td>
+        <td><a class="btn btn-md btn-info" href="#/events/event/{{event.id}}">View Details</a></td>
+    </tr>
+</table>

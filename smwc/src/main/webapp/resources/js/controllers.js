@@ -46,7 +46,7 @@
 
     }]);
 
-    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService) {
+    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', 'EventService', function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService) {
 
         var setup = function() {
             $scope.edit = false;
@@ -57,6 +57,7 @@
             $scope.initiator = null;
             $scope.organizations = null;
             $scope.addOrganization = {hidden : true};
+            $scope.addEvent = {hidden : true};
             $scope.newEncounter = {};
 
             //TODO: decouple this knowledge
@@ -130,6 +131,51 @@
             $location.path(path);
         };
 
+        $scope.toggleShowingEvents = function() {
+            $scope.eventsTable = $scope.contact.attendedEvents;
+            $scope.showingEvents=!$scope.showingEvents;
+        };
+
+        $scope.getEvents = function() {
+            $scope.addEvent.hidden = false;
+
+            if ($scope.events == null) {
+                EventService.findAll({}, function(response) {
+                    $scope.events = response;
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
+
+        $scope.attendEvent = function (index) {
+
+            var event = $scope.events[index];
+
+            if ($scope.contact.attendedEvents == null) {
+                $scope.contact.attendedEvents = [];
+            }
+
+            var attendees = [$scope.contact.id];
+            for (var i = 0; i < event.attendees.length; i++) {
+                attendees.push(event.attendees[i].id);
+            }
+
+            $scope.contact.attendedEvents.push({id : event.id, name: event.name, notes: event.notes, dateHeld: event.dateHeld, location: event.location, attendees: attendees });
+
+            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
+                $scope.addEvent.hidden = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+
+            }, function(err) {
+                $scope.contact.attendedEvents.pop();
+                console.log(err);
+            });
+
+        };
+
         $scope.getOrganizations = function() {
             $scope.addOrganization.hidden = false;
 
@@ -141,6 +187,7 @@
                 });
             }
         };
+
 
         $scope.addToOrganization = function (index) {
             $scope.organizationSuccess = true;
@@ -187,6 +234,34 @@
 
         }
 
+
+
+    }]);
+
+    controllers.controller('EventsCtrl', ['$scope', 'EventService', function($scope, EventService) {
+
+        $scope.addEvent = {hidden: true};
+        $scope.newEvent = {};
+
+        EventService.findAll({}, function(response) {
+            $scope.eventsTable = response;
+        }, function(err) {
+            console.log(err);
+        });
+
+        $scope.createEvent = function() {
+
+            $scope.newEvent.attendees = [];
+
+            EventService.create({}, $scope.newEvent, function(response) {
+                $scope.addEvent = {hidden : true};
+                $scope.eventsTable.push($scope.newEvent);
+                $scope.newEventForm.$setPristine();
+                $scope.newEvent = {};
+            }, function(err) {
+                console.log(err);
+            });
+        };
 
 
     }]);
