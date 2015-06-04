@@ -2,7 +2,6 @@ package edu.usm.it.controller;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
-import edu.usm.domain.Encounter;
 import edu.usm.domain.Organization;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
@@ -12,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
@@ -40,33 +37,18 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
 
     @After
     public void teardown() {
+        contactService.deleteAll();
         organizationService.deleteAll();
     }
 
 
     @Test
     public void testGetAllOrganizations() throws Exception {
-         /*Initiator*/
-        initiator = new Contact();
-        initiator.setFirstName("initiatorFirst");
-        initiator.setLastName("initiatorLast");
-        contactService.create(initiator);
-
-
+        
         /*contact*/
         contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
-
-
-        Encounter encounter = new Encounter();
-        encounter.setInitiator(initiator);
-        encounter.setContact(contact);
-        encounter.setAssessment(4);
-        List<Encounter> encounterList = new ArrayList<>();
-        encounterList.add(encounter);
-        contact.setEncounters(encounterList);
-
 
         /*orgs*/
         organization = new Organization();

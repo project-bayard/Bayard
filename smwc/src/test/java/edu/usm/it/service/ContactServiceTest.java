@@ -7,6 +7,7 @@ import edu.usm.domain.Organization;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,12 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         organization.setName("organization");
         committee = new Committee();
         committee.setName("committee");
+
+    }
+
+    @After
+    public void teardown() {
+        contactService.deleteAll();
 
     }
 

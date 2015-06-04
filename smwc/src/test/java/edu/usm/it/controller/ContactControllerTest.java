@@ -7,7 +7,6 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.dto.ContactDto;
 import edu.usm.dto.EncounterDto;
-import edu.usm.dto.EventDto;
 import edu.usm.dto.OrganizationDto;
 import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.service.ContactService;
@@ -23,14 +22,15 @@ import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -81,6 +81,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         organizationService.deleteAll();
         contactService.deleteAll();
+        eventService.deleteAll();
     }
 
 

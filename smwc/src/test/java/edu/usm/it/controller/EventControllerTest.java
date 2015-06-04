@@ -7,13 +7,11 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-
-import javax.transaction.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +19,7 @@ import java.util.Set;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by Andrew on 5/30/2015.
@@ -31,18 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class EventControllerTest extends WebAppConfigurationAware {
 
     @Autowired
-    ContactService contactService;
+    private ContactService contactService;
 
     @Autowired
-    EventService eventService;
+    private EventService eventService;
 
-    ObjectWriter writer;
+    private ObjectWriter writer = new ObjectMapper().writer();
 
-    @Before
-    @Transactional
-    public void setup() {
-        writer = new ObjectMapper().writer();
-    }
 
     private Event constructEvent(String name, String location, String date) {
         Event event = new Event();
@@ -51,6 +42,8 @@ public class EventControllerTest extends WebAppConfigurationAware {
         event.setDateHeld(date);
         return event;
     }
+
+
 
     private void persistDummyEvent() {
         //Attendee
@@ -73,14 +66,15 @@ public class EventControllerTest extends WebAppConfigurationAware {
         contactService.update(attendee);
     }
 
-    private void wipeData(){
+    @After
+    public void wipeData(){
         eventService.deleteAll();
+        contactService.deleteAll();
     }
 
     @Test
     public void testGetAllEvents() throws Exception {
 
-        wipeData();
         persistDummyEvent();
 
         Contact persistedAttendee = contactService.findAll().iterator().next();
@@ -89,7 +83,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         MvcResult result = mockMvc.perform(get("/events").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].id", is(persistedAttendee.getAttendedEvents().iterator().next().getId())))
+                .andExpect(jsonPath("$.[0].id", is(event.getId())))
                 .andExpect(jsonPath("$.[0].name", is(event.getName())))
                 .andExpect(jsonPath("$.[0].location", is(event.getLocation())))
                 .andExpect(jsonPath("$.[0].dateHeld", is(event.getDateHeld())))

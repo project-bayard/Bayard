@@ -20,7 +20,7 @@ public class Event extends BasicEntity  implements Serializable {
     @Column
     private String location;
 
-    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Contact> attendees;
 
     @Column
