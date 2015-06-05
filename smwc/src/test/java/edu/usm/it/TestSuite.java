@@ -1,5 +1,6 @@
 package edu.usm.it;
 
+import edu.usm.it.controller.CommitteeControllerTest;
 import edu.usm.it.controller.ContactControllerTest;
 import edu.usm.it.controller.EventControllerTest;
 import edu.usm.it.controller.OrganizationControllerTest;
@@ -32,7 +33,8 @@ import org.junit.runners.Suite;
         ContactMapperTest.class,
         ContactDtoMapperTest.class,
         OrganizationControllerTest.class,
-        EventControllerTest.class
+        EventControllerTest.class,
+        CommitteeControllerTest.class
 })
 public class TestSuite {
 }
