@@ -44,7 +44,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
 
     @Test
     public void testGetAllOrganizations() throws Exception {
-        
+
         /*contact*/
         contact = new Contact();
         contact.setFirstName("first");

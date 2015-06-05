@@ -1,0 +1,48 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Donor Information</h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label>Sustainer
+                <input type="checkbox"  ng-model="contact.donorInfo.sustainer" ng-disabled="!edit">
+            </label>
+            <label>Thank you Letter Sent
+                <input type="checkbox"  ng-model="contact.donorInfo.thankYouLetterSent" ng-disabled="!edit">
+            </label>
+            <label>IRS Letter Sent
+                <input type="checkbox"  ng-model="contact.donorInfo.irsLetterSent" ng-disabled="!edit">
+            </label>
+        </div>
+        <div class="form-group" ng-if="contact.donorInfo.sustainer">
+            <label>Sustainer Since
+                <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.date" ng-readonly="!edit">
+            </label>
+        </div>
+        <p><strong>Donations</strong></p>
+        <div ng-repeat="donation in contact.donorInfo.donations">
+            <div class="form-group">
+                <label>Date
+                    <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.donations.date" ng-readonly="true">
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Amount
+                    <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.donations.amount" ng-readonly="true">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Type
+                    <input type="text" class="form-control input-sm" ng-model="contact.donorInfo.donations.type" ng-readonly="true">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Comments
+                    <textarea rows="5" cols="80" ng-model="contact.donorInfo.donations.comment" ng-readonly="true"></textarea>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

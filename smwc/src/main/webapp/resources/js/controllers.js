@@ -227,6 +227,8 @@
             OrganizationService.create( organization, function(data) {
                 $scope.contactUpdated = true;
                 $scope.contact.organizations.push(organization);
+                $scope.organizations.push(organization);
+                $scope.addOrganization.hidden = true;
             }, function(err) {
                 console.log(err);
                 $scope.organizationSuccess = false;
@@ -279,9 +281,15 @@
 
         $scope.createOrganization = function(name) {
             var organization = {name: name, members: []};
+
             OrganizationService.create( organization, function(data) {
-                $scope.organizations.push(organization);
                 $scope.addOrganization = {hidden: true};
+
+                OrganizationService.findAll({}, function(data) {
+                    $scope.organizations = data;
+                }, function(err) {
+                    console.log(err);
+                });
             }, function(err) {
                 console.log(err);
             });
@@ -290,6 +298,17 @@
 
     }]);
 
+    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', function($scope, OrganizationService, $routeParams) {
+
+        OrganizationService.find({id : $routeParams.id}, function(data) {
+            $scope.organization = data;
+            if ($scope.organization.members == null) {
+                $scope.organization.members = [];
+            }
+        }, function(err) {
+            console.log(err);
+        });
+    }]);
 
 }());
 

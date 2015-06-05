@@ -25,6 +25,10 @@
                 templateUrl:'resources/partials/organizationList.html',
                 controller: 'OrganizationsCtrl'
             })
+            .when('/organizations/organization/:id', {
+                templateUrl: 'resources/partials/organizationDetails.html',
+                controller: 'OrganizationDetailsCtrl'
+            })
             .when('/events' , {
                 templateUrl:'resources/partials/eventList.html',
                 controller: 'EventsCtrl'

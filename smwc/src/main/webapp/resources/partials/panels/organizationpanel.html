@@ -5,21 +5,27 @@
     <div class="panel-body" ng-show="showingOrganizations">
         <button class="btn btn-md btn-primary" ng-click="getOrganizations()">Add Organization</button>
 
-        <div class="form-group" ng-if="addOrganization.hidden == false">
-            <label>Existing Organizations:
-                <select class="form-control input-small" ng-model="addOrganization.index">
-                    <option ng-repeat="organization in organizations | byAlreadyMemberOf:contact.organizations" value="{{$index}}">{{organization.name}}</option>
-                </select>
-            </label>
-            <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
-        </div>
-        <div class="form-group">
+        <div ng-if="addOrganization.hidden == false">
+            <div class="form-group">
+                <label>Existing Organizations:
+                    <select class="form-control input-small" ng-model="addOrganization.index">
+                        <option ng-repeat="organization in organizations | byAlreadyMemberOf:contact.organizations"
+                                value="{{$index}}">{{organization.name}}
+                        </option>
+                    </select>
+                </label>
+                <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit
+                </button>
+            </div>
             <label>New Organization:
-                <input type="text"ng-model="orgName">
+                <input type="text" ng-model="orgName">
             </label>
-            <button class="btn btn-md btn-success"ng-click="addToNewOrganization(orgName)">Add to New Organization</button>
+            <button class="btn btn-md btn-success" ng-click="addToNewOrganization(orgName)">Add to New Organization
+            </button>
         </div>
-        <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">Unable to add Organization</div>
+        <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">Unable to
+            add Organization
+        </div>
 
 
         <table class="bootstrap-table table table-striped table-hover table-responsive"
@@ -33,8 +39,11 @@
 
             <tr ng-repeat="organization in contact.organizations">
                 <td>{{organization.name}}</td>
-                <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View Details</a></td>
+                <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View
+                    Details</a></td>
             </tr>
         </table>
     </div>
+</div>
+
 </div>
