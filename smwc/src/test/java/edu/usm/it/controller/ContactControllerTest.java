@@ -135,7 +135,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         mockMvc.perform(get("/contacts").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.[0].id", is(id)));
+
 
     }
 

@@ -16,67 +16,67 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String firstName;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String middleName;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String lastName;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String streetAddress;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String aptNumber;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String city;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String zipCode;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String phoneNumber1;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String phoneNumber2;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String email;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String language;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String occupation;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private String interests;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private boolean donor;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private boolean member;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class})
     private int assessment;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)

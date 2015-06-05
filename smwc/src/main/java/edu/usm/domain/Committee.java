@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.CascadeType;
@@ -15,9 +16,11 @@ import java.util.Set;
 public class Committee extends BasicEntity implements Serializable {
 
     @ManyToMany(mappedBy = "committees" , cascade = CascadeType.REFRESH)
+    @JsonView(Views.CommitteeList.class)
     private Set<Contact> members;
 
     @Column
+    @JsonView(Views.CommitteeList.class)
     private String name;
 
     public Committee (String id) {
