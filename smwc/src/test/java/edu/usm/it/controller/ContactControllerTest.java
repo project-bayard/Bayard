@@ -129,16 +129,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Transactional
     public void testGetAllContacts () throws Exception {
 
-
         contactService.create(contact);
-        String id = contact.getId();
-
         mockMvc.perform(get("/contacts").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].id", is(id)));
-
-
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test

@@ -83,4 +83,30 @@
         });
     }]);
 
+    services.factory('CommitteeService',[ '$resource', function ($resource) {
+        return $resource('../committees/committee/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                url : "../committees",
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url : "../committees"
+            }
+        });
+    }]);
+
 }());

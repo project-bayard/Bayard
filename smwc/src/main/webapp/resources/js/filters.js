@@ -7,6 +7,7 @@
 
     filters.filter('byMembers', function () {
         return function (collection) {
+
             var newCollection = angular.copy(collection)
             for (var i = 0; i < newCollection.length; i++) {
 
@@ -21,10 +22,11 @@
 
     filters.filter('byAlreadyMemberOf', function () {
         return function (collection, contactCollection) {
-            var newCollection = angular.copy(collection);
-            if (contactCollection == null) {
-                return newCollection;
+            if (contactCollection == null || contactCollection == 0) {
+                return collection;
             }
+            var newCollection = angular.copy(collection);
+
 
             for (var i = 0; i < contactCollection.length; i++) {
                 var item = contactCollection[i];

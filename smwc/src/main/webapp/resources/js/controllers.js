@@ -46,7 +46,8 @@
 
     }]);
 
-    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', 'EventService', function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService) {
+    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', 'EventService', 'CommitteeService',
+        function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService) {
 
         var setup = function() {
             $scope.edit = false;
@@ -58,6 +59,7 @@
             $scope.organizations = null;
             $scope.addOrganization = {hidden : true};
             $scope.addEvent = {hidden : true};
+            $scope.addCommittee = {hidden : true};
             $scope.newEncounter = {};
 
             //TODO: decouple this knowledge
@@ -78,6 +80,8 @@
             }, function(err) {
                 console.log(err);
             });
+
+
         };
 
         setup();
@@ -177,7 +181,7 @@
         };
 
         $scope.getOrganizations = function() {
-            $scope.addOrganization.hidden = false;
+            $scope.addOrganization.hidden = !$scope.addOrganization.hidden;
 
             if ($scope.organizations == null) {
                 OrganizationService.findAll({}, function(data) {
@@ -199,6 +203,10 @@
             }
 
             var members = [$scope.contact.id];
+            if (organization.members == null) {
+                organization.members = [];
+            }
+
             for (var i = 0; i < organization.members.length; i++) {
                 members.push(organization.members[i].id);
             }
@@ -234,11 +242,59 @@
                 $scope.organizationSuccess = false;
             });
 
-        }
+        };
+
+        $scope.getCommittees = function() {
+            $scope.addCommittee.hidden = !$scope.addCommittee.hidden;
+
+            if ($scope.committees == null) {
+                CommitteeService.findAll({}, function(data) {
+                    $scope.committees = data;
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
 
 
+        $scope.addToCommittee = function (index) {
+            $scope.committeeSuccess = true;
+            var committee = $scope.committees[index];
 
-    }]);
+            if ($scope.contact.committees == null) {
+                $scope.contact.committees = [];
+
+            }
+
+
+            var members = [$scope.contact.id];
+            if (committee.members == null) {
+                committee.members = [];
+            }
+
+            for (var i = 0; i < committee.members.length; i++) {
+                members.push(committee.members[i].id);
+            }
+
+            $scope.contact.committees.push({id : committee.id, name: committee.name, members: members });
+
+            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
+                $scope.addCommittee.hidden = true;
+
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+
+                }, 3000);
+
+            }, function(err) {
+                console.log(err);
+                $scope.committeeSuccess = false;
+
+            });
+
+        };
+
+        }]);
 
     controllers.controller('EventsCtrl', ['$scope', 'EventService', function($scope, EventService) {
 
@@ -293,7 +349,7 @@
             }, function(err) {
                 console.log(err);
             });
-        }
+        };
 
 
     }]);
@@ -308,6 +364,39 @@
         }, function(err) {
             console.log(err);
         });
+    }]);
+
+    controllers.controller ('CommitteesCtrl',['$scope', 'CommitteeService', function($scope, CommitteeService){
+
+        var setup = function () {
+            $scope.panels = [];
+            $scope.addCommittee = {hidden: true};
+
+            CommitteeService.findAll({}, function(data) {
+                $scope.committees = data;
+                for (var i = 0; i < $scope.committees.size; i++) {
+                    $scope.panels.push({"hidden" : true});
+                }
+
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        setup();
+
+        $scope.createCommittee = function(name) {
+            var committee = {name: name, members: []};
+
+            CommitteeService.create( committee, function(data) {
+                $scope.addCommittee = {hidden: true};
+                setup();
+
+            }, function(err) {
+                console.log(err);
+            });
+        }
+
     }]);
 
 }());
