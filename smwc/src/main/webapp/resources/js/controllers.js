@@ -320,8 +320,19 @@
                 console.log(err);
             });
         };
+    }]);
 
 
+    controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', function($scope, EventService, $routeParams) {
+
+        EventService.find({id : $routeParams.id}, function(data) {
+            $scope.event = data;
+            if ($scope.event.attendees == null) {
+                $scope.event.attendees = [];
+            }
+        }, function(err) {
+            console.log(err);
+        });
     }]);
 
 

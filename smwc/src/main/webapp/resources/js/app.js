@@ -37,6 +37,10 @@
                 templateUrl:'resources/partials/committeeList.html',
                 controller: 'CommitteesCtrl'
             })
+            .when('/events/event/:id', {
+                templateUrl: 'resources/partials/eventDetails.html',
+                controller: 'EventDetailsCtrl'
+            })
             .otherwise({redirectTo: 'resources/partials/main.html'});
     });
 

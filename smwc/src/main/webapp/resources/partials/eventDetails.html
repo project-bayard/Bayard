@@ -1,0 +1,11 @@
+<div class="container-fluid">
+    <h1>Event Details</h1>
+    <h4>Name: {{event.name}}</h4>
+    <h4>Location: {{event.location}}</h4>
+    <h4>Date: {{event.dateHeld | date: 'MMMM d, y'}}</h4>
+
+    <br><br>
+    <h2>Members:</h2>
+    <div ng-include src=" 'resources/partials/tables/eventAttendeesTable.html' "></div>
+
+</div>
