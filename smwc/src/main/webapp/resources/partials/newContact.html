@@ -4,67 +4,76 @@
     <div ng-show="requestError" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
     <h1>Create New Contact</h1>
 
-    <form id="newContactForm" name="newContactForm">
-        <div class="form-group">
-            <label>First Name:
-            <input type="text" class="form-control input-sm" ng-model="contact.firstName">
-            </label>
-            <label>Middle Name:
-                <input type="text" class="form-control input-sm" ng-model="contact.middleName">
-            </label>
-            <label>Last Name:
-                <input type="text" class="form-control input-sm" ng-model="contact.lastName">
-            </label>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form id="newContactForm" name="newContactForm">
+                <div class="form-group">
+                    <label>First Name:
+                        <input type="text" class="form-control input-sm" ng-model="contact.firstName">
+                    </label>
+                </div>
+                <div class="form-group">
+                     <label>Middle Name:
+                        <input type="text" class="form-control input-sm" ng-model="contact.middleName">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Last Name:
+                        <input type="text" class="form-control input-sm" ng-model="contact.lastName">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Street Address:
+                        <input type="text" class="form-control input-sm" ng-model="contact.streetAddress">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Apt Number:
+                        <input type="text" class="form-control input-sm" ng-model="contact.aptNumber">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>City:
+                        <input type="text" class="form-control input-sm" ng-model="contact.city">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Zip:
+                        <input type="text" class="form-control input-sm" ng-model="contact.zipCode">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Primary Phone #:
+                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Secondary Phone #:
+                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Email:
+                        <input type="text" class="form-control input-sm" ng-model="contact.email">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Language:
+                        <input type="text" class="form-control input-sm" ng-model="contact.language">
+                    </label>
+                </div>
+
+                <button id="submitButton" class="btn btn-lg btn-block btn-success" ng-click="submit()">Submit</button>
+
+            </form>
         </div>
-
-        <div class="form-group">
-            <label>Street Address:
-                <input type="text" class="form-control input-sm" ng-model="contact.streetAddress">
-            </label>
-        </div>
-
-        <div class="form-group">
-            <label>Apt Number:
-                <input type="text" class="form-control input-sm" ng-model="contact.aptNumber">
-            </label>
-        </div>
-
-        <div class="form-group">
-            <label>City:
-                <input type="text" class="form-control input-sm" ng-model="contact.city">
-            </label>
-        </div>
-
-        <div class="form-group">
-            <label>Zip:
-                <input type="text" class="form-control input-sm" ng-model="contact.zipCode">
-            </label>
-        </div>
-
-        <div class="form-group">
-            <label>Primary Phone #:
-                <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1">
-            </label>
-            <label>Secondary Phone #:
-                <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2">
-            </label>
-        </div>
-
-        <div class="form-group">
-            <label>Email:
-                <input type="text" class="form-control input-sm" ng-model="contact.email">
-            </label>
-        </div>
-
-        <div class="form-group">
-        <label>Language:
-                <input type="text" class="form-control input-sm" ng-model="contact.lastName">
-            </label>
-        </div>
-
-        <button id="submitButton" class="btn btn-lg btn-block btn-success" ng-click="submit()">Submit</button>
-
-    </form>
+    </div>
 
     <p class="bg-danger">{{errorMessage}}</p>
 
