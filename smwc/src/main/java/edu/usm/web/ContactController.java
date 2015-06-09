@@ -45,10 +45,10 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
-    public void createContact(@RequestBody ContactDto contactDto) {
+    public String createContact(@RequestBody ContactDto contactDto) {
         logger.debug("POST request to /contacts");
         Contact contact = contactMapper.convertDtoToContact(contactDto);
-        contactService.create(contact);
+        return contactService.create(contact);
     }
 
 

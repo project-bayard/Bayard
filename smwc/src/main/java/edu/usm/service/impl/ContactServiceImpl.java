@@ -93,12 +93,11 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
 
     @Override
-    public void create(Contact contact) {
-
+    public String create(Contact contact) {
         logger.debug("Creating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
-
         contactDao.save(contact);
+        return contact.getId();
     }
 
     @Override

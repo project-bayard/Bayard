@@ -44,6 +44,24 @@
             });
         };
 
+        $scope.submitAndViewDetails = function() {
+
+            ContactService.create({}, $scope.contact, function(postSuccess) {
+                postSuccess.$promise.then(function(createdId) {
+                    var detailsPath = "/contacts/contact/" + createdId;
+                    $location.path(detailsPath);
+                });
+            }, function(err) {
+                console.log(err);
+                $scope.errorMessage = err;
+                $scope.requestError = true;
+                $timeout(function() {
+                    $scope.requestError = false;
+                }, 3000)
+            });
+
+        }
+
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', 'EventService', 'CommitteeService',

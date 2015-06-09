@@ -14,6 +14,6 @@ public interface ContactService {
     Set<Contact> findAll();
     void delete (Contact contact);
     void update (Contact contact);
-    void create(Contact contact);
+    String create(Contact contact);
     void deleteAll();
 }
