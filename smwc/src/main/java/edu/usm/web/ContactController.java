@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Views;
 import edu.usm.dto.ContactDto;
+import edu.usm.dto.IdDto;
 import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.mapper.ContactMapper;
 import edu.usm.service.ContactService;
@@ -44,11 +45,13 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
-    public String createContact(@RequestBody ContactDto contactDto) {
+    @RequestMapping(method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
+    public IdDto createContact(@RequestBody ContactDto contactDto) {
         logger.debug("POST request to /contacts");
         Contact contact = contactMapper.convertDtoToContact(contactDto);
-        return contactService.create(contact);
+        IdDto dto = new IdDto();
+        dto.id = contactService.create(contact);
+        return dto;
     }
 
 

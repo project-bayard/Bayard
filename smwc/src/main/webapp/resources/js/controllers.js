@@ -47,8 +47,12 @@
         $scope.submitAndViewDetails = function() {
 
             ContactService.create({}, $scope.contact, function(postSuccess) {
+                var id = postSuccess;
+                console.log("postSuccess = "+postSuccess.id);
+                console.log("id = "+id.id);
                 postSuccess.$promise.then(function(createdId) {
-                    var detailsPath = "/contacts/contact/" + createdId;
+                    console.log("createdId = "+createdId.id);
+                    var detailsPath = "/contacts/contact/" + createdId.id;
                     $location.path(detailsPath);
                 });
             }, function(err) {
