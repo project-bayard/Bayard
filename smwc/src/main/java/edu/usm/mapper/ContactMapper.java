@@ -77,10 +77,6 @@ public class ContactMapper {
                 if (event == null) {
                     logger.error("Could not find event with ID: "+eventDto.getId());
                 } else {
-                    if (null == event.getAttendees()) {
-                        event.setAttendees(new HashSet<>());
-                    }
-                    event.getAttendees().add(contact);
                     events.add(event);
                 }
             }
