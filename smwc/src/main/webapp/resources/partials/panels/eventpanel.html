@@ -8,7 +8,7 @@
         <div class="form-group" ng-if="addEvent.hidden == false">
             <label>Event:
                 <select class="form-control input-small" ng-model="addEvent">
-                    <option ng-repeat="event in events | byAlreadyMemberOf:contact.attendedEvents" value="{{event}}">{{event.name}}</option>
+                    <option ng-repeat="event in events | byAlreadyBelongsTo:contact.attendedEvents" value="{{event}}">{{event.name}}</option>
                 </select>
             </label>
             <button class="btn btn-md btn-success" ng-click="attendEvent(addEvent)">Submit</button>

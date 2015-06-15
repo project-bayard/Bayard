@@ -20,7 +20,7 @@
         };
     });
 
-    filters.filter('byAlreadyMemberOf', function () {
+    filters.filter('byAlreadyBelongsTo', function () {
         return function (collection, contactCollection) {
             if (contactCollection == null || contactCollection == 0) {
                 return collection;
@@ -45,16 +45,6 @@
             return newCollection;
         };
     });
-
-    filters.filter('byAlreadyAttended', function() {
-        return function(collection, contactCollection) {
-            if (contactCollection == null || contactCollection == 0) {
-                return collection;
-            }
-            var newCollection = angular.copy(collection);
-
-        }
-    })
 
 
 }());

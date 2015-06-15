@@ -9,7 +9,7 @@
             <div class="form-group">
                 <label>Existing Organizations:
                     <select class="form-control input-small" ng-model="addOrganization.index">
-                        <option ng-repeat="organization in organizations | byAlreadyMemberOf:contact.organizations"
+                        <option ng-repeat="organization in organizations | byAlreadyBelongsTo:contact.organizations"
                                 value="{{$index}}">{{organization.name}}
                         </option>
                     </select>
