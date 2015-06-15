@@ -10,7 +10,7 @@ import java.util.Set;
 public interface EventService {
 
     Event findById(String id);
-    void create (Event event);
+    String create (Event event);
     Set<Event> findAll();
     void delete(Event event);
     void deleteAll();

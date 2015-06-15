@@ -2,6 +2,7 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.dto.IdDto;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
@@ -40,9 +41,10 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public void create(Event event) {
+    public String create(Event event) {
         logger.debug("creating event with ID: " + event.getId());
         eventDao.save(event);
+        return event.getId();
     }
 
     @Override
