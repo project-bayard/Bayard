@@ -48,15 +48,16 @@ public class ContactEventsTest extends WebAppConfigurationAware{
         event = new Event();
         event.setName("Test Event");
     }
-//
-//    @After
-//    public void tearDown() {
-//        eventDao.deleteAll();
-//        contactDao.deleteAll();
-//    }
 
+    @After
+    public void tearDown() {
+        contactDao.deleteAll();
+        eventDao.deleteAll();
+    }
+
+    //Cannot be marked as transactional in order for join-table to be populated / hibernate cascading to occur
     @Test
-    public void attendEvent() throws Exception {
+    public void testAttendEvent() throws Exception {
         contactDao.save(contact);
         eventDao.save(event);
 
@@ -67,6 +68,44 @@ public class ContactEventsTest extends WebAppConfigurationAware{
         Event persistedEvent = eventDao.findOne(event.getId());
         assertNotNull(persistedEvent.getAttendees());
         assertEquals(1, persistedEvent.getAttendees().size());
+
+    }
+
+    @Test
+    public void testAttendDuplicateEvent() throws Exception {
+        tearDown();
+        setup();
+
+        contactDao.save(contact);
+        eventDao.save(event);
+
+        contact.setAttendedEvents(new HashSet<>());
+        contact.getAttendedEvents().add(event);
+        contactDao.save(contact);
+
+        contact.getAttendedEvents().add(event);
+        contactDao.save(contact);
+
+        contact = contactDao.findOne(contact.getId());
+        assertEquals(1, contact.getAttendedEvents().size());
+
+    }
+
+    @Test
+    public void testAddContactToEvent() throws Exception {
+        tearDown();
+        setup();
+
+        eventDao.save(event);
+        contactDao.save(contact);
+
+        event.setAttendees(new HashSet<>());
+        event.getAttendees().add(contact);
+        eventDao.save(event);
+
+        contact = contactDao.findOne(contact.getId());
+        assertNotNull(contact.getAttendedEvents());
+        assertEquals(0, contact.getAttendedEvents().size());
 
     }
 

@@ -24,6 +24,11 @@ public class Event extends BasicEntity  implements Serializable {
     @JsonView({Views.EventList.class})
     private String location;
 
+    /*
+    Adding an Event to a Contact's attendedEvents will refresh this set.
+    Adding a Contact to an Event's attendees will NOT refresh the Contact's attendedEvents
+
+     */
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JsonView({Views.EventList.class})
     private Set<Contact> attendees;
