@@ -2,12 +2,14 @@ package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Event;
 import edu.usm.domain.Views;
 import edu.usm.dto.ContactDto;
 import edu.usm.dto.IdDto;
 import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.mapper.ContactMapper;
 import edu.usm.service.ContactService;
+import edu.usm.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private EventService eventService;
 
     @Autowired
     private ContactMapper contactMapper;
@@ -49,9 +54,7 @@ public class ContactController {
     public IdDto createContact(@RequestBody ContactDto contactDto) {
         logger.debug("POST request to /contacts");
         Contact contact = contactMapper.convertDtoToContact(contactDto);
-        IdDto dto = new IdDto();
-        dto.id = contactService.create(contact);
-        return dto;
+        return new IdDto(contactService.create(contact));
     }
 
 
@@ -70,6 +73,22 @@ public class ContactController {
         Contact contact = contactMapper.convertDtoToContact(dto);
         contactService.update(contact);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.POST, value = "/contact/{id}/attend")
+    public void attendEvent(@PathVariable("id") String id, @RequestBody Event event) {
+        logger.debug("POST to /contacts/"+id+"/attend");
+        Contact contact = contactService.findById(id);
+        event = eventService.findById(event.getId());
+
+        if (!contact.getAttendedEvents().contains(event)) {
+            contact.getAttendedEvents().add(event);
+            contactService.update(contact);
+        }
+
+    }
+
+
 
 }
 
