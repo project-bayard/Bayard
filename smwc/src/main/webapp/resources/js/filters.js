@@ -46,5 +46,15 @@
         };
     });
 
+    filters.filter('byAlreadyAttended', function() {
+        return function(collection, contactCollection) {
+            if (contactCollection == null || contactCollection == 0) {
+                return collection;
+            }
+            var newCollection = angular.copy(collection);
+
+        }
+    })
+
 
 }());

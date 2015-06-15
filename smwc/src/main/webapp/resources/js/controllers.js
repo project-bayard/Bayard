@@ -165,38 +165,31 @@
         $scope.getEvents = function() {
             $scope.addEvent.hidden = false;
 
-            if ($scope.events == null) {
-                EventService.findAll({}, function(response) {
-                    $scope.events = response;
+            EventService.findAll({}, function(response) {
+                $scope.events = response;
+            }, function(err) {
+                console.log(err);
+            });
+
+        };
+
+        $scope.attendEvent = function (event) {
+
+            console.log("About to POST: "+event.name);
+
+            ContactService.attend({id : $scope.contact.id}, event, function(response) {
+                ContactService.find({id : $scope.contact.id}, function(data) {
+                    $scope.contact = data;
                 }, function(err) {
                     console.log(err);
                 });
-            }
-        };
 
-        $scope.attendEvent = function (index) {
-
-            var event = $scope.events[index];
-
-            if ($scope.contact.attendedEvents == null) {
-                $scope.contact.attendedEvents = [];
-            }
-
-            var attendees = [$scope.contact.id];
-            for (var i = 0; i < event.attendees.length; i++) {
-                attendees.push(event.attendees[i].id);
-            }
-
-            $scope.contact.attendedEvents.push({id : event.id, name: event.name, notes: event.notes, dateHeld: event.dateHeld, location: event.location, attendees: attendees });
-
-            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
                 $scope.addEvent.hidden = true;
                 $timeout(function() {
                     $scope.requestSuccess = false;
                 }, 3000);
 
             }, function(err) {
-                $scope.contact.attendedEvents.pop();
                 console.log(err);
             });
 
@@ -323,11 +316,15 @@
         $scope.addEvent = {hidden: true};
         $scope.newEvent = {};
 
-        EventService.findAll({}, function(response) {
-            $scope.eventsTable = response;
-        }, function(err) {
-            console.log(err);
-        });
+        var populateEvents = function() {
+            EventService.findAll({}, function(response) {
+                $scope.eventsTable = response;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        populateEvents();
 
         $scope.createEvent = function() {
 
@@ -335,7 +332,7 @@
 
             EventService.create({}, $scope.newEvent, function(response) {
                 $scope.addEvent = {hidden : true};
-                $scope.eventsTable.push($scope.newEvent);
+                populateEvents();
                 $scope.newEventForm.$setPristine();
                 $scope.newEvent = {};
             }, function(err) {

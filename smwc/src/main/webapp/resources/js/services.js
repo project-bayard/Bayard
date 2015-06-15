@@ -27,6 +27,10 @@
             create : {
                 method: 'POST',
                 url : "../contacts"
+            },
+            attend: {
+                method: 'POST',
+                url: "../contacts/contact/:id/attend"
             }
         });
     }]);
