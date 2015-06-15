@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -12,18 +13,23 @@ import java.util.Set;
 public class Event extends BasicEntity  implements Serializable {
 
     @Column
+    @JsonView({Views.EventList.class})
     private String name;
 
     @Column
+    @JsonView({Views.EventList.class})
     private String notes;
 
     @Column
+    @JsonView({Views.EventList.class})
     private String location;
 
-    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JsonView({Views.EventList.class})
     private Set<Contact> attendees;
 
     @Column
+    @JsonView({Views.EventList.class})
     private String dateHeld;
 
     public Event(String id) {
@@ -33,8 +39,6 @@ public class Event extends BasicEntity  implements Serializable {
     public Event() {
         super();
     }
-
-    //TODO: Need to ask about more attributes of Events
 
     public String getNotes() {
         return notes;
@@ -74,5 +78,19 @@ public class Event extends BasicEntity  implements Serializable {
 
     public void setDateHeld(String dateHeld) {
         this.dateHeld = dateHeld;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Event other = (Event) o;
+        if (dateHeld != null ? !dateHeld.equals(other.dateHeld) : other.dateHeld != null) return false;
+        if (location != null ? !location.equals(other.location) : other.location != null) return false;
+        if (name != null ? !name.equals(other.name) : other.name != null) return false;
+        if (notes != null ? !notes.equals(other.notes) : other.notes != null) return false;
+
+        return true;
     }
 }

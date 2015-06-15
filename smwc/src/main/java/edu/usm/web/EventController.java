@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
 import edu.usm.dto.EventDto;
+import edu.usm.dto.IdDto;
 import edu.usm.mapper.EventMapper;
 import edu.usm.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,24 +29,23 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
+    @JsonView({Views.EventList.class})
     public Set<Event> getAllEvents() {
-        Set<Event> allEvents;
-        System.out.println("Filler");
-        allEvents = eventService.findAll();
-        return allEvents;
+        return eventService.findAll();
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createEvent(@RequestBody EventDto eventDto) {
+    public IdDto createEvent(@RequestBody EventDto eventDto) {
         Event event = eventMapper.fromDto(eventDto);
-        eventService.create(event);
-    }
+        return new IdDto(eventService.create(event));
 
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/event/{id}", produces={"application/json"})
-    public Event getContactById(@PathVariable("id") String id) {
+    @JsonView({Views.EventList.class})
+    public Event getEventById(@PathVariable("id") String id) {
         return eventService.findById(id);
     }
 
