@@ -24,7 +24,12 @@ public abstract class BasicEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class,
+            Views.ContactEncounterDetails.class})
     private String id;
 
     @Column

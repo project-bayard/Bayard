@@ -1,5 +1,7 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,22 +13,28 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "contact_id")
+    @JsonView(Views.ContactEncounterDetails.class)
     private Contact contact;
 
     @Column
+    @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String encounterDate;
 
     @Column
+    @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String notes;
 
     @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.REFRESH)
     @JoinColumn(name = "initiator_id")
+    @JsonView(Views.ContactEncounterDetails.class)
     private Contact initiator;
 
     @Column
+    @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private int assessment;
 
     @Column
+    @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String type;
 
     @OneToOne(fetch=FetchType.LAZY)

@@ -2,6 +2,7 @@ package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Encounter;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
 import edu.usm.dto.ContactDto;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -59,15 +61,16 @@ public class ContactController {
 
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, value = "/contact/{id}", produces={"application/json"})
-    public ContactDto getContactById(@PathVariable("id") String id) {
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
+    @JsonView(Views.ContactDetails.class)
+    public Contact getContactById(@PathVariable("id") String id) {
         logger.debug("GET request to /contacts/contact/"+id);
         Contact contact = contactService.findById(id);
-        return dtoMapper.convertToContactDto(contact);
+        return contact;
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT, value = "/contact/{id}", consumes={"application/json"})
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
     public void updateContactById(@PathVariable("id") String id, @RequestBody ContactDto dto) {
         logger.debug("PUT request to /contacts/contact/"+id);
         Contact contact = contactMapper.convertDtoToContact(dto);
@@ -75,7 +78,7 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.POST, value = "/contact/{id}/attend")
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/attend")
     public void attendEvent(@PathVariable("id") String id, @RequestBody Event event) {
         logger.debug("POST to /contacts/"+id+"/attend");
         Contact contact = contactService.findById(id);
@@ -86,6 +89,13 @@ public class ContactController {
             contactService.update(contact);
         }
 
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/encounters")
+    @JsonView(Views.ContactEncounterDetails.class)
+    public List<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {
+        return contactService.findById(id).getEncounters();
     }
 
 

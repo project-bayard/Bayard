@@ -16,68 +16,134 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class,
+            Views.ContactEncounterDetails.class})
     private String firstName;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class,
+            Views.ContactEncounterDetails.class})
     private String middleName;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class,
+            Views.ContactEncounterDetails.class})
     private String lastName;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String streetAddress;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String aptNumber;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String city;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String zipCode;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String phoneNumber1;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String phoneNumber2;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String email;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String language;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String occupation;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String interests;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private boolean donor;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private boolean member;
 
     @Column
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.CommitteeList.class, Views.EventList.class})
-    private int assessment;
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})    private int assessment;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinTable(
@@ -85,6 +151,7 @@ public class Contact extends BasicEntity implements Serializable {
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="committee_id", referencedColumnName = "id")}
     )
+    @JsonView({Views.ContactDetails.class})
     private Set<Committee> committees;
 
     public Contact (String id) {
@@ -101,14 +168,17 @@ public class Contact extends BasicEntity implements Serializable {
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="org_id", referencedColumnName = "id")}
     )
+    @JsonView({Views.ContactDetails.class})
     private Set<Organization> organizations;
 
     @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     @JoinColumn(name = "donorinfo_id")
+    @JsonView({Views.ContactDetails.class})
     private DonorInfo donorInfo;
 
     @OneToOne(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "memberinfo_id")
+    @JsonView({Views.ContactDetails.class})
     private MemberInfo memberInfo;
 
     @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
@@ -117,12 +187,14 @@ public class Contact extends BasicEntity implements Serializable {
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="event_id", referencedColumnName = "id")}
     )
+    @JsonView({Views.ContactDetails.class})
     private Set<Event> attendedEvents;
 
     @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Encounter> encounters;
 
     @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JsonView({Views.ContactDetails.class})
     private List<Encounter> encountersInitiated;
 
     public String getFirstName() {

@@ -44,6 +44,8 @@
             });
         };
 
+
+
         $scope.submitAndViewDetails = function() {
 
             ContactService.create({}, $scope.contact, function(postSuccess) {
@@ -138,6 +140,7 @@
             });
         };
 
+            /*
         $scope.setEncounterInitiator = function(id) {
             $scope.initiator = {firstName: "" , lastName: ""};
 
@@ -147,6 +150,7 @@
                 console.log(err);
             });
         };
+        */
 
         $scope.viewDetails = function (id) {
             var path = "/contacts/contact/" + id ;
@@ -303,6 +307,19 @@
             });
 
         };
+
+        $scope.getEncounters = function () {
+            $scope.showingEncounters= !$scope.showingEncounters;
+
+            if ($scope.contact.encounters == null) {
+                ContactService.getEncounters({id : $scope.contact.id}, function(data) {
+                    $scope.contact.encounters = data;
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+
+        }
 
         }]);
 

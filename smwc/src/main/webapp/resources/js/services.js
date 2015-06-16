@@ -6,7 +6,7 @@
     var services = angular.module('services', ['ngResource']);
 
     services.factory('ContactService',[ '$resource', function ($resource) {
-        return $resource('../contacts/contact/:id', {id : '@id'}, {
+        return $resource('../contacts/:id', {id : '@id'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -21,16 +21,19 @@
             },
             findAll : {
                 method: 'GET',
-                url : "../contacts",
                 isArray : true
             },
             create : {
-                method: 'POST',
-                url : "../contacts"
+                method: 'POST'
             },
             attend: {
                 method: 'POST',
-                url: "../contacts/contact/:id/attend"
+                url: "../contacts/:id/attend"
+            },
+            getEncounters : {
+                method: 'GET',
+                isArray : true,
+                url: "../contacts/:id/encounters"
             }
         });
     }]);

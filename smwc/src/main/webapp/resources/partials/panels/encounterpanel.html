@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading" ng-click="showingEncounters=!showingEncounters">
+    <div class="panel-heading" ng-click="getEncounters()">
         <h3 class="panel-title">Encounters ({{contact.encounters.length}})</h3>
     </div>
     <div class="panel-body" ng-show="showingEncounters">
@@ -50,7 +50,7 @@
                 <td>{{encounter.assessment}}</td>
                 <td>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#encounterModal" ng-click="setEncounterInitiator(encounter.initiator)">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#encounterModal">
                         View Details
                     </button>
 
@@ -64,8 +64,8 @@
                                 </div>
                                 <div class="modal-body">
                                     <h4>Initiator</h4>
-                                    <p>{{initiator.firstName + " " + initiator.lastName}}</p>
-                                    <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(initiator.id)">View Details</button>
+                                    <p>{{encounter.initiator.firstName + " " + encounter.initiator.lastName}}</p>
+                                    <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(encounter.initiator.id)">View Details</button>
                                     <hr>
                                     <h4>Notes</h4>
                                     <div>{{encounter.notes}}</div>

@@ -17,7 +17,8 @@ public class Committee extends BasicEntity implements Serializable {
     private Set<Contact> members;
 
     @Column
-    @JsonView(Views.CommitteeList.class)
+    @JsonView({Views.CommitteeList.class,
+            Views.ContactDetails.class})
     private String name;
 
     public Committee (String id) {

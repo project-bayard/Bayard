@@ -157,7 +157,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String json = new ObjectMapper().writeValueAsString(contactDto);
 
-        mockMvc.perform(put("/contacts/contact/" + contactDto.getId())
+        mockMvc.perform(put("/contacts/" + contactDto.getId())
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
@@ -217,7 +217,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contactService.update(contact);
 
 
-        mockMvc.perform(get("/contacts/contact/" + contact.getId())
+        mockMvc.perform(get("/contacts/" + contact.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())))

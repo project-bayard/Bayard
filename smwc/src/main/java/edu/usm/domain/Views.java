@@ -7,5 +7,7 @@ public class Views {
     public interface ContactList {}
     public interface EventList {}
     public interface OrganizationList {}
-    public interface CommitteeList {};
+    public interface CommitteeList {}
+    public interface ContactDetails {}
+    public interface ContactEncounterDetails {}
 }
