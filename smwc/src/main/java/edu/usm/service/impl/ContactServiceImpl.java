@@ -108,5 +108,9 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contacts.stream().forEach(this::delete);
     }
 
-
+    @Override
+    public Set<Contact> findAllInitiators() {
+        logger.debug("Getting all Initiators");
+        return contactDao.findAllInitiators();
+    }
 }

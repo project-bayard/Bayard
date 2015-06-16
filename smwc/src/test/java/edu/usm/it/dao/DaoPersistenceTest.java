@@ -174,10 +174,24 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*Committees*/
 
+    }
 
+    @Test
+    public void testFilterByInitiator() throws Exception {
+        Contact contact = new Contact();
+        contact.setInitiator(true);
+        Contact contact1 = new Contact();
+        contact1.setInitiator(true);
+        contact1.setDeleted(true);
+        contactDao.save(contact1);
+        contactDao.save(contact);
 
-
-
+        Set<Contact> contacts = contactDao.findAllInitiators();
+        assertNotNull(contacts);
+        assertEquals(contacts.size(),1);
+        Contact fromDb = contacts.iterator().next();
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(),contact.getId());
 
 
     }

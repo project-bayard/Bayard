@@ -1,6 +1,7 @@
 package edu.usm.repository;
 
 import edu.usm.domain.Contact;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,9 @@ import java.util.HashSet;
 public interface ContactDao extends CrudRepository<Contact, String> {
 
     @Override
+
     HashSet<Contact> findAll();
+
+    @Query("select c from contact as c where initiator = 1")
+    HashSet<Contact> findAllInitiators();
 }

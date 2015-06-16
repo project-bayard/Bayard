@@ -197,6 +197,17 @@ public class Contact extends BasicEntity implements Serializable {
     @JsonView({Views.ContactDetails.class})
     private List<Encounter> encountersInitiated;
 
+    @Column
+    private boolean initiator;
+
+    public boolean isInitiator() {
+        return initiator;
+    }
+
+    public void setInitiator(boolean initiator) {
+        this.initiator = initiator;
+    }
+
     public String getFirstName() {
         return firstName;
     }

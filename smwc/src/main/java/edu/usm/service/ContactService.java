@@ -16,4 +16,5 @@ public interface ContactService {
     void update (Contact contact);
     String create(Contact contact);
     void deleteAll();
+    Set<Contact> findAllInitiators();
 }
