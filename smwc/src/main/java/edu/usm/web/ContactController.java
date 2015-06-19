@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -112,17 +113,21 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations/{orgId}", consumes= {"application/json"})
-    public Response addContactToOrganization(@PathVariable("id") String id, @PathVariable("orgId") String orgId) {
-        IdDto idDto = new IdDto(orgId);
-        Organization organization = organizationService.findById(idDto.getId());
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
+    public Response alternativeAddContactToOrganization(@PathVariable("id") String id, @RequestBody Map<String, Object> idDto) {
+
+        String idStringed = (String)idDto.get("id");
+
+        Organization organization = organizationService.findById(idStringed);
         Contact contact = contactService.findById(id);
 
         if (organization == null) {
-            return new Response(null,Response.FAILURE, "Organization with ID " + idDto.getId() + " does not exist");
+            logger.debug("No org");
+            return new Response(null,Response.FAILURE, "Organization with ID " + idStringed + " does not exist");
 
         } else if (contact == null) {
-            return new Response(null,Response.FAILURE, "Contact with ID " + idDto.getId() + " does not exist");
+            logger.debug("No contact");
+            return new Response(null,Response.FAILURE, "Contact with ID " + idStringed + " does not exist");
         }
 
         try {
@@ -130,10 +135,35 @@ public class ContactController {
             return new Response(null, Response.SUCCESS, null);
 
         } catch (Exception e) {
+            logger.debug("Bad service call");
             return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
                     " to organization with ID " + organization.getId());
         }
     }
+
+//    @ResponseStatus(HttpStatus.OK)
+//    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations/{orgId}", consumes= {"application/json"})
+//    public Response addContactToOrganization(@PathVariable("id") String id, @PathVariable("orgId") String orgId) {
+//        IdDto idDto = new IdDto(orgId);
+//        Organization organization = organizationService.findById(idDto.getId());
+//        Contact contact = contactService.findById(id);
+//
+//        if (organization == null) {
+//            return new Response(null,Response.FAILURE, "Organization with ID " + idDto.getId() + " does not exist");
+//
+//        } else if (contact == null) {
+//            return new Response(null,Response.FAILURE, "Contact with ID " + idDto.getId() + " does not exist");
+//        }
+//
+//        try {
+//            contactService.addContactToOrganization(contact,organization);
+//            return new Response(null, Response.SUCCESS, null);
+//
+//        } catch (Exception e) {
+//            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
+//                    " to organization with ID " + organization.getId());
+//        }
+//    }
 
 }
 

@@ -161,24 +161,21 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Test
     @Transactional
-    public void testAddContactToOrganization () throws Exception {
+    public void testAlternativeAddContactToOrganization () throws Exception {
         String id = contactService.create(contact);
 
         Organization organization = new Organization();
         organization.setName("org name");
         String orgId = organizationService.create(organization);
 
-        IdDto idDto = new IdDto(orgId);
+        IdDto organizationIdDto = new IdDto(orgId);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(idDto);
-        String path = "/contacts/" + id + "/organizations/" + orgId;
-
-
+        String json = mapper.writeValueAsString(organizationIdDto);
+        String path = "/contacts/" + id + "/organizations";
 
         mockMvc.perform(put(path)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
 
         Contact fromDb = contactService.findById(contact.getId());
         Organization orgFromDb = organizationService.findById(organization.getId());
@@ -189,4 +186,33 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(orgFromDb.getMembers().iterator().next().getId(), contact.getId());
 
     }
+
+//    @Test
+//    @Transactional
+//    public void testAddContactToOrganization () throws Exception {
+//        String id = contactService.create(contact);
+//
+//        Organization organization = new Organization();
+//        organization.setName("org name");
+//        String orgId = organizationService.create(organization);
+//
+//        IdDto idDto = new IdDto(orgId);
+//        ObjectMapper mapper = new ObjectMapper();
+//        String json = mapper.writeValueAsString(idDto);
+//        String path = "/contacts/" + id + "/organizations/" + orgId;
+//
+//        mockMvc.perform(put(path)
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+//
+//        Contact fromDb = contactService.findById(contact.getId());
+//        Organization orgFromDb = organizationService.findById(organization.getId());
+//
+//        assertNotNull(fromDb);
+//        assertEquals(fromDb.getOrganizations().iterator().next().getId(),organization.getId());
+//        assertNotNull(orgFromDb);
+//        assertEquals(orgFromDb.getMembers().iterator().next().getId(), contact.getId());
+//
+//    }
 }

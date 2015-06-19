@@ -1,9 +1,13 @@
 package edu.usm.dto;
 
+import java.io.Serializable;
+
 /**
  * Created by Andrew on 6/9/2015.
  */
-public class IdDto {
+public class IdDto implements Serializable{
+
+    private static final long serialVersionUID = 1L;
 
     public String id;
 
