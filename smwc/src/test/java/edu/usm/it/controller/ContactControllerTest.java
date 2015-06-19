@@ -233,4 +233,19 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
+    @Test
+    public void testGetAllInitiators() throws Exception {
+        Contact contact = new Contact();
+        contact.setFirstName("firstName");
+        contact.setLastName("lastName");
+        contact.setInitiator(true);
+
+        contactService.create(contact);
+
+        mockMvc.perform(get("/contacts/initiators")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id", is(contact.getId())));
+    }
+
 }

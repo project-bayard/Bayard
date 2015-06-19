@@ -10,4 +10,5 @@ public class Views {
     public interface CommitteeList {}
     public interface ContactDetails {}
     public interface ContactEncounterDetails {}
+    public interface ContactBasicDetails {}
 }

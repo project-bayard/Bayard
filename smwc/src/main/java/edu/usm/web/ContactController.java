@@ -98,6 +98,13 @@ public class ContactController {
         return contactService.findById(id).getEncounters();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/initiators")
+    @JsonView(Views.ContactList.class)
+    public Set<Contact> getAllInitiators() {
+        return contactService.findAllInitiators();
+    }
+
 
 
 }

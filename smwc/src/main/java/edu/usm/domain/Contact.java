@@ -143,7 +143,8 @@ public class Contact extends BasicEntity implements Serializable {
             Views.OrganizationList.class,
             Views.CommitteeList.class,
             Views.EventList.class,
-            Views.ContactDetails.class})    private int assessment;
+            Views.ContactDetails.class})
+    private int assessment;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinTable(

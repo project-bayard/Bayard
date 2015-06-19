@@ -34,6 +34,11 @@
                 method: 'GET',
                 isArray : true,
                 url: "../contacts/:id/encounters"
+            },
+            getInitiators : {
+                method: 'GET',
+                isArray : true,
+                url: "../contacts/initiators"
             }
         });
     }]);
