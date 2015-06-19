@@ -5,8 +5,7 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
-import edu.usm.dto.ContactDto;
-import edu.usm.dto.IdDto;
+import edu.usm.dto.Response;
 import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.mapper.ContactMapper;
 import edu.usm.service.ContactService;
@@ -47,16 +46,22 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.GET, produces="application/json")
     @JsonView(Views.ContactList.class)
     public Set<Contact> getContacts() {
-        Set<Contact> contacts =  contactService.findAll();
-        return contacts;
+        return contactService.findAll();
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
-    public IdDto createContact(@RequestBody ContactDto contactDto) {
+    public Response createContact(@RequestBody Contact contact) {
         logger.debug("POST request to /contacts");
-        Contact contact = contactMapper.convertDtoToContact(contactDto);
-        return new IdDto(contactService.create(contact));
+        String id;
+        try {
+            id = (contactService.create(contact));
+
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Unable to create contact");
+        }
+
+        return new Response(id,Response.SUCCESS,null);
     }
 
 
@@ -65,16 +70,22 @@ public class ContactController {
     @JsonView(Views.ContactDetails.class)
     public Contact getContactById(@PathVariable("id") String id) {
         logger.debug("GET request to /contacts/contact/"+id);
-        Contact contact = contactService.findById(id);
-        return contact;
+        return contactService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
-    public void updateContactById(@PathVariable("id") String id, @RequestBody ContactDto dto) {
+    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact contact) {
         logger.debug("PUT request to /contacts/contact/"+id);
-        Contact contact = contactMapper.convertDtoToContact(dto);
-        contactService.update(contact);
+
+        try {
+            contactService.update(contact);
+            return new Response(contact.getId(), Response.SUCCESS, null);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return new Response(contact.getId(),Response.FAILURE,"Unable to update contact");
+        }
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -104,8 +115,6 @@ public class ContactController {
     public Set<Contact> getAllInitiators() {
         return contactService.findAllInitiators();
     }
-
-
 
 }
 

@@ -14,7 +14,7 @@ import java.util.Set;
 public class Organization extends BasicEntity  implements Serializable {
 
 
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactDetails.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
     @Column
     private String name;
 

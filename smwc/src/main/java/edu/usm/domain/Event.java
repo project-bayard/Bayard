@@ -13,15 +13,15 @@ import java.util.Set;
 public class Event extends BasicEntity  implements Serializable {
 
     @Column
-    @JsonView({Views.EventList.class, Views.ContactDetails.class})
+    @JsonView({Views.EventList.class})
     private String name;
 
     @Column
-    @JsonView({Views.EventList.class, Views.ContactDetails.class})
+    @JsonView({Views.EventList.class})
     private String notes;
 
     @Column
-    @JsonView({Views.EventList.class, Views.ContactDetails.class})
+    @JsonView({Views.EventList.class})
     private String location;
 
     /*
@@ -34,7 +34,7 @@ public class Event extends BasicEntity  implements Serializable {
     private Set<Contact> attendees;
 
     @Column
-    @JsonView({Views.EventList.class, Views.ContactDetails.class})
+    @JsonView({Views.EventList.class})
     private String dateHeld;
 
     public Event(String id) {

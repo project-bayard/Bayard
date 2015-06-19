@@ -12,13 +12,11 @@ public class Response {
     private String status;
     private String message;
 
-    public Response(String id, String status) {
+    public Response(String id, String status, String message) {
         this.id = id;
         this.status = status;
+        this.message = message;
     }
-
-
-
 
     public String getId() {
         return id;
