@@ -1,6 +1,7 @@
 package edu.usm.service;
 
 import edu.usm.domain.Contact;
+import edu.usm.domain.Organization;
 
 import java.util.Set;
 
@@ -17,4 +18,5 @@ public interface ContactService {
     String create(Contact contact);
     void deleteAll();
     Set<Contact> findAllInitiators();
+    void addContactToOrganization(Contact contact, Organization organization);
 }

@@ -13,6 +13,6 @@ public interface OrganizationService {
     Set<Organization> findAll();
     void delete (Organization organization);
     void update (Organization organization);
-    void create(Organization organization);
+    String create(Organization organization);
     void deleteAll();
 }

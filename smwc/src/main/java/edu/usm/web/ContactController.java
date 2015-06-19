@@ -1,15 +1,12 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Encounter;
-import edu.usm.domain.Event;
-import edu.usm.domain.Views;
+import edu.usm.domain.*;
+import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
-import edu.usm.mapper.ContactDtoMapper;
-import edu.usm.mapper.ContactMapper;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
+import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +31,8 @@ public class ContactController {
     private EventService eventService;
 
     @Autowired
-    private ContactMapper contactMapper;
+    private OrganizationService organizationService;
 
-    @Autowired
-    private ContactDtoMapper dtoMapper;
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -114,6 +109,30 @@ public class ContactController {
     @JsonView(Views.ContactList.class)
     public Set<Contact> getAllInitiators() {
         return contactService.findAllInitiators();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations/{orgId}", consumes= {"application/json"})
+    public Response addContactToOrganization(@PathVariable("id") String id, @PathVariable("orgId") String orgId) {
+        IdDto idDto = new IdDto(orgId);
+        Organization organization = organizationService.findById(idDto.getId());
+        Contact contact = contactService.findById(id);
+
+        if (organization == null) {
+            return new Response(null,Response.FAILURE, "Organization with ID " + idDto.getId() + " does not exist");
+
+        } else if (contact == null) {
+            return new Response(null,Response.FAILURE, "Contact with ID " + idDto.getId() + " does not exist");
+        }
+
+        try {
+            contactService.addContactToOrganization(contact,organization);
+            return new Response(null, Response.SUCCESS, null);
+
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
+                    " to organization with ID " + organization.getId());
+        }
     }
 
 }

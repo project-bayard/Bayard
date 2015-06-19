@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -113,4 +114,25 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         logger.debug("Getting all Initiators");
         return contactDao.findAllInitiators();
     }
+
+    @Override
+    public void addContactToOrganization(Contact contact, Organization organization) {
+        Set<Organization> organizations = contact.getOrganizations();
+        Set<Contact> members = organization.getMembers();
+
+        if (organizations == null) {
+            organizations = new HashSet<>();
+            contact.setOrganizations(organizations);
+        }
+
+        if (organization.getMembers() == null) {
+            members = new HashSet<>();
+            organization.setMembers(members);
+        }
+
+        members.add(contact);
+        organizations.add(organization);
+        update(contact);
+    }
+
 }

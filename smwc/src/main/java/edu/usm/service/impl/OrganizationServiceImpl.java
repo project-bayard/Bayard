@@ -68,11 +68,11 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
 
     @Override
-    public void create(Organization organization) {
-        update(organization);
+    public String create(Organization organization) {
         logger.debug("Creating organization with ID: " + organization.getId());
         logger.debug("Time: " + LocalDateTime.now());
-
+        organizationDao.save(organization);
+        return organization.getId();
     }
 
     @Override
