@@ -114,9 +114,9 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
-    public Response alternativeAddContactToOrganization(@PathVariable("id") String id, @RequestBody Map<String, Object> idDto) {
+    public Response alternativeAddContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) {
 
-        String idStringed = (String)idDto.get("id");
+        String idStringed = idDto.getId();
 
         Organization organization = organizationService.findById(idStringed);
         Contact contact = contactService.findById(id);

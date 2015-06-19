@@ -11,6 +11,8 @@ public class IdDto implements Serializable{
 
     public String id;
 
+    public IdDto(){};
+
     public IdDto(String id) {
         this.id = id;
     }
