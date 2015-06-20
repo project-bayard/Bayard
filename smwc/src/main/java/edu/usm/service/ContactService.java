@@ -1,6 +1,7 @@
 package edu.usm.service;
 
 import edu.usm.domain.Contact;
+import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
 
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 public interface ContactService {
 
+    void attendEvent(Contact contact, Event event);
     Contact findById (String id);
     Set<Contact> findAll();
     void delete (Contact contact);

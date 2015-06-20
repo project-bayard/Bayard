@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
@@ -12,6 +13,7 @@ import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
+import org.assertj.core.internal.cglib.core.Local;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,6 +59,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     private Contact contact;
     private Contact initiator;
+    private Event event;
 
     @Before
     public void setup() {
@@ -70,6 +75,12 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         initiator = new Contact();
         initiator.setFirstName("initiatorFirst");
         contactService.create(initiator);
+
+        event = new Event();
+        event.setName("Test Event");
+        event.setLocation("Test event location");
+        event.setDateHeld(dateFormatConfig.formatDomainDate(LocalDate.of(2015, 01, 01)));
+        event.setNotes("Test event notes");
     }
 
     @After
@@ -157,6 +168,31 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id", is(contact.getId())));
+    }
+
+    @Test
+    @Transactional
+    public void testPutEvent() throws Exception {
+        String contactId = contactService.create(contact);
+        String eventId = eventService.create(event);
+
+        IdDto eventIdDto = new IdDto(eventId);
+        String requestBody = new ObjectMapper().writeValueAsString(eventIdDto);
+        String path = "/contacts/"+contactId+"/events";
+
+        mockMvc.perform(put(path)
+                .contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isOk());
+
+        Contact contactFromDb = contactService.findById(contactId);
+        Event eventFromDb = eventService.findById(eventId);
+
+        assertNotNull(contactFromDb);
+        assertNotNull(eventFromDb);
+
+        assertEquals(1, contactFromDb.getAttendedEvents().size());
+        assertTrue(contactFromDb.getAttendedEvents().contains(eventFromDb));
+
     }
 
     @Test
