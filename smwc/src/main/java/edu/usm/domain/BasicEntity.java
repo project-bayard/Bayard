@@ -80,14 +80,6 @@ public abstract class BasicEntity {
     }
 
     @Override
-    public int hashCode() {
-        if (null == id) {
-            return super.hashCode();
-        }
-        return id.hashCode();
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (obj instanceof BasicEntity) {
             BasicEntity other = (BasicEntity) obj;

@@ -85,12 +85,20 @@ public class ContactController {
         }
     }
 
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/events")
+    @JsonView(Views.EventList.class)
+    public Set<Event> getAttendedEvents(@PathVariable("id") String id) {
+        Contact contact = contactService.findById(id);
+        return contact.getAttendedEvents();
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/events")
-    public void attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventId) {
-        logger.debug("POST to /contacts/"+id+"/events");
+    public void attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) {
+        logger.debug("POST to /contacts/"+id+"/attend");
         Contact contact = contactService.findById(id);
-        Event event = eventService.findById(eventId.getId());
+        Event event = eventService.findById(eventIdDto.getId());
 
         if (null == contact.getAttendedEvents()) {
             contact.setAttendedEvents(new HashSet<>());
@@ -100,14 +108,6 @@ public class ContactController {
             contactService.attendEvent(contact, event);
         }
 
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}/events")
-    @JsonView(Views.EventList.class)
-    public Set<Event> getAttendedEvents(@PathVariable("id") String id) {
-        Contact contact = contactService.findById(id);
-        return contact.getAttendedEvents();
     }
 
 
