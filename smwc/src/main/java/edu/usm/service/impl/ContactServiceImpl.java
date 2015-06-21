@@ -145,7 +145,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             contact.setOrganizations(organizations);
         }
 
-        if (organization.getMembers() == null) {
+        if (members == null) {
             members = new HashSet<>();
             organization.setMembers(members);
         }
@@ -155,4 +155,18 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         update(contact);
     }
 
+
+    @Override
+    public void removeContactFromOrganization(Contact contact, Organization organization) {
+        Set<Organization> organizations = contact.getOrganizations();
+        Set<Contact> members = organization.getMembers();
+
+        if (organizations == null || members == null) {
+            return;
+        }
+
+        members.remove(contact);
+        organizations.remove(organization);
+        update(contact);
+    }
 }

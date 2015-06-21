@@ -387,21 +387,5 @@ public class Contact extends BasicEntity implements Serializable {
     public void setEncountersInitiated(List<Encounter> encountersInitiated) {
         this.encountersInitiated = encountersInitiated;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof Contact) {
-            Contact other = (Contact) obj;
-            return this.getId().equals(other.getId());
-        }
-        return false;
-    }
-
-
-
-
-
-
-
 }
 

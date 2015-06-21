@@ -72,7 +72,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @After
     public void teardown() {
         contactService.deleteAll();
-
+        organizationService.deleteAll();
+        committeeService.deleteAll();
     }
 
 
@@ -138,23 +139,26 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testDelete () {
+        contactService.create(contact);
+        contactService.create(contact2);
 
         /*Test deleted from Organization member list*/
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
 
-        organization.setMembers(contacts);
         organizationService.create(organization);
 
-        committee.setMembers(contacts);
-        committeeService.create(committee);
+        organization.setMembers(contacts);
+        organizationService.update(organization);
+
 
         Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
-        contactService.create(contact);
-        contactService.create(contact2);
+        contact2.setOrganizations(organizations);
+        contactService.update(contact);
+        contactService.update(contact2);
 
         contactService.delete(contact);
 
@@ -165,11 +169,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertNotNull(fromDb);
         assertFalse(fromDb.getMembers().contains(contact));
         assertTrue(fromDb.getMembers().contains(contact2));
-
-        Committee fromDbCommittee = committeeService.findById(committee.getId());
-        assertNotNull(fromDbCommittee);
-        assertFalse(fromDbCommittee.getMembers().contains(contact));
-        assertTrue(fromDbCommittee.getMembers().contains(contact2));
 
     }
 
@@ -278,6 +277,33 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contactFromDb.getOrganizations().iterator().next().getId(), organization.getId());
 
     }
+
+    @Test
+    public void testAddAndRemoveContactFromOrganization () throws Exception {
+        contactService.create(contact);
+        organizationService.create(organization);
+        contactService.addContactToOrganization(contact,organization);
+
+        Contact fromDb = contactService.findById(contact.getId());
+        assertNotNull(fromDb);
+        assertNotNull(fromDb.getOrganizations());
+        assertTrue(fromDb.getOrganizations().contains(organization));
+
+        contactService.removeContactFromOrganization(contact, organization);
+
+        fromDb = contactService.findById(contact.getId());
+        assertNotNull(fromDb);
+        assertNotNull(fromDb.getOrganizations());
+        assertFalse(fromDb.getOrganizations().contains(organization));
+
+        Organization orgFromDb = organizationService.findById(organization.getId());
+        assertNotNull(orgFromDb);
+        assertNotNull(orgFromDb.getMembers());
+        assertFalse(orgFromDb.getMembers().contains(contact));
+
+    }
+
+
 
 
 

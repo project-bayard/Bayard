@@ -21,4 +21,5 @@ public interface ContactService {
     void deleteAll();
     Set<Contact> findAllInitiators();
     void addContactToOrganization(Contact contact, Organization organization);
+    void removeContactFromOrganization(Contact contact, Organization organization);
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 public class Organization extends BasicEntity  implements Serializable {
 
 
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactOrganizationDetails.class})
     @Column
     private String name;
 
@@ -44,11 +44,6 @@ public class Organization extends BasicEntity  implements Serializable {
 
     public void setMembers(Set<Contact> members) {
         this.members = members;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-       return super.equals(o);
     }
 
 

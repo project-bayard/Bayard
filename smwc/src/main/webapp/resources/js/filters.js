@@ -22,21 +22,28 @@
 
     filters.filter('byAlreadyBelongsTo', function () {
         return function (collection, contactCollection) {
-            if (contactCollection == null || contactCollection == 0) {
+
+            if (collection == null && contactCollection == null ) {
+                return [];
+
+            } else if (collection == null) {
+                return contactCollection;
+
+            } else if (contactCollection == null) {
                 return collection;
             }
-            var newCollection = angular.copy(collection);
+
 
 
             for (var i = 0; i < contactCollection.length; i++) {
                 var item = contactCollection[i];
 
-                for (var j = 0; j < newCollection.length; j++) {
+                for (var j = 0; j < collection.length; j++) {
 
-                    var collectionItem = newCollection[j];
+                    var collectionItem = collection[j];
 
                     if(collectionItem.id == item.id) {
-                        newCollection.splice(j,1);
+                        collection.splice(j,1);
                         break;
                     }
                 }

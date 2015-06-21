@@ -29,7 +29,8 @@ public abstract class BasicEntity {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.ContactEncounterDetails.class})
+            Views.ContactEncounterDetails.class,
+            Views.ContactOrganizationDetails.class})
     private String id;
 
     @Column
@@ -79,13 +80,6 @@ public abstract class BasicEntity {
         this.created = created;
     }
 
-    @Override
-    public int hashCode() {
-        if (null == id) {
-            return super.hashCode();
-        }
-        return id.hashCode();
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -98,6 +92,16 @@ public abstract class BasicEntity {
         }
 
         return false;
+
+    }
+
+    @Override
+    public int hashCode() {
+        if (getId() != null) {
+            return (getId() + getCreated()).hashCode();
+        } else {
+            return getCreated().hashCode();
+        }
 
     }
 }

@@ -44,6 +44,15 @@
                 method: 'GET',
                 isArray : true,
                 url: "../contacts/:id/events"
+            },
+            getOrganizations : {
+                method: 'GET',
+                isArray : true,
+                url : "/contacts/:id/organizations"
+            },
+            addToOrganization : {
+                method: 'PUT',
+                url : "/contacts/:id/organizations"
             }
         });
     }]);

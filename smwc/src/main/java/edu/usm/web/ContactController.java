@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -126,8 +125,15 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/organizations")
+    @JsonView(Views.ContactOrganizationDetails.class)
+    public Set<Organization> getAllOrganizationsForContact(@PathVariable("id") String id) {
+        return contactService.findById(id).getOrganizations();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
-    public Response alternativeAddContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+    public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) {
 
         String idStringed = idDto.getId();
 
@@ -154,29 +160,36 @@ public class ContactController {
         }
     }
 
-//    @ResponseStatus(HttpStatus.OK)
-//    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations/{orgId}", consumes= {"application/json"})
-//    public Response addContactToOrganization(@PathVariable("id") String id, @PathVariable("orgId") String orgId) {
-//        IdDto idDto = new IdDto(orgId);
-//        Organization organization = organizationService.findById(idDto.getId());
-//        Contact contact = contactService.findById(id);
-//
-//        if (organization == null) {
-//            return new Response(null,Response.FAILURE, "Organization with ID " + idDto.getId() + " does not exist");
-//
-//        } else if (contact == null) {
-//            return new Response(null,Response.FAILURE, "Contact with ID " + idDto.getId() + " does not exist");
-//        }
-//
-//        try {
-//            contactService.addContactToOrganization(contact,organization);
-//            return new Response(null, Response.SUCCESS, null);
-//
-//        } catch (Exception e) {
-//            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
-//                    " to organization with ID " + organization.getId());
-//        }
-//    }
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations", consumes= {"application/json"})
+    public Response removeContactFromOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+        String idStringed = idDto.getId();
+
+        Organization organization = organizationService.findById(idStringed);
+        Contact contact = contactService.findById(id);
+
+        if (organization == null) {
+            logger.debug("No org");
+            return new Response(null,Response.FAILURE, "Organization with ID " + idStringed + " does not exist");
+
+        } else if (contact == null) {
+            logger.debug("No contact");
+            return new Response(null,Response.FAILURE, "Contact with ID " + idStringed + " does not exist");
+        }
+
+        try {
+            contactService.removeContactFromOrganization(contact,organization);
+            return new Response(null, Response.SUCCESS, null);
+
+        } catch (Exception e) {
+            logger.debug("Bad service call");
+            return new Response(null, Response.FAILURE, "Unable to remove contact with ID " + contact.getId() +
+                    " from organization with ID " + organization.getId());
+        }
+
+    }
+
+
 
 }
 

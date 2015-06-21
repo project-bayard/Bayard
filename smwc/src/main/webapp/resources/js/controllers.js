@@ -106,30 +106,7 @@
 
         setup();
 
-        $scope.addEncounter = function() {
-            $scope.newEncounter.contact = $scope.contact.id;
-
-            if (null === $scope.contact.encounters) {
-                $scope.contact.encounters = [];
-            }
-            $scope.contact.encounters.push($scope.newEncounter);
-
-            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
-                $scope.requestSuccess = true;
-                $scope.newEncounter = {};
-                $scope.addingEncounter = false;
-                $scope.encounterSuccess = true;
-
-                $timeout(function() {
-                    $scope.requestSuccess = false;
-                }, 3000);
-
-            }, function(err) {
-                $scope.encounterSuccess = false;
-                console.log(err);
-            });
-        };
-
+        /*Basic details*/
         $scope.updateBasicDetails = function() {
 
             ContactService.update({id : $scope.contact.id}, $scope.contact, function(data) {
@@ -156,6 +133,34 @@
             var path = "/contacts/contact/" + id ;
             $location.path(path);
         };
+
+        /*Encounters*/
+
+        $scope.addEncounter = function() {
+            $scope.newEncounter.contact = $scope.contact.id;
+
+            if (null === $scope.contact.encounters) {
+                $scope.contact.encounters = [];
+            }
+            $scope.contact.encounters.push($scope.newEncounter);
+
+            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
+                $scope.requestSuccess = true;
+                $scope.newEncounter = {};
+                $scope.addingEncounter = false;
+                $scope.encounterSuccess = true;
+
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+
+            }, function(err) {
+                $scope.encounterSuccess = false;
+                console.log(err);
+            });
+        };
+
+        /*Events */
 
         $scope.toggleShowingEvents = function() {
             ContactService.getEvents({id : $scope.contact.id}, function(data) {
@@ -203,6 +208,21 @@
 
         };
 
+
+        /* Organizations */
+
+        $scope.getContactOrganizations = function () {
+            $scope.showingOrganizations = !$scope.showingOrganizations;
+
+            if ($scope.contact.organizations == null) {
+                ContactService.getOrganizations({id: $scope.contact.id},function(data) {
+                    $scope.contact.organizations = data
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
+
         $scope.getOrganizations = function() {
             $scope.addOrganization.hidden = !$scope.addOrganization.hidden;
 
@@ -220,34 +240,19 @@
             $scope.organizationSuccess = true;
             var organization = $scope.organizations[index];
 
-            if ($scope.contact.organizations == null) {
-                $scope.contact.organizations = [];
-
-            }
-
-            var members = [$scope.contact.id];
-            if (organization.members == null) {
-                organization.members = [];
-            }
-
-            for (var i = 0; i < organization.members.length; i++) {
-                members.push(organization.members[i].id);
-            }
-
-            $scope.contact.organizations.push({id : organization.id, name: organization.name, members: members });
-
-            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
-                $scope.addOrganization.hidden = true;
-
-                $timeout(function() {
-                    $scope.requestSuccess = false;
-
-                }, 3000);
-
+            ContactService.addToOrganization({id: $scope.contact.id},{id: organization.id},
+                function(data) {
+                if (data.status == 'SUCCESS') {
+                    ContactService.getOrganizations({id: $scope.contact.id},function(data) {
+                        $scope.contact.organizations = data
+                    }, function(err) {
+                        console.log(err);
+                    });
+                } else {
+                    console.log(data.message)
+                }
             }, function(err) {
                 console.log(err);
-                $scope.organizationSuccess = false;
-
             });
 
         };

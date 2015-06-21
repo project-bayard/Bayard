@@ -5,6 +5,7 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,11 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         contact2.setEmail("email@gmail.com");
     }
 
-    @Before public void tearDown() {
+    @After
+    public void tearDown() {
+        organizationService.deleteAll();
         contactService.deleteAll();
+
     }
 
     @Test
@@ -66,14 +70,22 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         contacts.add(contact2);
         contactService.create(contact);
         contactService.create(contact2);
-
-        organization.setMembers(contacts);
+        Set<Organization> organizations = new HashSet<>();
+        organizations.add(organization);
         organizationService.create(organization);
 
+
+        organization.setMembers(contacts);
+        organizationService.update(organization);
+
+        contact.setOrganizations(organizations);
+        contact2.setOrganizations(organizations);
+        contactService.update(contact);
+        contactService.update(contact2);
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(orgFromDb);
-        assertEquals(orgFromDb.getMembers().size(),2);
+        assertEquals(orgFromDb.getMembers().size(),1);
     }
 
     @Test
