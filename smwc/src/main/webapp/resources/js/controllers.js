@@ -166,11 +166,11 @@
             ContactService.getEvents({id : $scope.contact.id}, function(data) {
                 $scope.contact.attendedEvents = data;
                 $scope.eventsTable = $scope.contact.attendedEvents;
-                $scope.showingEvents=!$scope.showingEvents;
-            }, function (err) {
+
+            }, function(err) {
                 console.log(err);
             });
-
+            $scope.showingEvents=!$scope.showingEvents;
         };
 
         $scope.getEvents = function() {
@@ -187,9 +187,9 @@
 
         $scope.attendEvent = function (eventId) {
 
-            var dto = { id : eventId };
+            var idDto = { id : eventId };
 
-            ContactService.attend({id : $scope.contact.id}, dto, function(response) {
+            ContactService.attend({id : $scope.contact.id}, idDto, function(response) {
                 ContactService.getEvents({id : $scope.contact.id}, function(data) {
                     $scope.contact.attendedEvents = data;
                     $scope.eventsTable = $scope.contact.attendedEvents;

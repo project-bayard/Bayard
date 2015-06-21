@@ -152,6 +152,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
+
     @Test
     public void testGetAllInitiators() throws Exception {
         Contact contact = new Contact();

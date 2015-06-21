@@ -85,22 +85,4 @@ public class Event extends BasicEntity  implements Serializable {
         this.dateHeld = dateHeld;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Event other = (Event) o;
-        if (dateHeld != null ? !dateHeld.equals(other.dateHeld) : other.dateHeld != null) return false;
-        if (location != null ? !location.equals(other.location) : other.location != null) return false;
-        if (name != null ? !name.equals(other.name) : other.name != null) return false;
-        if (notes != null ? !notes.equals(other.notes) : other.notes != null) return false;
-
-        return true;
-    }
 }

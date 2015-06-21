@@ -387,5 +387,6 @@ public class Contact extends BasicEntity implements Serializable {
     public void setEncountersInitiated(List<Encounter> encountersInitiated) {
         this.encountersInitiated = encountersInitiated;
     }
+
 }
 

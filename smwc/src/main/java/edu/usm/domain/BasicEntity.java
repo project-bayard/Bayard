@@ -80,7 +80,6 @@ public abstract class BasicEntity {
         this.created = created;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof BasicEntity) {

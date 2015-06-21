@@ -34,20 +34,21 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         Set<Event> attendedEvents = contact.getAttendedEvents();
         Set<Contact> attendees = event.getAttendees();
 
-        if (null == attendees) {
-            attendees = new HashSet<>();
-            event.setAttendees(attendees);
-        }
-
         if (null == attendedEvents) {
             attendedEvents = new HashSet<>();
             contact.setAttendedEvents(attendedEvents);
+        }
+
+        if (null == attendees) {
+            attendees = new HashSet<>();
+            event.setAttendees(attendees);
         }
 
         attendees.add(contact);
         attendedEvents.add(event);
         update(contact);
     }
+
 
 
     @Override
