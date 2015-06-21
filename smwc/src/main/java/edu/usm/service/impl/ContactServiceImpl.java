@@ -29,6 +29,27 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
+    @Override
+    public void attendEvent(Contact contact, Event event) {
+        Set<Event> attendedEvents = contact.getAttendedEvents();
+        Set<Contact> attendees = event.getAttendees();
+
+        if (null == attendedEvents) {
+            attendedEvents = new HashSet<>();
+            contact.setAttendedEvents(attendedEvents);
+        }
+
+        if (null == attendees) {
+            attendees = new HashSet<>();
+            event.setAttendees(attendees);
+        }
+
+        attendees.add(contact);
+        attendedEvents.add(event);
+        update(contact);
+    }
+
+
 
     @Override
     public Contact findById(String id) {

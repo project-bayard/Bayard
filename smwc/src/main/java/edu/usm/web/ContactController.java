@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,11 +86,23 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.POST, value = "/{id}/attend")
-    public void attendEvent(@PathVariable("id") String id, @RequestBody Event event) {
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/events")
+    @JsonView(Views.EventList.class)
+    public Set<Event> getAttendedEvents(@PathVariable("id") String id) {
+        Contact contact = contactService.findById(id);
+        return contact.getAttendedEvents();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/events")
+    public void attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) {
         logger.debug("POST to /contacts/"+id+"/attend");
         Contact contact = contactService.findById(id);
-        event = eventService.findById(event.getId());
+        Event event = eventService.findById(eventIdDto.getId());
+
+        if (null == contact.getAttendedEvents()) {
+            contact.setAttendedEvents(new HashSet<>());
+        }
 
         if (!contact.getAttendedEvents().contains(event)) {
             contact.getAttendedEvents().add(event);

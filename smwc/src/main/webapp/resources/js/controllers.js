@@ -158,7 +158,12 @@
         };
 
         $scope.toggleShowingEvents = function() {
-            $scope.eventsTable = $scope.contact.attendedEvents;
+            ContactService.getEvents({id : $scope.contact.id}, function(data) {
+                $scope.contact.attendedEvents = data;
+                $scope.eventsTable = $scope.contact.attendedEvents;
+            }, function(err) {
+                console.log(err);
+            });
             $scope.showingEvents=!$scope.showingEvents;
         };
 
@@ -173,11 +178,13 @@
 
         };
 
-        $scope.attendEvent = function (event) {
+        $scope.attendEvent = function (eventId) {
 
-            ContactService.attend({id : $scope.contact.id}, event, function(response) {
-                ContactService.find({id : $scope.contact.id}, function(data) {
-                    $scope.contact = data;
+            var idDto = { id : eventId };
+
+            ContactService.attend({id : $scope.contact.id}, idDto, function(response) {
+                ContactService.getEvents({id : $scope.contact.id}, function(data) {
+                    $scope.contact.attendedEvents = data;
                     $scope.eventsTable = $scope.contact.attendedEvents;
                 }, function(err) {
                     console.log(err);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
@@ -21,11 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,6 +58,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     private Contact contact;
     private Contact initiator;
+    private Event event;
 
     @Before
     public void setup() {
@@ -70,6 +74,12 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         initiator = new Contact();
         initiator.setFirstName("initiatorFirst");
         contactService.create(initiator);
+
+        event = new Event();
+        event.setName("Test Event");
+        event.setLocation("Test event location");
+        event.setDateHeld(dateFormatConfig.formatDomainDate(LocalDate.of(2015, 01, 01)));
+        event.setNotes("Test event notes");
     }
 
     @After
@@ -143,6 +153,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.email", is(contact.getEmail())));
 
     }
+
 
     @Test
     public void testGetAllInitiators() throws Exception {
