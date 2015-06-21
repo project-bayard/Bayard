@@ -396,6 +396,6 @@ public class Contact extends BasicEntity implements Serializable {
         }
         return false;
     }
-    
+
 }
 

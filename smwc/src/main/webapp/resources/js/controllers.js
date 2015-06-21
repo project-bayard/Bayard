@@ -161,18 +161,11 @@
             ContactService.getEvents({id : $scope.contact.id}, function(data) {
                 $scope.contact.attendedEvents = data;
                 $scope.eventsTable = $scope.contact.attendedEvents;
-<<<<<<< HEAD
-                $scope.showingEvents=!$scope.showingEvents;
-            }, function (err) {
-                console.log(err);
-            });
 
-=======
             }, function(err) {
                 console.log(err);
             });
             $scope.showingEvents=!$scope.showingEvents;
->>>>>>> stripHashingConcerns
         };
 
         $scope.getEvents = function() {
@@ -189,15 +182,9 @@
 
         $scope.attendEvent = function (eventId) {
 
-<<<<<<< HEAD
-            var dto = { id : eventId };
-
-            ContactService.attend({id : $scope.contact.id}, dto, function(response) {
-=======
             var idDto = { id : eventId };
 
             ContactService.attend({id : $scope.contact.id}, idDto, function(response) {
->>>>>>> stripHashingConcerns
                 ContactService.getEvents({id : $scope.contact.id}, function(data) {
                     $scope.contact.attendedEvents = data;
                     $scope.eventsTable = $scope.contact.attendedEvents;
