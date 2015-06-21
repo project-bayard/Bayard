@@ -7,11 +7,11 @@
 
         <div class="form-group" ng-if="addEvent.hidden == false">
             <label>Event:
-                <select class="form-control input-small" ng-model="addEvent">
-                    <option ng-repeat="event in events | byAlreadyBelongsTo:contact.attendedEvents" value="{{event}}">{{event.name}}</option>
+                <select class="form-control input-small" ng-model="selectedEventId">
+                    <option ng-repeat="event in events | byAlreadyBelongsTo:contact.attendedEvents" value="{{event.id}}">{{event.name}}</option>
                 </select>
             </label>
-            <button class="btn btn-md btn-success" ng-click="attendEvent(addEvent)">Submit</button>
+            <button class="btn btn-md btn-success" ng-click="attendEvent(selectedEventId)">Submit</button>
         </div>
 
         <div ng-include src=" 'resources/partials/tables/eventsTable.html' "></div>

@@ -81,6 +81,9 @@ public abstract class BasicEntity {
 
     @Override
     public int hashCode() {
+        if (null == id) {
+            return super.hashCode();
+        }
         return id.hashCode();
     }
 

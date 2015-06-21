@@ -27,8 +27,8 @@
                 method: 'POST'
             },
             attend: {
-                method: 'POST',
-                url: "../contacts/:id/attend"
+                method: 'PUT',
+                url: "../contacts/:id/events"
             },
             getEncounters : {
                 method: 'GET',
@@ -39,6 +39,11 @@
                 method: 'GET',
                 isArray : true,
                 url: "../contacts/initiators"
+            },
+            getEvents : {
+                method: 'GET',
+                isArray : true,
+                url: "../contacts/:id/events"
             }
         });
     }]);

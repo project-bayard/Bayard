@@ -103,6 +103,15 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/events")
+    @JsonView(Views.EventList.class)
+    public Set<Event> getAttendedEvents(@PathVariable("id") String id) {
+        Contact contact = contactService.findById(id);
+        return contact.getAttendedEvents();
+    }
+
+
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/encounters")
     @JsonView(Views.ContactEncounterDetails.class)
     public List<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {

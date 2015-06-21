@@ -158,14 +158,21 @@
         };
 
         $scope.toggleShowingEvents = function() {
-            $scope.eventsTable = $scope.contact.attendedEvents;
-            $scope.showingEvents=!$scope.showingEvents;
+            ContactService.getEvents({id : $scope.contact.id}, function(data) {
+                $scope.contact.attendedEvents = data;
+                $scope.eventsTable = $scope.contact.attendedEvents;
+                $scope.showingEvents=!$scope.showingEvents;
+            }, function (err) {
+                console.log(err);
+            });
+
         };
 
         $scope.getEvents = function() {
             $scope.addEvent.hidden = false;
 
             EventService.findAll({}, function(response) {
+                console.log(response);
                 $scope.events = response;
             }, function(err) {
                 console.log(err);
@@ -173,11 +180,13 @@
 
         };
 
-        $scope.attendEvent = function (event) {
+        $scope.attendEvent = function (eventId) {
 
-            ContactService.attend({id : $scope.contact.id}, event, function(response) {
-                ContactService.find({id : $scope.contact.id}, function(data) {
-                    $scope.contact = data;
+            var dto = { id : eventId };
+
+            ContactService.attend({id : $scope.contact.id}, dto, function(response) {
+                ContactService.getEvents({id : $scope.contact.id}, function(data) {
+                    $scope.contact.attendedEvents = data;
                     $scope.eventsTable = $scope.contact.attendedEvents;
                 }, function(err) {
                     console.log(err);
