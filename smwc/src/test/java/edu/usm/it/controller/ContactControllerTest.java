@@ -7,6 +7,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
+import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
 import edu.usm.mapper.ContactDtoMapper;
@@ -269,5 +270,40 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
+    }
+
+    @Test
+    @Transactional
+    public void testCreateEncounter() throws Exception {
+        String id = contactService.create(contact);
+        String initiatorId = contactService.create(generateSecondcontact());
+        EncounterDto dto = new EncounterDto();
+        dto.setInitiatorId(initiatorId);
+        dto.setNotes("Notes");
+        dto.setAssessment(9);
+        dto.setType("Call");
+        dto.setDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(put("/contacts/"+id+"/encounters")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+    }
+
+    private Contact generateSecondcontact() {
+        Contact secondContact = new Contact();
+        secondContact.setFirstName("Second");
+        secondContact.setLastName("ToLast");
+        secondContact.setStreetAddress("541 Downtown Abbey");
+        secondContact.setAptNumber("# 9");
+        secondContact.setCity("Yarmouth");
+        secondContact.setZipCode("04096");
+        secondContact.setEmail("second@gmail.com");
+        return secondContact;
     }
 }

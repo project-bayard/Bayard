@@ -2,6 +2,7 @@ package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.*;
+import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
 import edu.usm.service.ContactService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -109,12 +111,40 @@ public class ContactController {
 
     }
 
-
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/encounters")
     @JsonView(Views.ContactEncounterDetails.class)
     public List<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {
         return contactService.findById(id).getEncounters();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters")
+    public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) {
+        Contact contact = contactService.findById(id);
+        Contact initiator = contactService.findById(encounterDto.getInitiatorId());
+        if (null == initiator) {
+            return new Response(null, Response.FAILURE, "Initiator with ID "+encounterDto.getInitiatorId()+" does not exist");
+        }
+        Encounter encounter = new Encounter();
+        encounter.setContact(contact);
+        encounter.setInitiator(initiator);
+        encounter.setNotes(encounterDto.getNotes());
+        encounter.setType(encounterDto.getType());
+        encounter.setAssessment(encounterDto.getAssessment());
+
+        if (null == contact.getEncounters()) {
+            contact.setEncounters(new ArrayList<>());
+        }
+
+        contact.getEncounters().add(encounter);
+
+        try {
+            contactService.update(contact);
+            return new Response(null, Response.SUCCESS, null);
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Contact with new encounter");
+        }
     }
 
     @ResponseStatus(HttpStatus.OK)
