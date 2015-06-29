@@ -220,6 +220,13 @@ public class ContactController {
 
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/demographics")
+    @JsonView(Views.DemographicDetails.class)
+    public Contact getDemographicDetails(@PathVariable("id") String id) {
+        return contactService.findById(id);
+    }
+
 
 
 }
