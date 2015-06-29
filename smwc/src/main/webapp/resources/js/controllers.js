@@ -136,29 +136,57 @@
 
         /*Encounters*/
 
-        $scope.addEncounter = function() {
-            $scope.newEncounter.contact = $scope.contact.id;
+        $scope.addEncounter = function(newEncounter) {
 
-            if (null === $scope.contact.encounters) {
-                $scope.contact.encounters = [];
-            }
-            $scope.contact.encounters.push($scope.newEncounter);
+            ContactService.createEncounter({id: $scope.contact.id}, newEncounter, function(data) {
+                ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
+                    console.log("Got encounters");
+                    console.log(encounters);
+                    $scope.encountersTable = encounters;
+                    $scope.requestSuccess = true;
+                    newEncounter = {};
+                    $scope.addingEncounter = false;
+                    $scope.encounterSuccess = true;
 
-            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
-                $scope.requestSuccess = true;
-                $scope.newEncounter = {};
-                $scope.addingEncounter = false;
-                $scope.encounterSuccess = true;
+                    $timeout(function() {
+                        $scope.requestSuccess = false;
+                    }, 3000);
 
-                $timeout(function() {
-                    $scope.requestSuccess = false;
-                }, 3000);
+                }, function(err) {
+                    $scope.encounterSuccess = false;
+                    console.log(err);
+                });
 
             }, function(err) {
                 $scope.encounterSuccess = false;
                 console.log(err);
             });
         };
+
+
+            $scope.viewEncounterDetails = function(encounter) {
+
+                ContactService.find({id : encounter.initiator.id}, function(initiator) {
+                    var initiatorName = initiator.firstName + " " + initiator.lastName;
+                    $scope.encounterDetails = { initiatorId : initiator.id, notes : encounter.notes, initiatorName : initiatorName};
+
+                }, function(err) {
+                    console.log(err);
+                });
+
+            };
+
+            $scope.displayEncounters = function () {
+                $scope.showingEncounters = !$scope.showingEncounters;
+
+                if ($scope.showingEncounters == true) {
+                    ContactService.getEncounters({id : $scope.contact.id}, function(data) {
+                        $scope.encountersTable =  data;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+            };
 
         /*Events */
 
@@ -272,6 +300,8 @@
 
         };
 
+            /* Committees */
+
         $scope.getCommittees = function() {
             $scope.addCommittee.hidden = !$scope.addCommittee.hidden;
 
@@ -322,20 +352,9 @@
 
         };
 
-        $scope.getEncounters = function () {
-            $scope.showingEncounters= !$scope.showingEncounters;
-
-            if ($scope.contact.encounters == null) {
-                ContactService.getEncounters({id : $scope.contact.id}, function(data) {
-                    $scope.contact.encounters = data;
-                }, function(err) {
-                    console.log(err);
-                });
-            }
-
-        }
-
         }]);
+
+
 
     controllers.controller('EventsCtrl', ['$scope', 'EventService', function($scope, EventService) {
 
