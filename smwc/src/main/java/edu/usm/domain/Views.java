@@ -10,6 +10,7 @@ public class Views {
     public interface CommitteeList {}
     public interface ContactDetails {}
     public interface ContactEncounterDetails {}
+    public interface DemographicDetails {}
 
     /*For the contact details view. Doesn't contain membership information.*/
     public interface ContactOrganizationDetails {}
