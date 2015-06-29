@@ -1,6 +1,7 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import edu.usm.config.DateFormatConfig;
 import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
@@ -35,7 +36,6 @@ public class ContactController {
 
     @Autowired
     private OrganizationService organizationService;
-
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -127,6 +127,7 @@ public class ContactController {
             return new Response(null, Response.FAILURE, "Initiator with ID "+encounterDto.getInitiatorId()+" does not exist");
         }
         Encounter encounter = new Encounter();
+        encounter.setEncounterDate(encounterDto.getDate());
         encounter.setContact(contact);
         encounter.setInitiator(initiator);
         encounter.setNotes(encounterDto.getNotes());
