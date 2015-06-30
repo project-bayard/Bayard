@@ -1,0 +1,23 @@
+<div class="panel panel-default">
+    <div class="panel-heading" ng-click="displayDemographics()">
+        <h3 class="panel-title">Demographics</h3>
+    </div>
+    <div class="panel-body" ng-show="showingDemographics">
+
+        <div class="form-group">
+            <label>Race
+                <input type="text" class="form-control input-sm" ng-model="demographics.race" ng-readonly="!editingDemographics">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Ethnicity
+                <input type="text" class="form-control input-sm" ng-model="demographics.ethnicity" ng-readonly="!editingDemographics">
+            </label>
+        </div>
+
+
+        <button class="btn btn-primary" ng-click="editingDemographics=!editingDemographics">Edit Demographics</button>
+        <button class="btn btn-success" ng-click="updateDemographics()" ng-show="editingDemographics">Submit</button>
+
+    </div>
+</div>
