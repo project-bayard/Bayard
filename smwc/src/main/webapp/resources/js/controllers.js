@@ -352,6 +352,26 @@
 
         };
 
+            /* Demographics*/
+
+            $scope.displayDemographics = function() {
+
+                $scope.showingDemographics = !$scope.showingDemographics;
+
+                if (showingDemographics) {
+                    ContactService.getDemographics({id : $scope.contact.id}, function(data) {
+                        $scope.demographics = data;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+
+            };
+
+            $scope.updateDemographics = function() {
+                //TODO: PUT demographics to server
+            }
+
         }]);
 
 
