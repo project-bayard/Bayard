@@ -54,7 +54,6 @@ public class ContactController {
         String id;
         try {
             id = (contactService.create(contact));
-
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Unable to create contact");
         }
@@ -78,7 +77,7 @@ public class ContactController {
 
         try {
             contactService.update(contact);
-            return new Response(contact.getId(), Response.SUCCESS, null);
+            return new Response(id, Response.SUCCESS, null);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -96,17 +95,28 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/events")
-    public void attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) {
+    public Response attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) {
         logger.debug("POST to /contacts/"+id+"/attend");
         Contact contact = contactService.findById(id);
+
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
         Event event = eventService.findById(eventIdDto.getId());
+        if (null == event) {
+            return new Response(null, Response.FAILURE, "Event with ID "+eventIdDto.getId()+" does not exist");
+        }
 
         if (null == contact.getAttendedEvents()) {
             contact.setAttendedEvents(new HashSet<>());
         }
 
-        if (!contact.getAttendedEvents().contains(event)) {
+        try {
             contactService.attendEvent(contact, event);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Contact with Event");
         }
 
     }
@@ -122,6 +132,11 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters")
     public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) {
         Contact contact = contactService.findById(id);
+
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
         Contact initiator = contactService.findById(encounterDto.getInitiatorId());
         if (null == initiator) {
             return new Response(null, Response.FAILURE, "Initiator with ID "+encounterDto.getInitiatorId()+" does not exist");
@@ -142,7 +157,7 @@ public class ContactController {
 
         try {
             contactService.update(contact);
-            return new Response(null, Response.SUCCESS, null);
+            return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with new encounter");
         }
@@ -177,7 +192,7 @@ public class ContactController {
 
         } else if (contact == null) {
             logger.debug("No contact");
-            return new Response(null,Response.FAILURE, "Contact with ID " + idStringed + " does not exist");
+            return Response.failNonexistentContact(id);
         }
 
         try {
@@ -205,12 +220,12 @@ public class ContactController {
 
         } else if (contact == null) {
             logger.debug("No contact");
-            return new Response(null,Response.FAILURE, "Contact with ID " + idStringed + " does not exist");
+            return Response.failNonexistentContact(id);
         }
 
         try {
             contactService.removeContactFromOrganization(contact,organization);
-            return new Response(null, Response.SUCCESS, null);
+            return Response.successGeneric();
 
         } catch (Exception e) {
             logger.debug("Bad service call");
@@ -227,7 +242,30 @@ public class ContactController {
         return contactService.findById(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/demographics")
+    public Response updateDemographicDetails(@PathVariable("id") String id, @RequestBody Contact details) {
+        Contact contact = contactService.findById(id);
 
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
+        contact.setRace(details.getRace());
+        contact.setEthnicity(details.getEthnicity());
+        contact.setDateOfBirth(details.getDateOfBirth());
+        contact.setGender(details.getGender());
+        contact.setDisabled(details.isDisabled());
+        contact.setIncomeBracket(details.getIncomeBracket());
+        contact.setSexualOrientation(details.getSexualOrientation());
+
+        try {
+            contactService.update(contact);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Contact with demographic details");
+        }
+    }
 
 }
 

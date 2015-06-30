@@ -12,6 +12,14 @@ public class Response {
     private String status;
     private String message;
 
+    public static Response failNonexistentContact(String id) {
+        return new Response(null,Response.FAILURE, "Contact with ID " + id + " does not exist");
+    }
+
+    public static Response successGeneric() {
+        return new Response(null, Response.SUCCESS, null);
+    }
+
     public Response(String id, String status, String message) {
         this.id = id;
         this.status = status;
