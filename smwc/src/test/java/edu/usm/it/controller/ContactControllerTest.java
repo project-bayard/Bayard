@@ -69,6 +69,13 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+        contact.setDisabled(true);
+        contact.setGender("Female");
+        contact.setDateOfBirth(dateFormatConfig.formatDomainDate(LocalDate.now()));
+        contact.setIncomeBracket("100K");
+        contact.setEthnicity("White American");
+        contact.setRace("Hispanic");
+        contact.setSexualOrientation("Heterosexual");
 
         initiator = new Contact();
         initiator.setFirstName("initiatorFirst");
@@ -292,6 +299,24 @@ public class ContactControllerTest extends WebAppConfigurationAware {
             .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+    }
+
+    @Test
+    @Transactional
+    public void testGetDemographicDetails() throws Exception {
+        String id = contactService.create(contact);
+
+        mockMvc.perform(get("/contacts/" + id + "/demographics")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.race", is(contact.getRace())))
+                .andExpect(jsonPath("$.ethnicity", is(contact.getEthnicity())))
+                .andExpect(jsonPath("$.dateOfBirth", is(contact.getDateOfBirth())))
+                .andExpect(jsonPath("$.gender", is(contact.getGender())))
+                .andExpect(jsonPath("$.disabled", is(contact.isDisabled())))
+                .andExpect(jsonPath("$.incomeBracket", is(contact.getIncomeBracket())))
+                .andExpect(jsonPath("$.sexualOrientation", is(contact.getSexualOrientation())));
 
     }
 
