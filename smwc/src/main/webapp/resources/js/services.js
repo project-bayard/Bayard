@@ -57,6 +57,10 @@
             createEncounter : {
                 method : 'PUT',
                 url: "/contacts/:id/encounters"
+            },
+            getDemographics : {
+                method : 'PUT',
+                url: "/contacts/:id/demographics"
             }
         });
     }]);
