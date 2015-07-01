@@ -21,7 +21,8 @@
         </div>
         <div class="form-group">
             <label>Disabled
-                <input type="text" class="form-control input-sm" ng-model="demographics.disabled" ng-readonly="!editingDemographics">
+                <select class="form-control input-sm" ng-model="demographics.disabled" ng-readonly="!editingDemographics" ng-options="booleanToString(value) for value in [true, false]">
+                </select>
             </label>
         </div>
         <div class="form-group">
@@ -40,7 +41,7 @@
             </label>
         </div>
 
-        <button class="btn btn-primary" ng-click="editingDemographics=!editingDemographics">Edit Demographics</button>
+        <button class="btn btn-primary" ng-click="editingDemographics = !editingDemographics">Edit Demographics</button>
         <button class="btn btn-success" ng-click="updateDemographics()" ng-show="editingDemographics">Submit</button>
         <button class="btn btn-danger" ng-click="cancelUpdateDemographics()" ng-show="editingDemographics">Cancel</button>
 

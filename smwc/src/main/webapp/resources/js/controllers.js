@@ -81,12 +81,14 @@
             $scope.addEvent = {hidden : true};
             $scope.addCommittee = {hidden : true};
             $scope.newEncounter = {};
+            $scope.showingDemographics = false;
 
             //TODO: decouple this knowledge
             $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
 
             //TODO: decouple this knowledge
             $scope.encounterTypes = ["Call", "Other"];
+
 
             ContactService.find({id : $routeParams.id}, function(data) {
                 $scope.contact = data;
@@ -354,23 +356,56 @@
 
             /* Demographics*/
 
+            $scope.booleanToString = function(value) {
+                if (value) {
+                    return "Yes";
+                }
+                return "No";
+            };
+
             $scope.displayDemographics = function() {
 
                 $scope.showingDemographics = !$scope.showingDemographics;
 
-                if (showingDemographics) {
-                    ContactService.getDemographics({id : $scope.contact.id}, function(data) {
-                        $scope.demographics = data;
-                    }, function(err) {
-                        console.log(err);
-                    });
-                }
+                ContactService.getDemographics({id : $scope.contact.id}, function(data) {
+                    $scope.demographics = formatDemographics(data);
+                }, function(err) {
+                    console.log(err);
+                });
 
             };
 
             $scope.updateDemographics = function() {
-                //TODO: PUT demographics to server
-            }
+
+                console.log($scope.demographics);
+
+                ContactService.updateDemographics({id: $scope.contact.id}, $scope.demographics, function(data) {
+                    ContactService.getDemographics({id : $scope.contact.id}, function(demographics) {
+                        $scope.demographics = formatDemographics(demographics);
+                        $scope.editingDemographics = false;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }, function(err) {
+                    console.log(err);
+                })
+            };
+
+
+            $scope.cancelUpdateDemographics = function() {
+                ContactService.getDemographics({id : $scope.contact.id}, function(data) {
+                    $scope.demographics = formatDemographics(data);
+                    $scope.editingDemographics = false;
+                }, function(err) {
+                    console.log(err);
+                });
+            };
+
+
+            var formatDemographics = function(demographics) {
+                demographics.dateOfBirth = new Date(demographics.dateOfBirth);
+                return demographics;
+            };
 
         }]);
 
