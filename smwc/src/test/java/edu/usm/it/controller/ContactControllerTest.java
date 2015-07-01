@@ -320,6 +320,31 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
+    @Test
+    @Transactional
+    public void testUpdateDemographicDetails() throws Exception {
+        String id = contactService.create(contact);
+
+        Contact contactDetails = new Contact();
+        contactDetails.setIncomeBracket("High");
+        contactDetails.setRace("Race");
+        contactDetails.setSexualOrientation("Other");
+        contactDetails.setDisabled(false);
+        contactDetails.setEthnicity("Other");
+        contactDetails.setDateOfBirth(dateFormatConfig.formatDomainDate(LocalDate.now()));
+        contactDetails.setGender("F");
+
+        String json = new ObjectMapper().writeValueAsString(contactDetails);
+
+        mockMvc.perform(put("/contacts/" + id + "/demographics")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+
+
+
+    }
+
     private Contact generateSecondcontact() {
         Contact secondContact = new Contact();
         secondContact.setFirstName("Second");
