@@ -14,10 +14,35 @@
                 <input type="text" class="form-control input-sm" ng-model="demographics.ethnicity" ng-readonly="!editingDemographics">
             </label>
         </div>
-
+        <div class="form-group">
+            <label>Date of Birth
+                <input type="date" class="form-control input-sm" ng-model="demographics.dateOfBirth" ng-readonly="!editingDemographics">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Disabled
+                <input type="text" class="form-control input-sm" ng-model="demographics.disabled" ng-readonly="!editingDemographics">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Gender
+                <input type="text" class="form-control input-sm" ng-model="demographics.gender" ng-readonly="!editingDemographics">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Sexual Orientation
+                <input type="text" class="form-control input-sm" ng-model="demographics.sexualOrientation" ng-readonly="!editingDemographics">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>Income Bracket
+                <input type="text" class="form-control input-sm" ng-model="demographics.incomeBracket" ng-readonly="!editingDemographics">
+            </label>
+        </div>
 
         <button class="btn btn-primary" ng-click="editingDemographics=!editingDemographics">Edit Demographics</button>
         <button class="btn btn-success" ng-click="updateDemographics()" ng-show="editingDemographics">Submit</button>
+        <button class="btn btn-danger" ng-click="cancelUpdateDemographics()" ng-show="editingDemographics">Cancel</button>
 
     </div>
 </div>
