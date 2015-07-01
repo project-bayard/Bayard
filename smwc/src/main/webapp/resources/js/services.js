@@ -59,7 +59,11 @@
                 url: "/contacts/:id/encounters"
             },
             getDemographics : {
-                method : 'PUT',
+                method : 'GET',
+                url: "/contacts/:id/demographics"
+            },
+            updateDemographics : {
+                method: 'PUT',
                 url: "/contacts/:id/demographics"
             }
         });
