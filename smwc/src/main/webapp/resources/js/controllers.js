@@ -487,6 +487,7 @@
             console.log(err);
         });
 
+        //TODO: Should be refactored to account for all properties of Organization
         $scope.createOrganization = function(name) {
             var organization = {name: name, members: []};
 
