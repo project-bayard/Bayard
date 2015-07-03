@@ -111,6 +111,13 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization organization = new Organization();
         organization.setName("organization");
         organization.setMembers(contacts);
+        organization.setStreetAddress("123 Organizational Lane");
+        organization.setCity("Portland");
+        organization.setState("ME");
+        organization.setZipCode("04103");
+        organization.setPhoneNumber("123-456-7890");
+        organization.setPrimaryContactName("Theo McCeo");
+        organization.setDescription("A very good organization");
         organizationDao.save(organization);
         Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
@@ -166,6 +173,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         Organization fromDbOrg = organizationDao.findOne(organization.getId());
         assertNotNull(fromDbOrg);
         assertEquals(organizationDao.findOne(organization.getId()).getId(),organization.getId());
+        assertEquals(organizationDao.findOne(organization.getId()).getDescription(),organization.getDescription());
         assertEquals(organizationDao.findOne(organization.getId()).getMembers().iterator().next().getId(),contact.getId());
 
         /*Encounters*/
