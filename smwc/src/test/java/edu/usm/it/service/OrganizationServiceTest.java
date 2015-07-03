@@ -35,6 +35,13 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     public void setup() {
         organization = new Organization();
         organization.setName("organization");
+        organization.setStreetAddress("123 Organizational Lane");
+        organization.setCity("Portland");
+        organization.setState("ME");
+        organization.setZipCode("04103");
+        organization.setPhoneNumber("123-456-7890");
+        organization.setPrimaryContactName("Theo McCeo");
+        organization.setDescription("A very good organization");
 
         contact = new Contact();
         contact.setFirstName("First");
@@ -86,6 +93,10 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
 
         assertNotNull(orgFromDb);
         assertEquals(orgFromDb.getMembers().size(),1);
+        assertEquals(organization.getDescription(), orgFromDb.getDescription());
+        assertEquals(organization.getName(), orgFromDb.getName());
+        assertEquals(organization.getPhoneNumber(), orgFromDb.getPhoneNumber());
+        assertEquals(organization.getPrimaryContactName(), orgFromDb.getPrimaryContactName());
     }
 
     @Test
