@@ -44,6 +44,10 @@ public class Organization extends BasicEntity  implements Serializable {
 
     @Column
     @JsonView(Views.OrganizationList.class)
+    private String email;
+
+    @Column
+    @JsonView(Views.OrganizationList.class)
     private String primaryContactName;
 
     @Column
@@ -52,6 +56,14 @@ public class Organization extends BasicEntity  implements Serializable {
 
     public Organization(String id) {
         setId(id);
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getState() {
