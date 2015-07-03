@@ -22,8 +22,74 @@ public class Organization extends BasicEntity  implements Serializable {
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Contact> members;
 
+    @Column
+    private String streetAddress;
+
+    @Column
+    private String city;
+
+    @Column
+    private String zipCode;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String primaryContactName;
+
+    @Column
+    private String description;
+
     public Organization(String id) {
         setId(id);
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPrimaryContactName() {
+        return primaryContactName;
+    }
+
+    public void setPrimaryContactName(String primaryContactName) {
+        this.primaryContactName = primaryContactName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Organization() {
