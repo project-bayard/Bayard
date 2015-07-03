@@ -82,6 +82,7 @@
             $scope.addCommittee = {hidden : true};
             $scope.newEncounter = {};
             $scope.showingDemographics = false;
+            $scope.demographicPanel = { updateRequest : {success : false,  failure : false }, editingDemographics : false, showingDemographics : false };
 
             //TODO: decouple this knowledge
             $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
@@ -360,6 +361,10 @@
 
             /* Demographics*/
 
+            $scope.toggleEditingDemographics = function() {
+                $scope.demographicPanel.editingDemographics = !$scope.demographicPanel.editingDemographics;
+            };
+
             $scope.booleanToString = function(value) {
                 if (value) {
                     return "Yes";
@@ -369,7 +374,7 @@
 
             $scope.displayDemographics = function() {
 
-                $scope.showingDemographics = !$scope.showingDemographics;
+                $scope.demographicPanel.showingDemographics = !$scope.demographicPanel.showingDemographics;
 
                 ContactService.getDemographics({id : $scope.contact.id}, function(data) {
                     $scope.demographics = formatDemographics(data);
@@ -386,24 +391,24 @@
                 ContactService.updateDemographics({id: $scope.contact.id}, $scope.demographics, function(data) {
                     ContactService.getDemographics({id : $scope.contact.id}, function(demographics) {
                         $scope.demographics = formatDemographics(demographics);
-                        $scope.editingDemographics = false;
-                        $scope.demographicUpdateRequestSuccess = true;
+                        $scope.demographicPanel.editingDemographics = false;
+                        $scope.demographicPanel.updateRequest.success = true;
                         $timeout(function() {
-                            $scope.demographicUpdateRequestSuccess = false;
+                            $scope.demographicPanel.updateRequest.success = false;
                         }, 3000);
 
                     }, function(err) {
                         console.log(err);
-                        $scope.demographicUpdateRequestFailure = true;
+                        $scope.demographicPanel.updateRequest.failure = true;
                         $timeout(function() {
-                            $scope.demographicUpdateRequestFailure = false;
+                            $scope.demographicPanel.updateRequest.failure = false;
                         }, 3000);
                     });
                 }, function(err) {
                     console.log(err);
-                    $scope.demographicUpdateRequestFailure = true;
+                    $scope.demographicPanel.updateRequest.failure = true;
                     $timeout(function() {
-                        $scope.demographicUpdateRequestFailure = false;
+                        $scope.demographicPanel.updateRequest.failure = false;
                     }, 3000);
                 })
             };
@@ -412,7 +417,7 @@
             $scope.cancelUpdateDemographics = function() {
                 ContactService.getDemographics({id : $scope.contact.id}, function(data) {
                     $scope.demographics = formatDemographics(data);
-                    $scope.editingDemographics = false;
+                    $scope.demographicPanel.editingDemographics = false;
                 }, function(err) {
                     console.log(err);
                 });
