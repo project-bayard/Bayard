@@ -50,6 +50,13 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
 
         organization = new Organization();
         organization.setName("organization");
+        organization.setStreetAddress("123 Organizational Lane");
+        organization.setCity("Portland");
+        organization.setState("ME");
+        organization.setZipCode("04103");
+        organization.setPhoneNumber("123-456-7890");
+        organization.setPrimaryContactName("Theo McCeo");
+        organization.setDescription("A very good organization");
 
 
 
@@ -93,6 +100,9 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         Organization organizationFromDb = organizationDao.findOne(organization.getId());
         assertNotNull(organizationFromDb);
         assertEquals(organizationFromDb.getMembers().size(),1);
+        assertEquals(organization.getDescription(),organizationFromDb.getDescription());
+        assertEquals(organization.getPrimaryContactName(),organizationFromDb.getPrimaryContactName());
+        assertEquals(organization.getPhoneNumber(),organizationFromDb.getPhoneNumber());
 
     }
 
