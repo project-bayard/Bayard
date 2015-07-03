@@ -142,25 +142,29 @@
 
             ContactService.createEncounter({id: $scope.contact.id}, newEncounter, function(data) {
                 ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
-                    console.log("Got encounters");
-                    console.log(encounters);
-                    $scope.encountersTable = encounters;
-                    $scope.requestSuccess = true;
-                    newEncounter = {};
-                    $scope.addingEncounter = false;
-                    $scope.encounterSuccess = true;
+                    $scope.newEncounterRequestSuccess = true;
 
                     $timeout(function() {
-                        $scope.requestSuccess = false;
+                        $scope.newEncounterRequestSuccess = false;
                     }, 3000);
 
+                    $scope.encountersTable = encounters;
+                    $scope.newEncounterForm.$setPristine();
+                    $scope.addingEncounter = false;
+
                 }, function(err) {
-                    $scope.encounterSuccess = false;
+                    $scope.newEncounterRequestFailure = true;
+                    $timeout(function() {
+                        $scope.newEncounterRequestFailure = false;
+                    }, 3000);
                     console.log(err);
                 });
 
             }, function(err) {
-                $scope.encounterSuccess = false;
+                $scope.newEncounterRequestFailure = true;
+                $timeout(function() {
+                    $scope.newEncounterRequestFailure = false;
+                }, 3000);
                 console.log(err);
             });
         };
@@ -383,11 +387,24 @@
                     ContactService.getDemographics({id : $scope.contact.id}, function(demographics) {
                         $scope.demographics = formatDemographics(demographics);
                         $scope.editingDemographics = false;
+                        $scope.demographicUpdateRequestSuccess = true;
+                        $timeout(function() {
+                            $scope.demographicUpdateRequestSuccess = false;
+                        }, 3000);
+
                     }, function(err) {
                         console.log(err);
+                        $scope.demographicUpdateRequestFailure = true;
+                        $timeout(function() {
+                            $scope.demographicUpdateRequestFailure = false;
+                        }, 3000);
                     });
                 }, function(err) {
                     console.log(err);
+                    $scope.demographicUpdateRequestFailure = true;
+                    $timeout(function() {
+                        $scope.demographicUpdateRequestFailure = false;
+                    }, 3000);
                 })
             };
 
