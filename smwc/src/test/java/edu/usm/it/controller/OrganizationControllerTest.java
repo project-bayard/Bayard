@@ -56,6 +56,13 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         Set<Contact> members = new HashSet<>();
         members.add(contact);
         organization.setMembers(members);
+        organization.setStreetAddress("123 Organizational Lane");
+        organization.setCity("Portland");
+        organization.setState("ME");
+        organization.setZipCode("04103");
+        organization.setPhoneNumber("123-456-7890");
+        organization.setPrimaryContactName("Theo McCeo");
+        organization.setDescription("A very good organization");
 
         Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
@@ -68,6 +75,13 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[0].id", is(contact.getOrganizations().iterator().next().getId())))
                 .andExpect(jsonPath("$.[0].name", is(organization.getName())))
+                .andExpect(jsonPath("$.[0].streetAddress", is(organization.getStreetAddress())))
+                .andExpect(jsonPath("$.[0].city", is(organization.getCity())))
+                .andExpect(jsonPath("$.[0].state", is(organization.getState())))
+                .andExpect(jsonPath("$.[0].zipCode", is(organization.getZipCode())))
+                .andExpect(jsonPath("$.[0].phoneNumber", is(organization.getPhoneNumber())))
+                .andExpect(jsonPath("$.[0].primaryContactName", is(organization.getPrimaryContactName())))
+                .andExpect(jsonPath("$.[0].description", is(organization.getDescription())))
                 .andExpect(jsonPath("$.[0].members.[0].id", is(contact.getId())))
                 .andExpect(jsonPath("$.[0].members.[0].firstName", is(contact.getFirstName())))
                 .andExpect(jsonPath("$.[0].members.[0].assessment", is(contact.getAssessment())))
