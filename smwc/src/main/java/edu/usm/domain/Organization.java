@@ -32,6 +32,10 @@ public class Organization extends BasicEntity  implements Serializable {
 
     @Column
     @JsonView(Views.OrganizationList.class)
+    private String state;
+
+    @Column
+    @JsonView(Views.OrganizationList.class)
     private String zipCode;
 
     @Column
@@ -48,6 +52,14 @@ public class Organization extends BasicEntity  implements Serializable {
 
     public Organization(String id) {
         setId(id);
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getStreetAddress() {
