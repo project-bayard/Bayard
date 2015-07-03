@@ -23,21 +23,27 @@ public class Organization extends BasicEntity  implements Serializable {
     private Set<Contact> members;
 
     @Column
+    @JsonView(Views.OrganizationList.class)
     private String streetAddress;
 
     @Column
+    @JsonView(Views.OrganizationList.class)
     private String city;
 
     @Column
+    @JsonView(Views.OrganizationList.class)
     private String zipCode;
 
     @Column
+    @JsonView(Views.OrganizationList.class)
     private String phoneNumber;
 
     @Column
+    @JsonView(Views.OrganizationList.class)
     private String primaryContactName;
 
     @Column
+    @JsonView(Views.OrganizationList.class)
     private String description;
 
     public Organization(String id) {
