@@ -81,21 +81,6 @@ public class ContactDtoMapperTest {
 
         contact.setMemberInfo(memberInfo);
 
-        /*Encounters*/
-        Encounter encounter = new Encounter();
-        encounter.setAssessment(0);
-        encounter.setId("encounterID");
-        encounter.setNotes("notes");
-        encounter.setEncounterDate(LocalDate.now().toString());
-        encounter.setType(EncounterType.EVENT);
-        encounter.setCreated(LocalDateTime.now().toString());
-        encounter.setLastModified(LocalDateTime.now().toString());
-        encounter.setContact(contact);
-        encounter.setInitiator(initiator);
-        List<Encounter> encounterList = new ArrayList<>();
-        encounterList.add(encounter);
-        contact.setEncounters(encounterList);
-
         ContactDtoMapper mapper = new ContactDtoMapper();
 
         ContactDto contactDto = mapper.convertToContactDto(contact);
@@ -128,16 +113,6 @@ public class ContactDtoMapperTest {
         assertNotNull(contact.getOrganizations());
         assertEquals(contact.getOrganizations().size(), 1);
         assertEquals(contact.getOrganizations().iterator().next().getName(), contactDto.getOrganizations().iterator().next().getName());
-
-           /*Encounters*/
-        assertEquals(contactDto.getEncounters().get(0).getContact(), contact.getId());
-        assertEquals(contactDto.getEncounters().get(0).getInitiator(), initiator.getId());
-        assertEquals(contact.getEncounters().get(0).getAssessment(), contactDto.getEncounters().get(0).getAssessment());
-        assertEquals(contact.getEncounters().get(0).getEncounterDate(), contactDto.getEncounters().get(0).getEncounterDate());
-        assertEquals(contact.getEncounters().get(0).getNotes(), contactDto.getEncounters().get(0).getNotes());
-        assertEquals(contact.getEncounters().get(0).getType(), contactDto.getEncounters().get(0).getType());
-        assertEquals(contact.getEncounters().get(0).getLastModified(), contactDto.getEncounters().get(0).getLastModified());
-        assertEquals(contact.getEncounters().get(0).getCreated(), contactDto.getEncounters().get(0).getCreated());
 
         /*MemberInfo*/
         assertNotNull(contactDto.getMemberInfo());

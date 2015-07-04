@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading" ng-click="getEncounters()">
+    <div class="panel-heading" ng-click="displayEncounters()">
         <h3 class="panel-title">Encounters ({{contact.encounters.length}})</h3>
     </div>
     <div class="panel-body" ng-show="showingEncounters">
@@ -9,12 +9,12 @@
         <form name="newEncounterForm" id="newEncounterForm">
             <div class="form-group" ng-show="addingEncounter">
                 <label>Initiator:
-                    <select class="form-control input-small" ng-model="newEncounter.initiator">
+                    <select class="form-control input-small" ng-model="newEncounter.initiatorId">
                         <option ng-repeat="initiator in contacts" value="{{initiator.id}}">{{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
                     </select>
                 </label>
                 <label>Date
-                    <input type="date"  ng-model="newEncounter.encounterDate">
+                    <input type="date"  ng-model="newEncounter.date">
                 </label>
                 <label>Assessment
                     <select class="form-control input-small" ng-model="newEncounter.assessment">
@@ -29,55 +29,12 @@
                 <label>Notes
                     <textarea  rows="3" cols="50" ng-model="newEncounter.notes" ></textarea>
                 </label>
-                <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
+                <button class="btn btn-success" ng-click="addEncounter(newEncounter)">Complete Encounter</button>
             </div>
             <div ng-if="!encounterSuccess" class="alert alert-danger" role="alert">Failed to add encounter...</div>
         </form>
 
-        <table class="bootstrap-table table table-striped table-hover table-responsive"
-               data-toggle="table"
-               data-pagination="true"
-               data-search="true">
-
-            <th>Date</th>
-            <th>Type</th>
-            <th>Assessment</th>
-            <th>Notes</th>
-
-            <tr ng-repeat="encounter in contact.encounters">
-                <td>{{encounter.encounterDate | date: 'MMMM d, y'}}</td>
-                <td>{{encounter.type}}</td>
-                <td>{{encounter.assessment}}</td>
-                <td>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#encounterModal">
-                        View Details
-                    </button>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="encounterModal" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title" id="encounterModalLabel">Encounter Details</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <h4>Initiator</h4>
-                                    <p>{{encounter.initiator.firstName + " " + encounter.initiator.lastName}}</p>
-                                    <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(encounter.initiator.id)">View Details</button>
-                                    <hr>
-                                    <h4>Notes</h4>
-                                    <div>{{encounter.notes}}</div>
-                                    <hr>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div ng-include src=" 'resources/partials/tables/encountersTable.html' "></div>
 
     </div>
 </div>

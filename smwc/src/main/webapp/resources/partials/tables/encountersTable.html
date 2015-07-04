@@ -1,0 +1,44 @@
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+
+    <th>Date</th>
+    <th>Type</th>
+    <th>Assessment</th>
+    <th>Notes</th>
+
+    <tr ng-repeat="encounter in encountersTable">
+        <td>{{encounter.encounterDate | date: 'MMMM d, y'}}</td>
+        <td>{{encounter.type}}</td>
+        <td>{{encounter.assessment}}</td>
+        <td>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#encounterModal" ng-click="viewEncounterDetails(encounter)">
+                View Details
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="encounterModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="encounterModalLabel">Encounter Details</h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Initiator</h4>
+                            <p>{{encounterDetails.initiatorName}}</p>
+                            <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(encounterDetails.initiatorId)">View Details</button>
+                            <hr>
+                            <h4>Notes</h4>
+                            <div>{{encounterDetails.notes}}</div>
+                            <hr>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>

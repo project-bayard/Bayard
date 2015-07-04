@@ -146,6 +146,48 @@ public class Contact extends BasicEntity implements Serializable {
             Views.ContactDetails.class})
     private int assessment;
 
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private String race;
+
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private String ethnicity;
+
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private String dateOfBirth;
+
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private String gender;
+
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private boolean disabled;
+
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private String sexualOrientation;
+
+    @Column
+    @JsonView(
+            {Views.DemographicDetails.class}
+    )
+    private String incomeBracket;
+
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_committee",
@@ -388,5 +430,60 @@ public class Contact extends BasicEntity implements Serializable {
         this.encountersInitiated = encountersInitiated;
     }
 
+    public String getRace() {
+        return race;
+    }
+
+    public void setRace(String race) {
+        this.race = race;
+    }
+
+    public String getEthnicity() {
+        return ethnicity;
+    }
+
+    public void setEthnicity(String ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public String getSexualOrientation() {
+        return sexualOrientation;
+    }
+
+    public void setSexualOrientation(String sexualOrientation) {
+        this.sexualOrientation = sexualOrientation;
+    }
+
+    public String getIncomeBracket() {
+        return incomeBracket;
+    }
+
+    public void setIncomeBracket(String incomeBracket) {
+        this.incomeBracket = incomeBracket;
+    }
 }
 

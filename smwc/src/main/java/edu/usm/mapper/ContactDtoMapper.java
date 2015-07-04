@@ -32,9 +32,6 @@ public class ContactDtoMapper {
         if (contact.getCommittees() != null)
             convertCommittees(contact);
 
-        if (contact.getEncounters() != null)
-            convertEncounters(contact);
-
         if (contact.getMemberInfo() != null)
             convertMemberInfo(contact);
 
@@ -109,33 +106,6 @@ public class ContactDtoMapper {
         }
 
         contactDto.setCommittees(committeeDtos);
-    }
-
-    private void convertEncounters (Contact contact) {
-        List<EncounterDto> encounterDtos = new ArrayList<>();
-
-        for (Encounter encounter : contact.getEncounters()) {
-            EncounterDto encounterDto = new EncounterDto();
-            encounterDto.setId(encounter.getId());
-            encounterDto.setCreated(encounter.getCreated());
-            encounterDto.setLastModified(encounter.getLastModified());
-
-            encounterDto.setNotes(encounter.getNotes());
-            encounterDto.setType(encounter.getType());
-            encounterDto.setAssessment(encounter.getAssessment());
-            encounterDto.setEncounterDate(encounter.getEncounterDate());
-            encounterDto.setContact(encounter.getContact().getId());
-
-            if (null == encounter.getInitiator()) {
-                encounterDto.setInitiator(null);
-            } else {
-                encounterDto.setInitiator(encounter.getInitiator().getId());
-            }
-
-            encounterDtos.add(encounterDto);
-        }
-
-        contactDto.setEncounters(encounterDtos);
     }
 
     private void convertMemberInfo(Contact contact) {

@@ -53,6 +53,10 @@
             addToOrganization : {
                 method: 'PUT',
                 url : "/contacts/:id/organizations"
+            },
+            createEncounter : {
+                method : 'PUT',
+                url: "/contacts/:id/encounters"
             }
         });
     }]);
