@@ -194,7 +194,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Override
     public void removeContactFromCommittee(Contact contact, Committee committee) {
-
         Set<Committee> committees = contact.getCommittees();
         Set<Contact> members = committee.getMembers();
 
