@@ -287,5 +287,12 @@ public class ContactController {
         }
 
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/committees")
+    @JsonView(Views.ContactCommitteeDetails.class)
+    public Set<Committee> getAllCommitteesForContact(@PathVariable("id") String id) {
+        return contactService.findById(id).getCommittees();
+    }
 }
 

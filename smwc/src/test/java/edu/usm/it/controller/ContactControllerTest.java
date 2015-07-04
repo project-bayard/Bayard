@@ -363,6 +363,22 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
     }
 
+    @Test
+    public void testGetAllContactCommittees () throws Exception {
+        Committee committee = new Committee();
+        committee.setName("orgName");
+
+        contactService.create(contact);
+        committeeService.create(committee);
+        contactService.addContactToCommittee(contact, committee);
+
+        mockMvc.perform(get("/contacts/" + contact.getId() + "/committees")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id", is(committee.getId()))).andExpect(jsonPath("[0].name",
+                is(committee.getName())));
+    }
+
     private Contact generateSecondcontact() {
         Contact secondContact = new Contact();
         secondContact.setFirstName("Second");

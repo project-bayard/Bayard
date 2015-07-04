@@ -57,6 +57,15 @@
             createEncounter : {
                 method : 'PUT',
                 url: "/contacts/:id/encounters"
+            },
+            addToCommittee : {
+                method : 'PUT',
+                url : "/contacts/:id/committees"
+            },
+            getCommittees : {
+                method : 'GET',
+                isArray : true,
+                url : "/contacts/:id/committees"
             }
         });
     }]);

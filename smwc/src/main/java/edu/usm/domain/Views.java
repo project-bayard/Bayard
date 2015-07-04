@@ -14,5 +14,8 @@ public class Views {
 
     /*For the contact details view. Doesn't contain membership information.*/
     public interface ContactOrganizationDetails {}
+    public interface ContactCommitteeDetails {}
+
+
 
 }
