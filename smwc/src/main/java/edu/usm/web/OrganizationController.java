@@ -35,7 +35,7 @@ public class OrganizationController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, value = "/organization/{id}", produces={"application/json"})
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView(Views.OrganizationList.class)
     public Organization getContactById(@PathVariable("id") String id) {
         return organizationService.findById(id);

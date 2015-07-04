@@ -98,7 +98,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         committee.setName("newName");
         String json = new ObjectMapper().writeValueAsString(committee);
 
-        mockMvc.perform(put("/committees/committee/" + committee.getId()).contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(put("/committees/" + committee.getId()).contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
         Set<Committee> committees = committeeService.findAll();
@@ -127,7 +127,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         contact.setCommittees(committees);
         contactService.update(contact);
 
-        mockMvc.perform(get("/committees/committee/" + committee.getId())
+        mockMvc.perform(get("/committees/" + committee.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(committee.getId())))

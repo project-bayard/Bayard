@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -43,7 +42,7 @@ public class EventController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, value = "/event/{id}", produces={"application/json"})
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView({Views.EventList.class})
     public Event getEventById(@PathVariable("id") String id) {
         return eventService.findById(id);

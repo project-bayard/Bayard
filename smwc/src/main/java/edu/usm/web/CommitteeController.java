@@ -35,13 +35,13 @@ public class CommitteeController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/committee/{id}", method = RequestMethod.PUT, produces={"application/json"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces={"application/json"})
     public void updateCommittee(@PathVariable("id") String id, @RequestBody Committee committee) {
         committeeService.update(committee);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/committee/{id}", method = RequestMethod.GET, produces={"application/json"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.CommitteeList.class)
     public Committee updateCommittee(@PathVariable("id") String id) {
         return committeeService.findById(id);
