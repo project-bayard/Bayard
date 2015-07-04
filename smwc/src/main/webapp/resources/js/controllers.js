@@ -292,8 +292,9 @@
 
         };
 
+        //TODO: Needs to be refactored using new REST API
         $scope.addToNewOrganization = function(name) {
-            var organization = {name: name, members : [$scope.contact.id]};
+            var organization = {name: name};
 
             OrganizationService.create( organization, function(data) {
                 $scope.contactUpdated = true;
@@ -308,7 +309,17 @@
         };
 
             /* Committees */
+        $scope.getContactCommittees = function () {
+            $scope.showingCommittees = !$scope.showingCommittees;
 
+            if ($scope.contact.committees == null) {
+                ContactService.getCommittees({id: $scope.contact.id},function(data) {
+                    $scope.contact.committees = data
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
         $scope.getCommittees = function() {
             $scope.addCommittee.hidden = !$scope.addCommittee.hidden;
 
@@ -326,37 +337,20 @@
             $scope.committeeSuccess = true;
             var committee = $scope.committees[index];
 
-            if ($scope.contact.committees == null) {
-                $scope.contact.committees = [];
-
-            }
-
-
-            var members = [$scope.contact.id];
-            if (committee.members == null) {
-                committee.members = [];
-            }
-
-            for (var i = 0; i < committee.members.length; i++) {
-                members.push(committee.members[i].id);
-            }
-
-            $scope.contact.committees.push({id : committee.id, name: committee.name, members: members });
-
-            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
-                $scope.addCommittee.hidden = true;
-
-                $timeout(function() {
-                    $scope.requestSuccess = false;
-
-                }, 3000);
-
-            }, function(err) {
-                console.log(err);
-                $scope.committeeSuccess = false;
-
-            });
-
+            ContactService.addToCommittee({id: $scope.contact.id},{id: committee.id},
+                function(data) {
+                    if (data.status == 'SUCCESS') {
+                        ContactService.getCommittees({id: $scope.contact.id},function(data) {
+                            $scope.contact.committees = data
+                        }, function(err) {
+                            console.log(err);
+                        });
+                    } else {
+                        console.log(data.message)
+                    }
+                }, function(err) {
+                    console.log(err);
+                });
         };
 
             /* Demographics*/

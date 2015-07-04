@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading" ng-click="showingCommittees=!showingCommittees">
+    <div class="panel-heading" ng-click="getContactCommittees()">
         <h3 class="panel-title">Committees ({{contact.committees.length}})</h3>
     </div>
     <div class="panel-body" ng-show="showingCommittees">
@@ -9,7 +9,7 @@
             <div class="form-group">
                 <label>Committees:
                     <select class="form-control input-small" ng-model="addCommittee.index">
-                        <option ng-repeat="committee in committees | byAlreadyMemberOf:contact.committees"
+                        <option ng-repeat="committee in committees | byAlreadyBelongsTo:contact.committees"
                                 value="{{$index}}">{{committee.name}}
                         </option>
                     </select>

@@ -13,6 +13,6 @@ public interface CommitteeService {
     Set<Committee> findAll();
     void delete (Committee committee);
     void update (Committee committee);
-    void create (Committee committee);
+    String create (Committee committee);
     void deleteAll();
 }

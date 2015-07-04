@@ -1,11 +1,11 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.usm.config.DateFormatConfig;
 import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
@@ -36,6 +36,9 @@ public class ContactController {
 
     @Autowired
     private OrganizationService organizationService;
+
+    @Autowired
+    private CommitteeService committeeService;
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -197,8 +200,7 @@ public class ContactController {
 
         try {
             contactService.addContactToOrganization(contact,organization);
-            return new Response(null, Response.SUCCESS, null);
-
+            Response.successGeneric();
         } catch (Exception e) {
             logger.debug("Bad service call");
             return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
@@ -267,5 +269,66 @@ public class ContactController {
         }
     }
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/committees", consumes= {"application/json"})
+    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+
+        String idStringed = idDto.getId();
+
+        Committee committee = committeeService.findById(idStringed);
+        Contact contact = contactService.findById(id);
+
+        if (committee == null) {
+            logger.debug("No committee");
+            return new Response(null,Response.FAILURE, "Committee with ID " + idStringed + " does not exist");
+
+        } else if (contact == null) {
+            logger.debug("No contact");
+            Response.failNonexistentContact(id);
+        }
+
+        try {
+            contactService.addContactToCommittee(contact, committee);
+            Response.successGeneric();
+        } catch (Exception e) {
+            logger.debug("Bad service call");
+            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
+                    " to committee with ID " + committee.getId());
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees", consumes= {"application/json"})
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+        String idStringed = idDto.getId();
+
+        Committee committee = committeeService.findById(idStringed);
+        Contact contact = contactService.findById(id);
+
+        if (committee == null) {
+            logger.debug("No committee");
+            return new Response(null,Response.FAILURE, "Committee with ID " + idStringed + " does not exist");
+
+        } else if (contact == null) {
+            logger.debug("No contact");
+            Response.failNonexistentContact(id);
+        }
+
+        try {
+            contactService.removeContactFromCommittee(contact, committee);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            logger.debug("Bad service call");
+            return new Response(null, Response.FAILURE, "Unable to remove contact with ID " + contact.getId() +
+                    " from committee with ID " + committee.getId());
+        }
+
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/committees")
+    @JsonView(Views.ContactCommitteeDetails.class)
+    public Set<Committee> getAllCommitteesForContact(@PathVariable("id") String id) {
+        return contactService.findById(id).getCommittees();
+    }
 }
 

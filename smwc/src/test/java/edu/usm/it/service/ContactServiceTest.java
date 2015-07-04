@@ -303,11 +303,29 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
     }
 
+    @Test
+    public void testAddAndRemoveContactFromCommittee () throws Exception {
+        contactService.create(contact);
+        committeeService.create(committee);
 
+        contactService.addContactToCommittee(contact, committee);
 
+        Contact fromDb = contactService.findById(contact.getId());
+        assertNotNull(fromDb);
+        assertNotNull(fromDb.getCommittees());
+        assertTrue(fromDb.getCommittees().contains(committee));
 
+        contactService.removeContactFromCommittee(contact, committee);
 
+        fromDb = contactService.findById(contact.getId());
+        assertNotNull(fromDb);
+        assertNotNull(fromDb.getCommittees());
+        assertFalse(fromDb.getCommittees().contains(committee));
 
+        Committee committeeFromDb = committeeService.findById(committee.getId());
+        assertNotNull(committeeFromDb);
+        assertNotNull(committeeFromDb.getMembers());
+        assertFalse(committeeFromDb.getMembers().contains(contact));
 
-
+    }
 }
