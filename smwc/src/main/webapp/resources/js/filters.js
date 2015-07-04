@@ -49,7 +49,7 @@
                 }
             }
 
-            return newCollection;
+            return collection;
         };
     });
 

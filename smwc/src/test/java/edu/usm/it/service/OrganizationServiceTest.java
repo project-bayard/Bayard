@@ -65,9 +65,7 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testSave () throws Exception {
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        contacts.add(contact2);
+
         contactService.create(contact);
         contactService.create(contact2);
         Set<Organization> organizations = new HashSet<>();
@@ -75,6 +73,9 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organizationService.create(organization);
 
 
+        Set<Contact> contacts = new HashSet<>();
+        contacts.add(contact);
+        contacts.add(contact2);
         organization.setMembers(contacts);
         organizationService.update(organization);
 
@@ -85,7 +86,7 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(orgFromDb);
-        assertEquals(orgFromDb.getMembers().size(),1);
+        assertEquals(orgFromDb.getMembers().size(),2);
     }
 
     @Test
