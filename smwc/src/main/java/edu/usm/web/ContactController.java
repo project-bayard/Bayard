@@ -200,7 +200,7 @@ public class ContactController {
 
         try {
             contactService.addContactToOrganization(contact,organization);
-            Response.successGeneric();
+            return Response.successGeneric();
         } catch (Exception e) {
             logger.debug("Bad service call");
             return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
@@ -283,12 +283,12 @@ public class ContactController {
 
         } else if (contact == null) {
             logger.debug("No contact");
-            Response.failNonexistentContact(id);
+            return Response.failNonexistentContact(id);
         }
 
         try {
             contactService.addContactToCommittee(contact, committee);
-            Response.successGeneric();
+            return Response.successGeneric();
         } catch (Exception e) {
             logger.debug("Bad service call");
             return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
@@ -310,7 +310,7 @@ public class ContactController {
 
         } else if (contact == null) {
             logger.debug("No contact");
-            Response.failNonexistentContact(id);
+            return Response.failNonexistentContact(id);
         }
 
         try {
