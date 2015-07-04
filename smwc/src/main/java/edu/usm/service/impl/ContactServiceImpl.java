@@ -170,4 +170,40 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         organizations.remove(organization);
         update(contact);
     }
+
+
+    @Override
+    public void addContactToCommittee(Contact contact, Committee committee) {
+        Set<Committee> committees = contact.getCommittees();
+        Set<Contact> members = committee.getMembers();
+
+        if (committees == null) {
+            committees = new HashSet<>();
+            contact.setCommittees(committees);
+        }
+
+        if (members == null) {
+            members = new HashSet<>();
+            committee.setMembers(members);
+        }
+
+        members.add(contact);
+        committees.add(committee);
+        update(contact);
+    }
+
+    @Override
+    public void removeContactFromCommittee(Contact contact, Committee committee) {
+
+        Set<Committee> committees = contact.getCommittees();
+        Set<Contact> members = committee.getMembers();
+
+        if (committees == null || members == null) {
+            return;
+        }
+
+        members.remove(contact);
+        committees.remove(committee);
+        update(contact);
+    }
 }

@@ -1,5 +1,6 @@
 package edu.usm.service;
 
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
@@ -22,4 +23,6 @@ public interface ContactService {
     Set<Contact> findAllInitiators();
     void addContactToOrganization(Contact contact, Organization organization);
     void removeContactFromOrganization(Contact contact, Organization organization);
+    void addContactToCommittee(Contact contact, Committee committee);
+    void removeContactFromCommittee(Contact contact, Committee committee);
 }
