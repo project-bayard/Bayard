@@ -120,17 +120,6 @@
             });
         };
 
-            /*
-        $scope.setEncounterInitiator = function(id) {
-            $scope.initiator = {firstName: "" , lastName: ""};
-
-            ContactService.find({id :id}, function(data) {
-                $scope.initiator = data;
-            }, function(err) {
-                console.log(err);
-            });
-        };
-        */
 
         $scope.viewDetails = function (id) {
             var path = "/contacts/contact/" + id ;
@@ -139,18 +128,18 @@
 
         /*Encounters*/
 
-        $scope.addEncounter = function(newEncounter) {
+        $scope.addEncounter = function() {
 
-            ContactService.createEncounter({id: $scope.contact.id}, newEncounter, function(data) {
+            ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function(data) {
                 ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
                     $scope.newEncounterRequestSuccess = true;
+                    $scope.newEncounter = {};
 
                     $timeout(function() {
                         $scope.newEncounterRequestSuccess = false;
                     }, 3000);
 
                     $scope.encountersTable = encounters;
-                    $scope.newEncounterForm.$setPristine();
                     $scope.addingEncounter = false;
 
                 }, function(err) {

@@ -28,7 +28,7 @@
                 <label>Notes
                     <textarea  rows="3" cols="50" ng-model="newEncounter.notes" ></textarea>
                 </label>
-                <button class="btn btn-success" ng-click="addEncounter(newEncounter)">Complete Encounter</button>
+                <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
             </div>
         </form>
         <div ng-if="newEncounterRequestFailure" class="alert alert-danger" role="alert">Failed to add encounter...</div>
