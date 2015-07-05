@@ -77,6 +77,13 @@
                     <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
                 </label>
             </div>
+
+            <div class="form-group">
+                <label>Can this contact initiate encounters?
+                    <input type="checkbox" class="form-control input-sm" ng-model="contact.initiator" ng-readonly="!edit">
+                </label>
+            </div>
+
             <div>
                 <button class="btn btn-primary" ng-click="edit=!edit">Edit Basic Details</button>
                 <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="edit">Submit</button>

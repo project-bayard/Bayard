@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -147,6 +146,11 @@ public class Contact extends BasicEntity implements Serializable {
     private int assessment;
 
     @Column
+    @JsonView({Views.ContactList.class,
+            Views.ContactDetails.class})
+    private boolean initiator;
+
+    @Column
     @JsonView(
             {Views.DemographicDetails.class}
     )
@@ -188,6 +192,8 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private String incomeBracket;
 
+
+
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinTable(
             name="contact_committee",
@@ -226,12 +232,6 @@ public class Contact extends BasicEntity implements Serializable {
     @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private List<Encounter> encountersInitiated;
 
-    @Column
-    private boolean initiator;
-
-    public boolean isInitiator() {
-        return initiator;
-    }
 
     public Contact (String id) {
         setId(id);
@@ -243,6 +243,10 @@ public class Contact extends BasicEntity implements Serializable {
 
     public void setInitiator(boolean initiator) {
         this.initiator = initiator;
+    }
+
+    public boolean isInitiator() {
+        return initiator;
     }
 
     public String getFirstName() {
@@ -364,11 +368,6 @@ public class Contact extends BasicEntity implements Serializable {
     }
 
     public void setEncounters(List<Encounter> encounters) {
-        if (encounters != null && encounters.size() > 0) {
-            Collections.sort(encounters);
-            setAssessment(encounters.get(0).getAssessment());
-
-        }
         this.encounters = encounters;
     }
 

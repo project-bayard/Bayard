@@ -27,7 +27,7 @@
             ContactService.create({}, $scope.contact, function(data) {
                 console.log(data);
                 $scope.newContactForm.$setPristine();
-                $scope.contact = "";
+                $scope.contact = {};
 
                 $scope.requestSuccess = true;
                 $timeout(function() {
@@ -66,7 +66,8 @@
 
     }]);
 
-    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', 'EventService', 'CommitteeService',
+    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService',
+        'EventService', 'CommitteeService',
         function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService) {
 
         var setup = function() {
@@ -98,13 +99,6 @@
             });
 
 
-            ContactService.findAll({}, function(data) {
-                $scope.contacts = data;
-            }, function(err) {
-                console.log(err);
-            });
-
-
         };
 
         setup();
@@ -127,6 +121,20 @@
         };
 
         /*Encounters*/
+        $scope.showEncounterForm = function () {
+            $scope.addingEncounter = !$scope.addingEncounter;
+
+            if ($scope.initiators == null) {
+
+                ContactService.getInitiators({}, function(data) {
+                    $scope.initiators = data;
+
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
+
 
         $scope.addEncounter = function() {
 

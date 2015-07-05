@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -157,6 +154,12 @@ public class ContactController {
         }
 
         contact.getEncounters().add(encounter);
+
+        /*Sets assessment to most recent encounter assessment */
+        Collections.sort(contact.getEncounters());
+        int currentAssessment = contact.getEncounters().get(0).getAssessment() == 0 ? contact.getAssessment() :
+                contact.getEncounters().get(0).getAssessment();
+        contact.setAssessment(currentAssessment);
 
         try {
             contactService.update(contact);
