@@ -232,15 +232,6 @@ public class Contact extends BasicEntity implements Serializable {
     @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private List<Encounter> encountersInitiated;
 
-
-    public Contact (String id) {
-        setId(id);
-    }
-
-    public Contact() {
-        super();
-    }
-
     public void setInitiator(boolean initiator) {
         this.initiator = initiator;
     }

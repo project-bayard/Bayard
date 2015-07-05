@@ -11,7 +11,6 @@ import edu.usm.domain.Organization;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
-import edu.usm.mapper.ContactDtoMapper;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
@@ -55,9 +54,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Autowired
     DateFormatConfig dateFormatConfig;
-
-    @Autowired
-    ContactDtoMapper contactDtoMapper;
 
 
     private Contact contact;
@@ -132,9 +128,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     public void testPutContact() throws Exception {
         contactService.create(contact);
 
-        contact.setFirstName("newFirstName");
+        Contact details = new Contact();
+        details.setFirstName("newFirstName");
 
-        String json = new ObjectMapper().writeValueAsString(contact);
+        String json = new ObjectMapper().writeValueAsString(details);
 
         mockMvc.perform(put("/contacts/" + contact.getId())
                 .contentType(MediaType.APPLICATION_JSON).content(json))
@@ -142,7 +139,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.status", is(Response.SUCCESS)))
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
+        Contact fromDb = contactService.findById(contact.getId());
+        assertEquals(fromDb.getFirstName(),details.getFirstName());
 
+        //TODO: Test all fields
+        
     }
 
 

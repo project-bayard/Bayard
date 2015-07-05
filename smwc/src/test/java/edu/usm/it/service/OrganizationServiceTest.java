@@ -75,21 +75,10 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
 
         contactService.create(contact);
         contactService.create(contact2);
-        Set<Organization> organizations = new HashSet<>();
-        organizations.add(organization);
         organizationService.create(organization);
 
-
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        contacts.add(contact2);
-        organization.setMembers(contacts);
-        organizationService.update(organization);
-
-        contact.setOrganizations(organizations);
-        contact2.setOrganizations(organizations);
-        contactService.update(contact);
-        contactService.update(contact2);
+        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact2, organization);
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(orgFromDb);
@@ -112,14 +101,8 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organization.setMembers(contacts);
         organizationService.create(organization);
 
-        Set<Organization> organizations = new HashSet<>();
-        organizations.add(organization);
-
-        contact.setOrganizations(organizations);
-        contact2.setOrganizations(organizations);
-
-
-        contactService.update(contact);
+        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact2,organization);
 
         Contact contactFromDb = contactService.findById(contact.getId());
         assertEquals(contactFromDb.getOrganizations().size(),1); // before

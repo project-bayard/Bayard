@@ -3,9 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
-import edu.usm.dto.EventDto;
 import edu.usm.dto.IdDto;
-import edu.usm.mapper.EventMapper;
 import edu.usm.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +21,6 @@ public class EventController {
     @Autowired
     EventService eventService;
 
-    @Autowired
-    EventMapper eventMapper;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
@@ -35,8 +31,7 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public IdDto createEvent(@RequestBody EventDto eventDto) {
-        Event event = eventMapper.fromDto(eventDto);
+    public IdDto createEvent(@RequestBody Event event) {
         return new IdDto(eventService.create(event));
 
     }

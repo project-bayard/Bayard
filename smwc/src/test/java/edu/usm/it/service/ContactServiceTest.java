@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -142,28 +141,14 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.create(contact);
         contactService.create(contact2);
 
-        /*Test deleted from Organization member list*/
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        contacts.add(contact2);
-
         organizationService.create(organization);
 
-        organization.setMembers(contacts);
-        organizationService.update(organization);
-
-
-        Set<Organization> organizations = new HashSet<>();
-        organizations.add(organization);
-        contact.setOrganizations(organizations);
-        contact2.setOrganizations(organizations);
-        contactService.update(contact);
-        contactService.update(contact2);
+        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact2,organization);
 
         contactService.delete(contact);
 
         Organization fromDb = organizationService.findById(organization.getId());
-
 
         assertNull(contactService.findById(contact.getId()));
         assertNotNull(fromDb);
@@ -172,111 +157,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
     }
 
-    @Test
-    @Transactional
-    public void testUpdateCommittees () {
 
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-
-
-        Set<Committee> committees = new HashSet<>();
-        committees.add(committee);
-        contact.setCommittees(committees);
-        committee.setMembers(contacts);
-        committeeService.create(committee);
-
-        contactService.create(contact);
-
-        Contact contactFromDb = contactService.findById(contact.getId());
-
-        /*Before*/
-        assertEquals(contactFromDb.getCommittees().size(),committees.size());
-
-        /*Test add new committee*/
-        Committee newCommittee = new Committee();
-        newCommittee.setName("new_committee");
-        newCommittee.setMembers(contacts);
-        committeeService.create(newCommittee);
-
-        committees.add(newCommittee);
-
-        contactFromDb.setCommittees(committees);
-
-        contactService.update(contactFromDb);
-
-        contactFromDb = contactService.findById(contactFromDb.getId());
-
-        assertEquals(contactFromDb.getCommittees().size(),committees.size());
-
-        Committee committeeFromDb = committeeService.findById(committee.getId());
-        assertEquals(committeeFromDb.getMembers().iterator().next().getId(),contact.getId());
-
-        /*Test remove committee*/
-
-        committees.remove(newCommittee);
-
-        contactFromDb.setCommittees(committees);
-        contactService.update(contactFromDb);
-        contactFromDb = contactService.findById(contact.getId());
-
-        assertEquals(contactFromDb.getCommittees().size(), committees.size());
-        assertEquals(contactFromDb.getCommittees().iterator().next().getId(), committee.getId());
-
-    }
-
-    @Test
-    @Transactional
-    public void testUpdateOrganizations () {
-
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-
-
-        Set<Organization> organizations = new HashSet<>();
-        organizations.add(organization);
-        contact.setOrganizations(organizations);
-        organization.setMembers(contacts);
-        organizationService.create(organization);
-
-        contactService.create(contact);
-
-        Contact contactFromDb = contactService.findById(contact.getId());
-
-        /*Before*/
-        assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
-
-        /*Test add new organization*/
-        Organization newOrganization = new Organization();
-        newOrganization.setName("new_committee");
-        newOrganization.setMembers(contacts);
-        organizationService.create(newOrganization);
-
-        organizations.add(newOrganization);
-
-        contactFromDb.setOrganizations(organizations);
-
-        contactService.update(contactFromDb);
-
-        contactFromDb = contactService.findById(contactFromDb.getId());
-
-        assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
-
-        Organization organizationFromDb = organizationService.findById(organization.getId());
-        assertEquals(organizationFromDb.getMembers().iterator().next().getId(),contact.getId());
-
-        /*Test remove organization*/
-
-        organizations.remove(newOrganization);
-
-        contactFromDb.setOrganizations(organizations);
-        contactService.update(contactFromDb);
-        contactFromDb = contactService.findById(contact.getId());
-
-        assertEquals(contactFromDb.getOrganizations().size(), organizations.size());
-        assertEquals(contactFromDb.getOrganizations().iterator().next().getId(), organization.getId());
-
-    }
 
     @Test
     public void testAddAndRemoveContactFromOrganization () throws Exception {
@@ -326,6 +207,28 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertNotNull(committeeFromDb);
         assertNotNull(committeeFromDb.getMembers());
         assertFalse(committeeFromDb.getMembers().contains(contact));
+
+    }
+
+    @Test
+    public void testUpdateBasicDetails () throws Exception {
+        contactService.create(contact);
+
+        Contact details = new Contact();
+        details.setFirstName("newFirstName");
+        details.setLastName("newLastName");
+        details.setStreetAddress("123 Fake St");
+        details.setAptNumber("# 4");
+        details.setCity("Portland");
+        details.setZipCode("04101");
+        details.setEmail("email@gmail.com");
+
+        contactService.updateBasicDetails(contact, details);
+
+        Contact fromDb = contactService.findById(contact.getId());
+        assertEquals(fromDb.getFirstName(), details.getFirstName());
+        assertEquals(fromDb.getLastName(), details.getLastName());
+        assertEquals(fromDb.getStreetAddress(), details.getStreetAddress());
 
     }
 }

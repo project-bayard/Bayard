@@ -104,8 +104,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contactDao.delete(contact);
     }
 
-    @Override
-    public void update(Contact contact) {
+    private void update(Contact contact) {
         logger.debug("Updating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
         updateLastModified(contact);
@@ -204,5 +203,36 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         members.remove(contact);
         committees.remove(committee);
         update(contact);
+    }
+
+    @Override
+    public void updateBasicDetails(Contact contact, Contact details) {
+        contact.setFirstName(details.getFirstName());
+        contact.setMiddleName(details.getMiddleName());
+        contact.setLastName(details.getLastName());
+        contact.setStreetAddress(details.getStreetAddress());
+        contact.setAptNumber(details.getAptNumber());
+        contact.setCity(details.getCity());
+        contact.setZipCode(details.getZipCode());
+        contact.setPhoneNumber1(details.getPhoneNumber1());
+        contact.setPhoneNumber2(details.getPhoneNumber2());
+        contact.setEmail(details.getEmail());
+        contact.setLanguage(details.getLanguage());
+        contact.setOccupation(details.getOccupation());
+        contact.setInterests(details.getInterests());
+        contact.setInitiator(details.isInitiator());
+
+        update(contact);
+
+    }
+
+    @Override
+    public void unattendEvent(Contact contact, Event event) {
+        if (contact.getAttendedEvents() != null) {
+            contact.getAttendedEvents().remove(event);
+            event.getAttendees().remove(contact);
+            update(contact);
+            eventService.update(event);
+        }
     }
 }

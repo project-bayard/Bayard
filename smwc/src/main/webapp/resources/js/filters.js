@@ -59,7 +59,7 @@
            if (collection == null) {
                return [];
            }
-           
+
            for (var i = 0; i < collection.length; i++) {
 
                if (collection[i].id == id) {

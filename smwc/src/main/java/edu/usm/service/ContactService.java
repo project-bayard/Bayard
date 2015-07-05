@@ -14,10 +14,10 @@ import java.util.Set;
 public interface ContactService {
 
     void attendEvent(Contact contact, Event event);
+    void unattendEvent (Contact contact, Event event);
     Contact findById (String id);
     Set<Contact> findAll();
     void delete (Contact contact);
-    void update (Contact contact);
     String create(Contact contact);
     void deleteAll();
     Set<Contact> findAllInitiators();
@@ -25,4 +25,5 @@ public interface ContactService {
     void removeContactFromOrganization(Contact contact, Organization organization);
     void addContactToCommittee(Contact contact, Committee committee);
     void removeContactFromCommittee(Contact contact, Committee committee);
+    void updateBasicDetails(Contact contact, Contact details);
 }

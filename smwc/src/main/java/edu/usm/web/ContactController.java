@@ -54,11 +54,10 @@ public class ContactController {
         String id;
         try {
             id = (contactService.create(contact));
+            return new Response(id,Response.SUCCESS,null);
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Unable to create contact");
         }
-
-        return new Response(id,Response.SUCCESS,null);
     }
 
 
@@ -72,11 +71,17 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
-    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact contact) {
+    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) {
         logger.debug("PUT request to /contacts/contact/"+id);
 
+        Contact contact = contactService.findById(id);
+
+        if (contact == null) {
+            return Response.failNonexistentContact(id);
+        }
+
         try {
-            contactService.update(contact);
+            contactService.updateBasicDetails(contact, details);
             return new Response(id, Response.SUCCESS, null);
 
         } catch (Exception e) {
@@ -162,7 +167,7 @@ public class ContactController {
         contact.setAssessment(currentAssessment);
 
         try {
-            contactService.update(contact);
+          //  contactService.update(contact);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with new encounter");
@@ -265,7 +270,7 @@ public class ContactController {
         contact.setSexualOrientation(details.getSexualOrientation());
 
         try {
-            contactService.update(contact);
+         //   contactService.update(contact);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with demographic details");
