@@ -143,7 +143,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getFirstName(),details.getFirstName());
 
         //TODO: Test all fields
-        
+
     }
 
 

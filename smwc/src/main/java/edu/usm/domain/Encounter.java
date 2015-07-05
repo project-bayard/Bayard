@@ -10,6 +10,8 @@ import java.time.LocalDate;
 @Entity(name = "encounter")
 public class Encounter extends BasicEntity implements Serializable, Comparable<Encounter>{
 
+    public static final int DEFAULT_ASSESSMENT = 0;
+
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "contact_id")

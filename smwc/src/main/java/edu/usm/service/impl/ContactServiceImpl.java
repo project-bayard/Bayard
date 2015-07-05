@@ -1,6 +1,7 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.*;
+import edu.usm.dto.EncounterDto;
 import edu.usm.repository.ContactDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -234,5 +237,45 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             update(contact);
             eventService.update(event);
         }
+    }
+
+    @Override
+    public void updateDemographicDetails(Contact contact, Contact details) {
+
+        contact.setRace(details.getRace());
+        contact.setEthnicity(details.getEthnicity());
+        contact.setDateOfBirth(details.getDateOfBirth());
+        contact.setGender(details.getGender());
+        contact.setDisabled(details.isDisabled());
+        contact.setIncomeBracket(details.getIncomeBracket());
+        contact.setSexualOrientation(details.getSexualOrientation());
+
+        update(contact);
+    }
+
+    @Override
+    public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) {
+
+        Encounter encounter = new Encounter();
+        encounter.setEncounterDate(dto.getDate());
+        encounter.setContact(contact);
+        encounter.setInitiator(initiator);
+        encounter.setNotes(dto.getNotes());
+        encounter.setType(dto.getType());
+        encounter.setAssessment(dto.getAssessment());
+
+        if (null == contact.getEncounters()) {
+            contact.setEncounters(new ArrayList<>());
+        }
+
+        contact.getEncounters().add(encounter);
+
+        /*Sets assessment to most recent encounter assessment */
+        Collections.sort(contact.getEncounters());
+        int currentAssessment = contact.getEncounters().get(0).getAssessment() == Encounter.DEFAULT_ASSESSMENT ? contact.getAssessment() :
+                contact.getEncounters().get(0).getAssessment();
+        contact.setAssessment(currentAssessment);
+
+        update(contact);
     }
 }

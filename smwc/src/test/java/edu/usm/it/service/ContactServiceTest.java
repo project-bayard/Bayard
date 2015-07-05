@@ -4,6 +4,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.dto.EncounterDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
@@ -229,6 +230,28 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getFirstName(), details.getFirstName());
         assertEquals(fromDb.getLastName(), details.getLastName());
         assertEquals(fromDb.getStreetAddress(), details.getStreetAddress());
+
+    }
+
+    @Test
+    public void testAddEncounter () throws Exception {
+        String id = contactService.create(contact);
+
+        String initiatorId = contactService.create(contact2);
+
+        EncounterDto dto = new EncounterDto();
+        dto.setType("CALL");
+        dto.setDate("2012-01-01");
+        dto.setNotes("Notes!");
+
+        contactService.addEncounter(contact,contact2, dto);
+
+        Contact fromDb = contactService.findById(contact.getId());
+
+        assertNotNull(fromDb.getEncounters());
+        assertEquals(fromDb.getEncounters().get(0).getContact().getId(),contact.getId());
+        assertEquals(fromDb.getEncounters().get(0).getInitiator().getId(), contact2.getId());
+        assertEquals(fromDb.getEncounters().get(0).getAssessment(), dto.getAssessment());
 
     }
 }

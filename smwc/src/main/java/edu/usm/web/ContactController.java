@@ -146,28 +146,9 @@ public class ContactController {
         if (null == initiator) {
             return new Response(null, Response.FAILURE, "Initiator with ID "+encounterDto.getInitiatorId()+" does not exist");
         }
-        Encounter encounter = new Encounter();
-        encounter.setEncounterDate(encounterDto.getDate());
-        encounter.setContact(contact);
-        encounter.setInitiator(initiator);
-        encounter.setNotes(encounterDto.getNotes());
-        encounter.setType(encounterDto.getType());
-        encounter.setAssessment(encounterDto.getAssessment());
-
-        if (null == contact.getEncounters()) {
-            contact.setEncounters(new ArrayList<>());
-        }
-
-        contact.getEncounters().add(encounter);
-
-        /*Sets assessment to most recent encounter assessment */
-        Collections.sort(contact.getEncounters());
-        int currentAssessment = contact.getEncounters().get(0).getAssessment() == 0 ? contact.getAssessment() :
-                contact.getEncounters().get(0).getAssessment();
-        contact.setAssessment(currentAssessment);
 
         try {
-          //  contactService.update(contact);
+            contactService.addEncounter(contact, initiator, encounterDto);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with new encounter");
@@ -261,16 +242,8 @@ public class ContactController {
             return Response.failNonexistentContact(id);
         }
 
-        contact.setRace(details.getRace());
-        contact.setEthnicity(details.getEthnicity());
-        contact.setDateOfBirth(details.getDateOfBirth());
-        contact.setGender(details.getGender());
-        contact.setDisabled(details.isDisabled());
-        contact.setIncomeBracket(details.getIncomeBracket());
-        contact.setSexualOrientation(details.getSexualOrientation());
-
         try {
-         //   contactService.update(contact);
+            contactService.updateDemographicDetails(contact, details);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with demographic details");
@@ -309,7 +282,7 @@ public class ContactController {
     public Response removeContactFromCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
         String idStringed = idDto.getId();
 
-        Committee committee = committeeService.findById(idStringed);
+        Committee committee = committeeService.findById(idDto.getId());
         Contact contact = contactService.findById(id);
 
         if (committee == null) {
