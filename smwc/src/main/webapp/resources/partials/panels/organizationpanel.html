@@ -16,54 +16,54 @@
                 </label>
                 <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
             </div>
-            <button class="btn btn-md btn-success" ng-click="addOrganization.hidden = !addOrganization.hidden">Add to New Organization</button>
-            <div ng-if="addOrganization.hidden == false">
+            <button class="btn btn-md btn-success" ng-click="newOrganization.hidden = !newOrganization.hidden">Add to New Organization</button>
+            <div ng-if="newOrganization.hidden == false">
                 <div class="from-group">
                     <label>Name
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.name">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.name">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>Street Address
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.streetAddress">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.streetAddress">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>City
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.city">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.city">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>State
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.state">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.state">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>Zip
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.zipCode">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.zipCode">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>Description
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.description">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.description">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>Primary Contact
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.primaryContactName">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.primaryContactName">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>Phone
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.phoneNumber">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.phoneNumber">
                     </label>
                 </div>
                 <div class="from-group">
                     <label>Email
-                        <input type="text" class="form-control input-sm" ng-model="addOrganization.email">
+                        <input type="text" class="form-control input-sm" ng-model="newOrganization.email">
                     </label>
                 </div>
-                <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(addOrganization)">Submit</button>
+                <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(newOrganization)">Submit</button>
             </div>
         </div>
         <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">
