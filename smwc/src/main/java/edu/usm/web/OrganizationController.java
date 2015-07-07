@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Organization;
 import edu.usm.domain.Views;
+import edu.usm.dto.Response;
 import edu.usm.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,14 @@ public class OrganizationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-    public void createOrganization(@RequestBody Organization organization) {
-        organizationService.create(organization);
+    public Response createOrganization(@RequestBody Organization organization) {
+        String id;
+        try {
+            id = organizationService.create(organization);
+            return new Response(id,Response.SUCCESS,null);
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Unable to create organization");
+        }
     }
 
     @ResponseStatus(HttpStatus.OK)
