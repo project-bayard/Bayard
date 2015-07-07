@@ -79,6 +79,7 @@
             $scope.initiator = null;
             $scope.organizations = null;
             $scope.addOrganization = {hidden : true};
+            $scope.newOrganization = {hidden : true};
             $scope.addEvent = {hidden : true};
             $scope.addCommittee = {hidden : true};
             $scope.newEncounter = {};
@@ -289,17 +290,36 @@
         };
 
         $scope.createAndAddToOrganization = function(organization) {
-            organization.members = [$scope.contact.id];
             OrganizationService.create( organization, function(data) {
-                $scope.contactUpdated = true;
-                $scope.contact.organizations.push(organization);
-                $scope.organizations.push(organization);
-                $scope.addOrganization.hidden = true;
+
+                //Add this contact to the newly-created Organization
+                ContactService.addToOrganization({id: $scope.contact.id}, data.id, function(data) {
+
+                    //Refresh organizations the contact is now a member of
+                    OrganizationService.getContactOrganizations({id:$scope.contact.id}, function(data) {
+                        $scope.contactUpdated = true;
+                        $scope.contact.organizations = data;
+                        $scope.addOrganization.hidden = true;
+                        $scope.newOrganization.hidden = true;
+                    }, function(err) {
+                        console.log(err);
+                        $scope.organizationSuccess = false;
+                    });
+                }, function (err) {
+                    console.log(err);
+                    $scope.organizationSuccess = false;
+                });
+
+                //Refresh list of all organizations known to the app
+                OrganizationService.getOrganizations(function(allOrgs) {
+                    $scope.organizations = allOrgs;
+                }, function(err) {
+                    console.log(err);
+                });
             }, function(err) {
                 console.log(err);
                 $scope.organizationSuccess = false;
             });
-
         };
 
             /* Committees */
@@ -475,7 +495,6 @@
             console.log(err);
         });
 
-        //TODO: Should be refactored to account for all properties of Organization
         $scope.createOrganization = function(organization) {
             organization.members = [];
             OrganizationService.create( organization, function(data) {
