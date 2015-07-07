@@ -1,11 +1,11 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.usm.config.DateFormatConfig;
 import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -37,6 +34,9 @@ public class ContactController {
     @Autowired
     private OrganizationService organizationService;
 
+    @Autowired
+    private CommitteeService committeeService;
+
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
@@ -54,11 +54,10 @@ public class ContactController {
         String id;
         try {
             id = (contactService.create(contact));
+            return new Response(id,Response.SUCCESS,null);
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Unable to create contact");
         }
-
-        return new Response(id,Response.SUCCESS,null);
     }
 
 
@@ -72,11 +71,17 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
-    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact contact) {
+    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) {
         logger.debug("PUT request to /contacts/contact/"+id);
 
+        Contact contact = contactService.findById(id);
+
+        if (contact == null) {
+            return Response.failNonexistentContact(id);
+        }
+
         try {
-            contactService.update(contact);
+            contactService.updateBasicDetails(contact, details);
             return new Response(id, Response.SUCCESS, null);
 
         } catch (Exception e) {
@@ -141,22 +146,9 @@ public class ContactController {
         if (null == initiator) {
             return new Response(null, Response.FAILURE, "Initiator with ID "+encounterDto.getInitiatorId()+" does not exist");
         }
-        Encounter encounter = new Encounter();
-        encounter.setEncounterDate(encounterDto.getDate());
-        encounter.setContact(contact);
-        encounter.setInitiator(initiator);
-        encounter.setNotes(encounterDto.getNotes());
-        encounter.setType(encounterDto.getType());
-        encounter.setAssessment(encounterDto.getAssessment());
-
-        if (null == contact.getEncounters()) {
-            contact.setEncounters(new ArrayList<>());
-        }
-
-        contact.getEncounters().add(encounter);
 
         try {
-            contactService.update(contact);
+            contactService.addEncounter(contact, initiator, encounterDto);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with new encounter");
@@ -197,8 +189,7 @@ public class ContactController {
 
         try {
             contactService.addContactToOrganization(contact,organization);
-            return new Response(null, Response.SUCCESS, null);
-
+            return Response.successGeneric();
         } catch (Exception e) {
             logger.debug("Bad service call");
             return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
@@ -251,21 +242,74 @@ public class ContactController {
             return Response.failNonexistentContact(id);
         }
 
-        contact.setRace(details.getRace());
-        contact.setEthnicity(details.getEthnicity());
-        contact.setDateOfBirth(details.getDateOfBirth());
-        contact.setGender(details.getGender());
-        contact.setDisabled(details.isDisabled());
-        contact.setIncomeBracket(details.getIncomeBracket());
-        contact.setSexualOrientation(details.getSexualOrientation());
-
         try {
-            contactService.update(contact);
+            contactService.updateDemographicDetails(contact, details);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Contact with demographic details");
         }
     }
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/committees", consumes= {"application/json"})
+    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+
+        String idStringed = idDto.getId();
+
+        Committee committee = committeeService.findById(idStringed);
+        Contact contact = contactService.findById(id);
+
+        if (committee == null) {
+            logger.debug("No committee");
+            return new Response(null,Response.FAILURE, "Committee with ID " + idStringed + " does not exist");
+
+        } else if (contact == null) {
+            logger.debug("No contact");
+            return Response.failNonexistentContact(id);
+        }
+
+        try {
+            contactService.addContactToCommittee(contact, committee);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            logger.debug("Bad service call");
+            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
+                    " to committee with ID " + committee.getId());
+        }
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees", consumes= {"application/json"})
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+        String idStringed = idDto.getId();
+
+        Committee committee = committeeService.findById(idDto.getId());
+        Contact contact = contactService.findById(id);
+
+        if (committee == null) {
+            logger.debug("No committee");
+            return new Response(null,Response.FAILURE, "Committee with ID " + idStringed + " does not exist");
+
+        } else if (contact == null) {
+            logger.debug("No contact");
+            return Response.failNonexistentContact(id);
+        }
+
+        try {
+            contactService.removeContactFromCommittee(contact, committee);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            logger.debug("Bad service call");
+            return new Response(null, Response.FAILURE, "Unable to remove contact with ID " + contact.getId() +
+                    " from committee with ID " + committee.getId());
+        }
+
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/committees")
+    @JsonView(Views.ContactCommitteeDetails.class)
+    public Set<Committee> getAllCommitteesForContact(@PathVariable("id") String id) {
+        return contactService.findById(id).getCommittees();
+    }
 }
 

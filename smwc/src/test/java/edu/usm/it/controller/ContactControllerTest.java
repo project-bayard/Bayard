@@ -4,13 +4,14 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
 import edu.usm.domain.Organization;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
-import edu.usm.mapper.ContactDtoMapper;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import edu.usm.service.OrganizationService;
@@ -46,13 +47,13 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     OrganizationService organizationService;
 
     @Autowired
+    CommitteeService committeeService;
+
+    @Autowired
     EventService eventService;
 
     @Autowired
     DateFormatConfig dateFormatConfig;
-
-    @Autowired
-    ContactDtoMapper contactDtoMapper;
 
 
     private Contact contact;
@@ -127,9 +128,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     public void testPutContact() throws Exception {
         contactService.create(contact);
 
-        contact.setFirstName("newFirstName");
+        Contact details = new Contact();
+        details.setFirstName("newFirstName");
 
-        String json = new ObjectMapper().writeValueAsString(contact);
+        String json = new ObjectMapper().writeValueAsString(details);
 
         mockMvc.perform(put("/contacts/" + contact.getId())
                 .contentType(MediaType.APPLICATION_JSON).content(json))
@@ -137,6 +139,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.status", is(Response.SUCCESS)))
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
+        Contact fromDb = contactService.findById(contact.getId());
+        assertEquals(fromDb.getFirstName(),details.getFirstName());
+
+        //TODO: Test all fields
 
     }
 
@@ -317,6 +323,44 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.disabled", is(contact.isDisabled())))
                 .andExpect(jsonPath("$.incomeBracket", is(contact.getIncomeBracket())))
                 .andExpect(jsonPath("$.sexualOrientation", is(contact.getSexualOrientation())));
+    }
+    public void testAddContactToCommittee () throws  Exception {
+        String id = contactService.create(contact);
+
+        Committee committee = new Committee();
+        committee.setName("committee name");
+        String committeeId = committeeService.create(committee);
+
+        IdDto committeeIdDto = new IdDto(committeeId);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(committeeIdDto);
+        String path = "/contacts/" + id + "/committees";
+
+        mockMvc.perform(put(path)
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
+
+        Contact fromDb = contactService.findById(contact.getId());
+        Committee committeeFromDb = committeeService.findById(committee.getId());
+
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getCommittees().iterator().next().getId(), committee.getId());
+        assertNotNull(committeeFromDb);
+        assertEquals(committeeFromDb.getMembers().iterator().next().getId(), contact.getId());
+
+
+        /*Bad Contact Id*/
+        mockMvc.perform(put("/contacts/" + "badId" + "/committees")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andExpect(jsonPath("status", is("FAILURE")));
+
+
+        /*Bad org ID*/
+        committeeIdDto.setId("badId");
+        json = mapper.writeValueAsString(committeeIdDto);
+        mockMvc.perform(put(path)
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andExpect(jsonPath("status", is("FAILURE")));
 
     }
 
@@ -340,9 +384,43 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+    }
+
+    public void testRemoveContactFromCommittee () throws Exception {
+        String id = contactService.create(contact);
+
+        Committee committee = new Committee();
+        committee.setName("orgName");
+
+        String committeeID = committeeService.create(committee);
 
 
+        IdDto organizationIdDto = new IdDto(committeeID);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(organizationIdDto);
 
+        mockMvc.perform(delete("/contacts/" + id + "/committees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
+    }
+
+    @Test
+    public void testGetAllContactCommittees () throws Exception {
+        Committee committee = new Committee();
+        committee.setName("orgName");
+
+        contactService.create(contact);
+        committeeService.create(committee);
+        contactService.addContactToCommittee(contact, committee);
+
+        mockMvc.perform(get("/contacts/" + contact.getId() + "/committees")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id", is(committee.getId()))).andExpect(jsonPath("[0].name",
+                is(committee.getName())));
     }
 
     private Contact generateSecondcontact() {

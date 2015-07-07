@@ -1,6 +1,7 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.*;
+import edu.usm.dto.EncounterDto;
 import edu.usm.repository.ContactDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -104,8 +107,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contactDao.delete(contact);
     }
 
-    @Override
-    public void update(Contact contact) {
+    private void update(Contact contact) {
         logger.debug("Updating contact with ID: " + contact.getId());
         logger.debug("Time: " + LocalDateTime.now());
         updateLastModified(contact);
@@ -168,6 +170,112 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.remove(contact);
         organizations.remove(organization);
+        update(contact);
+    }
+
+
+    @Override
+    public void addContactToCommittee(Contact contact, Committee committee) {
+        Set<Committee> committees = contact.getCommittees();
+        Set<Contact> members = committee.getMembers();
+
+        if (committees == null) {
+            committees = new HashSet<>();
+            contact.setCommittees(committees);
+        }
+
+        if (members == null) {
+            members = new HashSet<>();
+            committee.setMembers(members);
+        }
+
+        members.add(contact);
+        committees.add(committee);
+        update(contact);
+    }
+
+    @Override
+    public void removeContactFromCommittee(Contact contact, Committee committee) {
+        Set<Committee> committees = contact.getCommittees();
+        Set<Contact> members = committee.getMembers();
+
+        if (committees == null || members == null) {
+            return;
+        }
+
+        members.remove(contact);
+        committees.remove(committee);
+        update(contact);
+    }
+
+    @Override
+    public void updateBasicDetails(Contact contact, Contact details) {
+        contact.setFirstName(details.getFirstName());
+        contact.setMiddleName(details.getMiddleName());
+        contact.setLastName(details.getLastName());
+        contact.setStreetAddress(details.getStreetAddress());
+        contact.setAptNumber(details.getAptNumber());
+        contact.setCity(details.getCity());
+        contact.setZipCode(details.getZipCode());
+        contact.setPhoneNumber1(details.getPhoneNumber1());
+        contact.setPhoneNumber2(details.getPhoneNumber2());
+        contact.setEmail(details.getEmail());
+        contact.setLanguage(details.getLanguage());
+        contact.setOccupation(details.getOccupation());
+        contact.setInterests(details.getInterests());
+        contact.setInitiator(details.isInitiator());
+
+        update(contact);
+
+    }
+
+    @Override
+    public void unattendEvent(Contact contact, Event event) {
+        if (contact.getAttendedEvents() != null) {
+            contact.getAttendedEvents().remove(event);
+            event.getAttendees().remove(contact);
+            update(contact);
+            eventService.update(event);
+        }
+    }
+
+    @Override
+    public void updateDemographicDetails(Contact contact, Contact details) {
+
+        contact.setRace(details.getRace());
+        contact.setEthnicity(details.getEthnicity());
+        contact.setDateOfBirth(details.getDateOfBirth());
+        contact.setGender(details.getGender());
+        contact.setDisabled(details.isDisabled());
+        contact.setIncomeBracket(details.getIncomeBracket());
+        contact.setSexualOrientation(details.getSexualOrientation());
+
+        update(contact);
+    }
+
+    @Override
+    public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) {
+
+        Encounter encounter = new Encounter();
+        encounter.setEncounterDate(dto.getDate());
+        encounter.setContact(contact);
+        encounter.setInitiator(initiator);
+        encounter.setNotes(dto.getNotes());
+        encounter.setType(dto.getType());
+        encounter.setAssessment(dto.getAssessment());
+
+        if (null == contact.getEncounters()) {
+            contact.setEncounters(new ArrayList<>());
+        }
+
+        contact.getEncounters().add(encounter);
+
+        /*Sets assessment to most recent encounter assessment */
+        Collections.sort(contact.getEncounters());
+        int currentAssessment = contact.getEncounters().get(0).getAssessment() == Encounter.DEFAULT_ASSESSMENT ? contact.getAssessment() :
+                contact.getEncounters().get(0).getAssessment();
+        contact.setAssessment(currentAssessment);
+
         update(contact);
     }
 }

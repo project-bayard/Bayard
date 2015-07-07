@@ -86,17 +86,10 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         contacts.add(contact);
         contacts.add(contact2);
 
-        committee.setMembers(contacts);
         committeeService.create(committee);
 
-        Set<Committee> committees = new HashSet<>();
-        committees.add(committee);
-
-        contact.setCommittees(committees);
-        contact2.setCommittees(committees);
-
-
-        contactService.update(contact);
+        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact2, committee);
 
         Contact contactFromDb = contactService.findById(contact.getId());
         assertEquals(contactFromDb.getCommittees().size(), 1); // before

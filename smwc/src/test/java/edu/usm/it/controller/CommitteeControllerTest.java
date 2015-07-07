@@ -49,15 +49,9 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
 
         Committee committee = new Committee();
         committee.setName("committeeName");
-        Set<Contact> members = new HashSet<>();
-        members.add(contact);
-        committee.setMembers(members);
         committeeService.create(committee);
+        contactService.addContactToCommittee(contact,committee);
 
-        Set<Committee> committees = new HashSet<>();
-        committees.add(committee);
-        contact.setCommittees(committees);
-        contactService.update(contact);
 
         mockMvc.perform(get("/committees").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -98,7 +92,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         committee.setName("newName");
         String json = new ObjectMapper().writeValueAsString(committee);
 
-        mockMvc.perform(put("/committees/committee/" + committee.getId()).contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(put("/committees/" + committee.getId()).contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
         Set<Committee> committees = committeeService.findAll();
@@ -117,17 +111,10 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
 
         Committee committee = new Committee();
         committee.setName("name");
-        Set<Contact> members = new HashSet<>();
-        members.add(contact);
-        committee.setMembers(members);
         committeeService.create(committee);
+        contactService.addContactToCommittee(contact,committee);
 
-        Set<Committee> committees = new HashSet<>();
-        committees.add(committee);
-        contact.setCommittees(committees);
-        contactService.update(contact);
-
-        mockMvc.perform(get("/committees/committee/" + committee.getId())
+        mockMvc.perform(get("/committees/" + committee.getId())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(committee.getId())))

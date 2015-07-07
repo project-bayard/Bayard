@@ -27,7 +27,7 @@
             ContactService.create({}, $scope.contact, function(data) {
                 console.log(data);
                 $scope.newContactForm.$setPristine();
-                $scope.contact = "";
+                $scope.contact = {};
 
                 $scope.requestSuccess = true;
                 $timeout(function() {
@@ -66,7 +66,8 @@
 
     }]);
 
-    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService', 'EventService', 'CommitteeService',
+    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService',
+        'EventService', 'CommitteeService',
         function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService) {
 
         var setup = function() {
@@ -98,13 +99,6 @@
             });
 
 
-            ContactService.findAll({}, function(data) {
-                $scope.contacts = data;
-            }, function(err) {
-                console.log(err);
-            });
-
-
         };
 
         setup();
@@ -120,17 +114,6 @@
             });
         };
 
-            /*
-        $scope.setEncounterInitiator = function(id) {
-            $scope.initiator = {firstName: "" , lastName: ""};
-
-            ContactService.find({id :id}, function(data) {
-                $scope.initiator = data;
-            }, function(err) {
-                console.log(err);
-            });
-        };
-        */
 
         $scope.viewDetails = function (id) {
             var path = "/contacts/contact/" + id ;
@@ -138,19 +121,33 @@
         };
 
         /*Encounters*/
+        $scope.showEncounterForm = function () {
+            $scope.addingEncounter = !$scope.addingEncounter;
 
-        $scope.addEncounter = function(newEncounter) {
+            if ($scope.initiators == null) {
 
-            ContactService.createEncounter({id: $scope.contact.id}, newEncounter, function(data) {
+                ContactService.getInitiators({}, function(data) {
+                    $scope.initiators = data;
+
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
+
+
+        $scope.addEncounter = function() {
+
+            ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function(data) {
                 ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
                     $scope.newEncounterRequestSuccess = true;
+                    $scope.newEncounter = {};
 
                     $timeout(function() {
                         $scope.newEncounterRequestSuccess = false;
                     }, 3000);
 
                     $scope.encountersTable = encounters;
-                    $scope.newEncounterForm.$setPristine();
                     $scope.addingEncounter = false;
 
                 }, function(err) {
@@ -293,7 +290,6 @@
 
         $scope.createAndAddToOrganization = function(organization) {
             organization.members = [$scope.contact.id];
-
             OrganizationService.create( organization, function(data) {
                 $scope.contactUpdated = true;
                 $scope.contact.organizations.push(organization);
@@ -307,7 +303,17 @@
         };
 
             /* Committees */
+        $scope.getContactCommittees = function () {
+            $scope.showingCommittees = !$scope.showingCommittees;
 
+            if ($scope.contact.committees == null) {
+                ContactService.getCommittees({id: $scope.contact.id},function(data) {
+                    $scope.contact.committees = data
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+        };
         $scope.getCommittees = function() {
             $scope.addCommittee.hidden = !$scope.addCommittee.hidden;
 
@@ -325,37 +331,20 @@
             $scope.committeeSuccess = true;
             var committee = $scope.committees[index];
 
-            if ($scope.contact.committees == null) {
-                $scope.contact.committees = [];
-
-            }
-
-
-            var members = [$scope.contact.id];
-            if (committee.members == null) {
-                committee.members = [];
-            }
-
-            for (var i = 0; i < committee.members.length; i++) {
-                members.push(committee.members[i].id);
-            }
-
-            $scope.contact.committees.push({id : committee.id, name: committee.name, members: members });
-
-            ContactService.update({id: $scope.contact.id}, $scope.contact, function(data) {
-                $scope.addCommittee.hidden = true;
-
-                $timeout(function() {
-                    $scope.requestSuccess = false;
-
-                }, 3000);
-
-            }, function(err) {
-                console.log(err);
-                $scope.committeeSuccess = false;
-
-            });
-
+            ContactService.addToCommittee({id: $scope.contact.id},{id: committee.id},
+                function(data) {
+                    if (data.status == 'SUCCESS') {
+                        ContactService.getCommittees({id: $scope.contact.id},function(data) {
+                            $scope.contact.committees = data
+                        }, function(err) {
+                            console.log(err);
+                        });
+                    } else {
+                        console.log(data.message)
+                    }
+                }, function(err) {
+                    console.log(err);
+                });
         };
 
             /* Demographics*/

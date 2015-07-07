@@ -46,8 +46,7 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         updateLastModified(committee);
         if (committee.getMembers() != null) {
             for(Contact contact : committee.getMembers()) {
-                contact.getCommittees().remove(committee);
-                contactService.update(contact);
+                contactService.removeContactFromCommittee(contact,committee);
             }
         }
         committeeDao.delete(committee);
@@ -61,9 +60,10 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
-    public void create(Committee committee) {
+    public String create(Committee committee) {
         logger.debug("Creating committee with ID: " + committee.getId());
         committeeDao.save(committee);
+        return committee.getId();
     }
 
     @Override

@@ -64,13 +64,22 @@
             },
             updateDemographics : {
                 method: 'PUT',
-                url: "/contacts/:id/demographics"
+                url: "/contacts/:id/demographics",
+            },
+            addToCommittee : {
+                method : 'PUT',
+                url : "/contacts/:id/committees"
+            },
+            getCommittees : {
+                method : 'GET',
+                isArray : true,
+                url : "/contacts/:id/committees"
             }
         });
     }]);
 
     services.factory('OrganizationService',[ '$resource', function ($resource) {
-        return $resource('../organizations/organization/:id', {id : '@id'}, {
+        return $resource('../organizations/:id', {id : '@id'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -85,18 +94,16 @@
             },
             findAll : {
                 method: 'GET',
-                url : "../organizations",
                 isArray : true
             },
             create : {
-                method: 'POST',
-                url : "../organizations"
+                method: 'POST'
             }
         });
     }]);
 
     services.factory('EventService',[ '$resource', function ($resource) {
-        return $resource('../events/event/:id', {id : '@id'}, {
+        return $resource('../events/:id', {id : '@id'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -111,18 +118,16 @@
             },
             findAll : {
                 method: 'GET',
-                url : "../events",
                 isArray : true
             },
             create : {
-                method: 'POST',
-                url : "../events"
+                method: 'POST'
             }
         });
     }]);
 
     services.factory('CommitteeService',[ '$resource', function ($resource) {
-        return $resource('../committees/committee/:id', {id : '@id'}, {
+        return $resource('../committees/:id', {id : '@id'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -137,12 +142,10 @@
             },
             findAll : {
                 method: 'GET',
-                url : "../committees",
                 isArray : true
             },
             create : {
-                method: 'POST',
-                url : "../committees"
+                method: 'POST'
             }
         });
     }]);

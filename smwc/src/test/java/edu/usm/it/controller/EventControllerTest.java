@@ -55,15 +55,12 @@ public class EventControllerTest extends WebAppConfigurationAware {
         //Event
         Event event = constructEvent("Rally", "Headquarters", "2012-01-01");
 
-        Set<Contact> attendees = new HashSet<>();
-        attendees.add(attendee);
-        event.setAttendees(attendees);
         eventService.create(event);
 
         Set<Event> events = new HashSet<>();
         events.add(event);
         attendee.setAttendedEvents(events);
-        contactService.update(attendee);
+        contactService.attendEvent(attendee,event);
     }
 
     @After

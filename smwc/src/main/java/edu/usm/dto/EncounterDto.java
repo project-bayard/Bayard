@@ -2,7 +2,7 @@ package edu.usm.dto;
 
 import java.io.Serializable;
 
-public class EncounterDto extends BasicEntityDto implements Serializable {
+public class EncounterDto implements Serializable {
 
     private String date;
     private String notes;

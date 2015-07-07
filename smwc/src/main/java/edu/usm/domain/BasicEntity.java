@@ -30,7 +30,8 @@ public abstract class BasicEntity {
             Views.EventList.class,
             Views.ContactDetails.class,
             Views.ContactEncounterDetails.class,
-            Views.ContactOrganizationDetails.class})
+            Views.ContactOrganizationDetails.class,
+            Views.ContactCommitteeDetails.class})
     private String id;
 
     @Column

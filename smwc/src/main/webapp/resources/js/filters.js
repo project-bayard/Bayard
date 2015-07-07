@@ -53,5 +53,23 @@
         };
     });
 
+    filters.filter('removeItemById', function() {
+       return function (collection, id) {
+
+           if (collection == null) {
+               return [];
+           }
+
+           for (var i = 0; i < collection.length; i++) {
+
+               if (collection[i].id == id) {
+                   collection.splice(i,1);
+               }
+           }
+
+           return collection;
+       }
+    });
+
 
 }());

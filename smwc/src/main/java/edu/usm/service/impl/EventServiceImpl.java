@@ -2,7 +2,6 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
-import edu.usm.dto.IdDto;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
@@ -51,8 +50,7 @@ public class EventServiceImpl extends BasicService implements EventService {
     public void delete(Event event) {
 
         for (Contact contact : event.getAttendees()) {
-            contact.getAttendedEvents().remove(event);
-            contactService.update(contact);
+            contactService.unattendEvent(contact,event);
         }
         eventDao.delete(event);
     }

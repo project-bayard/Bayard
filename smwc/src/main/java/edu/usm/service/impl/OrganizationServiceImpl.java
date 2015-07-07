@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by scottkimball on 4/11/15.
@@ -50,9 +51,9 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         /*Remove references to */
 
         if (organization.getMembers() != null) {
-            for(Contact contact : organization.getMembers()) {
-                contact.getOrganizations().remove(organization);
-                contactService.update(contact);
+            CopyOnWriteArrayList<Contact> contacts = new CopyOnWriteArrayList<>(organization.getMembers());
+            for(Contact contact : contacts) {
+                contactService.removeContactFromOrganization(contact,organization);
             }
         }
         organizationDao.delete(organization);
