@@ -270,7 +270,6 @@
             }
         };
 
-
         $scope.addToOrganization = function (index) {
             $scope.organizationSuccess = true;
             var organization = $scope.organizations[index];
@@ -292,8 +291,8 @@
 
         };
 
-        $scope.addToNewOrganization = function(name) {
-            var organization = {name: name, members : [$scope.contact.id]};
+        $scope.createAndAddToOrganization = function(organization) {
+            organization.members = [$scope.contact.id];
 
             OrganizationService.create( organization, function(data) {
                 $scope.contactUpdated = true;
@@ -488,12 +487,10 @@
         });
 
         //TODO: Should be refactored to account for all properties of Organization
-        $scope.createOrganization = function(name) {
-            var organization = {name: name, members: []};
-
+        $scope.createOrganization = function(organization) {
+            organization.members = [];
             OrganizationService.create( organization, function(data) {
                 $scope.addOrganization = {hidden: true};
-
                 OrganizationService.findAll({}, function(data) {
                     $scope.organizations = data;
                 }, function(err) {

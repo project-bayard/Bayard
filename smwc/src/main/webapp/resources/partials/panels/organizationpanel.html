@@ -14,17 +14,60 @@
                         </option>
                     </select>
                 </label>
-                <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit
-                </button>
+                <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
             </div>
-            <label>New Organization:
-                <input type="text" ng-model="orgName">
-            </label>
-            <button class="btn btn-md btn-success" ng-click="addToNewOrganization(orgName)">Add to New Organization
-            </button>
+            <button class="btn btn-md btn-success" ng-click="addOrganization.hidden = !addOrganization.hidden">Add to New Organization</button>
+            <div ng-if="addOrganization.hidden == false">
+                <div class="from-group">
+                    <label>Name
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.name">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>Street Address
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.streetAddress">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>City
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.city">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>State
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.state">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>Zip
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.zipCode">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>Description
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.description">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>Primary Contact
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.primaryContactName">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>Phone
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.phoneNumber">
+                    </label>
+                </div>
+                <div class="from-group">
+                    <label>Email
+                        <input type="text" class="form-control input-sm" ng-model="addOrganization.email">
+                    </label>
+                </div>
+                <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(addOrganization)">Submit</button>
+            </div>
         </div>
-        <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">Unable to
-            add Organization
+        <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">
+            Unable to add Organization
         </div>
 
 
