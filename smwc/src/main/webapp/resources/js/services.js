@@ -74,6 +74,14 @@
                 method : 'GET',
                 isArray : true,
                 url : "/contacts/:id/committees"
+            },
+            getMemberInfo : {
+                method : "GET",
+                url : "/contacts/:id/memberinfo"
+            },
+            updateMemberInfo : {
+                method : "PUT",
+                url : "/contacts/:id/memberinfo"
             }
         });
     }]);
