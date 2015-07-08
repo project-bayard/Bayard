@@ -13,6 +13,11 @@
             <label>Date
                 <input type="date"  ng-model="newEvent.dateHeld">
             </label>
+            <label>Committee
+                <select class="form-control input-small" ng-model="newEvent.committeeId">
+                    <option ng-repeat="committee in committees" value="{{committee.id}}">{{committee.name}}</option>
+                </select>
+            </label>
             <label>Additional Notes
                 <input type="text" class="form-control input-sm" ng-model="newEvent.notes">
             </label>

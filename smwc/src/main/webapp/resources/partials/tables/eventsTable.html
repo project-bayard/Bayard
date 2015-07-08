@@ -6,12 +6,14 @@
         <th>Name</th>
         <th>Location</th>
         <th>Date</th>
+        <th>Committee</th>
         <th># Attendees</th>
     </tr>
     <tr ng-repeat="event in eventsTable">
         <td>{{event.name}}</td>
         <td>{{event.location}}</td>
         <td>{{event.dateHeld | date: 'MMMM d, y'}}</td>
+        <td>{{event.committee.name}}</td>
         <td>{{event.attendees.length}}</td>
         <td><a class="btn btn-md btn-info" href="#/events/event/{{event.id}}">View Details</a></td>
     </tr>

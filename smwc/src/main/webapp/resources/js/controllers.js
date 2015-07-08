@@ -531,10 +531,17 @@
 
 
 
-    controllers.controller('EventsCtrl', ['$scope', 'EventService', function($scope, EventService) {
+    controllers.controller('EventsCtrl', ['$scope', 'EventService', 'CommitteeService', function($scope, EventService, CommitteeService) {
 
         $scope.addEvent = {hidden: true};
         $scope.newEvent = {};
+
+        CommitteeService.findAll({}, function(data) {
+           $scope.committees = data;
+            $scope.committees.push({id: null, name: "None"});
+        }, function(err) {
+            console.log(err);
+        });
 
         var populateEvents = function() {
             EventService.findAll({}, function(response) {
@@ -549,7 +556,6 @@
         $scope.createEvent = function() {
 
             $scope.newEvent.attendees = [];
-
             EventService.create({}, $scope.newEvent, function(response) {
                 $scope.addEvent = {hidden : true};
                 populateEvents();
