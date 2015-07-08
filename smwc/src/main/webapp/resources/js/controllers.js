@@ -293,7 +293,7 @@
             OrganizationService.create( organization, function(data) {
 
                 //Add this contact to the newly-created Organization
-                ContactService.addToOrganization({id: $scope.contact.id}, data.id, function(data) {
+                ContactService.addToOrganization({id: $scope.contact.id},{id : data.id}, function(data) {
 
                     //Refresh organizations the contact is now a member of
                     OrganizationService.getContactOrganizations({id:$scope.contact.id}, function(data) {
