@@ -247,7 +247,7 @@
         $scope.getContactOrganizations = function () {
             $scope.showingOrganizations = !$scope.showingOrganizations;
 
-            if ($scope.contact.organizations == null) {
+            if ($scope.showingOrganizations == true) {
                 ContactService.getOrganizations({id: $scope.contact.id},function(data) {
                     $scope.contact.organizations = data
                 }, function(err) {
@@ -291,12 +291,10 @@
 
         $scope.createAndAddToOrganization = function(organization) {
             OrganizationService.create( organization, function(data) {
-
                 //Add this contact to the newly-created Organization
                 ContactService.addToOrganization({id: $scope.contact.id},{id : data.id}, function(data) {
-
                     //Refresh organizations the contact is now a member of
-                    OrganizationService.getContactOrganizations({id:$scope.contact.id}, function(data) {
+                    ContactService.getOrganizations({id:$scope.contact.id}, function(data) {
                         $scope.contactUpdated = true;
                         $scope.contact.organizations = data;
                         $scope.addOrganization.hidden = true;
@@ -309,16 +307,16 @@
                     console.log(err);
                     $scope.organizationSuccess = false;
                 });
-
-                //Refresh list of all organizations known to the app
-                OrganizationService.getOrganizations(function(allOrgs) {
-                    $scope.organizations = allOrgs;
-                }, function(err) {
-                    console.log(err);
-                });
             }, function(err) {
                 console.log(err);
                 $scope.organizationSuccess = false;
+            });
+
+            //Refresh list of all organizations known to the app
+            OrganizationService.getOrganizations(function(allOrgs) {
+                $scope.organizations = allOrgs;
+            }, function(err) {
+                console.log(err);
             });
         };
 
