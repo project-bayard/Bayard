@@ -234,6 +234,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional
     public void testAddEncounter () throws Exception {
         String id = contactService.create(contact);
 
