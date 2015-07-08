@@ -24,6 +24,10 @@ public class Event extends BasicEntity  implements Serializable {
     @JsonView({Views.EventList.class})
     private String location;
 
+    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "committee_id")
+    private Committee committee;
+
     /*
     Adding an Event to a Contact's attendedEvents will refresh this set.
     Adding a Contact to an Event's attendees will NOT refresh the Contact's attendedEvents
@@ -43,6 +47,14 @@ public class Event extends BasicEntity  implements Serializable {
 
     public Event() {
         super();
+    }
+
+    public Committee getCommittee() {
+        return committee;
+    }
+
+    public void setCommittee(Committee committee) {
+        this.committee = committee;
     }
 
     public String getNotes() {

@@ -16,6 +16,9 @@ public class Committee extends BasicEntity implements Serializable {
     @JsonView(Views.CommitteeList.class)
     private Set<Contact> members;
 
+    @OneToMany(mappedBy="committee", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    private Set<Event> events;
+
     @Column
     @JsonView({Views.CommitteeList.class,
             Views.ContactDetails.class,
@@ -28,6 +31,14 @@ public class Committee extends BasicEntity implements Serializable {
 
     public Committee() {
         super();
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 
     public Set<Contact> getMembers() {
