@@ -26,6 +26,7 @@ public class Event extends BasicEntity  implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.REFRESH)
     @JoinColumn(name = "committee_id")
+    @JsonView({Views.EventList.class})
     private Committee committee;
 
     /*
