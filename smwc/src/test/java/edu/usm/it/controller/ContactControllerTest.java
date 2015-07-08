@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.Member;
+import java.rmi.server.ExportException;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -437,6 +438,25 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.paidDues", is(contact.getMemberInfo().hasPaidDues())))
                 .andExpect(jsonPath("$.signedAgreement", is(contact.getMemberInfo().hasSignedAgreement())));
 
+    }
+
+    @Test
+    public void testUpdateMemberInfo() throws Exception {
+        contactService.create(contact);
+
+        MemberInfo newInfo = new MemberInfo();
+        newInfo.setStatus(MemberInfo.STATUS_BAD);
+        newInfo.setSignedAgreement(true);
+        newInfo.setPaidDues(false);
+
+        String json = new ObjectMapper().writeValueAsString(newInfo);
+
+        mockMvc.perform(put("/contacts/"+contact.getId()+"/memberinfo")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
     }
 
     private Contact generateSecondcontact() {

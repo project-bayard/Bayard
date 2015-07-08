@@ -235,6 +235,23 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/memberinfo")
+    public Response updateMemberInfo(@PathVariable("id") String id, @RequestBody MemberInfo memberInfo) {
+        Contact contact = contactService.findById(id);
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
+        try {
+            contactService.updateMemberInfo(contact, memberInfo);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Contact's membership information");
+        }
+
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/demographics")
     @JsonView(Views.DemographicDetails.class)
     public Contact getDemographicDetails(@PathVariable("id") String id) {

@@ -1,9 +1,6 @@
 package edu.usm.service;
 
-import edu.usm.domain.Committee;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Event;
-import edu.usm.domain.Organization;
+import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 
 import java.util.Set;
@@ -29,4 +26,6 @@ public interface ContactService {
     void updateBasicDetails(Contact contact, Contact details);
     void updateDemographicDetails(Contact contact, Contact details);
     void addEncounter (Contact contact, Contact initiator, EncounterDto dto);
+    void updateMemberInfo(Contact contact, MemberInfo memberInfo);
+
 }

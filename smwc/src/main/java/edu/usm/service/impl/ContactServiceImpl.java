@@ -278,4 +278,10 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         update(contact);
     }
+
+    @Override
+    public void updateMemberInfo(Contact contact, MemberInfo memberInfo) {
+        contact.setMemberInfo(memberInfo);
+        update(contact);
+    }
 }
