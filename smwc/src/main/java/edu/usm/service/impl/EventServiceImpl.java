@@ -1,7 +1,9 @@
 package edu.usm.service.impl;
 
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.dto.EventDto;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
@@ -37,6 +39,17 @@ public class EventServiceImpl extends BasicService implements EventService {
     @Override
     public Event findById(String id) {
         return eventDao.findOne(id);
+    }
+
+    @Override
+    public String create(EventDto dto, Committee committee) {
+        Event event = new Event();
+        event.setName(dto.getName());
+        event.setNotes(dto.getNotes());
+        event.setLocation(dto.getLocation());
+        event.setDateHeld(dto.getDateHeld());
+        event.setCommittee(committee);
+        return create(event);
     }
 
     @Override

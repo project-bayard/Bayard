@@ -1,9 +1,13 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
+import edu.usm.dto.EventDto;
 import edu.usm.dto.IdDto;
+import edu.usm.dto.Response;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +25,8 @@ public class EventController {
     @Autowired
     EventService eventService;
 
+    @Autowired
+    CommitteeService committeeService;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
@@ -31,8 +37,18 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public IdDto createEvent(@RequestBody Event event) {
-        return new IdDto(eventService.create(event));
+    public Response createEvent(@RequestBody EventDto eventDto) {
+        Committee committee = null;
+        if (null != eventDto.getCommitteeId()) {
+            committee = committeeService.findById(eventDto.getCommitteeId());
+        }
+
+        try {
+            String eventId = eventService.create(eventDto, committee);
+            return new Response(eventId,Response.SUCCESS,null);
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Unable to create event");
+        }
 
     }
 
