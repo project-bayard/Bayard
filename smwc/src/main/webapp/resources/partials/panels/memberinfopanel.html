@@ -1,0 +1,40 @@
+<div class="panel panel-default">
+    <div class="panel-heading" ng-click="checkIfMember()">
+        <h3 class="panel-title">Member Information</h3>
+    </div>
+    <div class="panel-body" ng-show="memberInfoPanel.showingPanel">
+        <div ng-show="memberInfoPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Member information updated</div>
+        <div ng-show="promptNotMember">
+            <div class="alert alert-warning">This contact is not currently a member.</div>
+            <button class="btn btn-success" ng-click="becomeMember()">Make Member</button>
+        </div>
+        <div ng-show="memberInfoPanel.showingMemberInfo">
+            <div class="form-group">
+                <label>Paid Dues?
+                    <select class="form-control input-sm" ng-model="memberInfo.paidDues" ng-readonly="!memberInfoPanel.editingMemberInfo" ng-options="booleanToString(value) for value in [true, false]">
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Signed Agreement?
+                    <select class="form-control input-sm" ng-model="memberInfo.signedAgreement" ng-readonly="!memberInfoPanel.editingMemberInfo" ng-options="booleanToString(value) for value in [true, false]">
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Standing
+                    <select class="form-control input-small" ng-model="memberInfo.status" ng-readonly="!memberInfoPanel.editingMemberInfo">
+                        <option ng-repeat="standing in memberInfoPanel.standings" value="{{standing.value}}">{{standing.label}}</option>
+                    </select>
+                </label>
+            </div>
+
+            <button class="btn btn-primary" ng-click="toggleEditingMemberInfo()" ng-show="!memberInfoPanel.editingMemberInfo">Edit Member Info</button>
+            <button class="btn btn-success" ng-click="updateMembershipInfo()" ng-show="memberInfoPanel.editingMemberInfo">Submit</button>
+            <button class="btn btn-danger" ng-click="cancelUpdateMemberInfo()" ng-show="memberInfoPanel.editingMemberInfo">Cancel</button>
+
+            <div ng-if="memberInfoPanel.updateRequest.failure" class="alert alert-danger" role="alert">Failed to update member information...</div>
+        </div>
+
+    </div>
+</div>

@@ -85,6 +85,22 @@
             $scope.newEncounter = {};
             $scope.showingDemographics = false;
             $scope.demographicPanel = { updateRequest : {success : false,  failure : false }, editingDemographics : false, showingDemographics : false };
+            $scope.memberInfoPanel = { showingPanel : false, updateRequest : {success : false,  failure : false },
+                showingMemberInfo : false, editingMemberInfo : false,
+                standings : {
+                    good : {
+                        label : "Good",
+                        value : 1
+                    },
+                    bad : {
+                        label : "Bad",
+                        value : 2
+                    },
+                    other : {
+                        label : "Other",
+                        value : 3
+                    }
+                }};
 
             //TODO: decouple this knowledge
             $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
@@ -434,6 +450,82 @@
                 demographics.dateOfBirth = new Date(demographics.dateOfBirth);
                 return demographics;
             };
+
+            /* MEMBERINFO */
+
+            $scope.checkIfMember = function() {
+                $scope.memberInfoPanel.showingPanel = !$scope.memberInfoPanel.showingPanel;
+
+                if($scope.contact.member == true) {
+                    $scope.displayMemberInfo();
+                } else {
+                    $scope.promptNoMemberInfo();
+                }
+            };
+
+            $scope.promptNoMemberInfo = function() {
+                $scope.promptNotMember = true;
+            };
+
+            $scope.becomeMember = function() {
+                $scope.displayMemberInfo();
+                $scope.toggleEditingMemberInfo();
+            };
+
+            $scope.updateMembershipInfo = function() {
+                ContactService.updateMemberInfo({id: $scope.contact.id}, $scope.memberInfo, function(data) {
+                    ContactService.getMemberInfo({id: $scope.contact.id}, function(data) {
+                        $scope.contact.member = true;
+                        $scope.promptNotMember = false;
+                        $scope.memberInfoPanel.editingMemberInfo = false;
+                        $scope.memberInfoPanel.updateRequest.success = true;
+                        $timeout(function() {
+                            $scope.memberInfoPanel.updateRequest.success = false;
+                        }, 3000);
+                    }, function(err) {
+                        console.log(err);
+                        $scope.memberInfoPanel.updateRequest.failure = true;
+                        $timeout(function() {
+                            $scope.memberInfoPanel.updateRequest.failure = false;
+                        }, 3000);
+                    })
+                }, function(err) {
+                    console.log(err);
+                    $scope.memberInfoPanel.updateRequest.failure = true;
+                    $timeout(function() {
+                        $scope.memberInfoPanel.updateRequest.failure = false;
+                    }, 3000);                })
+            };
+
+
+            $scope.displayMemberInfo = function() {
+                console.log("Hit displayMemberInfo");
+
+                $scope.memberInfoPanel.showingMemberInfo = !$scope.memberInfoPanel.showingMemberInfo;
+
+                if ($scope.memberInfoPanel.showingMemberInfo) {
+                    ContactService.getMemberInfo({id : $scope.contact.id}, function(data) {
+                        $scope.memberInfo = data;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+            };
+
+            $scope.toggleEditingMemberInfo = function() {
+                $scope.memberInfoPanel.editingMemberInfo = !$scope.memberInfoPanel.editingMemberInfo;
+            };
+
+            $scope.cancelUpdateMemberInfo = function() {
+                ContactService.getMemberInfo({id : $scope.contact.id}, function(data) {
+                    $scope.memberInfo = data;
+                    $scope.memberInfoPanel.editingMemberInfo = false;
+                    $scope.checkIfMember();
+                }, function(err) {
+                    console.log(err);
+                });
+            };
+
 
         }]);
 
