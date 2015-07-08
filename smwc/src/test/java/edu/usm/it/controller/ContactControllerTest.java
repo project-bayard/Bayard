@@ -4,10 +4,7 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Committee;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Event;
-import edu.usm.domain.Organization;
+import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
@@ -24,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
+import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -77,6 +75,12 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setEthnicity("White American");
         contact.setRace("Hispanic");
         contact.setSexualOrientation("Heterosexual");
+
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setPaidDues(true);
+        memberInfo.setSignedAgreement(false);
+        memberInfo.setStatus(MemberInfo.STATUS_GOOD);
+        contact.setMemberInfo(memberInfo);
 
         initiator = new Contact();
         initiator.setFirstName("initiatorFirst");
@@ -421,6 +425,18 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id", is(committee.getId()))).andExpect(jsonPath("[0].name",
                 is(committee.getName())));
+    }
+
+    @Test
+    public void testGetMemberInfo() throws Exception {
+        contactService.create(contact);
+
+        mockMvc.perform(get("/contacts/"+contact.getId()+"/memberinfo").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(contact.getMemberInfo().getStatus())))
+                .andExpect(jsonPath("$.paidDues", is(contact.getMemberInfo().hasPaidDues())))
+                .andExpect(jsonPath("$.signedAgreement", is(contact.getMemberInfo().hasSignedAgreement())));
+
     }
 
     private Contact generateSecondcontact() {

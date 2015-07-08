@@ -227,6 +227,14 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/memberinfo")
+    @JsonView(Views.MemberInfo.class)
+    public MemberInfo getMemberInfo(@PathVariable("id") String id) {
+        Contact contact = contactService.findById(id);
+        return (null == contact) ? null : contact.getMemberInfo();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/demographics")
     @JsonView(Views.DemographicDetails.class)
     public Contact getDemographicDetails(@PathVariable("id") String id) {
