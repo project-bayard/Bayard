@@ -1,0 +1,12 @@
+To set up a development or production environment that relies on a Postgres data source:
+
+1. Create the user that the application will use to communicate with Postgres
+    create user smwc_postgres with password 'secretpassword';
+2. Create the database that the application will use
+    create database smwc;
+3. Grant privileges to the application user on the application database
+    grant all privileges on database smwc to smwc_postgres;
+4. Configure the data source defined in persistence.properties
+    dataSource.url=jdbc:postgresql://localhost/smwc
+    dataSource.username=smwc_postgres
+    dataSource.password=secretpassword

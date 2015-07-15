@@ -18,6 +18,6 @@ public interface ContactDao extends CrudRepository<Contact, String> {
 
     HashSet<Contact> findAll();
 
-    @Query("select c from contact as c where initiator = 1")
+    @Query("select c from contact as c where initiator = 'true'")
     HashSet<Contact> findAllInitiators();
 }

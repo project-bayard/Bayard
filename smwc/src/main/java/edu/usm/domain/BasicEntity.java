@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
  */
 
 @Entity(name = "basic_entity")
-@SQLDelete(sql="UPDATE basic_entity SET deleted = 1 WHERE id = ?")
-@Where(clause="deleted <> 1 ")
+@SQLDelete(sql="UPDATE basic_entity SET deleted = 'true' WHERE id = ?")
+@Where(clause="deleted <> 'true' ")
 public abstract class BasicEntity {
 
 
