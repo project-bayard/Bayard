@@ -5,10 +5,7 @@ import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
-import edu.usm.service.CommitteeService;
-import edu.usm.service.ContactService;
-import edu.usm.service.EventService;
-import edu.usm.service.OrganizationService;
+import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +33,9 @@ public class ContactController {
 
     @Autowired
     private CommitteeService committeeService;
+
+    @Autowired
+    private EncounterService encounterService;
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -131,6 +131,37 @@ public class ContactController {
     @JsonView(Views.ContactEncounterDetails.class)
     public List<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {
         return contactService.findById(id).getEncounters();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters/{encounterId}")
+    public Response updateEncounter(@PathVariable("id") String id, @PathVariable("encounterId") String encounterId, @RequestBody EncounterDto encounterDto) {
+        Contact contact = contactService.findById(id);
+        Contact initiator = contactService.findById(encounterDto.getInitiatorId());
+        Encounter encounter = encounterService.findById(encounterId);
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
+        if (null == encounter) {
+            return new Response(null, Response.FAILURE, "Encounter with ID "+encounterId+" does not exist");
+        }
+
+        if (null == initiator) {
+            return new Response(null, Response.FAILURE, "Initiator with ID "+id+" does not exist");
+        }
+
+        if (!contact.getId().equals(encounter.getContact().getId())) {
+            return new Response(null, Response.FAILURE, "Discrepancy between Contact with ID "+id+" and Contact("+encounter.getContact().getId()+") associated with this Encounter. Unable to update.");
+        }
+
+        try {
+            encounterService.updateEncounter(encounter, encounterDto);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Encounter");
+        }
+
     }
 
     @ResponseStatus(HttpStatus.OK)

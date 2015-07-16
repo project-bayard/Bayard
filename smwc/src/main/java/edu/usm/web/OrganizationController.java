@@ -22,6 +22,45 @@ public class OrganizationController {
     @Autowired
     OrganizationService organizationService;
 
+    @RequestMapping(method = RequestMethod.DELETE, value="/{id}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public Response deleteOrganization(@PathVariable("id") String id) {
+
+        Organization organization = organizationService.findById(id);
+        if (null == organization) {
+            return new Response(null, Response.FAILURE, "Organization with ID "+id+" does not exist.");
+        }
+
+        try {
+            organizationService.delete(organization);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error deleting Organization with ID "+id+".");
+        }
+
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value="/{id}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public Response updateOrganizationDetails(@PathVariable("id") String id, @RequestBody Organization organization) {
+        Organization fromDb = organizationService.findById(id);
+        if (null == fromDb) {
+            return new Response(null, Response.FAILURE, "Organization with ID "+id+" does not exist.");
+        }
+
+        //assumption that a RequestBody without members should be interpreted as an omission of the complete object graph
+        if (null == organization.getMembers()) {
+            organization.setMembers(fromDb.getMembers());
+        }
+
+        try {
+            organizationService.update(organization);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Organization with ID "+id+".");
+        }
+    }
+
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.OrganizationList.class)

@@ -16,9 +16,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.HashSet;
 import java.util.Set;
 
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -34,6 +36,12 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
     private ObjectWriter writer = new ObjectMapper().writer();
 
+    @After
+    public void wipeData(){
+        eventService.deleteAll();
+        contactService.deleteAll();
+    }
+
 
     private Event constructEvent(String name, String location, String date) {
         Event event = new Event();
@@ -42,8 +50,6 @@ public class EventControllerTest extends WebAppConfigurationAware {
         event.setDateHeld(date);
         return event;
     }
-
-
 
     private void persistDummyEvent() {
         //Attendee
@@ -63,11 +69,6 @@ public class EventControllerTest extends WebAppConfigurationAware {
         contactService.attendEvent(attendee,event);
     }
 
-    @After
-    public void wipeData(){
-        eventService.deleteAll();
-        contactService.deleteAll();
-    }
 
     @Test
     public void testGetAllEvents() throws Exception {
@@ -99,6 +100,98 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
         mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isCreated());
+
+    }
+
+    @Test
+    public void testDeleteEvent() throws Exception {
+        Event event = constructEvent("Rally", "Headquarters", "2012-01-01");
+        String eventId = eventService.create(event);
+
+        //Attendee
+        Contact attendee = new Contact();
+        attendee.setFirstName("Test");
+        attendee.setLastName("Attendee");
+        contactService.create(attendee);
+        attendee.setAttendedEvents(new HashSet<>());
+        contactService.attendEvent(attendee, event);
+
+        mockMvc.perform(delete("/events/"+eventId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        Event eventFromDb = eventService.findById(eventId);
+        assertNull(eventFromDb);
+
+        Contact contactFromDb = contactService.findById(attendee.getId());
+        assertEquals(0, contactFromDb.getAttendedEvents().size());
+
+    }
+
+    @Test
+    public void testUpdateEventPrimitives() throws Exception {
+        Event event = constructEvent("Rally", "Headquarters", "2012-01-01");
+        String eventId = eventService.create(event);
+
+        //Attendee
+        Contact attendee = new Contact();
+        attendee.setFirstName("Test");
+        attendee.setLastName("Attendee");
+        contactService.create(attendee);
+        attendee.setAttendedEvents(new HashSet<>());
+        contactService.attendEvent(attendee, event);
+
+        event.setName("Updated Name");
+
+        String json = writer.writeValueAsString(event);
+
+        MvcResult result = mockMvc.perform(put("/events/" + eventId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Event eventFromDb = eventService.findById(eventId);
+        assertTrue(eventFromDb.getAttendees().contains(attendee));
+        assertEquals("Updated Name", eventFromDb.getName());
+
+        Contact contactFromDb = contactService.findById(attendee.getId());
+        assertTrue(contactFromDb.getAttendedEvents().contains(eventFromDb));
+
+    }
+
+    @Test
+    public void testUpdateTruncatedObjectGraph() throws Exception {
+        Event event = constructEvent("Rally", "Headquarters", "2012-01-01");
+        String eventId = eventService.create(event);
+
+        //Attendee
+        Contact attendee = new Contact();
+        attendee.setFirstName("Test");
+        attendee.setLastName("Attendee");
+        contactService.create(attendee);
+        attendee.setAttendedEvents(new HashSet<>());
+        contactService.attendEvent(attendee, event);
+
+        event.setAttendees(null);
+        event.setName("Updated Name");
+
+        String json = writer.writeValueAsString(event);
+
+        MvcResult result = mockMvc.perform(put("/events/" + eventId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Event eventFromDb = eventService.findById(eventId);
+        assertTrue(eventFromDb.getAttendees().contains(attendee));
+        assertEquals("Updated Name", eventFromDb.getName());
+
+        Contact contactFromDb = contactService.findById(attendee.getId());
+        assertTrue(contactFromDb.getAttendedEvents().contains(eventFromDb));
 
     }
 

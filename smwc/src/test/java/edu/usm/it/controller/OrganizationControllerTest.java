@@ -1,11 +1,13 @@
 package edu.usm.it.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,9 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -35,6 +36,28 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     private Contact contact;
     private Contact initiator;
 
+    @Before
+    public void setup() {
+        /*contact*/
+        contact = new Contact();
+        contact.setFirstName("first");
+        contact.setLastName("last");
+
+        /*orgs*/
+        organization = new Organization();
+        organization.setName("Org Name");
+        organization.setMembers(new HashSet<>());
+        organization.setStreetAddress("123 Organizational Lane");
+        organization.setCity("Portland");
+        organization.setState("ME");
+        organization.setZipCode("04103");
+        organization.setPhoneNumber("123-456-7890");
+        organization.setPrimaryContactName("Theo McCeo");
+        organization.setDescription("A very good organization");
+
+
+    }
+
     @After
     public void teardown() {
         contactService.deleteAll();
@@ -45,25 +68,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     @Test
     public void testGetAllOrganizations() throws Exception {
 
-        /*contact*/
-        contact = new Contact();
-        contact.setFirstName("first");
-        contact.setLastName("last");
-
-        /*orgs*/
-        organization = new Organization();
-        organization.setName("Org Name");
-        Set<Contact> members = new HashSet<>();
-        members.add(contact);
-        organization.setMembers(members);
-        organization.setStreetAddress("123 Organizational Lane");
-        organization.setCity("Portland");
-        organization.setState("ME");
-        organization.setZipCode("04103");
-        organization.setPhoneNumber("123-456-7890");
-        organization.setPrimaryContactName("Theo McCeo");
-        organization.setDescription("A very good organization");
-
+        organization.getMembers().add(contact);
         Set<Organization> organizations = new HashSet<>();
         organizations.add(organization);
         contact.setOrganizations(organizations);
@@ -97,6 +102,85 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isCreated());
         Set<Organization> organizations = organizationService.findAll();
         assertEquals(organizations.size(),1);
+    }
+
+    @Test
+    public void testDeleteOrganization() throws Exception {
+
+        organization.getMembers().add(contact);
+        Set<Organization> organizations = new HashSet<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
+        contactService.create(contact);
+
+        String organizationId = organization.getId();
+        assertNotNull(organizationService.findById(organizationId));
+
+        MvcResult result = mockMvc.perform(delete("/organizations/"+organizationId).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Organization persistedOrganization = organizationService.findById(organizationId);
+        assertNull(persistedOrganization);
+
+        Contact persistedContact = contactService.findById(contact.getId());
+        assertEquals(0, persistedContact.getOrganizations().size());
+
+    }
+
+    @Test
+    public void testUpdatePrimitives() throws Exception {
+
+        organization.getMembers().add(contact);
+        Set<Organization> organizations = new HashSet<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
+        contactService.create(contact);
+
+        organization.setName("Updated Name");
+        organization.setPrimaryContactName("Updated Primary Contact");
+
+        String json = new ObjectMapper().writeValueAsString(organization);
+
+        MvcResult result = mockMvc.perform(put("/organizations/" + organization.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Organization fromDb = organizationService.findById(organization.getId());
+        assertEquals("Updated Name", fromDb.getName());
+        assertEquals("Updated Primary Contact", fromDb.getPrimaryContactName());
+
+    }
+
+    @Test
+    public void testUpdateTruncatedObjectGraph() throws Exception {
+
+        organization.getMembers().add(contact);
+        Set<Organization> organizations = new HashSet<>();
+        organizations.add(organization);
+        contact.setOrganizations(organizations);
+        contactService.create(contact);
+
+        organization.setMembers(null);
+        organization.setName("Updated Name");
+
+        String json = new ObjectMapper().writeValueAsString(organization);
+
+        MvcResult result = mockMvc.perform(put("/organizations/" + organization.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Organization fromDb = organizationService.findById(organization.getId());
+        assertTrue(fromDb.getMembers().contains(contact));
+        assertEquals("Updated Name", fromDb.getName());
+
+
     }
 
 

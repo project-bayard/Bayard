@@ -8,10 +8,7 @@ import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
-import edu.usm.service.CommitteeService;
-import edu.usm.service.ContactService;
-import edu.usm.service.EventService;
-import edu.usm.service.OrganizationService;
+import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +21,8 @@ import javax.transaction.Transactional;
 import java.lang.reflect.Member;
 import java.rmi.server.ExportException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
@@ -50,6 +49,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Autowired
     EventService eventService;
+
+    @Autowired
+    EncounterService encounterService;
 
     @Autowired
     DateFormatConfig dateFormatConfig;
@@ -310,6 +312,52 @@ public class ContactControllerTest extends WebAppConfigurationAware {
             .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateEncounter() throws Exception {
+        String id = contactService.create(contact);
+        String initiatorId = contactService.create(generateSecondcontact());
+        EncounterDto dto = new EncounterDto();
+        dto.setInitiatorId(initiatorId);
+        dto.setNotes("Notes");
+        dto.setAssessment(9);
+        dto.setType("Call");
+        dto.setDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(put("/contacts/"+id+"/encounters")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+        Contact contactFromDb = contactService.findById(id);
+        Encounter encounterFromDb = contactFromDb.getEncounters().get(0);
+        String newInitiatorId = contactService.create(generateSecondcontact());
+
+        dto = new EncounterDto();
+        dto.setAssessment(5);
+        dto.setNotes("Updated Notes");
+        dto.setType("Other");
+        dto.setInitiatorId(newInitiatorId);
+
+        json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(put("/contacts/"+id+"/encounters/"+encounterFromDb.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+        encounterFromDb = encounterService.findById(encounterFromDb.getId());
+        assertEquals("Updated Notes", encounterFromDb.getNotes());
+        assertEquals(newInitiatorId, encounterFromDb.getInitiator().getId());
 
     }
 

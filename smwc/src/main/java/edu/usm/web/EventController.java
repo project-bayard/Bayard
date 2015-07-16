@@ -28,6 +28,43 @@ public class EventController {
     @Autowired
     CommitteeService committeeService;
 
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public Response deleteEvent(@PathVariable("id") String id) {
+        Event event = eventService.findById(id);
+        if (null == event) {
+            return new Response(null, Response.FAILURE, "Event with ID "+id+" does not exist.");
+        }
+        try {
+            eventService.delete(event);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error deleting Event with ID "+id);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody Event event) {
+        Event fromDb = eventService.findById(id);
+        if (null == fromDb) {
+            return new Response(null, Response.FAILURE, "Event with ID "+id+" does not exist.");
+        }
+
+        //assumption that a RequestBody without attendees should be interpreted as an omission of the complete object graph
+        if (null == event.getAttendees()) {
+            event.setAttendees(fromDb.getAttendees());
+        }
+
+        try {
+            eventService.update(event);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error updating Event with ID "+id+".");
+        }
+    }
+
+
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @JsonView({Views.EventList.class})
