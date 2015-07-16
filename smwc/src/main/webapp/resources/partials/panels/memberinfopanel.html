@@ -22,6 +22,12 @@
                 </label>
             </div>
             <div class="form-group">
+                <label>Attended Orientation?
+                    <select class="form-control input-sm" ng-model="memberInfo.attendedOrientation" ng-readonly="!memberInfoPanel.editingMemberInfo" ng-options="booleanToString(value) for value in [true, false]">
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
                 <label>Standing
                     <select class="form-control input-small" ng-model="memberInfo.status" ng-readonly="!memberInfoPanel.editingMemberInfo">
                         <option ng-repeat="standing in memberInfoPanel.standings" value="{{standing.value}}">{{standing.label}}</option>

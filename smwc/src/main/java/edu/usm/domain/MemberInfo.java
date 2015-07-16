@@ -28,6 +28,18 @@ public class MemberInfo extends BasicEntity  implements Serializable {
     @JsonView(Views.MemberInfo.class)
     private int status;
 
+    @Column
+    @JsonView(Views.MemberInfo.class)
+    private boolean attendedOrientation;
+
+    public boolean hasAttendedOrientation() {
+        return attendedOrientation;
+    }
+
+    public void setAttendedOrientation(boolean attendedOrientation) {
+        this.attendedOrientation = attendedOrientation;
+    }
+
     public MemberInfo(String id) {
         setId(id);
     }
