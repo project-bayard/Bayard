@@ -229,16 +229,15 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations", consumes= {"application/json"})
-    public Response removeContactFromOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) {
-        String idStringed = idDto.getId();
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{orgId}", consumes= {"application/json"})
+    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("orgId") String orgId) {
 
-        Organization organization = organizationService.findById(idStringed);
+        Organization organization = organizationService.findById(orgId);
         Contact contact = contactService.findById(id);
 
         if (organization == null) {
             logger.debug("No org");
-            return new Response(null,Response.FAILURE, "Organization with ID " + idStringed + " does not exist");
+            return new Response(null,Response.FAILURE, "Organization with ID " + orgId + " does not exist");
 
         } else if (contact == null) {
             logger.debug("No contact");
@@ -334,16 +333,15 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees", consumes= {"application/json"})
-    public Response removeContactFromCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
-        String idStringed = idDto.getId();
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{comId}", consumes= {"application/json"})
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("comId") String comId) {
 
-        Committee committee = committeeService.findById(idDto.getId());
+        Committee committee = committeeService.findById(comId);
         Contact contact = contactService.findById(id);
 
         if (committee == null) {
             logger.debug("No committee");
-            return new Response(null,Response.FAILURE, "Committee with ID " + idStringed + " does not exist");
+            return new Response(null,Response.FAILURE, "Committee with ID " + comId + " does not exist");
 
         } else if (contact == null) {
             logger.debug("No contact");

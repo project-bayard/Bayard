@@ -62,7 +62,7 @@ public class CommitteeController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces={"application/json"})
-    public Response updateCommittee(@PathVariable("id") String id) {
+    public Response deleteCommittee(@PathVariable("id") String id) {
         Committee committee = committeeService.findById(id);
         if (null == committee) {
             return new Response(null, Response.FAILURE, "Committee with ID "+id+" does not exist.");

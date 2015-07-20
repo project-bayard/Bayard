@@ -279,15 +279,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String orgID = organizationService.create(organization);
 
-
-        IdDto organizationIdDto = new IdDto(orgID);
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(organizationIdDto);
-
-        mockMvc.perform(delete("/contacts/" + id + "/organizations")
+        mockMvc.perform(delete("/contacts/" + id + "/organizations/"+orgID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
     }
@@ -444,18 +438,17 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Committee committee = new Committee();
         committee.setName("orgName");
+        HashSet members = new HashSet();
+        members.add(contact);
+        committee.setMembers(members);
+
+        committeeService.create(committee);
 
         String committeeID = committeeService.create(committee);
 
-
-        IdDto organizationIdDto = new IdDto(committeeID);
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(organizationIdDto);
-
-        mockMvc.perform(delete("/contacts/" + id + "/committees")
+        mockMvc.perform(delete("/contacts/" + id + "/committees/"+committeeID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
     }
