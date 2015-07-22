@@ -5,10 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
  */
 
 @Entity(name = "basic_entity")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SQLDelete(sql="UPDATE basic_entity SET deleted = 'true' WHERE id = ?")
 @Where(clause="deleted <> 'true' ")
 public abstract class BasicEntity {
