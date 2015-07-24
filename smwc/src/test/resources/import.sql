@@ -1,0 +1,2 @@
+-- Hibernate picks up and executes import.sql from src/main/resources unless this file exists in src/test/resources
+-- Ideally our test configuration will not allow Hibernate to search for and execute this file
