@@ -3,6 +3,7 @@ package edu.usm.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import edu.usm.Application;
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,18 +23,23 @@ import java.util.Properties;
 @EnableJpaRepositories(basePackageClasses = Application.class)
 class JpaConfig implements TransactionManagementConfigurer {
 
-    @Value("${dataSource.driverClassName}")
+    @Value("${spring.dataSource.driverClassName}")
     private String driver;
-    @Value("${dataSource.url}")
+    @Value("${spring.dataSource.url}")
     private String url;
-    @Value("${dataSource.username}")
+    @Value("${spring.dataSource.username}")
     private String username;
-    @Value("${dataSource.password}")
+    @Value("${spring.dataSource.password}")
     private String password;
     @Value("${hibernate.dialect}")
     private String dialect;
     @Value("${hibernate.hbm2ddl.auto}")
     private String hbm2ddlAuto;
+    @Value("${hibernate.show_sql}")
+    private boolean showSql;
+    @Value("${spring.datasource.initialize}")
+    private boolean initialize;
+
 
     @Bean
     public DataSource configureDataSource() {
@@ -46,7 +52,6 @@ class JpaConfig implements TransactionManagementConfigurer {
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         config.addDataSourceProperty("useServerPrepStmts", "true");
-
         return new HikariDataSource(config);
     }
 
@@ -60,6 +65,8 @@ class JpaConfig implements TransactionManagementConfigurer {
         Properties jpaProperties = new Properties();
         jpaProperties.put(org.hibernate.cfg.Environment.DIALECT, dialect);
         jpaProperties.put(org.hibernate.cfg.Environment.HBM2DDL_AUTO, hbm2ddlAuto);
+        jpaProperties.put(Environment.SHOW_SQL, showSql);
+        jpaProperties.put("spring.datasource.initialize", initialize);
         entityManagerFactoryBean.setJpaProperties(jpaProperties);
 
         return entityManagerFactoryBean;

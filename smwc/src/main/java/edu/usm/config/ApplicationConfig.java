@@ -18,7 +18,7 @@ class ApplicationConfig {
 	@Bean
 	public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-		ppc.setLocations(new ClassPathResource("/persistence.properties"), new ClassPathResource("/config.properties"));
+		ppc.setLocations(new ClassPathResource("/application.properties"), new ClassPathResource("/config.properties"));
 		return ppc;
 	}
 	
