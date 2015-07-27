@@ -216,6 +216,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.setStreetAddress(details.getStreetAddress());
         contact.setAptNumber(details.getAptNumber());
         contact.setCity(details.getCity());
+        contact.setState(details.getState());
         contact.setZipCode(details.getZipCode());
         contact.setPhoneNumber1(details.getPhoneNumber1());
         contact.setPhoneNumber2(details.getPhoneNumber2());

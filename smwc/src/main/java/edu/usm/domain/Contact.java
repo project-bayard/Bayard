@@ -71,6 +71,14 @@ public class Contact extends BasicEntity implements Serializable {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class})
+    private String state;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
     private String zipCode;
 
     @Column
@@ -376,6 +384,14 @@ public class Contact extends BasicEntity implements Serializable {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getZipCode() {
