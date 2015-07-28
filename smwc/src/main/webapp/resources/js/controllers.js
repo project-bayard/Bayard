@@ -653,6 +653,46 @@
 
     }]);
 
+
+    controllers.controller ('LoginCtrl',['$scope','$rootScope', '$location', 'UserService','$http', function($scope,$rootScope, $location, UserService, $http){
+        $scope.error = false;
+
+        var authenticate = function(credentials, callback) {
+
+            var headers = credentials ? {authorization : "Basic "
+            + btoa(credentials.username + ":" + credentials.password)
+            } : {};
+
+            $http.get('/users/authenticate', {headers : headers}).success(function(data) {
+                if (data.email) {
+                    $rootScope.authenticated = true;
+                    $rootScope.user = data;
+                } else {
+                    $rootScope.authenticated = false;
+                }
+                callback && callback();
+            }).error(function() {
+                $rootScope.authenticated = false;
+                callback && callback();
+            });
+
+        }
+
+        authenticate();
+        $scope.credentials = {};
+
+        $scope.login = function() {
+            authenticate($scope.credentials, function() {
+                if ($rootScope.authenticated) {
+                    $location.path("/");
+                    $scope.error = false;
+                } else {
+                    $location.path("/login");
+                    $scope.error = true;
+                }
+            });
+        };
+    }]);
 }());
 
 

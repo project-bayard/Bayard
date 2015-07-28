@@ -3,7 +3,8 @@
 
     var app = angular.module('app', ['ngRoute', 'controllers','services','filters']);
 
-    app.config(function ($routeProvider) {
+    app.config(function ($routeProvider, $httpProvider) {
+
         $routeProvider
             .when('/', {
                 templateUrl: 'resources/partials/main.html',
@@ -41,7 +42,30 @@
                 templateUrl: 'resources/partials/eventDetails.html',
                 controller: 'EventDetailsCtrl'
             })
-            .otherwise({redirectTo: 'resources/partials/main.html'});
+            .when('/login', {
+                templateUrl: 'resources/partials/login.html',
+                controller: 'LoginCtrl'
+            })
+            .otherwise({redirectTo: '/login'});
+
+
+        $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
     });
+
+    app.run(function($rootScope, $location) {
+        $rootScope.authenticated = false;
+        $rootScope.user = {};
+
+        $rootScope.$on("$routeChangeStart", function (event, next, current) {
+            if ($rootScope.authenticated == false) {
+                event.preventDefault();
+                $rootScope.$evalAsync(function() {
+                    $location.path('/login');
+                });
+            }
+        });
+    })
+
+
 
 }());

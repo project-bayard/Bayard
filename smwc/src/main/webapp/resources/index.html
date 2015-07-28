@@ -32,8 +32,9 @@
 </head>
 <body>
 
+
 <!-- HEADER AND NAVBAR -->
-<header>
+<header ng-show="authenticated">
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
@@ -51,10 +52,7 @@
         </div>
     </nav>
 </header>
-
-
-<div ng-view autoscroll="true">
-
+    <div ng-view autoscroll="true">
 </div>
 
 </body>

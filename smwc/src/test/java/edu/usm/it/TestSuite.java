@@ -1,9 +1,6 @@
 package edu.usm.it;
 
-import edu.usm.it.controller.CommitteeControllerTest;
-import edu.usm.it.controller.ContactControllerTest;
-import edu.usm.it.controller.EventControllerTest;
-import edu.usm.it.controller.OrganizationControllerTest;
+import edu.usm.it.controller.*;
 import edu.usm.it.dao.ContactCommitteesTest;
 import edu.usm.it.dao.ContactEncountersTest;
 import edu.usm.it.dao.ContactOrganizationsTest;
@@ -30,7 +27,8 @@ import org.junit.runners.Suite;
         ContactEncountersTest.class,
         OrganizationControllerTest.class,
         EventControllerTest.class,
-        CommitteeControllerTest.class
+        CommitteeControllerTest.class,
+        UserControllerTest.class
 })
 public class TestSuite {
 }

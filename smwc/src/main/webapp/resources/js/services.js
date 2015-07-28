@@ -158,4 +158,27 @@
         });
     }]);
 
+    services.factory('UserService',[ '$resource', function ($resource) {
+        return $resource('../users/:id', {id : '@id'}, {
+
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            authenticate : {
+                method : 'GET',
+                url : '/users/authenticate'
+            }
+        });
+    }]);
+
 }());

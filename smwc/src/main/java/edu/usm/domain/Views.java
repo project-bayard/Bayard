@@ -17,6 +17,8 @@ public class Views {
     public interface ContactOrganizationDetails {}
     public interface ContactCommitteeDetails {}
 
+    public interface UserDetails {}
+
 
 
 }
