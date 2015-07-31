@@ -131,7 +131,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         encounter.setNotes("Notes");
         encounter.setType(EncounterType.EVENT);
 
-        List<Encounter> encounters = new ArrayList<>();
+        SortedSet<Encounter> encounters = new TreeSet<>();
         encounters.add(encounter);
         contact.setEncounters(encounters);
 
@@ -178,7 +178,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
         /*Encounters*/
         assertNotNull(contact.getEncounters());
-        assertEquals(contact.getEncounters().get(0).getAssessment(), encounter.getAssessment());
+        assertEquals(contact.getEncounters().first().getAssessment(), encounter.getAssessment());
 
         /*Committees*/
 

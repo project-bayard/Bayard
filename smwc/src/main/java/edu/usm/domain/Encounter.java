@@ -1,14 +1,16 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import edu.usm.config.DateFormatConfig;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 @Entity(name = "encounter")
-public class Encounter extends BasicEntity implements Serializable, Comparable<Encounter>{
+public class Encounter extends BasicEntity implements Serializable, Comparable<Encounter> {
 
     public static final int DEFAULT_ASSESSMENT = 0;
 
@@ -41,6 +43,23 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
 
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
+
+    @Override
+    public int compareTo(Encounter o2) {
+        if (this.getEncounterDate() == null && o2.getEncounterDate() == null) {
+            return 0;
+        } else if (this.getEncounterDate() == null) {
+            return 1;
+        } else if (o2.getEncounterDate() == null) {
+            return -1;
+        } else {
+            DateTimeFormatter formatter = DateFormatConfig.getDateTimeFormatter();
+            LocalDate thisDate = LocalDate.parse(this.getEncounterDate(), formatter);
+            LocalDate otherDate = LocalDate.parse(o2.getEncounterDate(), formatter);
+
+            return otherDate.compareTo(thisDate);
+        }
+    }
 
     public Encounter (String id) {
         setId(id);
@@ -104,25 +123,6 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    @Override
-    /*
-     * by most recent date
-     */
-    public int compareTo(Encounter o) {
-        if (this.getEncounterDate() == null && o.getEncounterDate() == null) {
-            return 0;
-        } else if (this.getEncounterDate() == null) {
-            return 1;
-        } else if (o.getEncounterDate() == null) {
-            return -1;
-        } else {
-            LocalDate thisDate = LocalDate.parse(this.getEncounterDate());
-            LocalDate otherDate = LocalDate.parse(o.getEncounterDate());
-
-            return otherDate.compareTo(thisDate);
-        }
     }
 
 

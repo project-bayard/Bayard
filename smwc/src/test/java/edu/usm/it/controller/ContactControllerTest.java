@@ -331,7 +331,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
 
         Contact contactFromDb = contactService.findById(id);
-        Encounter encounterFromDb = contactFromDb.getEncounters().get(0);
+        Encounter encounterFromDb = contactFromDb.getEncounters().first();
         String newInitiatorId = contactService.create(generateSecondcontact());
 
         dto = new EncounterDto();

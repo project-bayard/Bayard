@@ -5,6 +5,24 @@
 
     var services = angular.module('services', ['ngResource']);
 
+    services.factory('DateFormatter', ['$filter', function($filter) {
+        return {
+            formatDate : function(date) {
+                return $filter('date')(date, 'yyyy-MM-dd');
+            },
+            asDate: function(string) {
+                //prevent html input date from misinterpreting midnight
+                var date = new Date(string);
+                var localTime = date.getTime();
+                var localOffset = date.getTimezoneOffset() * 60000;
+                return new Date(localTime + localOffset);
+            },
+            getDateFormat : function() {
+                return 'yyyy-MM-dd';
+            }
+        }
+    }]);
+
     services.factory('ContactService',[ '$resource', function ($resource) {
         return $resource('../contacts/:id', {id : '@id'}, {
             update : {

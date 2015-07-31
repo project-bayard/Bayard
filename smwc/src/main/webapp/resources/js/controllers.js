@@ -67,8 +67,8 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService',
-        'EventService', 'CommitteeService',
-        function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService) {
+        'EventService', 'CommitteeService', 'DateFormatter',
+        function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter) {
 
         var setup = function() {
             $scope.edit = false;
@@ -154,6 +154,8 @@
 
 
         $scope.addEncounter = function() {
+
+            $scope.newEncounter.date = DateFormatter.formatDate($scope.newEncounter.jsDate);
 
             ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function(data) {
                 ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
@@ -394,38 +396,38 @@
                 return "No";
             };
 
-            $scope.displayDemographics = function() {
-
-                $scope.demographicPanel.showingDemographics = !$scope.demographicPanel.showingDemographics;
-
-                ContactService.getDemographics({id : $scope.contact.id}, function(data) {
-                    $scope.demographics = formatDemographics(data);
+            var retrieveDemographics = function() {
+                return ContactService.getDemographics({id : $scope.contact.id}, function(demographics) {
+                    $scope.demographics = demographics;
+                    $scope.demographics.dobAsDate = DateFormatter.asDate($scope.demographics.dateOfBirth);
+                    return true;
                 }, function(err) {
                     console.log(err);
+                    return false;
                 });
+            };
 
+            $scope.displayDemographics = function() {
+                $scope.demographicPanel.showingDemographics = !$scope.demographicPanel.showingDemographics;
+                retrieveDemographics();
             };
 
             $scope.updateDemographics = function() {
 
-                console.log($scope.demographics);
-
+                $scope.demographics.dateOfBirth = DateFormatter.formatDate($scope.demographics.dobAsDate);
                 ContactService.updateDemographics({id: $scope.contact.id}, $scope.demographics, function(data) {
-                    ContactService.getDemographics({id : $scope.contact.id}, function(demographics) {
-                        $scope.demographics = formatDemographics(demographics);
+                    if (retrieveDemographics()) {
                         $scope.demographicPanel.editingDemographics = false;
                         $scope.demographicPanel.updateRequest.success = true;
                         $timeout(function() {
                             $scope.demographicPanel.updateRequest.success = false;
                         }, 3000);
-
-                    }, function(err) {
-                        console.log(err);
+                    } else {
                         $scope.demographicPanel.updateRequest.failure = true;
                         $timeout(function() {
                             $scope.demographicPanel.updateRequest.failure = false;
                         }, 3000);
-                    });
+                    }
                 }, function(err) {
                     console.log(err);
                     $scope.demographicPanel.updateRequest.failure = true;
@@ -435,20 +437,10 @@
                 })
             };
 
-
             $scope.cancelUpdateDemographics = function() {
-                ContactService.getDemographics({id : $scope.contact.id}, function(data) {
-                    $scope.demographics = formatDemographics(data);
+                if (retrieveDemographics()) {
                     $scope.demographicPanel.editingDemographics = false;
-                }, function(err) {
-                    console.log(err);
-                });
-            };
-
-
-            var formatDemographics = function(demographics) {
-                demographics.dateOfBirth = new Date(demographics.dateOfBirth);
-                return demographics;
+                }
             };
 
             /* MEMBERINFO */
@@ -499,7 +491,6 @@
 
 
             $scope.displayMemberInfo = function() {
-                console.log("Hit displayMemberInfo");
 
                 $scope.memberInfoPanel.showingMemberInfo = !$scope.memberInfoPanel.showingMemberInfo;
 
@@ -531,7 +522,7 @@
 
 
 
-    controllers.controller('EventsCtrl', ['$scope', 'EventService', 'CommitteeService', function($scope, EventService, CommitteeService) {
+    controllers.controller('EventsCtrl', ['$scope', 'EventService', 'CommitteeService', 'DateFormatter', function($scope, EventService, CommitteeService, DateFormatter) {
 
         $scope.addEvent = {hidden: true};
         $scope.newEvent = {};
@@ -556,6 +547,7 @@
         $scope.createEvent = function() {
 
             $scope.newEvent.attendees = [];
+            $scope.newEvent.dateHeld = DateFormatter.formatDate($scope.newEvent.dateHeld);
             EventService.create({}, $scope.newEvent, function(response) {
                 $scope.addEvent = {hidden : true};
                 populateEvents();

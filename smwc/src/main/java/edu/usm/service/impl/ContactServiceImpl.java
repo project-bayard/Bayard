@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -266,15 +263,14 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         encounter.setAssessment(dto.getAssessment());
 
         if (null == contact.getEncounters()) {
-            contact.setEncounters(new ArrayList<>());
+            contact.setEncounters(new TreeSet<>());
         }
 
         contact.getEncounters().add(encounter);
 
         /*Sets assessment to most recent encounter assessment */
-        Collections.sort(contact.getEncounters());
-        int currentAssessment = contact.getEncounters().get(0).getAssessment() == Encounter.DEFAULT_ASSESSMENT ? contact.getAssessment() :
-                contact.getEncounters().get(0).getAssessment();
+        int currentAssessment = contact.getEncounters().first().getAssessment() == Encounter.DEFAULT_ASSESSMENT ? contact.getAssessment() :
+                contact.getEncounters().first().getAssessment();
         contact.setAssessment(currentAssessment);
 
         update(contact);

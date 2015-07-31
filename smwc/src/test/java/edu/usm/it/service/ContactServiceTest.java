@@ -250,9 +250,9 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         Contact fromDb = contactService.findById(contact.getId());
 
         assertNotNull(fromDb.getEncounters());
-        assertEquals(fromDb.getEncounters().get(0).getContact().getId(),contact.getId());
-        assertEquals(fromDb.getEncounters().get(0).getInitiator().getId(), contact2.getId());
-        assertEquals(fromDb.getEncounters().get(0).getAssessment(), dto.getAssessment());
+        assertEquals(fromDb.getEncounters().first().getContact().getId(),contact.getId());
+        assertEquals(fromDb.getEncounters().first().getInitiator().getId(), contact2.getId());
+        assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
 
     }
 }

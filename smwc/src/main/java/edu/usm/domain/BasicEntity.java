@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @Where(clause="deleted <> 'true' ")
 public abstract class BasicEntity {
 
-
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")

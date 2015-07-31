@@ -129,8 +129,9 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/encounters")
     @JsonView(Views.ContactEncounterDetails.class)
-    public List<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {
-        return contactService.findById(id).getEncounters();
+    public SortedSet<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {
+        Contact c = contactService.findById(id);
+        return c.getEncounters();
     }
 
     @ResponseStatus(HttpStatus.OK)

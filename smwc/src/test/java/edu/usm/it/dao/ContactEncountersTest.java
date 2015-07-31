@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -65,7 +65,7 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
     public void testSaveEncounter() {
         Contact initiator = new Contact();
         initiator.setFirstName("initiator");
-        List<Encounter> encountersInitiated = new ArrayList<>();
+        SortedSet<Encounter> encountersInitiated = new TreeSet<>();
         encountersInitiated.add(encounter);
         initiator.setEncountersInitiated(encountersInitiated);
         contactDao.save(initiator);
@@ -73,7 +73,7 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
 
 
         encounter.setInitiator(initiator);
-        List<Encounter> encounters = new ArrayList<>();
+        SortedSet<Encounter> encounters = new TreeSet<>();
         encounters.add(encounter);
         contact.setEncounters(encounters);
         contactDao.save(contact);
@@ -81,9 +81,9 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
         Contact fromDb = contactDao.findOne(contact.getId());
         assertNotNull(fromDb.getEncounters());
         assertEquals(fromDb.getEncounters().size(), 1);
-        assertEquals(fromDb.getEncounters().get(0).getAssessment(), encounter.getAssessment());
-        assertNotNull(fromDb.getEncounters().get(0).getInitiator());
-        assertEquals(fromDb.getEncounters().get(0).getInitiator().getId(), initiator.getId());
+        assertEquals(fromDb.getEncounters().first().getAssessment(), encounter.getAssessment());
+        assertNotNull(fromDb.getEncounters().first().getInitiator());
+        assertEquals(fromDb.getEncounters().first().getInitiator().getId(), initiator.getId());
 
     }
 
@@ -93,13 +93,13 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
         contactDao.save(contact);
         Contact initiator = new Contact();
         initiator.setFirstName("initiator");
-        List<Encounter> encountersInitiated = new ArrayList<>();
+        SortedSet<Encounter> encountersInitiated = new TreeSet<>();
         encountersInitiated.add(encounter);
         initiator.setEncountersInitiated(encountersInitiated);
         contactDao.save(initiator);
 
         encounter.setInitiator(initiator);
-        List<Encounter> encounters = new ArrayList<>();
+        SortedSet<Encounter> encounters = new TreeSet<>();
         encounters.add(encounter);
         contact.setEncounters(encounters);
         contactDao.save(contact);

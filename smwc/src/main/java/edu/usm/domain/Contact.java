@@ -3,11 +3,12 @@ package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.SortNatural;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 @Entity(name = "contact")
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
@@ -235,10 +236,12 @@ public class Contact extends BasicEntity implements Serializable {
     private Set<Event> attendedEvents;
 
     @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Encounter> encounters;
+    @SortNatural
+    private SortedSet<Encounter> encounters;
 
     @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private List<Encounter> encountersInitiated;
+    @SortNatural
+    private SortedSet<Encounter> encountersInitiated;
 
     public void setInitiator(boolean initiator) {
         this.initiator = initiator;
@@ -362,11 +365,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.attendedEvents = attendedEvents;
     }
 
-    public List<Encounter> getEncounters() {
+    public SortedSet<Encounter> getEncounters() {
         return encounters;
     }
 
-    public void setEncounters(List<Encounter> encounters) {
+    public void setEncounters(SortedSet<Encounter> encounters) {
         this.encounters = encounters;
     }
 
@@ -428,11 +431,11 @@ public class Contact extends BasicEntity implements Serializable {
         this.assessment = assessment;
     }
 
-    public List<Encounter> getEncountersInitiated() {
+    public SortedSet<Encounter> getEncountersInitiated() {
         return encountersInitiated;
     }
 
-    public void setEncountersInitiated(List<Encounter> encountersInitiated) {
+    public void setEncountersInitiated(SortedSet<Encounter> encountersInitiated) {
         this.encountersInitiated = encountersInitiated;
     }
 

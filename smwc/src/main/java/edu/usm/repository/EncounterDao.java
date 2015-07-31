@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * Created by scottkimball on 2/22/15.
@@ -14,5 +15,5 @@ import java.util.List;
 public interface EncounterDao extends CrudRepository<Encounter, String> {
 
     @Override
-    List<Encounter> findAll();
+    SortedSet<Encounter> findAll();
 }

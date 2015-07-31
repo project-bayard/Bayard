@@ -1,6 +1,5 @@
 package edu.usm.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,11 +11,14 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class DateFormatConfig {
 
-    @Value("${dates.domainDateFormat}")
-    private String domainDateFormat;
+    public static final String applicationDateFormat = "yyyy-MM-dd";
 
-    public String formatDomainDate(LocalDate date) {
-        return date.format(DateTimeFormatter.ofPattern(domainDateFormat));
+    public static String formatDomainDate(LocalDate date) {
+        return date.format(DateTimeFormatter.ofPattern(applicationDateFormat));
+    }
+
+    public static DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ofPattern(applicationDateFormat);
     }
 
 }
