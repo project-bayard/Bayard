@@ -4,18 +4,18 @@ import java.io.Serializable;
 
 public class EncounterDto implements Serializable {
 
-    private String date;
+    private String encounterDate;
     private String notes;
     private String initiatorId;
     private int assessment;
     private String type;
 
-    public String getDate() {
-        return date;
+    public String getEncounterDate() {
+        return encounterDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setEncounterDate(String date) {
+        this.encounterDate = date;
     }
 
     public String getInitiatorId() {

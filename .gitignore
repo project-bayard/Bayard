@@ -14,3 +14,6 @@ hs_err_pid*
 .idea/
 *.iml
 target/
+
+smwc/src/main/webapp/WEB-INF/views/
+smwc/src/main/webapp/resources/js/dependencies

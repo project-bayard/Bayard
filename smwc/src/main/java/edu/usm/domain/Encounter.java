@@ -14,7 +14,6 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
 
     public static final int DEFAULT_ASSESSMENT = 0;
 
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "contact_id")
     @JsonView(Views.ContactEncounterDetails.class)

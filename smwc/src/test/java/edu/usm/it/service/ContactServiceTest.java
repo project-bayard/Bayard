@@ -242,7 +242,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         EncounterDto dto = new EncounterDto();
         dto.setType("CALL");
-        dto.setDate("2012-01-01");
+        dto.setEncounterDate("2012-01-01");
         dto.setNotes("Notes!");
 
         contactService.addEncounter(contact,contact2, dto);
@@ -254,5 +254,9 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getEncounters().first().getInitiator().getId(), contact2.getId());
         assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
 
+        Contact initiatorFromDb = contactService.findById(initiatorId);
+//        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
+
     }
+
 }

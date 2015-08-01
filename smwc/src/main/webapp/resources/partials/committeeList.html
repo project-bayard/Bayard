@@ -19,7 +19,22 @@
             </div>
             <div class="panel-body" ng-show="!panels[$index].hidden">
                 <br>
-                <hr>
+                <div ng-show="!updatingCommittee">
+                    <button class="btn btn-warning" ng-click="showUpdateForm()">Rename Committee</button>
+                    <button class="btn btn-danger" ng-click="deleteCommittee(committee)">Delete Committee</button>
+                </div>
+
+                <div ng-show="updatingCommittee">
+                    <label>Update Name
+                        <input type="text" class="form-control input-sm" ng-model="newCommitteeName">
+                    </label>
+                </div>
+
+                <div ng-show="updatingCommittee">
+                    <button class="btn btn-success" ng-click="submitUpdate(committee, newCommitteeName)">Done</button>
+                    <button class="btn btn-danger" ng-click="cancelUpdate()">Cancel</button>
+                </div>
+
                 <h3>Members:</h3>
                 <table class="bootstrap-table table table-striped table-hover table-responsive"
                        data-toggle="table"

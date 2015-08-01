@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading" ng-click="getContactOrganizations()">
-        <h3 class="panel-title">Organizations ({{contact.organizations.length}})</h3>
+        <h3 class="panel-title">Organizations</h3>
     </div>
     <div class="panel-body" ng-show="showingOrganizations">
         <button class="btn btn-md btn-primary" ng-click="getOrganizations()">Add Organization</button>
@@ -70,22 +70,30 @@
             Unable to add Organization
         </div>
 
+        <div ng-if="contact.organizations.length > 0">
+            <table class="bootstrap-table table table-striped table-hover table-responsive"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true">
+                <tr>
+                    <th>Name</th>
+                    <th>Details</th>
+                    <th>Remove from Organization</th>
+                </tr>
 
-        <table class="bootstrap-table table table-striped table-hover table-responsive"
-               data-toggle="table"
-               data-pagination="true"
-               data-search="true">
-            <tr>
-                <th>Name</th>
-                <th>Details</th>
-            </tr>
+                <tr ng-repeat="organization in contact.organizations">
+                    <td>{{organization.name}}</td>
+                    <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View
+                        Details</a></td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromOrganization(organization.id)">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-            <tr ng-repeat="organization in contact.organizations">
-                <td>{{organization.name}}</td>
-                <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View
-                    Details</a></td>
-            </tr>
-        </table>
     </div>
 </div>
 

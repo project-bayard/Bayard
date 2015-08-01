@@ -6,6 +6,7 @@ import edu.usm.domain.Event;
 import edu.usm.dto.EventDto;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
 import org.slf4j.Logger;
@@ -28,6 +29,9 @@ public class EventServiceImpl extends BasicService implements EventService {
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private CommitteeService committeeService;
 
     private Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
 
@@ -83,4 +87,15 @@ public class EventServiceImpl extends BasicService implements EventService {
         eventDao.save(event);
     }
 
+    @Override
+    public void update(Event event, EventDto eventDto) {
+        if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
+            event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));
+        }
+        event.setNotes(eventDto.getNotes());
+        event.setLocation(eventDto.getLocation());
+        event.setDateHeld(eventDto.getDateHeld());
+        event.setName(eventDto.getName());
+        update(event);
+    }
 }

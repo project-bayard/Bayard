@@ -126,6 +126,31 @@ public class ContactController {
 
     }
 
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/events/{entityId}")
+    public Response removeFromEvent(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+
+        Contact contact =  contactService.findById(id);
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
+        Event event = eventService.findById(entityId);
+
+        if (null == event) {
+            return new Response(null, Response.FAILURE, "Event with id "+entityId+" does not exist!");
+        }
+
+        try {
+            contactService.unattendEvent(contact, event);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error removing Contact from Event");
+        }
+
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/encounters")
     @JsonView(Views.ContactEncounterDetails.class)
@@ -133,6 +158,29 @@ public class ContactController {
         Contact c = contactService.findById(id);
         return c.getEncounters();
     }
+//
+//    @ResponseStatus(HttpStatus.OK)
+//    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/encounters/{entityId}")
+//    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+//
+//        Contact contact =  contactService.findById(id);
+//        if (null == contact) {
+//            return Response.failNonexistentContact(id);
+//        }
+//
+//        Encounter encounter = encounterService.findById(entityId);
+//        if (null == encounter) {
+//            return new Response(null, Response.FAILURE, "Encounter with ID "+entityId+" does not exist");
+//        }
+//
+//        try {
+//            encounterService.deleteEncounter(encounter);
+//            return Response.successGeneric();
+//        } catch (Exception e) {
+//            return new Response(null, Response.FAILURE, "Error deleting Encounter");
+//        }
+//
+//    }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters/{encounterId}")
@@ -230,15 +278,15 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{orgId}", consumes= {"application/json"})
-    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("orgId") String orgId) {
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{entityId}")
+    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
 
-        Organization organization = organizationService.findById(orgId);
+        Organization organization = organizationService.findById(entityId);
         Contact contact = contactService.findById(id);
 
         if (organization == null) {
             logger.debug("No org");
-            return new Response(null,Response.FAILURE, "Organization with ID " + orgId + " does not exist");
+            return new Response(null,Response.FAILURE, "Organization with ID " + entityId + " does not exist");
 
         } else if (contact == null) {
             logger.debug("No contact");
@@ -334,15 +382,15 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{comId}", consumes= {"application/json"})
-    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("comId") String comId) {
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{entityId}")
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
 
-        Committee committee = committeeService.findById(comId);
+        Committee committee = committeeService.findById(entityId);
         Contact contact = contactService.findById(id);
 
         if (committee == null) {
             logger.debug("No committee");
-            return new Response(null,Response.FAILURE, "Committee with ID " + comId + " does not exist");
+            return new Response(null,Response.FAILURE, "Committee with ID " + entityId + " does not exist");
 
         } else if (contact == null) {
             logger.debug("No contact");

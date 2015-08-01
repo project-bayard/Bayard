@@ -255,7 +255,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) {
 
         Encounter encounter = new Encounter();
-        encounter.setEncounterDate(dto.getDate());
+        encounter.setEncounterDate(dto.getEncounterDate());
         encounter.setContact(contact);
         encounter.setInitiator(initiator);
         encounter.setNotes(dto.getNotes());
@@ -267,13 +267,39 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         }
 
         contact.getEncounters().add(encounter);
+        contact.setAssessment(getUpdatedAssessment(contact));
+        update(contact);
 
+//        if (null == initiator.getEncountersInitiated()) {
+//            initiator.setEncountersInitiated(new TreeSet<>());
+//        }
+//        initiator.getEncountersInitiated().add(encounter);
+//        update(initiator);
+    }
+
+    private int getUpdatedAssessment(Contact contact) {
         /*Sets assessment to most recent encounter assessment */
+        if (null == contact.getEncounters() || contact.getEncounters().isEmpty()) {
+            return contact.getAssessment();
+        }
+
         int currentAssessment = contact.getEncounters().first().getAssessment() == Encounter.DEFAULT_ASSESSMENT ? contact.getAssessment() :
                 contact.getEncounters().first().getAssessment();
-        contact.setAssessment(currentAssessment);
+        return currentAssessment;
 
+    }
+
+    @Override
+    public void removeEncounter(Contact contact, Encounter encounter) {
+        contact.getEncounters().remove(encounter);
+        contact.setAssessment(getUpdatedAssessment(contact));
         update(contact);
+    }
+
+    @Override
+    public void removeInitiator(Contact initiator, Encounter encounter) {
+        initiator.getEncountersInitiated().remove(encounter);
+        update(initiator);
     }
 
     @Override

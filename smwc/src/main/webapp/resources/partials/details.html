@@ -11,34 +11,27 @@
             <h3 class="panel-title">Basic Details</h3>
         </div>
         <div class="panel-body" ng-show="!hideBasicDetails">
-            <div class="form-group">
-                <label>ID:
-                    <input type="text" class="form-control input-sm" ng-model="contact.id" ng-readonly="true">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Assessment
-                    <input type="text" class="form-control input-sm" ng-model="contact.assessment" ng-readonly="true">
-                </label>
-            </div>
-
-
-            <div class="form-group">
-                <label>First Name
-                    <input type="text" class="form-control input-sm" ng-model="contact.firstName" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Middle Name
-                    <input type="text" class="form-control input-sm" ng-model="contact.middleName" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Last Name
-                    <input type="text" class="form-control input-sm" ng-model="contact.lastName" ng-readonly="!edit">
-                </label>
-            </div>
-
+            <div class="smwc-form">
+                <div class="form-group">
+                    <label>Assessment
+                        <input type="text" class="form-control input-sm" ng-model="contact.assessment" ng-readonly="true">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>First Name
+                        <input type="text" class="form-control input-sm" ng-model="contact.firstName" ng-readonly="!edit">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Middle Name
+                        <input type="text" class="form-control input-sm" ng-model="contact.middleName" ng-readonly="!edit">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Last Name
+                        <input type="text" class="form-control input-sm" ng-model="contact.lastName" ng-readonly="!edit">
+                    </label>
+                </div>
             <div class="form-group">
                 <label>Street Address
                     <input type="text" class="form-control input-sm" ng-model="contact.streetAddress" ng-readonly="!edit">
@@ -66,33 +59,35 @@
             </div>
 
 
-            <div class="form-group">
-                <label>Preferred Language
-                    <input type="text" class="form-control input-sm" ng-model="contact.language" ng-readonly="!edit">
-                </label>
+                <div class="form-group">
+                    <label>Preferred Language
+                        <input type="text" class="form-control input-sm" ng-model="contact.language" ng-readonly="!edit">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number 1
+                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1" ng-readonly="!edit">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number 2
+                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Can this contact initiate encounters?
+                        <input type="checkbox" class="form-control input-sm" ng-model="contact.initiator" ng-readonly="!edit">
+                    </label>
+                </div>
+
+                <div>
+                    <button class="btn btn-primary" ng-click="edit=!edit">Edit Basic Details</button>
+                    <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="edit">Submit</button>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Phone Number 1
-                    <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Phone Number 2
-                    <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
-                </label>
-            </div>
-
-            <div class="form-group">
-                <label>Can this contact initiate encounters?
-                    <input type="checkbox" class="form-control input-sm" ng-model="contact.initiator" ng-readonly="!edit">
-                </label>
-            </div>
-
-            <div>
-                <button class="btn btn-primary" ng-click="edit=!edit">Edit Basic Details</button>
-                <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="edit">Submit</button>
-            </div>
         </div>
 
     </div>

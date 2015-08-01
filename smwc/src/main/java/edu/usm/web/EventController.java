@@ -45,19 +45,14 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody Event event) {
-        Event fromDb = eventService.findById(id);
-        if (null == fromDb) {
+    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody EventDto eventDto) {
+        Event event = eventService.findById(id);
+        if (null == event) {
             return new Response(null, Response.FAILURE, "Event with ID "+id+" does not exist.");
         }
 
-        //assumption that a RequestBody without attendees should be interpreted as an omission of the complete object graph
-        if (null == event.getAttendees()) {
-            event.setAttendees(fromDb.getAttendees());
-        }
-
         try {
-            eventService.update(event);
+            eventService.update(event, eventDto);
             return Response.successGeneric();
         } catch (Exception e) {
             return new Response(null, Response.FAILURE, "Error updating Event with ID "+id+".");
@@ -76,7 +71,8 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     public Response createEvent(@RequestBody EventDto eventDto) {
         Committee committee = null;
-        if (null != eventDto.getCommitteeId()) {
+
+        if (null != eventDto.getCommitteeId() && !eventDto.getCommitteeId().isEmpty()) {
             committee = committeeService.findById(eventDto.getCommitteeId());
         }
 

@@ -18,4 +18,5 @@ public interface EventService {
     void delete(Event event);
     void deleteAll();
     void update(Event event);
+    void update(Event event, EventDto eventDto);
 }

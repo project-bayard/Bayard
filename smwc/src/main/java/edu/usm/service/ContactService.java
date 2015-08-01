@@ -27,5 +27,7 @@ public interface ContactService {
     void updateDemographicDetails(Contact contact, Contact details);
     void addEncounter (Contact contact, Contact initiator, EncounterDto dto);
     void updateMemberInfo(Contact contact, MemberInfo memberInfo);
+    void removeEncounter(Contact contact, Encounter encounter);
+    void removeInitiator(Contact initiator, Encounter encounter);
 
 }

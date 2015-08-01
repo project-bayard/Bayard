@@ -15,7 +15,9 @@
             <button class="btn btn-md btn-success" ng-click="attendEvent(addEventId)">Submit</button>
         </div>
 
-        <div ng-include src=" 'resources/partials/tables/eventsTable.html' "></div>
+        <div ng-if="eventsTable.length > 0">
+            <div ng-include src=" 'resources/partials/tables/eventsTable.html' "></div>
+        </div>
     </div>
 
 </div>

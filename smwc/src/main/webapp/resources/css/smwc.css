@@ -12,3 +12,17 @@
 .modal-backdrop {
     z-index: -1;
 }
+
+#top-level-ng-view {
+    margin-left: 2.5em;
+    margin-right: 2.5em;
+}
+
+div.smwc-form {
+    margin-top:  1.5em;
+    width: 600px;
+}
+
+span.smwc-addon-span {
+    width: 120px;
+}

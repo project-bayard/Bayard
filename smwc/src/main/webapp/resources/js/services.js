@@ -24,7 +24,7 @@
     }]);
 
     services.factory('ContactService',[ '$resource', function ($resource) {
-        return $resource('../contacts/:id', {id : '@id'}, {
+        return $resource('../contacts/:id', {id : '@id', entityId : '@entityId'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -47,6 +47,10 @@
             attend: {
                 method: 'PUT',
                 url: "../contacts/:id/events"
+            },
+            removeFromEvent : {
+                method: 'DELETE',
+                url: "../contacts/:id/events/:entityId"
             },
             getEncounters : {
                 method: 'GET',
@@ -76,13 +80,20 @@
                 method : 'PUT',
                 url: "/contacts/:id/encounters"
             },
+            updateEncounter : {
+                method : 'PUT',
+                url: "/contacts/:id/encounters/:entityId"
+            },
+            deleteEncounter : {
+                method: 'PUT'
+            },
             getDemographics : {
                 method : 'GET',
                 url: "/contacts/:id/demographics"
             },
             updateDemographics : {
                 method: 'PUT',
-                url: "/contacts/:id/demographics",
+                url: "/contacts/:id/demographics"
             },
             addToCommittee : {
                 method : 'PUT',
@@ -93,6 +104,10 @@
                 isArray : true,
                 url : "/contacts/:id/committees"
             },
+            removeFromCommittee: {
+                method : 'DELETE',
+                url: "/contacts/:id/committees/:entityId"
+            },
             getMemberInfo : {
                 method : "GET",
                 url : "/contacts/:id/memberinfo"
@@ -100,6 +115,10 @@
             updateMemberInfo : {
                 method : "PUT",
                 url : "/contacts/:id/memberinfo"
+            },
+            removeFromOrganization : {
+                method: "DELETE",
+                url : "/contacts/:id/organizations/:entityId"
             }
         });
     }]);
@@ -124,6 +143,9 @@
             },
             create : {
                 method: 'POST'
+            },
+            delete : {
+                method: 'DELETE'
             }
         });
     }]);
@@ -148,6 +170,9 @@
             },
             create : {
                 method: 'POST'
+            },
+            delete : {
+                method: 'DELETE'
             }
         });
     }]);
@@ -172,6 +197,9 @@
             },
             create : {
                 method: 'POST'
+            },
+            delete : {
+                method: 'DELETE'
             }
         });
     }]);

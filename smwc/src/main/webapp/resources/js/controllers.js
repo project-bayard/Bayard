@@ -140,22 +140,27 @@
         /*Encounters*/
         $scope.showEncounterForm = function () {
             $scope.addingEncounter = !$scope.addingEncounter;
+            populateInitiatorList();
 
-            if ($scope.initiators == null) {
 
-                ContactService.getInitiators({}, function(data) {
-                    $scope.initiators = data;
-
-                }, function(err) {
-                    console.log(err);
-                });
-            }
         };
+
+            var populateInitiatorList = function() {
+                if ($scope.initiators == null) {
+
+                    ContactService.getInitiators({}, function(data) {
+                        $scope.initiators = data;
+
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+            };
 
 
         $scope.addEncounter = function() {
 
-            $scope.newEncounter.date = DateFormatter.formatDate($scope.newEncounter.jsDate);
+            $scope.newEncounter.encounterDate = DateFormatter.formatDate($scope.newEncounter.jsDate);
 
             ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function(data) {
                 ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
@@ -186,13 +191,57 @@
             });
         };
 
+            $scope.showUpdateEncounterForm = function() {
+                $scope.updatingEncounter = true;
+                populateInitiatorList();
+            };
+
+            $scope.deleteEncounter = function() {
+
+                var deleteConfirmed = $window.confirm('Are you sure you want to delete this encounter?');
+                if (deleteConfirmed) {
+                    ContactService.deleteEncounter({id : $scope.event.id}, function() {
+                        $location.path("/events");
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+
+            };
+
+            $scope.updateEncounter = function() {
+
+                $scope.encounterDetails.encounterDate = DateFormatter.formatDate($scope.encounterDetails.jsDate);
+                ContactService.updateEncounter({id: $scope.contact.id, entityId : $scope.encounterDetails.id}, $scope.encounterDetails, function(succ) {
+                    $scope.updatingEncounter = false;
+                    ContactService.getEncounters({id: $scope.contact.id}, function(encounters) {
+                        $scope.encountersTable = encounters;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+
+            };
+
+            $scope.cancelUpdateEncounter = function() {
+                $scope.updatingEncounter = false;
+            };
+
+            var createEncounterDetails = function(encounter, initiator) {
+                var encounterDetails = encounter;
+                var initiatorName = initiator.firstName + " " + initiator.lastName;
+                encounterDetails["initiatorName"] = initiatorName;
+                encounterDetails["initiatorId"] = initiator.id;
+                encounterDetails["jsDate"] = DateFormatter.asDate(encounter.encounterDate);
+                return encounterDetails;
+            };
 
             $scope.viewEncounterDetails = function(encounter) {
 
                 ContactService.find({id : encounter.initiator.id}, function(initiator) {
-                    var initiatorName = initiator.firstName + " " + initiator.lastName;
-                    $scope.encounterDetails = { initiatorId : initiator.id, notes : encounter.notes, initiatorName : initiatorName};
-
+                    $scope.encounterDetails = createEncounterDetails(encounter, initiator);
                 }, function(err) {
                     console.log(err);
                 });
@@ -258,6 +307,19 @@
             });
 
         };
+
+            $scope.removeFromEvent = function(eventId) {
+                ContactService.removeFromEvent({id : $scope.contact.id, entityId : eventId}, function(success) {
+                    ContactService.getEvents({id : $scope.contact.id}, function(data) {
+                        $scope.contact.attendedEvents = data;
+                        $scope.eventsTable = $scope.contact.attendedEvents;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }, function(err) {
+                    console.log(err);
+                });
+            };
 
 
         /* Organizations */
@@ -331,12 +393,25 @@
             });
 
             //Refresh list of all organizations known to the app
-            OrganizationService.getOrganizations(function(allOrgs) {
+            OrganizationService.findAll(function(allOrgs) {
                 $scope.organizations = allOrgs;
             }, function(err) {
                 console.log(err);
             });
         };
+
+            $scope.removeFromOrganization = function(id) {
+
+                ContactService.removeFromOrganization({id : $scope.contact.id, entityId : id}, function(resp) {
+                    ContactService.getOrganizations({id : $scope.contact.id}, function(orgs) {
+                        $scope.contact.organizations = orgs;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+            };
 
             /* Committees */
         $scope.getContactCommittees = function () {
@@ -382,6 +457,20 @@
                     console.log(err);
                 });
         };
+
+            $scope.removeFromCommittee = function(committeeId) {
+
+                ContactService.removeFromCommittee({id : $scope.contact.id, entityId : committeeId}, function(success) {
+                    ContactService.getCommittees({id : $scope.contact.id}, function(committees) {
+                        $scope.contact.committees = committees;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+
+            };
 
             /* Demographics*/
 
@@ -547,7 +636,7 @@
         $scope.createEvent = function() {
 
             $scope.newEvent.attendees = [];
-            $scope.newEvent.dateHeld = DateFormatter.formatDate($scope.newEvent.dateHeld);
+            $scope.newEvent.dateHeld = DateFormatter.formatDate($scope.newEvent.jsDate);
             EventService.create({}, $scope.newEvent, function(response) {
                 $scope.addEvent = {hidden : true};
                 populateEvents();
@@ -560,16 +649,81 @@
     }]);
 
 
-    controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', function($scope, EventService, $routeParams) {
+    controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', 'CommitteeService', '$timeout', '$window', '$location', 'DateFormatter',
+        function($scope, EventService, $routeParams, CommitteeService, $timeout, $window, $location, DateFormatter) {
 
-        EventService.find({id : $routeParams.id}, function(data) {
-            $scope.event = data;
-            if ($scope.event.attendees == null) {
-                $scope.event.attendees = [];
+        var formatEvent = function(event) {
+            event.jsDate = DateFormatter.asDate(event.dateHeld);
+            if (event.attendees == null) {
+                event.attendees = [];
             }
+            return event;
+        };
+
+        EventService.find({id : $routeParams.id}, function(event) {
+            $scope.event = formatEvent(event);
         }, function(err) {
             console.log(err);
         });
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingEventDetails = true;
+
+            CommitteeService.findAll({}, function(committees) {
+                $scope.committees = committees;
+                $scope.committees.push({id: null, name: "None"});
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.submitUpdate = function() {
+
+            $scope.event.dateHeld = DateFormatter.formatDate($scope.event.jsDate);
+            EventService.update({id : $scope.event.id}, $scope.event, function(success) {
+                EventService.find({id : $scope.event.id}, function(event) {
+                    $scope.event = formatEvent(event);
+                    $scope.requestSuccess = true;
+                    $scope.updatingEventDetails = false;
+                    $timeout(function() {
+                        $scope.requestSuccess = false;
+                    }, 3000)
+                }, function(err) {
+                    console.log(err);
+                });
+            }, function(err) {
+                $scope.requestFail = true;
+                $timeout(function() {
+                    $scope.requestFail = false;
+                }, 3000);
+                console.log(err);
+            });
+
+        };
+
+        $scope.cancelUpdate = function() {
+            $scope.updatingEventDetails = false;
+
+            EventService.find({id : $scope.event.id}, function(event) {
+                $scope.event = formatEvent(event)
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.deleteEvent = function() {
+
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this event?');
+            if (deleteConfirmed) {
+                EventService.delete({id : $scope.event.id}, function() {
+                    $location.path("/events");
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+
+        };
+
     }]);
 
 
@@ -600,7 +754,7 @@
 
     }]);
 
-    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', function($scope, OrganizationService, $routeParams) {
+    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', function($scope, OrganizationService, $routeParams, $location, $window) {
 
         OrganizationService.find({id : $routeParams.id}, function(data) {
             $scope.organization = data;
@@ -610,9 +764,56 @@
         }, function(err) {
             console.log(err);
         });
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingOrganizationDetails = true;
+        };
+
+        $scope.cancelUpdate = function() {
+            $scope.updatingOrganizationDetails = false;
+
+            OrganizationService.find({id : $routeParams.id}, function(data) {
+                $scope.organization = data;
+                if ($scope.organization.members == null) {
+                    $scope.organization.members = [];
+                }
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.deleteOrganization = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this organization?');
+            if (deleteConfirmed) {
+                OrganizationService.delete({id : $scope.organization.id}, function() {
+                    $location.path("/organizations");
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+
+        };
+
+
+        $scope.submitUpdate = function() {
+            OrganizationService.update({id : $scope.organization.id}, $scope.organization, function(data) {
+                $scope.updatingOrganizationDetails = false;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000)
+            }, function(err) {
+                $scope.requestFail = true;
+                $timeout(function() {
+                    $scope.requestFail = false;
+                }, 3000)
+                console.log(err);
+            })
+        };
+
     }]);
 
-    controllers.controller ('CommitteesCtrl',['$scope', 'CommitteeService', function($scope, CommitteeService){
+    controllers.controller ('CommitteesCtrl',['$scope', 'CommitteeService', '$window', function($scope, CommitteeService, $window){
 
         var setup = function () {
             $scope.panels = [];
@@ -641,7 +842,45 @@
             }, function(err) {
                 console.log(err);
             });
-        }
+        };
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingCommittee = true;
+            $scope.newCommitteeName = "";
+
+        };
+
+        $scope.cancelUpdate = function() {
+            $scope.updatingCommittee = false;
+
+        };
+
+        $scope.submitUpdate = function(committee, name) {
+            committee.name = name;
+
+            CommitteeService.update({id : committee.id}, committee, function(success) {
+                $scope.updatingCommittee = false;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.deleteCommittee = function(committee) {
+
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this committee?');
+            if (deleteConfirmed) {
+                CommitteeService.delete({id : committee.id}, function(success) {
+                    CommitteeService.findAll({}, function(data) {
+                        $scope.committees = data;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+
+        };
 
     }]);
 

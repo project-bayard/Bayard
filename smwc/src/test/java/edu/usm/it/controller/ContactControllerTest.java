@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Member;
-import java.rmi.server.ExportException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -296,7 +293,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         dto.setNotes("Notes");
         dto.setAssessment(9);
         dto.setType("Call");
-        dto.setDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
@@ -309,6 +306,40 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
+//    @Test
+//    public void testDeleteEncounter() throws Exception {
+//        String id = contactService.create(contact);
+//        String initiatorId = contactService.create(generateSecondcontact());
+//        EncounterDto dto = new EncounterDto();
+//        dto.setInitiatorId(initiatorId);
+//        dto.setNotes("Notes");
+//        dto.setAssessment(9);
+//        dto.setType("Call");
+//        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+//
+//        String json = new ObjectMapper().writeValueAsString(dto);
+//
+//        mockMvc.perform(put("/contacts/"+id+"/encounters")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(json))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.status", is("SUCCESS")));
+//
+//        Contact contactFromDb = contactService.findById(id);
+//        Encounter encounter = contactFromDb.getEncounters().first();
+//
+//        mockMvc.perform(delete("/contacts/"+id+"/encounters/"+encounter.getId())
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.status", is("SUCCESS")));
+//
+//
+//        contactFromDb = contactService.findById(id);
+//        assertEquals(0, contactFromDb.getEncounters().size());
+//    }
+
     @Test
     @Transactional
     public void testUpdateEncounter() throws Exception {
@@ -319,7 +350,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         dto.setNotes("Notes");
         dto.setAssessment(9);
         dto.setType("Call");
-        dto.setDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
@@ -498,6 +529,26 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
+    }
+
+    @Test
+    public void testRemoveContactFromEvent() throws Exception {
+        contactService.create(contact);
+        eventService.create(event);
+        contact.setAttendedEvents(new HashSet<>());
+        contactService.attendEvent(contact, event);
+
+        mockMvc.perform(delete("/contacts/"+contact.getId()+"/events/"+event.getId())
+        .accept(MediaType.APPLICATION_JSON)
+        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        Contact contactFromDb = contactService.findById(contact.getId());
+        assertFalse(contactFromDb.getAttendedEvents().contains(event));
+
+        Event eventFromDb = eventService.findById(event.getId());
+        assertFalse(eventFromDb.getAttendees().contains(contact));
+
     }
 
     private Contact generateSecondcontact() {

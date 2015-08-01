@@ -1,12 +1,66 @@
 <div class="container-fluid">
-    <h1>Event Details</h1>
-    <h4>Name: {{event.name}}</h4>
-    <h4>Location: {{event.location}}</h4>
-    <h4>Date: {{event.dateHeld | date: 'MMMM d, y'}}</h4>
-    <h4>Committee: {{event.committee.name}}</h4>
+    <div class="page-header">
+        <h1>Event Details</h1>
+    </div>
+    <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Event Updated</div>
+    <div ng-show="requestFail" class="alert alert-danger alert-dismissable" role="alert">Unable to update Event...</div>
+    <div id="org-detail-attributes" ng-show="!updatingEventDetails">
+        <ul class="list-group">
+            <li class="list-group-item">
+                Name: {{event.name}}
+            </li>
+            <li class="list-group-item">
+                Location: {{event.location}}
+            </li>
+            <li class="list-group-item">
+                Date: {{event.dateHeld}}
+            </li>
+            <li class="list-group-item">
+                Committee: {{event.committee.name}}
+            </li>
+        </ul>
+    </div>
+    <div class="smwc-form" id="event-detail-update-input" ng-show="updatingEventDetails">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon smwc-addon-span">Name</span>
+                    <input type="text" class="form-control" placeholder="{{event.name}}" ng-model="event.name" >
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon smwc-addon-span">Location</span>
+                    <input type="text" class="form-control" placeholder="{{event.location}}" ng-model="event.location" >
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon smwc-addon-span">Date</span>
+                    <input type="date" class="form-control" ng-model="event.jsDate">
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon smwc-addon-span">Committee</span>
+                    <select class="form-control input-small"  ng-model="event.committeeId" >
+                        <option ng-selected="event.committee.id == committee.id" ng-repeat="committee in committees" value="{{committee.id}}">{{committee.name}}</option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+    </div>
 
-    <br><br>
-    <h2>Members:</h2>
+    <div ng-show="!updatingEventDetails">
+        <button class="btn btn-warning" ng-click="showUpdateForm()">Update Event</button>
+        <button class="btn btn-danger" ng-click="deleteEvent()">Delete Event</button>
+    </div>
+
+    <div ng-show="updatingEventDetails">
+        <button class="btn btn-success" ng-click="submitUpdate()">Done</button>
+        <button class="btn btn-danger" ng-click="cancelUpdate()">Cancel</button>
+    </div>
+
     <div ng-include src=" 'resources/partials/tables/eventAttendeesTable.html' "></div>
 
 </div>

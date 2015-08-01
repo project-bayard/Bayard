@@ -3,10 +3,14 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.dto.EventDto;
+import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
+import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +38,16 @@ public class EventControllerTest extends WebAppConfigurationAware {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private CommitteeService committeeService;
+
     private ObjectWriter writer = new ObjectMapper().writer();
 
     @After
     public void wipeData(){
         eventService.deleteAll();
         contactService.deleteAll();
+        committeeService.deleteAll();
     }
 
 
@@ -48,6 +56,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         event.setName(name);
         event.setLocation(location);
         event.setDateHeld(date);
+
         return event;
     }
 
@@ -141,9 +150,13 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setAttendedEvents(new HashSet<>());
         contactService.attendEvent(attendee, event);
 
-        event.setName("Updated Name");
+        EventDto dto = new EventDto();
+        dto.setName("Updated Name");
+        dto.setLocation(event.getLocation());
+        dto.setNotes(event.getNotes());
+        dto.setDateHeld(event.getDateHeld());
 
-        String json = writer.writeValueAsString(event);
+        String json = writer.writeValueAsString(dto);
 
         MvcResult result = mockMvc.perform(put("/events/" + eventId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -162,8 +175,14 @@ public class EventControllerTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testUpdateTruncatedObjectGraph() throws Exception {
+    public void testUpdateChangedCommittee() throws Exception {
         Event event = constructEvent("Rally", "Headquarters", "2012-01-01");
+
+        //Old Committee
+        Committee committee = new Committee();
+        committee.setName("Test Event Committee");
+        committeeService.create(committee);
+        event.setCommittee(committee);
         String eventId = eventService.create(event);
 
         //Attendee
@@ -174,10 +193,19 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setAttendedEvents(new HashSet<>());
         contactService.attendEvent(attendee, event);
 
-        event.setAttendees(null);
-        event.setName("Updated Name");
+        //New Committee
+        Committee newCommittee = new Committee();
+        newCommittee.setName("New Committee");
+        String newCommitteeId = committeeService.create(newCommittee);
 
-        String json = writer.writeValueAsString(event);
+        EventDto dto = new EventDto();
+        dto.setName("Updated Name");
+        dto.setLocation(event.getLocation());
+        dto.setNotes(event.getNotes());
+        dto.setDateHeld(event.getDateHeld());
+        dto.setCommitteeId(newCommitteeId);
+
+        String json = writer.writeValueAsString(dto);
 
         MvcResult result = mockMvc.perform(put("/events/" + eventId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -189,9 +217,12 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Event eventFromDb = eventService.findById(eventId);
         assertTrue(eventFromDb.getAttendees().contains(attendee));
         assertEquals("Updated Name", eventFromDb.getName());
+        Assert.assertEquals("New Committee", eventFromDb.getCommittee().getName());
 
         Contact contactFromDb = contactService.findById(attendee.getId());
         assertTrue(contactFromDb.getAttendedEvents().contains(eventFromDb));
+
+
 
     }
 

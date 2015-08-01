@@ -27,14 +27,51 @@
                             <h4 class="modal-title" id="encounterModalLabel">Encounter Details</h4>
                         </div>
                         <div class="modal-body">
+                            <div ng-show="!updatingEncounter">
                             <h4>Initiator</h4>
                             <p>{{encounterDetails.initiatorName}}</p>
                             <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(encounterDetails.initiatorId)">View Details</button>
                             <hr>
+                            <h4>Type</h4>
+                            <p>{{encounterDetails.type}}</p>
+                            <hr>
+                                <h4>Assessment</h4>
+                                <p>{{encounterDetails.assessment}}</p>
+                                <hr>
                             <h4>Notes</h4>
                             <div>{{encounterDetails.notes}}</div>
                             <hr>
-
+                            <h4>Date</h4>
+                            <div>{{encounterDetails.encounterDate}}</div>
+                            <hr>
+                            <button class="btn btn-warning" ng-click="showUpdateEncounterForm()">Update Encounter</button>
+                            <!--<button class="btn btn-danger" ng-click="deleteEncounter()">Delete Encounter</button>-->
+                        </div>
+                            <div ng-show="updatingEncounter">
+                                <h4>Initiator</h4>
+                                <select class="form-control input-small" ng-model="encounterDetails.initiatorId">
+                                    <option ng-selected="encounterDetails.initiatorId == initiator.id" ng-repeat="initiator in initiators | removeItemById:contact.id" value="{{initiator.id}}">
+                                        {{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
+                                </select>
+                                <hr>
+                                <h4>Type</h4>
+                                <select class="form-control input-small" ng-model="encounterDetails.type">
+                                    <option ng-selected="encounterDetails.type == value" ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
+                                </select>
+                                <hr>
+                                <h4>Assessment</h4>
+                                    <select class="form-control input-small" ng-model="encounterDetails.assessment">
+                                        <option ng-selected="encounterDetails.assessment == value" ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
+                                    </select>
+                                <h4>Notes</h4>
+                                <textarea  rows="3" cols="50" ng-model="encounterDetails.notes" ></textarea>
+                                <hr>
+                                <h4>Date</h4>
+                                <input type="date"  ng-model="encounterDetails.jsDate">
+                                <hr>
+                                <button class="btn btn-success" ng-click="updateEncounter()">Done</button>
+                                <button class="btn btn-danger" ng-click="cancelUpdateEncounter()">Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
