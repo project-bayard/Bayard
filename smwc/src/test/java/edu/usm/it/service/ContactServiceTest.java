@@ -237,7 +237,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Transactional
     public void testAddEncounter () throws Exception {
         String id = contactService.create(contact);
-
         String initiatorId = contactService.create(contact2);
 
         EncounterDto dto = new EncounterDto();
@@ -255,8 +254,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
 
         Contact initiatorFromDb = contactService.findById(initiatorId);
-//        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
+        assertNotNull(initiatorFromDb.getEncountersInitiated());
+        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
 
     }
-
 }

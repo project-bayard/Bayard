@@ -29,8 +29,9 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
 
     @Override
     public void deleteEncounter(Encounter encounter) {
-        encounterDao.delete(encounter);
         contactService.removeEncounter(encounter.getContact(), encounter);
+        contactService.removeInitiator(encounter.getInitiator(), encounter);
+        encounterDao.delete(encounter);
     }
 
     @Override
@@ -42,5 +43,10 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         existingEncounter.setType(dto.getType());
         existingEncounter.setInitiator(initiator);
         encounterDao.save(existingEncounter);
+    }
+
+    @Override
+    public void updateEncounter(Encounter encounter) {
+        encounterDao.save(encounter);
     }
 }

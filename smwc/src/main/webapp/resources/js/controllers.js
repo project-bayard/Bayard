@@ -67,8 +67,8 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService',
-        'EventService', 'CommitteeService', 'DateFormatter',
-        function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter) {
+        'EventService', 'CommitteeService', 'DateFormatter', '$window',
+        function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window) {
 
         var setup = function() {
             $scope.edit = false;
@@ -196,12 +196,16 @@
                 populateInitiatorList();
             };
 
-            $scope.deleteEncounter = function() {
+            $scope.deleteEncounter = function(encounterId) {
 
                 var deleteConfirmed = $window.confirm('Are you sure you want to delete this encounter?');
                 if (deleteConfirmed) {
-                    ContactService.deleteEncounter({id : $scope.event.id}, function() {
-                        $location.path("/events");
+                    ContactService.deleteEncounter({id : $scope.contact.id, entityId: encounterId}, function(succ) {
+                        ContactService.getEncounters({id: $scope.contact.id}, function(encounters) {
+                            $scope.encountersTable = encounters;
+                        }, function(err) {
+                            console.log(err);
+                        })
                     }, function(err) {
                         console.log(err);
                     });

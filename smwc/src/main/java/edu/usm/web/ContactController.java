@@ -158,29 +158,29 @@ public class ContactController {
         Contact c = contactService.findById(id);
         return c.getEncounters();
     }
-//
-//    @ResponseStatus(HttpStatus.OK)
-//    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/encounters/{entityId}")
-//    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
-//
-//        Contact contact =  contactService.findById(id);
-//        if (null == contact) {
-//            return Response.failNonexistentContact(id);
-//        }
-//
-//        Encounter encounter = encounterService.findById(entityId);
-//        if (null == encounter) {
-//            return new Response(null, Response.FAILURE, "Encounter with ID "+entityId+" does not exist");
-//        }
-//
-//        try {
-//            encounterService.deleteEncounter(encounter);
-//            return Response.successGeneric();
-//        } catch (Exception e) {
-//            return new Response(null, Response.FAILURE, "Error deleting Encounter");
-//        }
-//
-//    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/encounters/{entityId}")
+    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+
+        Contact contact =  contactService.findById(id);
+        if (null == contact) {
+            return Response.failNonexistentContact(id);
+        }
+
+        Encounter encounter = encounterService.findById(entityId);
+        if (null == encounter) {
+            return new Response(null, Response.FAILURE, "Encounter with ID "+entityId+" does not exist");
+        }
+
+        try {
+            encounterService.deleteEncounter(encounter);
+            return Response.successGeneric();
+        } catch (Exception e) {
+            return new Response(null, Response.FAILURE, "Error deleting Encounter");
+        }
+
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters/{encounterId}")

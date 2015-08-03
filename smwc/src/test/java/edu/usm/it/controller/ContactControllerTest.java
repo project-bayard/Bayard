@@ -306,39 +306,39 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
-//    @Test
-//    public void testDeleteEncounter() throws Exception {
-//        String id = contactService.create(contact);
-//        String initiatorId = contactService.create(generateSecondcontact());
-//        EncounterDto dto = new EncounterDto();
-//        dto.setInitiatorId(initiatorId);
-//        dto.setNotes("Notes");
-//        dto.setAssessment(9);
-//        dto.setType("Call");
-//        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
-//
-//        String json = new ObjectMapper().writeValueAsString(dto);
-//
-//        mockMvc.perform(put("/contacts/"+id+"/encounters")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(json))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.status", is("SUCCESS")));
-//
-//        Contact contactFromDb = contactService.findById(id);
-//        Encounter encounter = contactFromDb.getEncounters().first();
-//
-//        mockMvc.perform(delete("/contacts/"+id+"/encounters/"+encounter.getId())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.status", is("SUCCESS")));
-//
-//
-//        contactFromDb = contactService.findById(id);
-//        assertEquals(0, contactFromDb.getEncounters().size());
-//    }
+    @Test
+    public void testDeleteEncounter() throws Exception {
+        String id = contactService.create(contact);
+        String initiatorId = contactService.create(generateSecondcontact());
+        EncounterDto dto = new EncounterDto();
+        dto.setInitiatorId(initiatorId);
+        dto.setNotes("Notes");
+        dto.setAssessment(9);
+        dto.setType("Call");
+        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(put("/contacts/"+id+"/encounters")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+        Contact contactFromDb = contactService.findById(id);
+        Encounter encounter = contactFromDb.getEncounters().first();
+
+        mockMvc.perform(delete("/contacts/"+id+"/encounters/"+encounter.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")));
+
+
+        contactFromDb = contactService.findById(id);
+        assertEquals(0, contactFromDb.getEncounters().size());
+    }
 
     @Test
     @Transactional

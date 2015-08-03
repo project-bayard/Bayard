@@ -26,6 +26,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private CommitteeService committeeService;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private EncounterService encounterService;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -97,7 +99,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getEncountersInitiated() != null) {
             for (Encounter encounter : contact.getEncountersInitiated()) {
                 encounter.setInitiator(null);
-                this.update(encounter.getContact());
+                encounterService.updateEncounter(encounter);
             }
         }
 
@@ -270,11 +272,11 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.setAssessment(getUpdatedAssessment(contact));
         update(contact);
 
-//        if (null == initiator.getEncountersInitiated()) {
-//            initiator.setEncountersInitiated(new TreeSet<>());
-//        }
-//        initiator.getEncountersInitiated().add(encounter);
-//        update(initiator);
+        if (null == initiator.getEncountersInitiated()) {
+            initiator.setEncountersInitiated(new TreeSet<>());
+        }
+        initiator.getEncountersInitiated().add(encounter);
+        update(initiator);
     }
 
     private int getUpdatedAssessment(Contact contact) {
@@ -293,12 +295,14 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     public void removeEncounter(Contact contact, Encounter encounter) {
         contact.getEncounters().remove(encounter);
         contact.setAssessment(getUpdatedAssessment(contact));
+        encounter.setContact(null);
         update(contact);
     }
 
     @Override
     public void removeInitiator(Contact initiator, Encounter encounter) {
         initiator.getEncountersInitiated().remove(encounter);
+        encounter.setInitiator(null);
         update(initiator);
     }
 

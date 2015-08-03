@@ -10,6 +10,7 @@ public interface EncounterService {
 
     Encounter findById(String id);
     void updateEncounter(Encounter existingEncounter, EncounterDto dto);
+    void updateEncounter(Encounter encounter);
     void deleteEncounter(Encounter encounter);
 
 }

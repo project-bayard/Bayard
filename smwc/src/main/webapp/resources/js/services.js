@@ -85,7 +85,8 @@
                 url: "/contacts/:id/encounters/:entityId"
             },
             deleteEncounter : {
-                method: 'PUT'
+                method: 'DELETE',
+                url: '/contacts/:id/encounters/:entityId'
             },
             getDemographics : {
                 method : 'GET',
