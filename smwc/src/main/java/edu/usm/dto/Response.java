@@ -12,12 +12,19 @@ public class Response {
     private String status;
     private String message;
 
+    private static final Response GENERIC = new Response(null, Response.SUCCESS, null);
+    private static final Response UNAUTHORIZED_USER = new Response(null, FAILURE, "You are not authorized to perform this action");
+
     public static Response failNonexistentContact(String id) {
         return new Response(null,Response.FAILURE, "Contact with ID " + id + " does not exist");
     }
 
     public static Response successGeneric() {
-        return new Response(null, Response.SUCCESS, null);
+        return GENERIC;
+    }
+
+    public static Response unauthorized() {
+        return UNAUTHORIZED_USER;
     }
 
     public Response(String id, String status, String message) {

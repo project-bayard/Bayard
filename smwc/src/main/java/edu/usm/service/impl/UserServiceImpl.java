@@ -1,5 +1,6 @@
 package edu.usm.service.impl;
 
+import edu.usm.domain.Role;
 import edu.usm.domain.User;
 import edu.usm.repository.UserDao;
 import edu.usm.service.UserService;
@@ -26,10 +27,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long createUser(User user) {
-        String password = user.getPasswordHash();
-        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
-        userDao.save(user);
-        return user.getId();
+        if (user.getRole() == Role.ROLE_USER || user.getRole() == Role.ROLE_DEVELOPMENT) {
+            String password = user.getPasswordHash();
+            user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+            userDao.save(user);
+            return user.getId();
+        } else {
+            return createAdministrativeUser(user);
+        }
+
     }
 
     @Override
@@ -50,5 +56,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteAll() {
         userDao.deleteAll();
+    }
+
+    @Override
+    public long createAdministrativeUser(User user) {
+        String password = user.getPasswordHash();
+        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+        userDao.save(user);
+        return user.getId();
     }
 }

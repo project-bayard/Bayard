@@ -7,6 +7,7 @@ import edu.usm.dto.Response;
 import edu.usm.service.CommitteeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -35,9 +36,10 @@ public class CommitteeController {
         try {
             String id = committeeService.create(committee);
             return new Response(id, Response.SUCCESS, null);
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Unable to create Committee.");
+        } catch (AccessDeniedException e) {
+            return Response.unauthorized();
         }
+
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -55,8 +57,8 @@ public class CommitteeController {
         try {
             committeeService.update(committee);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Committee with ID "+id+".");
+        } catch (AccessDeniedException e) {
+            return Response.unauthorized();
         }
     }
 
@@ -71,8 +73,8 @@ public class CommitteeController {
         try {
             committeeService.delete(committee);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error deleting Committee with ID "+id+".");
+        } catch (AccessDeniedException e) {
+            return Response.unauthorized();
         }
     }
 
