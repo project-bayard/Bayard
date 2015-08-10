@@ -201,6 +201,11 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private String incomeBracket;
 
+    @Column
+    @JsonView(
+            {Views.ContactList.class, Views.ContactDetails.class}
+    )
+    private boolean needsFollowUp;
 
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
@@ -493,6 +498,14 @@ public class Contact extends BasicEntity implements Serializable {
 
     public void setIncomeBracket(String incomeBracket) {
         this.incomeBracket = incomeBracket;
+    }
+
+    public boolean needsFollowUp() {
+        return needsFollowUp;
+    }
+
+    public void setNeedsFollowUp(boolean needsFollowUp) {
+        this.needsFollowUp = needsFollowUp;
     }
 }
 

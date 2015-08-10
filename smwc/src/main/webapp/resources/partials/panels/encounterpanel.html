@@ -5,31 +5,45 @@
     <div class="panel-body" ng-show="showingEncounters">
         <button class="btn btn-primary" ng-click="showEncounterForm()">Add Encounter</button>
 
-        <form name="newEncounterForm" id="newEncounterForm">
-            <div class="form-group" ng-show="addingEncounter">
+        <form name="newEncounterForm" id="newEncounterForm" ng-show="addingEncounter">
+            <div class="form-group">
                 <label>Initiator:
                     <select class="form-control input-small" ng-model="newEncounter.initiatorId">
                         <option ng-repeat="initiator in initiators | removeItemById:contact.id" value="{{initiator.id}}">{{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
                     </select>
                 </label>
+            </div>
+            <div class="form-group">
                 <label>Date
-                    <input type="date"  ng-model="newEncounter.jsDate">
+                    <input type="date" class="form-control input-sm" ng-model="newEncounter.jsDate">
                 </label>
+            </div>
+            <div class="form-group">
                 <label>Assessment
                     <select class="form-control input-small" ng-model="newEncounter.assessment">
                         <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
                     </select>
                 </label>
+            </div>
+            <div class="form-group">
                 <label>Type
                     <select class="form-control input-small" ng-model="newEncounter.type">
                         <option ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
                     </select>
                 </label>
-                <label>Notes
-                    <textarea  rows="3" cols="50" ng-model="newEncounter.notes" ></textarea>
-                </label>
-                <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
             </div>
+            <div class="form-group">
+                <label>Notes
+                    <textarea class="form-control input-sm" rows="3" cols="50" ng-model="newEncounter.notes" ></textarea>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Does this encounter require a follow up?
+                    <select class="form-control input-sm" ng-model="newEncounter.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+                    </select>
+                </label>
+            </div>
+                <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
         </form>
         <div ng-if="newEncounterRequestFailure" class="alert alert-danger" role="alert">Failed to add encounter...</div>
         <div ng-if="newEncounterRequestSuccess" class="alert alert-success alert-dismissable" role="alert">Encounter Added</div>

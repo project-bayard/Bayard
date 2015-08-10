@@ -40,6 +40,10 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String type;
 
+    @Column
+    @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
+    private boolean requiresFollowUp;
+
     @OneToOne(fetch=FetchType.LAZY)
     private Form form;
 
@@ -124,5 +128,11 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.type = type;
     }
 
+    public boolean requiresFollowUp() {
+        return requiresFollowUp;
+    }
 
+    public void setRequiresFollowUp(boolean requiresFollowUp) {
+        this.requiresFollowUp = requiresFollowUp;
+    }
 }

@@ -9,6 +9,15 @@ public class EncounterDto implements Serializable {
     private String initiatorId;
     private int assessment;
     private String type;
+    private boolean requiresFollowUp;
+
+    public boolean requiresFollowUp() {
+        return requiresFollowUp;
+    }
+
+    public void setRequiresFollowUp(boolean requiresFollowUp) {
+        this.requiresFollowUp = requiresFollowUp;
+    }
 
     public String getEncounterDate() {
         return encounterDate;

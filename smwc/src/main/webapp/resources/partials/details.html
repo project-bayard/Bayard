@@ -12,76 +12,83 @@
         </div>
         <div class="panel-body" ng-show="!hideBasicDetails">
             <div class="smwc-form">
-                <div class="form-group">
-                    <label>Assessment
-                        <input type="text" class="form-control input-sm" ng-model="contact.assessment" ng-readonly="true">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>First Name
-                        <input type="text" class="form-control input-sm" ng-model="contact.firstName" ng-readonly="!edit">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Middle Name
-                        <input type="text" class="form-control input-sm" ng-model="contact.middleName" ng-readonly="!edit">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Last Name
-                        <input type="text" class="form-control input-sm" ng-model="contact.lastName" ng-readonly="!edit">
-                    </label>
-                </div>
-            <div class="form-group">
-                <label>Street Address
-                    <input type="text" class="form-control input-sm" ng-model="contact.streetAddress" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Apartment Number
-                    <input type="text" class="form-control input-sm" ng-model="contact.aptNumber" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>City
-                    <input type="text" class="form-control input-sm" ng-model="contact.city" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>State
-                    <input type="text" class="form-control input-sm" ng-model="contact.state" ng-readonly="!edit">
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Zip Code
-                    <input type="text" class="form-control input-sm" ng-model="contact.zipCode" ng-readonly="!edit">
-                </label>
-            </div>
+                <div class="row">
+                    <div class="col-xs-6 form-group">
+                        <label>First Name
+                            <input type="text" class="form-control input-sm" ng-model="contact.firstName" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Street Address
+                            <input type="text" class="form-control input-sm" ng-model="contact.streetAddress" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Middle Name
+                            <input type="text" class="form-control input-sm" ng-model="contact.middleName" ng-readonly="!edit">
+                        </label>
+                    </div>
 
-
-                <div class="form-group">
-                    <label>Preferred Language
-                        <input type="text" class="form-control input-sm" ng-model="contact.language" ng-readonly="!edit">
-                    </label>
+                    <div class="col-xs-6 form-group">
+                        <label>Apartment Number
+                            <input type="text" class="form-control input-sm" ng-model="contact.aptNumber" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Last Name
+                            <input type="text" class="form-control input-sm" ng-model="contact.lastName" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>City
+                            <input type="text" class="form-control input-sm" ng-model="contact.city" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Assessment
+                            <input type="text" class="form-control input-sm" ng-model="contact.assessment" ng-readonly="true">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>State
+                            <input type="text" class="form-control input-sm" ng-model="contact.state" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Preferred Language
+                            <input type="text" class="form-control input-sm" ng-model="contact.language" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Zip Code
+                            <input type="text" class="form-control input-sm" ng-model="contact.zipCode" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-select="contact.initiator" ng-model="contact.initiator" ng-readonly="!edit"> This contact can initiate encounters
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Phone Number 1
+                            <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1" ng-readonly="!edit">
+                        </label>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-checked="contact.needsFollowUp" ng-model="contact.needsFollowUp" ng-readonly="!edit"> This contact needs a follow up
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <label>Phone Number 2
+                            <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
+                        </label>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Phone Number 1
-                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1" ng-readonly="!edit">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Phone Number 2
-                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Can this contact initiate encounters?
-                        <input type="checkbox" class="form-control input-sm" ng-model="contact.initiator" ng-readonly="!edit">
-                    </label>
-                </div>
-
                 <div>
                     <button class="btn btn-primary" ng-click="edit=!edit">Edit Basic Details</button>
                     <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="edit">Submit</button>

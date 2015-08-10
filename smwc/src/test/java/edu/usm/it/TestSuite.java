@@ -7,6 +7,7 @@ import edu.usm.it.dao.ContactOrganizationsTest;
 import edu.usm.it.dao.DaoPersistenceTest;
 import edu.usm.it.service.CommitteeServiceTest;
 import edu.usm.it.service.ContactServiceTest;
+import edu.usm.it.service.EncounterServiceTest;
 import edu.usm.it.service.OrganizationServiceTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -28,7 +29,8 @@ import org.junit.runners.Suite;
         OrganizationControllerTest.class,
         EventControllerTest.class,
         CommitteeControllerTest.class,
-        UserControllerTest.class
+        UserControllerTest.class,
+        EncounterServiceTest.class
 })
 public class TestSuite {
 }

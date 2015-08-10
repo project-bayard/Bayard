@@ -65,5 +65,11 @@ public interface ContactService {
 
     @PreAuthorize(value = "hasAuthority('ROLE_USER')")
     void removeInitiator(Contact initiator, Encounter encounter);
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    void updateNeedsFollowUp(Contact contact, boolean followUp);
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    int getUpdatedAssessment(Contact contact);
+    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    void updateAssessment(Contact contact, int assessment);
 
 }

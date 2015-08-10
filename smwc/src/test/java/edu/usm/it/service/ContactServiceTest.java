@@ -1,5 +1,6 @@
 package edu.usm.it.service;
 
+import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
@@ -52,6 +53,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+        contact.setNeedsFollowUp(false);
 
         contact2 = new Contact();
         contact2.setFirstName("FirstName");
@@ -133,7 +135,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         Set<Contact> contacts = contactService.findAll();
 
         assertNotNull(contacts);
-        assertEquals(contacts.size(),2);
+        assertEquals(contacts.size(), 2);
     }
 
     @Test
@@ -244,18 +246,68 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         dto.setEncounterDate("2012-01-01");
         dto.setNotes("Notes!");
 
-        contactService.addEncounter(contact,contact2, dto);
+        contactService.addEncounter(contact, contact2, dto);
 
         Contact fromDb = contactService.findById(contact.getId());
 
         assertNotNull(fromDb.getEncounters());
-        assertEquals(fromDb.getEncounters().first().getContact().getId(),contact.getId());
+        assertEquals(fromDb.getEncounters().first().getContact().getId(), contact.getId());
         assertEquals(fromDb.getEncounters().first().getInitiator().getId(), contact2.getId());
         assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
 
         Contact initiatorFromDb = contactService.findById(initiatorId);
         assertNotNull(initiatorFromDb.getEncountersInitiated());
         assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
+
+    }
+
+    @Test
+    @Transactional
+    public void testAddMultipleEncouters() throws Exception {
+        String id = contactService.create(contact);
+        contactService.create(contact2);
+
+        EncounterDto firstEncounter = new EncounterDto();
+        firstEncounter.setType("CALL");
+        firstEncounter.setEncounterDate("2014-01-01");
+        firstEncounter.setNotes("Notes!");
+        firstEncounter.setAssessment(10);
+        firstEncounter.setRequiresFollowUp(false);
+
+        contactService.addEncounter(contact, contact2, firstEncounter);
+
+        EncounterDto secondEncounter = new EncounterDto();
+        int mostRecentAssessment = 5;
+        boolean mostRecentFollowUpIndicator = true;
+        secondEncounter.setType("OTHER");
+        secondEncounter.setEncounterDate("2015-01-01");
+        secondEncounter.setAssessment(mostRecentAssessment);
+        secondEncounter.setNotes("More notes!");
+        secondEncounter.setRequiresFollowUp(mostRecentFollowUpIndicator);
+
+        contactService.addEncounter(contact, contact2, secondEncounter);
+
+        EncounterDto thirdEncounter = new EncounterDto();
+        thirdEncounter.setEncounterDate("2013-01-01");
+        thirdEncounter.setRequiresFollowUp(false);
+        thirdEncounter.setAssessment(7);
+
+        contactService.addEncounter(contact, contact2, thirdEncounter);
+
+        Contact fromDb = contactService.findById(id);
+        assertEquals(mostRecentAssessment, fromDb.getAssessment());
+        assertEquals(mostRecentFollowUpIndicator, fromDb.needsFollowUp());
+
+    }
+
+    @Test
+    public void testUpdateFollowUp() throws Exception {
+        String id = contactService.create(contact);
+        Contact fromDb = contactService.findById(id);
+        assertFalse(fromDb.needsFollowUp());
+        contactService.updateNeedsFollowUp(contact, true);
+        fromDb = contactService.findById(id);
+        assertTrue(fromDb.needsFollowUp());
 
     }
 }

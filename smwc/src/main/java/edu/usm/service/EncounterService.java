@@ -18,4 +18,7 @@ public interface EncounterService {
     @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
     void deleteEncounter(Encounter encounter);
 
+    @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
+    void deleteAll();
+
 }

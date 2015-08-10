@@ -99,7 +99,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getEncountersInitiated() != null) {
             for (Encounter encounter : contact.getEncountersInitiated()) {
                 encounter.setInitiator(null);
-                encounterService.updateEncounter(encounter);
+                encounterService.updateEncounter(encounter, null);
             }
         }
 
@@ -224,6 +224,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.setOccupation(details.getOccupation());
         contact.setInterests(details.getInterests());
         contact.setInitiator(details.isInitiator());
+        contact.setNeedsFollowUp(details.needsFollowUp());
 
         update(contact);
 
@@ -263,13 +264,17 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         encounter.setNotes(dto.getNotes());
         encounter.setType(dto.getType());
         encounter.setAssessment(dto.getAssessment());
+        encounter.setRequiresFollowUp(dto.requiresFollowUp());
 
         if (null == contact.getEncounters()) {
             contact.setEncounters(new TreeSet<>());
         }
 
+        //update assessment and follow up indicator if this is the most recent encounter
         contact.getEncounters().add(encounter);
+        contact.setNeedsFollowUp(contact.getEncounters().first().requiresFollowUp());
         contact.setAssessment(getUpdatedAssessment(contact));
+
         update(contact);
 
         if (null == initiator.getEncountersInitiated()) {
@@ -279,7 +284,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         update(initiator);
     }
 
-    private int getUpdatedAssessment(Contact contact) {
+    @Override
+    public int getUpdatedAssessment(Contact contact) {
         /*Sets assessment to most recent encounter assessment */
         if (null == contact.getEncounters() || contact.getEncounters().isEmpty()) {
             return contact.getAssessment();
@@ -289,6 +295,12 @@ public class ContactServiceImpl extends BasicService implements ContactService {
                 contact.getEncounters().first().getAssessment();
         return currentAssessment;
 
+    }
+
+    @Override
+    public void updateNeedsFollowUp(Contact contact, boolean followUp) {
+        contact.setNeedsFollowUp(followUp);
+        update(contact);
     }
 
     @Override
@@ -309,6 +321,12 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     public void updateMemberInfo(Contact contact, MemberInfo memberInfo) {
         contact.setMemberInfo(memberInfo);
+        update(contact);
+    }
+
+    @Override
+    public void updateAssessment(Contact contact, int assessment) {
+        contact.setAssessment(assessment);
         update(contact);
     }
 }

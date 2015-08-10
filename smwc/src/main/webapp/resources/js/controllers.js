@@ -3,13 +3,17 @@
 
     var controllers = angular.module('controllers', []);
 
-    controllers.controller('ContactsCtrl', ['$scope', 'ContactService', function($scope, ContactService) {
+    controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$location', function($scope, ContactService, $location) {
 
         ContactService.findAll({}, function(data) {
             $scope.contacts = data;
         }, function(err) {
             console.log(err);
         });
+
+        $scope.viewContactDetails = function(contactId) {
+            $location.path("/contacts/contact/"+contactId);
+        }
 
     }]);
 
@@ -182,6 +186,12 @@
                     console.log(err);
                 });
 
+                ContactService.find({id: $scope.contact.id}, function(contact) {
+                    $scope.contact = contact;
+                }, function(err) {
+                    console.log(err);
+                })
+
             }, function(err) {
                 $scope.newEncounterRequestFailure = true;
                 $timeout(function() {
@@ -220,6 +230,13 @@
                     $scope.updatingEncounter = false;
                     ContactService.getEncounters({id: $scope.contact.id}, function(encounters) {
                         $scope.encountersTable = encounters;
+                    }, function(err) {
+                        console.log(err);
+                    });
+
+                    //Fetch updated assessment and follow up
+                    ContactService.find({id: $scope.contact.id}, function(contact) {
+                        $scope.contact = contact;
                     }, function(err) {
                         console.log(err);
                     })
@@ -810,7 +827,7 @@
                 $scope.requestFail = true;
                 $timeout(function() {
                     $scope.requestFail = false;
-                }, 3000)
+                }, 3000);
                 console.log(err);
             })
         };

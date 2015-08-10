@@ -20,11 +20,11 @@
         <th>City</th>
         <th>State</th>
         <th>Primary phone</th>
-        <th>Secondary Phone phone</th>
         <th>Email</th>
+        <th>Needs Follow Up</th>
         <th>Details</th>
 
-        <tr ng-repeat="contact in contacts | filter:search">
+        <tr ng-repeat="contact in contacts | filter:search" ng-click="viewContactDetails(contact.id)">
             <td>{{contact.assessment}}</td>
             <td>{{contact.firstName}}</td>
             <td>{{contact.lastName}}</td>
@@ -33,8 +33,10 @@
             <td>{{contact.city}}</td>
             <td>{{contact.state}}</td>
             <td>{{contact.phoneNumber1}}</td>
-            <td>{{contact.phoneNumber2}}</td>
             <td>{{contact.email}}</td>
+            <td>
+                <span class="glyphicon glyphicon-earphone" ng-if="contact.needsFollowUp" aria-hidden="true"></span>
+            </td>
             <td>
                 <a class="btn btn-md btn-info" href="#/contacts/contact/{{contact.id}}">View Details</a>
             </td>
