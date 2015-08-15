@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Entity(name = "event")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="event_id")
 public class Event extends BasicEntity  implements Serializable {
 
     @Column
