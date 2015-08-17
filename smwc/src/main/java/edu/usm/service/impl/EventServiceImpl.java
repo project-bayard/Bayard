@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -66,7 +67,9 @@ public class EventServiceImpl extends BasicService implements EventService {
     @Override
     public void delete(Event event) {
 
-        for (Contact contact : event.getAttendees()) {
+        Set<Contact> attendees = new HashSet<>(event.getAttendees());
+
+        for (Contact contact : attendees) {
             contactService.unattendEvent(contact,event);
         }
         eventDao.delete(event);
