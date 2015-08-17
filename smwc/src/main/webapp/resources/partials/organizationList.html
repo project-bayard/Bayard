@@ -1,68 +1,14 @@
 <div class="container-fluid">
     <h1>Organizations</h1>
-    <button class="btn btn-md btn-primary"ng-model="addOrganization.hidden" ng-click="addOrganization.hidden = !addOrganization.hidden">Create Organization</button>
+    <button class="btn btn-md btn-primary" ng-show="hideForm" ng-click="showOrganizationForm()">Create Organization</button>
 
-    <div ng-if="addOrganization.hidden == false">
-
-        <div class="smwc-form">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Name</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.name" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Address</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.streetAddress" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">City</span>
-                        <input type="text" class="form-control"  ng-model="addOrganization.city" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">State</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.state" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Zip</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.zipCode" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Primary Contact</span>
-                        <input type="text" class="form-control"  ng-model="addOrganization.primaryContactName" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Phone</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.phoneNumber" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Email</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.email" >
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-addon smwc-addon-span">Description</span>
-                        <input type="text" class="form-control" ng-model="addOrganization.description" >
-                    </div>
-                </li>
-            </ul>
-            <br/>
-            <button class="btn btn-md btn-success" ng-click="createOrganization(addOrganization)">Submit</button>
+    <div ng-if="!hideForm">
+        <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
+        <div class="row">
+            <div class="col-md-8">
+                <button class="btn btn-md btn-success" ng-click="createOrganization()" ng-disabled="formHolder.organizationForm.$invalid">Submit</button>
+                <button class="btn btn-md btn-danger" ng-click="cancelCreateOrganization()">Cancel</button>
+            </div>
         </div>
     </div>
     <br><br>

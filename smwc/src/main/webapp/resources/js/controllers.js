@@ -28,10 +28,10 @@
 
         $scope.submit = function() {
 
-            ContactService.create({}, $scope.contact, function(data) {
+            ContactService.create({}, $scope.newContact, function(data) {
                 console.log(data);
                 $scope.newContactForm.$setPristine();
-                $scope.contact = {};
+                $scope.newContact = {};
 
                 $scope.requestSuccess = true;
                 $timeout(function() {
@@ -48,11 +48,9 @@
             });
         };
 
-
-
         $scope.submitAndViewDetails = function() {
 
-            ContactService.create({}, $scope.contact, function(postSuccess) {
+            ContactService.create({}, $scope.newContact, function(postSuccess) {
                 postSuccess.$promise.then(function(createdId) {
                     var detailsPath = "/contacts/contact/" + createdId.id;
                     $location.path(detailsPath);
@@ -70,187 +68,196 @@
 
     }]);
 
-    controllers.controller('DetailsCtrl', ['$scope','$routeParams', 'ContactService', '$timeout','$location','OrganizationService',
+    controllers.controller('DetailsCtrl', ['$scope', '$routeParams', 'ContactService', '$timeout', '$location', 'OrganizationService',
         'EventService', 'CommitteeService', 'DateFormatter', '$window',
-        function($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window) {
+        function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window) {
 
-        var setup = function() {
-            $scope.edit = false;
-            $scope.success = null;
-            $scope.errorMessage = "";
-            $scope.addingEncounter = false;
-            $scope.encounterSuccess = true;
-            $scope.initiator = null;
-            $scope.organizations = null;
-            $scope.addOrganization = {hidden : true};
-            $scope.newOrganization = {hidden : true};
-            $scope.addEvent = {hidden : true};
-            $scope.addCommittee = {hidden : true};
-            $scope.newEncounter = {};
-            $scope.showingDemographics = false;
-            $scope.demographicPanel = { updateRequest : {success : false,  failure : false }, editingDemographics : false, showingDemographics : false };
-            $scope.memberInfoPanel = { showingPanel : false, updateRequest : {success : false,  failure : false },
-                showingMemberInfo : false, editingMemberInfo : false,
-                standings : {
-                    good : {
-                        label : "Good",
-                        value : 1
-                    },
-                    bad : {
-                        label : "Bad",
-                        value : 2
-                    },
-                    other : {
-                        label : "Other",
-                        value : 3
+            var setup = function () {
+                $scope.edit = false;
+                $scope.success = null;
+                $scope.errorMessage = "";
+                $scope.addingEncounter = false;
+                $scope.encounterSuccess = true;
+                $scope.initiator = null;
+                $scope.organizations = null;
+                $scope.addOrganization = {hidden: true};
+                $scope.newOrganization = {hidden: true};
+                $scope.addEvent = {hidden: true};
+                $scope.addCommittee = {hidden: true};
+                $scope.newEncounter = {};
+                $scope.showingDemographics = false;
+                $scope.demographicPanel = {
+                    updateRequest: {success: false, failure: false},
+                    editingDemographics: false,
+                    showingDemographics: false
+                };
+                $scope.memberInfoPanel = {
+                    showingPanel: false, updateRequest: {success: false, failure: false},
+                    showingMemberInfo: false, editingMemberInfo: false,
+                    standings: {
+                        good: {
+                            label: "Good",
+                            value: 1
+                        },
+                        bad: {
+                            label: "Bad",
+                            value: 2
+                        },
+                        other: {
+                            label: "Other",
+                            value: 3
+                        }
                     }
-                }};
+                };
 
-            //TODO: decouple this knowledge
-            $scope.assessmentRange = [0,1,2,3,4,5,6,7,8,9,10];
+                //TODO: decouple this knowledge
+                $scope.assessmentRange = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-            //TODO: decouple this knowledge
-            $scope.encounterTypes = ["Call", "Other"];
-
-
-            ContactService.find({id : $routeParams.id}, function(data) {
-                $scope.contact = data;
-            }, function(err) {
-                console.log(err);
-            });
+                //TODO: decouple this knowledge
+                $scope.encounterTypes = ["Call", "Other"];
 
 
-        };
-
-        setup();
-
-        /*Basic details*/
-        $scope.updateBasicDetails = function() {
-
-            ContactService.update({id : $scope.contact.id}, $scope.contact, function(data) {
-                //indicate success
-                $scope.contactUpdated = true;
-            }, function(err) {
-                console.log(err);
-            });
-        };
+                ContactService.find({id: $routeParams.id}, function (data) {
+                    $scope.contact = data;
+                }, function (err) {
+                    console.log(err);
+                });
 
 
-        $scope.viewDetails = function (id) {
-            var path = "/contacts/contact/" + id ;
-            $location.path(path);
-        };
+            };
 
-        /*Encounters*/
-        $scope.showEncounterForm = function () {
-            $scope.addingEncounter = !$scope.addingEncounter;
-            populateInitiatorList();
+            setup();
+
+            /*Basic details*/
+            $scope.updateBasicDetails = function () {
+
+                ContactService.update({id: $scope.contact.id}, $scope.contact, function (data) {
+                    //indicate success
+                    $scope.contactUpdated = true;
+                }, function (err) {
+                    console.log(err);
+                });
+            };
 
 
-        };
+            $scope.viewDetails = function (id) {
+                var path = "/contacts/contact/" + id;
+                $location.path(path);
+            };
 
-            var populateInitiatorList = function() {
+            /*Encounters*/
+            $scope.showEncounterForm = function () {
+                $scope.addingEncounter = !$scope.addingEncounter;
+                populateInitiatorList();
+
+
+            };
+
+            var populateInitiatorList = function () {
                 if ($scope.initiators == null) {
 
-                    ContactService.getInitiators({}, function(data) {
+                    ContactService.getInitiators({}, function (data) {
                         $scope.initiators = data;
 
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     });
                 }
             };
 
 
-        $scope.addEncounter = function() {
+            $scope.addEncounter = function () {
 
-            $scope.newEncounter.encounterDate = DateFormatter.formatDate($scope.newEncounter.jsDate);
+                $scope.newEncounter.encounterDate = DateFormatter.formatDate($scope.newEncounter.jsDate);
 
-            ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function(data) {
-                ContactService.getEncounters({id : $scope.contact.id}, function(encounters) {
-                    $scope.newEncounterRequestSuccess = true;
-                    $scope.newEncounter = {};
+                ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function (data) {
+                    ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
+                        $scope.newEncounterRequestSuccess = true;
+                        $scope.newEncounter = {};
 
-                    $timeout(function() {
-                        $scope.newEncounterRequestSuccess = false;
-                    }, 3000);
+                        $timeout(function () {
+                            $scope.newEncounterRequestSuccess = false;
+                        }, 3000);
 
-                    $scope.encountersTable = encounters;
-                    $scope.addingEncounter = false;
+                        $scope.encountersTable = encounters;
+                        $scope.addingEncounter = false;
 
-                }, function(err) {
+                    }, function (err) {
+                        $scope.newEncounterRequestFailure = true;
+                        $timeout(function () {
+                            $scope.newEncounterRequestFailure = false;
+                        }, 3000);
+                        console.log(err);
+                    });
+
+                    ContactService.find({id: $scope.contact.id}, function (contact) {
+                        $scope.contact = contact;
+                    }, function (err) {
+                        console.log(err);
+                    })
+
+                }, function (err) {
                     $scope.newEncounterRequestFailure = true;
-                    $timeout(function() {
+                    $timeout(function () {
                         $scope.newEncounterRequestFailure = false;
                     }, 3000);
                     console.log(err);
                 });
+            };
 
-                ContactService.find({id: $scope.contact.id}, function(contact) {
-                    $scope.contact = contact;
-                }, function(err) {
-                    console.log(err);
-                })
-
-            }, function(err) {
-                $scope.newEncounterRequestFailure = true;
-                $timeout(function() {
-                    $scope.newEncounterRequestFailure = false;
-                }, 3000);
-                console.log(err);
-            });
-        };
-
-            $scope.showUpdateEncounterForm = function() {
+            $scope.showUpdateEncounterForm = function () {
                 $scope.updatingEncounter = true;
                 populateInitiatorList();
             };
 
-            $scope.deleteEncounter = function(encounterId) {
+            $scope.deleteEncounter = function (encounterId) {
 
                 var deleteConfirmed = $window.confirm('Are you sure you want to delete this encounter?');
                 if (deleteConfirmed) {
-                    ContactService.deleteEncounter({id : $scope.contact.id, entityId: encounterId}, function(succ) {
-                        ContactService.getEncounters({id: $scope.contact.id}, function(encounters) {
+                    ContactService.deleteEncounter({id: $scope.contact.id, entityId: encounterId}, function (succ) {
+                        ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
                             $scope.encountersTable = encounters;
-                        }, function(err) {
+                        }, function (err) {
                             console.log(err);
                         })
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     });
                 }
 
             };
 
-            $scope.updateEncounter = function() {
+            $scope.updateEncounter = function () {
 
                 $scope.encounterDetails.encounterDate = DateFormatter.formatDate($scope.encounterDetails.jsDate);
-                ContactService.updateEncounter({id: $scope.contact.id, entityId : $scope.encounterDetails.id}, $scope.encounterDetails, function(succ) {
+                ContactService.updateEncounter({
+                    id: $scope.contact.id,
+                    entityId: $scope.encounterDetails.id
+                }, $scope.encounterDetails, function (succ) {
                     $scope.updatingEncounter = false;
-                    ContactService.getEncounters({id: $scope.contact.id}, function(encounters) {
+                    ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
                         $scope.encountersTable = encounters;
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     });
 
                     //Fetch updated assessment and follow up
-                    ContactService.find({id: $scope.contact.id}, function(contact) {
+                    ContactService.find({id: $scope.contact.id}, function (contact) {
                         $scope.contact = contact;
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     })
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                 })
 
             };
 
-            $scope.cancelUpdateEncounter = function() {
+            $scope.cancelUpdateEncounter = function () {
                 $scope.updatingEncounter = false;
             };
 
-            var createEncounterDetails = function(encounter, initiator) {
+            var createEncounterDetails = function (encounter, initiator) {
                 var encounterDetails = encounter;
                 var initiatorName = initiator.firstName + " " + initiator.lastName;
                 encounterDetails["initiatorName"] = initiatorName;
@@ -259,11 +266,11 @@
                 return encounterDetails;
             };
 
-            $scope.viewEncounterDetails = function(encounter) {
+            $scope.viewEncounterDetails = function (encounter) {
 
-                ContactService.find({id : encounter.initiator.id}, function(initiator) {
+                ContactService.find({id: encounter.initiator.id}, function (initiator) {
                     $scope.encounterDetails = createEncounterDetails(encounter, initiator);
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                 });
 
@@ -273,134 +280,138 @@
                 $scope.showingEncounters = !$scope.showingEncounters;
 
                 if ($scope.showingEncounters == true) {
-                    ContactService.getEncounters({id : $scope.contact.id}, function(data) {
-                        $scope.encountersTable =  data;
-                    }, function(err) {
+                    ContactService.getEncounters({id: $scope.contact.id}, function (data) {
+                        $scope.encountersTable = data;
+                    }, function (err) {
                         console.log(err);
                     });
                 }
             };
 
-        /*Events */
+            /*Events */
 
-        $scope.toggleShowingEvents = function() {
-            ContactService.getEvents({id : $scope.contact.id}, function(data) {
-                $scope.contact.attendedEvents = data;
-                $scope.eventsTable = $scope.contact.attendedEvents;
-
-            }, function(err) {
-                console.log(err);
-            });
-            $scope.showingEvents=!$scope.showingEvents;
-        };
-
-        $scope.getEvents = function() {
-            $scope.addEvent.hidden = false;
-
-            EventService.findAll({}, function(response) {
-                console.log(response);
-                $scope.events = response;
-            }, function(err) {
-                console.log(err);
-            });
-
-        };
-
-        $scope.attendEvent = function (eventId) {
-
-            var idDto = { id : eventId };
-
-            ContactService.attend({id : $scope.contact.id}, idDto, function(response) {
-                ContactService.getEvents({id : $scope.contact.id}, function(data) {
+            $scope.toggleShowingEvents = function () {
+                ContactService.getEvents({id: $scope.contact.id}, function (data) {
                     $scope.contact.attendedEvents = data;
                     $scope.eventsTable = $scope.contact.attendedEvents;
-                }, function(err) {
+
+                }, function (err) {
+                    console.log(err);
+                });
+                $scope.showingEvents = !$scope.showingEvents;
+            };
+
+            $scope.getEvents = function () {
+                $scope.addEvent.hidden = false;
+
+                EventService.findAll({}, function (response) {
+                    console.log(response);
+                    $scope.events = response;
+                }, function (err) {
                     console.log(err);
                 });
 
-                $scope.addEvent.hidden = true;
-                $timeout(function() {
-                    $scope.requestSuccess = false;
-                }, 3000);
+            };
 
-            }, function(err) {
-                console.log(err);
-            });
+            $scope.attendEvent = function (eventId) {
 
-        };
+                var idDto = {id: eventId};
 
-            $scope.removeFromEvent = function(eventId) {
-                ContactService.removeFromEvent({id : $scope.contact.id, entityId : eventId}, function(success) {
-                    ContactService.getEvents({id : $scope.contact.id}, function(data) {
+                ContactService.attend({id: $scope.contact.id}, idDto, function (response) {
+                    ContactService.getEvents({id: $scope.contact.id}, function (data) {
                         $scope.contact.attendedEvents = data;
                         $scope.eventsTable = $scope.contact.attendedEvents;
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     });
-                }, function(err) {
+
+                    $scope.addEvent.hidden = true;
+                    $timeout(function () {
+                        $scope.requestSuccess = false;
+                    }, 3000);
+
+                }, function (err) {
+                    console.log(err);
+                });
+
+            };
+
+            $scope.removeFromEvent = function (eventId) {
+                ContactService.removeFromEvent({id: $scope.contact.id, entityId: eventId}, function (success) {
+                    ContactService.getEvents({id: $scope.contact.id}, function (data) {
+                        $scope.contact.attendedEvents = data;
+                        $scope.eventsTable = $scope.contact.attendedEvents;
+                    }, function (err) {
+                        console.log(err);
+                    });
+                }, function (err) {
                     console.log(err);
                 });
             };
 
 
-        /* Organizations */
+            /* Organizations */
 
-        $scope.getContactOrganizations = function () {
-            $scope.showingOrganizations = !$scope.showingOrganizations;
+            $scope.getContactOrganizations = function () {
+                $scope.showingOrganizations = !$scope.showingOrganizations;
 
-            if ($scope.showingOrganizations == true) {
-                ContactService.getOrganizations({id: $scope.contact.id},function(data) {
-                    $scope.contact.organizations = data
-                }, function(err) {
-                    console.log(err);
-                });
-            }
-        };
-
-        $scope.getOrganizations = function() {
-            $scope.addOrganization.hidden = !$scope.addOrganization.hidden;
-
-            if ($scope.organizations == null) {
-                OrganizationService.findAll({}, function(data) {
-                    $scope.organizations = data;
-                }, function(err) {
-                    console.log(err);
-                });
-            }
-        };
-
-        $scope.addToOrganization = function (index) {
-            $scope.organizationSuccess = true;
-            var organization = $scope.organizations[index];
-
-            ContactService.addToOrganization({id: $scope.contact.id},{id: organization.id},
-                function(data) {
-                if (data.status == 'SUCCESS') {
-                    ContactService.getOrganizations({id: $scope.contact.id},function(data) {
+                if ($scope.showingOrganizations == true) {
+                    ContactService.getOrganizations({id: $scope.contact.id}, function (data) {
                         $scope.contact.organizations = data
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     });
-                } else {
-                    console.log(data.message)
                 }
-            }, function(err) {
-                console.log(err);
-            });
+            };
 
-        };
+            $scope.getOrganizations = function () {
+                $scope.addOrganization.hidden = !$scope.addOrganization.hidden;
 
-        $scope.createAndAddToOrganization = function(organization) {
-            OrganizationService.create( organization, function(data) {
-                //Add this contact to the newly-created Organization
-                ContactService.addToOrganization({id: $scope.contact.id},{id : data.id}, function(data) {
-                    //Refresh organizations the contact is now a member of
-                    ContactService.getOrganizations({id:$scope.contact.id}, function(data) {
-                        $scope.contactUpdated = true;
-                        $scope.contact.organizations = data;
-                        $scope.addOrganization.hidden = true;
-                        $scope.newOrganization.hidden = true;
-                    }, function(err) {
+                if ($scope.organizations == null) {
+                    OrganizationService.findAll({}, function (data) {
+                        $scope.organizations = data;
+                    }, function (err) {
+                        console.log(err);
+                    });
+                }
+            };
+
+            $scope.addToOrganization = function (index) {
+                $scope.organizationSuccess = true;
+                var organization = $scope.organizations[index];
+
+                ContactService.addToOrganization({id: $scope.contact.id}, {id: organization.id},
+                    function (data) {
+                        if (data.status == 'SUCCESS') {
+                            ContactService.getOrganizations({id: $scope.contact.id}, function (data) {
+                                $scope.contact.organizations = data
+                            }, function (err) {
+                                console.log(err);
+                            });
+                        } else {
+                            console.log(data.message)
+                        }
+                    }, function (err) {
+                        console.log(err);
+                    });
+
+            };
+
+            $scope.createAndAddToOrganization = function (organization) {
+                OrganizationService.create(organization, function (data) {
+                    //Add this contact to the newly-created Organization
+                    ContactService.addToOrganization({id: $scope.contact.id}, {id: data.id}, function (data) {
+                        //Refresh organizations the contact is now a member of
+                        ContactService.getOrganizations({id: $scope.contact.id}, function (data) {
+                            $scope.contactUpdated = true;
+                            $scope.contact.organizations = data;
+                            $scope.addOrganization.hidden = true;
+                            $scope.newOrganization.hidden = true;
+                        }, function (err) {
+                            console.log(err);
+                            $scope.organizationSuccess = false;
+                        });
+                    }, function (err) {
                         console.log(err);
                         $scope.organizationSuccess = false;
                     });
@@ -408,86 +419,85 @@
                     console.log(err);
                     $scope.organizationSuccess = false;
                 });
-            }, function(err) {
-                console.log(err);
-                $scope.organizationSuccess = false;
-            });
 
-            //Refresh list of all organizations known to the app
-            OrganizationService.findAll(function(allOrgs) {
-                $scope.organizations = allOrgs;
-            }, function(err) {
-                console.log(err);
-            });
-        };
+                //Refresh list of all organizations known to the app
+                OrganizationService.findAll(function (allOrgs) {
+                    $scope.organizations = allOrgs;
+                }, function (err) {
+                    console.log(err);
+                });
+            };
 
-            $scope.removeFromOrganization = function(id) {
+            $scope.removeFromOrganization = function (id) {
 
-                ContactService.removeFromOrganization({id : $scope.contact.id, entityId : id}, function(resp) {
-                    ContactService.getOrganizations({id : $scope.contact.id}, function(orgs) {
+                ContactService.removeFromOrganization({id: $scope.contact.id, entityId: id}, function (resp) {
+                    ContactService.getOrganizations({id: $scope.contact.id}, function (orgs) {
                         $scope.contact.organizations = orgs;
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     })
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                 })
             };
 
             /* Committees */
-        $scope.getContactCommittees = function () {
-            $scope.showingCommittees = !$scope.showingCommittees;
+            $scope.getContactCommittees = function () {
+                $scope.showingCommittees = !$scope.showingCommittees;
 
-            if ($scope.contact.committees == null) {
-                ContactService.getCommittees({id: $scope.contact.id},function(data) {
-                    $scope.contact.committees = data
-                }, function(err) {
-                    console.log(err);
-                });
-            }
-        };
-        $scope.getCommittees = function() {
-            $scope.addCommittee.hidden = !$scope.addCommittee.hidden;
+                if ($scope.contact.committees == null) {
+                    ContactService.getCommittees({id: $scope.contact.id}, function (data) {
+                        $scope.contact.committees = data
+                    }, function (err) {
+                        console.log(err);
+                    });
+                }
+            };
+            $scope.getCommittees = function () {
+                $scope.addCommittee.hidden = !$scope.addCommittee.hidden;
 
-            if ($scope.committees == null) {
-                CommitteeService.findAll({}, function(data) {
-                    $scope.committees = data;
-                }, function(err) {
-                    console.log(err);
-                });
-            }
-        };
+                if ($scope.committees == null) {
+                    CommitteeService.findAll({}, function (data) {
+                        $scope.committees = data;
+                    }, function (err) {
+                        console.log(err);
+                    });
+                }
+            };
 
 
-        $scope.addToCommittee = function (index) {
-            $scope.committeeSuccess = true;
-            var committee = $scope.committees[index];
+            $scope.addToCommittee = function (index) {
+                $scope.committeeSuccess = true;
+                var committee = $scope.committees[index];
 
-            ContactService.addToCommittee({id: $scope.contact.id},{id: committee.id},
-                function(data) {
-                    if (data.status == 'SUCCESS') {
-                        ContactService.getCommittees({id: $scope.contact.id},function(data) {
-                            $scope.contact.committees = data
-                        }, function(err) {
-                            console.log(err);
-                        });
-                    } else {
-                        console.log(data.message)
-                    }
-                }, function(err) {
-                    console.log(err);
-                });
-        };
+                ContactService.addToCommittee({id: $scope.contact.id}, {id: committee.id},
+                    function (data) {
+                        if (data.status == 'SUCCESS') {
+                            ContactService.getCommittees({id: $scope.contact.id}, function (data) {
+                                $scope.contact.committees = data
+                            }, function (err) {
+                                console.log(err);
+                            });
+                        } else {
+                            console.log(data.message)
+                        }
+                    }, function (err) {
+                        console.log(err);
+                    });
+            };
 
-            $scope.removeFromCommittee = function(committeeId) {
+            $scope.removeFromCommittee = function (committeeId) {
 
-                ContactService.removeFromCommittee({id : $scope.contact.id, entityId : committeeId}, function(success) {
-                    ContactService.getCommittees({id : $scope.contact.id}, function(committees) {
+                ContactService.removeFromCommittee({
+                    id: $scope.contact.id,
+                    entityId: committeeId
+                }, function (success) {
+                    ContactService.getCommittees({id: $scope.contact.id}, function (committees) {
                         $scope.contact.committees = committees;
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     })
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                 })
 
@@ -495,59 +505,59 @@
 
             /* Demographics*/
 
-            $scope.toggleEditingDemographics = function() {
+            $scope.toggleEditingDemographics = function () {
                 $scope.demographicPanel.editingDemographics = !$scope.demographicPanel.editingDemographics;
             };
 
-            $scope.booleanToString = function(value) {
+            $scope.booleanToString = function (value) {
                 if (value) {
                     return "Yes";
                 }
                 return "No";
             };
 
-            var retrieveDemographics = function() {
-                return ContactService.getDemographics({id : $scope.contact.id}, function(demographics) {
+            var retrieveDemographics = function () {
+                return ContactService.getDemographics({id: $scope.contact.id}, function (demographics) {
                     $scope.demographics = demographics;
                     $scope.demographics.dobAsDate = DateFormatter.asDate($scope.demographics.dateOfBirth);
                     return true;
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                     return false;
                 });
             };
 
-            $scope.displayDemographics = function() {
+            $scope.displayDemographics = function () {
                 $scope.demographicPanel.showingDemographics = !$scope.demographicPanel.showingDemographics;
                 retrieveDemographics();
             };
 
-            $scope.updateDemographics = function() {
+            $scope.updateDemographics = function () {
 
                 $scope.demographics.dateOfBirth = DateFormatter.formatDate($scope.demographics.dobAsDate);
-                ContactService.updateDemographics({id: $scope.contact.id}, $scope.demographics, function(data) {
+                ContactService.updateDemographics({id: $scope.contact.id}, $scope.demographics, function (data) {
                     if (retrieveDemographics()) {
                         $scope.demographicPanel.editingDemographics = false;
                         $scope.demographicPanel.updateRequest.success = true;
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.demographicPanel.updateRequest.success = false;
                         }, 3000);
                     } else {
                         $scope.demographicPanel.updateRequest.failure = true;
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.demographicPanel.updateRequest.failure = false;
                         }, 3000);
                     }
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                     $scope.demographicPanel.updateRequest.failure = true;
-                    $timeout(function() {
+                    $timeout(function () {
                         $scope.demographicPanel.updateRequest.failure = false;
                     }, 3000);
                 })
             };
 
-            $scope.cancelUpdateDemographics = function() {
+            $scope.cancelUpdateDemographics = function () {
                 if (retrieveDemographics()) {
                     $scope.demographicPanel.editingDemographics = false;
                 }
@@ -555,74 +565,75 @@
 
             /* MEMBERINFO */
 
-            $scope.checkIfMember = function() {
+            $scope.checkIfMember = function () {
                 $scope.memberInfoPanel.showingPanel = !$scope.memberInfoPanel.showingPanel;
 
-                if($scope.contact.member == true) {
+                if ($scope.contact.member == true) {
                     $scope.displayMemberInfo();
                 } else {
                     $scope.promptNoMemberInfo();
                 }
             };
 
-            $scope.promptNoMemberInfo = function() {
+            $scope.promptNoMemberInfo = function () {
                 $scope.promptNotMember = true;
             };
 
-            $scope.becomeMember = function() {
+            $scope.becomeMember = function () {
                 $scope.displayMemberInfo();
                 $scope.toggleEditingMemberInfo();
             };
 
-            $scope.updateMembershipInfo = function() {
-                ContactService.updateMemberInfo({id: $scope.contact.id}, $scope.memberInfo, function(data) {
-                    ContactService.getMemberInfo({id: $scope.contact.id}, function(data) {
+            $scope.updateMembershipInfo = function () {
+                ContactService.updateMemberInfo({id: $scope.contact.id}, $scope.memberInfo, function (data) {
+                    ContactService.getMemberInfo({id: $scope.contact.id}, function (data) {
                         $scope.contact.member = true;
                         $scope.promptNotMember = false;
                         $scope.memberInfoPanel.editingMemberInfo = false;
                         $scope.memberInfoPanel.updateRequest.success = true;
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.memberInfoPanel.updateRequest.success = false;
                         }, 3000);
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                         $scope.memberInfoPanel.updateRequest.failure = true;
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.memberInfoPanel.updateRequest.failure = false;
                         }, 3000);
                     })
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                     $scope.memberInfoPanel.updateRequest.failure = true;
-                    $timeout(function() {
+                    $timeout(function () {
                         $scope.memberInfoPanel.updateRequest.failure = false;
-                    }, 3000);                })
+                    }, 3000);
+                })
             };
 
 
-            $scope.displayMemberInfo = function() {
+            $scope.displayMemberInfo = function () {
 
                 $scope.memberInfoPanel.showingMemberInfo = !$scope.memberInfoPanel.showingMemberInfo;
 
                 if ($scope.memberInfoPanel.showingMemberInfo) {
-                    ContactService.getMemberInfo({id : $scope.contact.id}, function(data) {
+                    ContactService.getMemberInfo({id: $scope.contact.id}, function (data) {
                         $scope.memberInfo = data;
-                    }, function(err) {
+                    }, function (err) {
                         console.log(err);
                     });
                 }
             };
 
-            $scope.toggleEditingMemberInfo = function() {
+            $scope.toggleEditingMemberInfo = function () {
                 $scope.memberInfoPanel.editingMemberInfo = !$scope.memberInfoPanel.editingMemberInfo;
             };
 
-            $scope.cancelUpdateMemberInfo = function() {
-                ContactService.getMemberInfo({id : $scope.contact.id}, function(data) {
+            $scope.cancelUpdateMemberInfo = function () {
+                ContactService.getMemberInfo({id: $scope.contact.id}, function (data) {
                     $scope.memberInfo = data;
                     $scope.memberInfoPanel.editingMemberInfo = false;
                     $scope.checkIfMember();
-                }, function(err) {
+                }, function (err) {
                     console.log(err);
                 });
             };
@@ -630,19 +641,11 @@
 
         }]);
 
-
-
     controllers.controller('EventsCtrl', ['$scope', 'EventService', 'CommitteeService', 'DateFormatter', function($scope, EventService, CommitteeService, DateFormatter) {
 
         $scope.addEvent = {hidden: true};
-        $scope.newEvent = {};
-
-        CommitteeService.findAll({}, function(data) {
-           $scope.committees = data;
-            $scope.committees.push({id: null, name: "None"});
-        }, function(err) {
-            console.log(err);
-        });
+        $scope.formHolder = {};
+        $scope.modelHolder = {};
 
         var populateEvents = function() {
             EventService.findAll({}, function(response) {
@@ -656,101 +659,118 @@
 
         $scope.createEvent = function() {
 
-            $scope.newEvent.attendees = [];
-            $scope.newEvent.dateHeld = DateFormatter.formatDate($scope.newEvent.jsDate);
-            EventService.create({}, $scope.newEvent, function(response) {
-                $scope.addEvent = {hidden : true};
-                populateEvents();
-                $scope.newEventForm.$setPristine();
-                $scope.newEvent = {};
-            }, function(err) {
-                console.log(err);
-            });
+            $scope.modelHolder.eventModel.dateHeld = DateFormatter.formatDate($scope.modelHolder.eventModel.jsDate);
+
+                $scope.modelHolder.eventModel.attendees = [];
+                EventService.create({}, $scope.modelHolder.eventModel, function(response) {
+                    $scope.addEvent = {hidden : true};
+                    $scope.clashingName = false;
+                    populateEvents();
+                    $scope.modelHolder.eventModel = {};
+                }, function(err) {
+                    //TODO inspect error response for validation failures
+                    console.log(err);
+                });
         };
+
     }]);
 
 
     controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', 'CommitteeService', '$timeout', '$window', '$location', 'DateFormatter',
         function($scope, EventService, $routeParams, CommitteeService, $timeout, $window, $location, DateFormatter) {
 
-        var formatEvent = function(event) {
-            event.jsDate = DateFormatter.asDate(event.dateHeld);
-            if (event.attendees == null) {
-                event.attendees = [];
-            }
-            return event;
-        };
+            $scope.modelHolder = {};
+            $scope.formHolder = {};
 
-        EventService.find({id : $routeParams.id}, function(event) {
-            $scope.event = formatEvent(event);
+            var formatEvent = function(event) {
+                event.jsDate = DateFormatter.asDate(event.dateHeld);
+                if (event.attendees == null) {
+                    event.attendees = [];
+                }
+                return event;
+            };
+
+            EventService.find({id : $routeParams.id}, function(event) {
+                $scope.modelHolder.eventModel = formatEvent(event);
+            }, function(err) {
+                console.log(err);
+            });
+
+            $scope.showUpdateForm = function() {
+                $scope.updatingEventDetails = true;
+            };
+
+            $scope.submitUpdate = function() {
+
+                $scope.modelHolder.eventModel.dateHeld = DateFormatter.formatDate($scope.modelHolder.eventModel.jsDate);
+
+                EventService.update({id : $scope.modelHolder.eventModel.id}, $scope.modelHolder.eventModel, function(success) {
+                    EventService.find({id : $scope.modelHolder.eventModel.id}, function(event) {
+                        $scope.modelHolder.eventModel = formatEvent(event);
+                        $scope.requestSuccess = true;
+                        $scope.updatingEventDetails = false;
+                        $timeout(function() {
+                            $scope.requestSuccess = false;
+                        }, 3000)
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }, function(err) {
+                    $scope.requestFail = true;
+                    $timeout(function() {
+                        $scope.requestFail = false;
+                    }, 3000);
+                    console.log(err);
+                });
+
+            };
+
+            $scope.cancelUpdate = function() {
+                $scope.updatingEventDetails = false;
+
+                EventService.find({id : $scope.modelHolder.eventModel.id}, function(event) {
+                    $scope.modelHolder.eventModel = formatEvent(event)
+                }, function(err) {
+                    console.log(err);
+                });
+            };
+
+            $scope.deleteEvent = function() {
+
+                var deleteConfirmed = $window.confirm('Are you sure you want to delete this event?');
+                if (deleteConfirmed) {
+                    EventService.delete({id : $scope.modelHolder.eventModel.id}, function() {
+                        $location.path("/events");
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+
+            };
+
+        }]);
+
+    controllers.controller('EventFormCtrl', ['$scope', 'CommitteeService', function($scope, CommitteeService) {
+
+        CommitteeService.findAll({}, function(data) {
+            $scope.committees = data;
+            $scope.committees.push({id: null, name: "None"});
         }, function(err) {
             console.log(err);
         });
 
-        $scope.showUpdateForm = function() {
-            $scope.updatingEventDetails = true;
-
-            CommitteeService.findAll({}, function(committees) {
-                $scope.committees = committees;
-                $scope.committees.push({id: null, name: "None"});
-            }, function(err) {
-                console.log(err);
-            });
-        };
-
-        $scope.submitUpdate = function() {
-
-            $scope.event.dateHeld = DateFormatter.formatDate($scope.event.jsDate);
-            EventService.update({id : $scope.event.id}, $scope.event, function(success) {
-                EventService.find({id : $scope.event.id}, function(event) {
-                    $scope.event = formatEvent(event);
-                    $scope.requestSuccess = true;
-                    $scope.updatingEventDetails = false;
-                    $timeout(function() {
-                        $scope.requestSuccess = false;
-                    }, 3000)
-                }, function(err) {
-                    console.log(err);
-                });
-            }, function(err) {
-                $scope.requestFail = true;
-                $timeout(function() {
-                    $scope.requestFail = false;
-                }, 3000);
-                console.log(err);
-            });
-
-        };
-
-        $scope.cancelUpdate = function() {
-            $scope.updatingEventDetails = false;
-
-            EventService.find({id : $scope.event.id}, function(event) {
-                $scope.event = formatEvent(event)
-            }, function(err) {
-                console.log(err);
-            });
-        };
-
-        $scope.deleteEvent = function() {
-
-            var deleteConfirmed = $window.confirm('Are you sure you want to delete this event?');
-            if (deleteConfirmed) {
-                EventService.delete({id : $scope.event.id}, function() {
-                    $location.path("/events");
-                }, function(err) {
-                    console.log(err);
-                });
-            }
-
-        };
-
     }]);
 
 
+    controllers.controller('OrganizationFormCtrl', ['$scope', function($scope) {
+
+    }]);
+
     controllers.controller('OrganizationsCtrl', ['$scope', 'OrganizationService', function($scope, OrganizationService) {
 
-        $scope.addOrganization = {hidden: true};
+        $scope.modelHolder = {};
+        $scope.formHolder = {};
+        $scope.hideForm = true;
 
         OrganizationService.findAll({}, function(data) {
             $scope.organizations = data;
@@ -758,10 +778,15 @@
             console.log(err);
         });
 
-        $scope.createOrganization = function(organization) {
-            organization.members = [];
-            OrganizationService.create( organization, function(data) {
-                $scope.addOrganization = {hidden: true};
+        $scope.showOrganizationForm = function() {
+            $scope.hideForm = false;
+        };
+
+        $scope.createOrganization = function() {
+            $scope.modelHolder.organizationModel.members = [];
+            OrganizationService.create( $scope.modelHolder.organizationModel, function(data) {
+                $scope.hideForm = true;
+                $scope.modelHolder.organizationModel = {};
                 OrganizationService.findAll({}, function(data) {
                     $scope.organizations = data;
                 }, function(err) {
@@ -772,15 +797,22 @@
             });
         };
 
+        $scope.cancelCreateOrganization = function() {
+            $scope.hideForm = true;
+        };
 
     }]);
 
-    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', function($scope, OrganizationService, $routeParams, $location, $window) {
+    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout',
+        function($scope, OrganizationService, $routeParams, $location, $window, $timeout) {
+
+        $scope.formHolder = {};
+        $scope.modelHolder = {};
 
         OrganizationService.find({id : $routeParams.id}, function(data) {
-            $scope.organization = data;
-            if ($scope.organization.members == null) {
-                $scope.organization.members = [];
+            $scope.modelHolder.organizationModel = data;
+            if ($scope.modelHolder.organizationModel.members == null) {
+                $scope.modelHolder.organizationModel.members = [];
             }
         }, function(err) {
             console.log(err);
@@ -794,9 +826,9 @@
             $scope.updatingOrganizationDetails = false;
 
             OrganizationService.find({id : $routeParams.id}, function(data) {
-                $scope.organization = data;
-                if ($scope.organization.members == null) {
-                    $scope.organization.members = [];
+                $scope.modelHolder.organizationModel = data;
+                if ($scope.modelHolder.organizationModel.members == null) {
+                    $scope.modelHolder.organizationModel.members = [];
                 }
             }, function(err) {
                 console.log(err);
@@ -806,7 +838,7 @@
         $scope.deleteOrganization = function() {
             var deleteConfirmed = $window.confirm('Are you sure you want to delete this organization?');
             if (deleteConfirmed) {
-                OrganizationService.delete({id : $scope.organization.id}, function() {
+                OrganizationService.delete({id : $scope.modelHolder.organizationModel.id}, function() {
                     $location.path("/organizations");
                 }, function(err) {
                     console.log(err);
@@ -815,9 +847,8 @@
 
         };
 
-
         $scope.submitUpdate = function() {
-            OrganizationService.update({id : $scope.organization.id}, $scope.organization, function(data) {
+            OrganizationService.update({id : $scope.modelHolder.organizationModel.id}, $scope.modelHolder.organizationModel, function(data) {
                 $scope.updatingOrganizationDetails = false;
                 $scope.requestSuccess = true;
                 $timeout(function() {

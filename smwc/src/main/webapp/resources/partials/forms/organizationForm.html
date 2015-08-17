@@ -1,0 +1,60 @@
+<form id="formHolder.organizationForm" name="formHolder.organizationForm" novalidate ng-controller="OrganizationFormCtrl">
+    <div class="row">
+        <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : formHolder.organizationForm.name.$invalid && !formHolder.organizationForm.name.$pristine }">
+            <label class="control-label">Name of Organization</label>
+            <input name="name" type="text" class="form-control" ng-model="modelHolder.organizationModel.name" ng-maxlength="80" ng-minlength="2" required>
+            <p ng-show="formHolder.organizationForm.name.$error.required && !formHolder.organizationForm.name.$pristine" class="help-block">The organization name is required</p>
+            <p ng-show="formHolder.organizationForm.name.$error.maxlength" class="help-block">Organization name too long</p>
+            <p ng-show="formHolder.organizationForm.name.$error.minlength" class="help-block">Organization name too short</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">Address</label>
+            <input name="streetAddress" type="text" class="form-control" ng-model="modelHolder.organizationModel.streetAddress">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">City</label>
+            <input name="city" type="text" class="form-control" ng-model="modelHolder.organizationModel.city">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">State</label>
+            <input name="state" type="text" ui-mask="AA" class="form-control" ng-model="modelHolder.organizationModel.state">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">Zip</label>
+            <input name="location" type="text" ui-mask="99999" class="form-control" ng-model="modelHolder.organizationModel.zipCode">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">Primary Contact Name</label>
+            <input name="primaryContactName" type="text" class="form-control" ng-model="modelHolder.organizationModel.primaryContactName">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">Phone</label>
+            <input name="phoneNumber" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="modelHolder.organizationModel.phoneNumber">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">Email</label>
+            <input name="email" type="email" class="form-control" ng-model="modelHolder.organizationModel.email">
+            <p ng-show="formHolder.organizationForm.$error.email" class="help-block">Enter a valid email address</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label class="control-label">Description</label>
+            <input name="description" type="text" class="form-control" ng-model="modelHolder.organizationModel.description">
+        </div>
+    </div>
+</form>

@@ -64,7 +64,8 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView({Views.EventList.class})
     public Set<Event> getAllEvents() {
-        return eventService.findAll();
+        Set<Event> events = eventService.findAll();
+        return events;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
