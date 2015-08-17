@@ -9,16 +9,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
  */
 public interface EncounterService {
 
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Encounter findById(String id);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateEncounter(Encounter existingEncounter, EncounterDto dto);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void deleteEncounter(Encounter encounter);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 
 }

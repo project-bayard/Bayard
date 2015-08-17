@@ -12,22 +12,22 @@ public interface UserService {
 
     User findByEmail(String email);
 
-    @PreAuthorize(value = "hasRole('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     long createUser(User user);
 
-    @PreAuthorize(value = "hasRole('ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     long createAdministrativeUser(User user);
 
-    @PreAuthorize(value = "hasRole('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     List<User> getAllUsers();
 
-    @PreAuthorize(value = "hasRole('ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteUser(User user);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     User findById(long id);
 
-    @PreAuthorize(value = "hasRole('ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 
 

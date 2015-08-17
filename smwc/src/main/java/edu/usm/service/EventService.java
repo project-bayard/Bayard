@@ -12,27 +12,27 @@ import java.util.Set;
  */
 public interface EventService {
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Event findById(String id);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create (Event event);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create (EventDto dto, Committee committee);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Event> findAll();
 
-    @PreAuthorize(value = "hasRole('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void delete(Event event);
 
-    @PreAuthorize(value = "hasRole('ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update(Event event);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update(Event event, EventDto eventDto);
 }

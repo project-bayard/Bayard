@@ -10,21 +10,21 @@ import java.util.Set;
  */
 public interface CommitteeService {
 
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Committee findById (String id);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Committee> findAll();
 
-    @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void delete (Committee committee);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update (Committee committee);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create (Committee committee);
 
-    @PreAuthorize(value = "hasAuthority('ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 }

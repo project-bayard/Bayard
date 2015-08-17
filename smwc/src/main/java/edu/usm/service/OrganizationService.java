@@ -10,21 +10,21 @@ import java.util.Set;
  */
 public interface OrganizationService {
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Organization findById (String id);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Organization> findAll();
 
-    @PreAuthorize(value = "hasRole('ROLE_ELEVATED')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void delete (Organization organization);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update (Organization organization);
 
-    @PreAuthorize(value = "hasRole('ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create(Organization organization);
 
-    @PreAuthorize(value = "hasRole('ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 }
