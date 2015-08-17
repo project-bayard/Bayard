@@ -32,19 +32,34 @@
 
 <!-- HEADER AND NAVBAR -->
 <header ng-show="authenticated">
-    <nav class="navbar navbar-default">
-        <div class="container">
+    <nav class="navbar navbar-inverse">
+        <div>
             <div class="navbar-header">
-                <a class="navbar-brand" href="#">Southern Maine Workers' Center</a>
+                <a class="navbar-brand" href="#/">Southern Maine Workers' Center</a>
             </div>
 
+            <ul class="nav navbar-nav">
+                <li role="separator" class="divider"></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Organizing<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#contacts"><i class="fa fa-shield"></i>Contacts</a></li>
+                        <li><a href="#newContact"><i class="fa fa-comment"></i>Create Contact</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#organizations"><i class="fa fa-comment"></i>Organizations</a></li>
+                        <li><a href="#committees"><i class="fa fa-comment"></i>Committees</a></li>
+                        <li><a href="#events"><i class="fa fa-comment"></i>Events</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    </ul>
+                </li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="#contacts"><i class="fa fa-shield"></i>Contacts</a></li>
-                <li><a href="#newContact"><i class="fa fa-comment"></i>Create Contact</a></li>
-                <li><a href="#organizations"><i class="fa fa-comment"></i>Organizations</a></li>
-                <li><a href="#committees"><i class="fa fa-comment"></i>Committees</a></li>
-                <li><a href="#events"><i class="fa fa-comment"></i>Events</a></li>
+                <li><p class="navbar-text">Signed in as <a href="#" class="navbar-link">{{user.firstName + " " + user.lastName}}</a></p></li>
+                <li><p class="navbar-text"><a href="#" class="navbar-link">[logout]</a></p></li>
             </ul>
         </div>
     </nav>

@@ -46,7 +46,7 @@
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'
             })
-            .otherwise({redirectTo: '/login'});
+            .otherwise({redirectTo: '/'});
 
 
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
