@@ -1,100 +1,63 @@
-<div class="panel panel-default">
-    <div class="panel-heading" ng-click="getContactOrganizations()">
-        <h3 class="panel-title">Organizations</h3>
-    </div>
-    <div class="panel-body" ng-show="showingOrganizations">
-        <button class="btn btn-md btn-primary" ng-click="getOrganizations()">Add Organization</button>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="getContactOrganizations()">
+                    <h3 class="panel-title">Organizations</h3>
+                </div>
+                <div class="panel-body" ng-show="showingOrganizations">
+                    <button class="btn btn-md btn-primary" ng-click="getOrganizations()">Add Organization</button>
+                    <div ng-if="addOrganization.hidden == false">
+                        <div class="form-group">
+                            <label>Existing Organizations:
+                                <select class="form-control input-small" ng-model="addOrganization.index">
+                                    <option ng-repeat="organization in organizations | byAlreadyBelongsTo:contact.organizations"
+                                            value="{{$index}}">{{organization.name}}
+                                    </option>
+                                </select>
+                            </label>
+                            <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
+                        </div>
+                        <button class="btn btn-md btn-success" ng-click="newOrganization.hidden = !newOrganization.hidden">Add to New Organization</button>
+                        <div ng-if="newOrganization.hidden == false">
+                            <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
+                            <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(modelHolder.organizationModel)" ng-disabled="formHolder.organizationForm.$invalid">Submit</button>
+                        </div>
+                    </div>
+                    <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">
+                        Unable to add Organization
+                    </div>
 
-        <div ng-if="addOrganization.hidden == false">
-            <div class="form-group">
-                <label>Existing Organizations:
-                    <select class="form-control input-small" ng-model="addOrganization.index">
-                        <option ng-repeat="organization in organizations | byAlreadyBelongsTo:contact.organizations"
-                                value="{{$index}}">{{organization.name}}
-                        </option>
-                    </select>
-                </label>
-                <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
+                    <div ng-if="contact.organizations.length > 0">
+                        <table class="bootstrap-table table table-striped table-hover table-responsive"
+                               data-toggle="table"
+                               data-pagination="true"
+                               data-search="true">
+                            <tr>
+                                <th>Name</th>
+                                <th>Details</th>
+                                <th>Remove from Organization</th>
+                            </tr>
+
+                            <tr ng-repeat="organization in contact.organizations">
+                                <td>{{organization.name}}</td>
+                                <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View
+                                    Details</a></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromOrganization(organization.id)">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
             </div>
-            <button class="btn btn-md btn-success" ng-click="newOrganization.hidden = !newOrganization.hidden">Add to New Organization</button>
-            <div ng-if="newOrganization.hidden == false">
-                <div class="from-group">
-                    <label>Name
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.name">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>Street Address
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.streetAddress">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>City
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.city">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>State
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.state">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>Zip
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.zipCode">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>Description
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.description">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>Primary Contact
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.primaryContactName">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>Phone
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.phoneNumber">
-                    </label>
-                </div>
-                <div class="from-group">
-                    <label>Email
-                        <input type="text" class="form-control input-sm" ng-model="newOrganization.email">
-                    </label>
-                </div>
-                <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(newOrganization)">Submit</button>
-            </div>
-        </div>
-        <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">
-            Unable to add Organization
-        </div>
 
-        <div ng-if="contact.organizations.length > 0">
-            <table class="bootstrap-table table table-striped table-hover table-responsive"
-                   data-toggle="table"
-                   data-pagination="true"
-                   data-search="true">
-                <tr>
-                    <th>Name</th>
-                    <th>Details</th>
-                    <th>Remove from Organization</th>
-                </tr>
-
-                <tr ng-repeat="organization in contact.organizations">
-                    <td>{{organization.name}}</td>
-                    <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View
-                        Details</a></td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromOrganization(organization.id)">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
-                        </button>
-                    </td>
-                </tr>
-            </table>
         </div>
 
     </div>
 </div>
 
-</div>
+

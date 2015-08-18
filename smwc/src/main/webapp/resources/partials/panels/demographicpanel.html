@@ -1,51 +1,72 @@
-<div class="panel panel-default">
-    <div class="panel-heading" ng-click="displayDemographics()">
-        <h3 class="panel-title">Demographics</h3>
-    </div>
-    <div class="panel-body" ng-show="demographicPanel.showingDemographics">
-        <div ng-show="demographicPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Demographics Updated</div>
-        <div class="form-group">
-            <label>Race
-                <input type="text" class="form-control input-sm" ng-model="demographics.race" ng-readonly="!demographicPanel.editingDemographics">
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Ethnicity
-                <input type="text" class="form-control input-sm" ng-model="demographics.ethnicity" ng-readonly="!demographicPanel.editingDemographics">
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Date of Birth
-                <input type="date" class="form-control input-sm" ng-model="demographics.dobAsDate" ng-readonly="!demographicPanel.editingDemographics">
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Disabled
-                <select class="form-control input-sm" ng-model="demographics.disabled" ng-readonly="!demographicPanel.editingDemographics" ng-options="booleanToString(value) for value in [true, false]">
-                </select>
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Gender
-                <input type="text" class="form-control input-sm" ng-model="demographics.gender" ng-readonly="!demographicPanel.editingDemographics">
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Sexual Orientation
-                <input type="text" class="form-control input-sm" ng-model="demographics.sexualOrientation" ng-readonly="!demographicPanel.editingDemographics">
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Income Bracket
-                <input type="text" class="form-control input-sm" ng-model="demographics.incomeBracket" ng-readonly="!demographicPanel.editingDemographics">
-            </label>
-        </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="displayDemographics()">
+                    <h3 class="panel-title">Demographics</h3>
+                </div>
+                <div class="panel-body" ng-show="demographicPanel.showingDemographics">
+                    <div ng-show="demographicPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Demographics Updated</div>
+                    <form id="demographicPanel.form" name="demographicPanel.form" novalidate>
+                        <fieldset ng-disabled="!demographicPanel.editingDemographics">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Race</label>
+                                    <input name="race" type="text" class="form-control" ng-model="demographics.race">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Ethnicity</label>
+                                    <input name="ethnicity" type="text" class="form-control" ng-model="demographics.ethnicity">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Date of Birth</label>
+                                    <input name="race" type="date" class="form-control" ng-model="demographics.dobAsDate">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Disabled</label>
+                                    <select name="disabled" class="form-control input-sm" ng-model="demographics.disabled" ng-options="booleanToString(value) for value in [true, false]">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Gender</label>
+                                    <input name="gender" type="text" class="form-control" ng-model="demographics.gender">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Sexual Orientation</label>
+                                    <input name="sexualOrientation" type="text" class="form-control" ng-model="demographics.sexualOrientation">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Income Bracket</label>
+                                    <input name="incomeBracket" type="text" class="form-control" ng-model="demographics.incomeBracket">
+                                </div>
+                            </div>
 
-        <button class="btn btn-primary" ng-click="toggleEditingDemographics()">Edit Demographics</button>
-        <button class="btn btn-success" ng-click="updateDemographics()" ng-show="demographicPanel.editingDemographics">Submit</button>
-        <button class="btn btn-danger" ng-click="cancelUpdateDemographics()" ng-show="demographicPanel.editingDemographics">Cancel</button>
+                        </fieldset>
 
-        <div ng-if="demographicPanel.updateRequest.failure" class="alert alert-danger" role="alert">Failed to update demographics...</div>
+                    </form>
 
+                    <div ng-show="!demographicPanel.editingDemographics">
+                        <button class="btn btn-primary" ng-click="toggleEditingDemographics()">Edit Demographics</button>
+                    </div>
+                    <div ng-show="demographicPanel.editingDemographics">
+                        <button class="btn btn-success" ng-click="updateDemographics()">Submit</button>
+                        <button class="btn btn-danger" ng-click="cancelUpdateDemographics()">Cancel</button>
+                    </div>
+                    <div ng-if="demographicPanel.updateRequest.failure" class="alert alert-danger" role="alert">Failed to update demographics...</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

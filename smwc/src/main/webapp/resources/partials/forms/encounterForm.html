@@ -1,0 +1,52 @@
+<form name="formHolder.encounterForm" id="formHolder.encounterForm" novalidate>
+        <div class="row">
+            <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : formHolder.encounterForm.initiator.$invalid && !formHolder.encounterForm.initiator.$pristine }">
+                <label class="control-label">Initiator:</label>
+                    <select class="form-control input-small" name="initiator" ng-model="modelHolder.encounterModel.initiatorId" required>
+                        <option ng-repeat="initiator in initiators | removeItemById:contact.id" value="{{initiator.id}}">{{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
+                    </select>
+                <p ng-show="formHolder.encounterForm.initiator.$error.required && !formHolder.encounterForm.initiator.$pristine" class="help-block">An initiator is required</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : formHolder.encounterForm.jsDate.$invalid && !formHolder.encounterForm.jsDate.$pristine }">
+                <label class="control-label">Date</label>
+                    <input name="jsDate" type="date" class="form-control " ng-model="modelHolder.encounterModel.jsDate" required>
+                <p ng-show="formHolder.encounterForm.jsDate.$error.required && !formHolder.encounterForm.jsDate.$pristine" class="help-block">The encounter date is required</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : formHolder.encounterForm.assessment.$invalid && !formHolder.encounterForm.assessment.$pristine }">
+                <label class="control-label">Assessment</label>
+                    <select name="assessment" class="form-control input-small" ng-model="modelHolder.encounterModel.assessment" required>
+                        <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
+                    </select>
+                <p ng-show="formHolder.encounterForm.assessment.$error.required && !formHolder.encounterForm.assessment.$pristine" class="help-block">The assessment is required</p>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : formHolder.encounterForm.type.$invalid && !formHolder.encounterForm.type.$pristine }">
+                <label class="control-label">Type</label>
+                    <select name="type" class="form-control input-small" ng-model="modelHolder.encounterModel.type" required>
+                        <option ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
+                    </select>
+                <p ng-show="formHolder.encounterForm.type.$error.required && !formHolder.encounterForm.type.$pristine" class="help-block">The encounter type is required</p>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-3">
+                <label class="control-label">Notes</label>
+                    <textarea class="form-control" rows="3" cols="50" ng-model="modelHolder.encounterModel.notes" ></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-3">
+                <label class="control-label">Does this encounter require a follow up?</label>
+                    <select name="requiresFollowUp" class="form-control " required ng-model="modelHolder.encounterModel.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+                        <p ng-show="formHolder.encounterForm.requiresFollowUp.$error.required && !formHolder.encounterForm.requiresFollowUp.$pristine" class="help-block">This answer is required.</p>
+                    </select>
+            </div>
+        </div>
+</form>

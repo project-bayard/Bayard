@@ -1,102 +1,122 @@
 
 <div class="container-fluid">
-
-    <div ng-if="success" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
-    <div ng-if="success===false" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
-    <div class="page-header">
-        <h1>Contact Details</h1>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading" ng-click="hideBasicDetails=!hideBasicDetails">
-            <h3 class="panel-title">Basic Details</h3>
-        </div>
-        <div class="panel-body" ng-show="!hideBasicDetails">
-            <div class="smwc-form">
-                <div class="row">
-                    <div class="col-xs-6 form-group">
-                        <label>First Name
-                            <input type="text" class="form-control input-sm" ng-model="contact.firstName" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Street Address
-                            <input type="text" class="form-control input-sm" ng-model="contact.streetAddress" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Middle Name
-                            <input type="text" class="form-control input-sm" ng-model="contact.middleName" ng-readonly="!edit">
-                        </label>
-                    </div>
-
-                    <div class="col-xs-6 form-group">
-                        <label>Apartment Number
-                            <input type="text" class="form-control input-sm" ng-model="contact.aptNumber" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Last Name
-                            <input type="text" class="form-control input-sm" ng-model="contact.lastName" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>City
-                            <input type="text" class="form-control input-sm" ng-model="contact.city" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Assessment
-                            <input type="text" class="form-control input-sm" ng-model="contact.assessment" ng-readonly="true">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>State
-                            <input type="text" class="form-control input-sm" ng-model="contact.state" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Preferred Language
-                            <input type="text" class="form-control input-sm" ng-model="contact.language" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Zip Code
-                            <input type="text" class="form-control input-sm" ng-model="contact.zipCode" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-select="contact.initiator" ng-model="contact.initiator" ng-readonly="!edit"> This contact can initiate encounters
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Phone Number 1
-                            <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1" ng-readonly="!edit">
-                        </label>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-checked="contact.needsFollowUp" ng-model="contact.needsFollowUp" ng-readonly="!edit"> This contact needs a follow up
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-6 form-group">
-                        <label>Phone Number 2
-                            <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2" ng-readonly="!edit">
-                        </label>
-                    </div>
+    <div class="row">
+        <div class="col-xs-9">
+            <div ng-if="contactUpdated" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
+            <div ng-if="success===false" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
+            <div class="page-header">
+                <h1>Contact Details</h1>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="hideBasicDetails=!hideBasicDetails">
+                    <h3 class="panel-title">Basic Details</h3>
                 </div>
-                <div>
-                    <button class="btn btn-primary" ng-click="edit=!edit">Edit Basic Details</button>
-                    <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="edit">Submit</button>
+                <div class="panel-body" ng-show="!hideBasicDetails">
+                    <form id="contactDetailsForm" name="contactDetailsForm" novalidate>
+                        <fieldset ng-disabled="!editingBasicDetails">
+                            <div class="row">
+                                <div class=" col-xs-4 form-group required" ng-class="{ 'has-error' : newContactForm.firstName.$invalid && !newContactForm.firstName.$pristine }">
+                                    <label class="control-label">First Name</label>
+                                    <input name="firstName" type="text" class="form-control  " ng-model="contact.firstName" ng-maxlength="80" required>
+                                    <p ng-show="contactDetailsForm.firstName.$error.required && !contactDetailsForm.firstName.$pristine" class="help-block">A first name is required</p>
+                                    <p ng-show="contactDetailsForm.firstName.$error.maxlength" class="help-block">First name too long</p>
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Assessment</label>
+                                    <input type="text" class="form-control  " ng-model="contact.assessment" ng-disabled="true">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Middle Name</label>
+                                    <input type="text" class="form-control  " ng-model="contact.middleName">
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Street Address</label>
+                                    <input type="text" class="form-control  " ng-model="contact.streetAddress">
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Last Name</label>
+                                    <input type="text" class="form-control  " ng-model="contact.lastName">
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Apartment Number</label>
+                                    <input type="text" class="form-control  " ng-model="contact.aptNumber">
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Email</label>
+                                    <input name="email" type="email" class="form-control" ng-model="contact.email">
+                                    <p ng-show="contactDetailsForm.$error.email" class="help-block">Enter a valid email address</p>
+                                    </label>
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">City</label>
+                                    <input type="text" class="form-control  " ng-model="contact.city">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Preferred Language</label>
+                                    <input type="text" class="form-control  " ng-model="contact.language">
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">State</label>
+                                    <input type="text" class="form-control  " ui-mask="AA" ng-model="contact.state">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <div class="checkbox">
+                                        <label class="control-label">
+                                            <input type="checkbox" ng-select="contact.initiator" ng-model="contact.initiator"> This contact can initiate encounters
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Zip Code</label>
+                                    <input type="text" class="form-control  " ui-mask="99999" ng-model="contact.zipCode">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <div class="checkbox">
+                                        <label class="control-label">
+                                            <input type="checkbox" ng-checked="contact.needsFollowUp" ng-model="contact.needsFollowUp"> This contact needs a follow up
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Phone Number 1</label>
+                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber1">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4"></div>
+                                <div class="col-xs-4">
+                                    <label class="control-label">Phone Number 2</label>
+                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber2">
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div ng-show="!editingBasicDetails">
+                            <button class="btn btn-primary" ng-click="editingBasicDetails=true">Edit Basic Details</button>
+                        </div>
+                        <div ng-show="editingBasicDetails" >
+                            <button class="btn btn-success" ng-click="updateBasicDetails()" ng-disabled="contactDetailsForm.$invalid || contactDetailsForm.$pristine">Submit</button>
+                            <button class="btn btn-danger" ng-click="cancelUpdateBasicDetails()">Cancel</button>
+                        </div>
+                    </form>
+
                 </div>
             </div>
-
         </div>
-
     </div>
 
     <div ng-include src=" 'resources/partials/panels/demographicpanel.html' "></div>

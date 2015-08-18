@@ -9,7 +9,7 @@
             <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : newContactForm.firstName.$invalid && !newContactForm.firstName.$pristine }">
                 <label class="control-label">First Name</label>
                 <input name="firstName" type="text" class="form-control" ng-model="newContact.firstName" ng-maxlength="80" required>
-                <p ng-show="newContactForm.firstName.$error.required && !formHolder.newContactForm.firstName.$pristine" class="help-block">A first name is required</p>
+                <p ng-show="newContactForm.firstName.$error.required && !newContactForm.firstName.$pristine" class="help-block">A first name is required</p>
                 <p ng-show="newContactForm.firstName.$error.maxlength" class="help-block">First name too long</p>
             </div>
         </div>

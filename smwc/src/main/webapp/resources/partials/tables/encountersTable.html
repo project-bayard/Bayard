@@ -29,61 +29,44 @@
                             <h4 class="modal-title" id="encounterModalLabel">Encounter Details</h4>
                         </div>
                         <div class="modal-body">
-                            <div ng-show="!updatingEncounter">
+                            <div ng-show="!updatingEncounter" class="container-fluid">
                                 <h4>Initiator</h4>
-                                <p>{{encounterDetails.initiatorName}}</p>
-                                <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(encounterDetails.initiatorId)">View Details</button>
+                                <p>{{modelHolder.encounterModel.initiatorName}}</p>
+                                <button class="btn btn-md btn-info" data-dismiss="modal"  ng-click="viewDetails(modelHolder.encounterModel.initiatorId)">View Details</button>
                                 <hr>
                                 <h4>Type</h4>
-                                <p>{{encounterDetails.type}}</p>
+                                <p>{{modelHolder.encounterModel.type}}</p>
                                 <hr>
                                 <h4>Assessment</h4>
-                                <p>{{encounterDetails.assessment}}</p>
+                                <p>{{modelHolder.encounterModel.assessment}}</p>
                                 <hr>
                                 <h4>Notes</h4>
-                                <div>{{encounterDetails.notes}}</div>
+                                <div>{{modelHolder.encounterModel.notes}}</div>
                                 <hr>
                                 <h4>Date</h4>
-                                <div>{{encounterDetails.encounterDate}}</div>
+                                <div>{{modelHolder.encounterModel.encounterDate}}</div>
                                 <hr>
                                 <h4>Required Follow Up</h4>
-                                <div>{{booleanToString(encounterDetails.requiresFollowUp)}}</div>
+                                <div>{{booleanToString(modelHolder.encounterModel.requiresFollowUp)}}</div>
                                 <hr>
-                                <button class="btn btn-warning" ng-click="showUpdateEncounterForm()">Update Encounter</button>
-                                <button class="btn btn-danger" ng-click="deleteEncounter(encounterDetails.id)">Delete Encounter</button>
                             </div>
+                            <div ng-show="updatingEncounter" class="container-fluid">
+                                <div ng-include src=" 'resources/partials/forms/encounterFormModal.html' "></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
                             <div ng-show="updatingEncounter">
-                                <h4>Initiator</h4>
-                                <select class="form-control input-small" ng-model="encounterDetails.initiatorId">
-                                    <option ng-selected="encounterDetails.initiatorId == initiator.id" ng-repeat="initiator in initiators | removeItemById:contact.id" value="{{initiator.id}}">
-                                        {{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
-                                </select>
-                                <hr>
-                                <h4>Type</h4>
-                                <select class="form-control input-small" ng-model="encounterDetails.type">
-                                    <option ng-selected="encounterDetails.type == value" ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
-                                </select>
-                                <hr>
-                                <h4>Assessment</h4>
-                                    <select class="form-control input-small" ng-model="encounterDetails.assessment">
-                                        <option ng-selected="encounterDetails.assessment == value" ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
-                                    </select>
-                                <h4>Notes</h4>
-                                <textarea  rows="3" cols="50" ng-model="encounterDetails.notes" ></textarea>
-                                <hr>
-                                <h4>Date</h4>
-                                <input type="date"  ng-model="encounterDetails.jsDate">
-                                <hr>
-                                <h4>Requires Follow Up</h4>
-                                <select class="form-control input-sm" ng-model="encounterDetails.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]" ng-selected="newEncounterDetails.requiresFollowUp == value">
-                                </select>
-                                <hr>
-                                <button class="btn btn-success" ng-click="updateEncounter()">Done</button>
+                                <button class="btn btn-success" ng-click="updateEncounter()" ng-disabled="formHolder.encounterFormModal.$invalid">Done</button>
                                 <button class="btn btn-danger" ng-click="cancelUpdateEncounter()">Cancel</button>
+                            </div>
+                            <div ng-show="!updatingEncounter">
+                                <button class="btn btn-warning" ng-click="showUpdateEncounterForm()">Update Encounter</button>
+                                <button class="btn btn-danger" ng-click="deleteEncounter(modelHolder.encounterModel.id)">Delete Encounter</button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </td>
     </tr>

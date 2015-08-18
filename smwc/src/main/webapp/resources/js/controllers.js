@@ -73,7 +73,7 @@
         function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window) {
 
             var setup = function () {
-                $scope.edit = false;
+                $scope.editingBasicDetails = false;
                 $scope.success = null;
                 $scope.errorMessage = "";
                 $scope.addingEncounter = false;
@@ -84,7 +84,8 @@
                 $scope.newOrganization = {hidden: true};
                 $scope.addEvent = {hidden: true};
                 $scope.addCommittee = {hidden: true};
-                $scope.newEncounter = {};
+                $scope.modelHolder = {encounterModel : {},
+                                        organizationModel : {}};
                 $scope.showingDemographics = false;
                 $scope.demographicPanel = {
                     updateRequest: {success: false, failure: false},
@@ -123,20 +124,38 @@
                     console.log(err);
                 });
 
+                $scope.modelHolder = {};
+                $scope.formHolder = {};
 
             };
 
-            setup();
-
-            /*Basic details*/
-            $scope.updateBasicDetails = function () {
-
-                ContactService.update({id: $scope.contact.id}, $scope.contact, function (data) {
-                    //indicate success
-                    $scope.contactUpdated = true;
+            var establishBasicDetails = function(id) {
+                ContactService.find({id: id}, function (data) {
+                    $scope.contact = data;
                 }, function (err) {
                     console.log(err);
                 });
+            };
+
+            setup();
+            establishBasicDetails($routeParams.id);
+
+            /*Basic details*/
+            $scope.updateBasicDetails = function () {
+                ContactService.update({id: $scope.contact.id}, $scope.contact, function (data) {
+                    establishBasicDetails($scope.contact.id);
+                    $scope.contactUpdated = true;
+                    $timeout(function () {
+                        $scope.contactUpdated = false;
+                    }, 3000);
+                }, function (err) {
+                    console.log(err);
+                });
+            };
+
+            $scope.cancelUpdateBasicDetails = function() {
+                $scope.editingBasicDetails = false;
+                establishBasicDetails($scope.contact.id);
             };
 
 
@@ -149,8 +168,6 @@
             $scope.showEncounterForm = function () {
                 $scope.addingEncounter = !$scope.addingEncounter;
                 populateInitiatorList();
-
-
             };
 
             var populateInitiatorList = function () {
@@ -168,12 +185,12 @@
 
             $scope.addEncounter = function () {
 
-                $scope.newEncounter.encounterDate = DateFormatter.formatDate($scope.newEncounter.jsDate);
+                $scope.modelHolder.encounterModel.encounterDate = DateFormatter.formatDate($scope.modelHolder.encounterModel.jsDate);
 
-                ContactService.createEncounter({id: $scope.contact.id}, $scope.newEncounter, function (data) {
+                ContactService.createEncounter({id: $scope.contact.id}, $scope.modelHolder.encounterModel, function (data) {
                     ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
                         $scope.newEncounterRequestSuccess = true;
-                        $scope.newEncounter = {};
+                        $scope.modelHolder.encounterModel = {};
 
                         $timeout(function () {
                             $scope.newEncounterRequestSuccess = false;
@@ -205,6 +222,11 @@
                 });
             };
 
+            $scope.cancelAddEncounter = function() {
+                $scope.modelHolder.encounterModel = {};
+                $scope.addingEncounter = false;
+            };
+
             $scope.showUpdateEncounterForm = function () {
                 $scope.updatingEncounter = true;
                 populateInitiatorList();
@@ -229,13 +251,11 @@
 
             $scope.updateEncounter = function () {
 
-                $scope.encounterDetails.encounterDate = DateFormatter.formatDate($scope.encounterDetails.jsDate);
-                ContactService.updateEncounter({
-                    id: $scope.contact.id,
-                    entityId: $scope.encounterDetails.id
-                }, $scope.encounterDetails, function (succ) {
+                $scope.modelHolder.encounterModel.encounterDate = DateForbtter.formatDate($scope.modelHolder.encounterModel.jsDate);
+                ContactService.updateEncounter({id: $scope.contact.id, entityId: $scope.modelHolder.encounterModel.id}, $scope.modelHolder.encounterModel, function (succ) {
                     $scope.updatingEncounter = false;
                     ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
+                        $scope.modelHolder.encounterModel = {};
                         $scope.encountersTable = encounters;
                     }, function (err) {
                         console.log(err);
@@ -269,7 +289,7 @@
             $scope.viewEncounterDetails = function (encounter) {
 
                 ContactService.find({id: encounter.initiator.id}, function (initiator) {
-                    $scope.encounterDetails = createEncounterDetails(encounter, initiator);
+                    $scope.modelHolder.encounterModel = createEncounterDetails(encounter, initiator);
                 }, function (err) {
                     console.log(err);
                 });
@@ -397,8 +417,8 @@
 
             };
 
-            $scope.createAndAddToOrganization = function (organization) {
-                OrganizationService.create(organization, function (data) {
+            $scope.createAndAddToOrganization = function () {
+                OrganizationService.create($scope.modelHolder.organizationModel, function (data) {
                     //Add this contact to the newly-created Organization
                     ContactService.addToOrganization({id: $scope.contact.id}, {id: data.id}, function (data) {
                         //Refresh organizations the contact is now a member of
@@ -407,6 +427,7 @@
                             $scope.contact.organizations = data;
                             $scope.addOrganization.hidden = true;
                             $scope.newOrganization.hidden = true;
+                            $scope.modelHolder.organizationModel = {};
                         }, function (err) {
                             console.log(err);
                             $scope.organizationSuccess = false;
@@ -565,7 +586,7 @@
 
             /* MEMBERINFO */
 
-            $scope.checkIfMember = function () {
+            $scope.toggleMemberInfoPanel = function () {
                 $scope.memberInfoPanel.showingPanel = !$scope.memberInfoPanel.showingPanel;
 
                 if ($scope.contact.member == true) {
@@ -632,7 +653,9 @@
                 ContactService.getMemberInfo({id: $scope.contact.id}, function (data) {
                     $scope.memberInfo = data;
                     $scope.memberInfoPanel.editingMemberInfo = false;
-                    $scope.checkIfMember();
+                    if (!$scope.contact.member) {
+                        $scope.memberInfoPanel.showingMemberInfo = false;
+                    }
                 }, function (err) {
                     console.log(err);
                 });
