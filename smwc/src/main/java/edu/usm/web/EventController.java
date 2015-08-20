@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
@@ -30,32 +31,27 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteEvent(@PathVariable("id") String id) {
+    public Response deleteEvent(@PathVariable("id") String id) throws NullDomainReference{
         Event event = eventService.findById(id);
-        if (null == event) {
-            return new Response(null, Response.FAILURE, "Event with ID "+id+" does not exist.");
-        }
+
         try {
             eventService.delete(event);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error deleting Event with ID "+id);
+        } catch (NullDomainReference.NullEvent e) {
+            throw new NullDomainReference.NullEvent(id, e);
         }
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody EventDto eventDto) {
+    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody EventDto eventDto) throws NullDomainReference{
         Event event = eventService.findById(id);
-        if (null == event) {
-            return new Response(null, Response.FAILURE, "Event with ID "+id+" does not exist.");
-        }
 
         try {
             eventService.update(event, eventDto);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Event with ID "+id+".");
+        } catch (NullDomainReference.NullEvent e) {
+            throw new NullDomainReference.NullEvent(id, e);
         }
     }
 
@@ -64,25 +60,24 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView({Views.EventList.class})
     public Set<Event> getAllEvents() {
-        Set<Event> events = eventService.findAll();
-        return events;
+        return eventService.findAll();
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createEvent(@RequestBody EventDto eventDto) {
+    public Response createEvent(@RequestBody EventDto eventDto) throws NullDomainReference{
         Committee committee = null;
 
         if (null != eventDto.getCommitteeId() && !eventDto.getCommitteeId().isEmpty()) {
             committee = committeeService.findById(eventDto.getCommitteeId());
+            if (null == committee) {
+                throw new NullDomainReference.NullCommittee(eventDto.getCommitteeId());
+            }
         }
 
-        try {
-            String eventId = eventService.create(eventDto, committee);
-            return new Response(eventId,Response.SUCCESS,null);
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Unable to create event");
-        }
+        String eventId = eventService.create(eventDto, committee);
+        return new Response(eventId,Response.SUCCESS);
+
 
     }
 

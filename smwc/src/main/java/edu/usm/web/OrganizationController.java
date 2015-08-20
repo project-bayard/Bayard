@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Organization;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.Response;
 import edu.usm.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,28 +25,26 @@ public class OrganizationController {
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteOrganization(@PathVariable("id") String id) {
+    public Response deleteOrganization(@PathVariable("id") String id) throws NullDomainReference{
 
         Organization organization = organizationService.findById(id);
-        if (null == organization) {
-            return new Response(null, Response.FAILURE, "Organization with ID "+id+" does not exist.");
-        }
 
         try {
             organizationService.delete(organization);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error deleting Organization with ID "+id+".");
+        } catch (NullDomainReference e) {
+            throw new NullDomainReference.NullOrganization(id, e);
         }
 
     }
 
     @RequestMapping(method = RequestMethod.PUT, value="/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateOrganizationDetails(@PathVariable("id") String id, @RequestBody Organization organization) {
+    public Response updateOrganizationDetails(@PathVariable("id") String id, @RequestBody Organization organization) throws NullDomainReference{
         Organization fromDb = organizationService.findById(id);
+
         if (null == fromDb) {
-            return new Response(null, Response.FAILURE, "Organization with ID "+id+" does not exist.");
+            throw new NullDomainReference.NullOrganization(id);
         }
 
         //assumption that a RequestBody without members should be interpreted as an omission of the complete object graph
@@ -53,12 +52,9 @@ public class OrganizationController {
             organization.setMembers(fromDb.getMembers());
         }
 
-        try {
-            organizationService.update(organization);
-            return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Organization with ID "+id+".");
-        }
+        organizationService.update(organization);
+        return Response.successGeneric();
+
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
@@ -71,13 +67,9 @@ public class OrganizationController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public Response createOrganization(@RequestBody Organization organization) {
-        String id;
-        try {
-            id = organizationService.create(organization);
-            return new Response(id,Response.SUCCESS,null);
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Unable to create organization");
-        }
+        String id = organizationService.create(organization);
+        return new Response(id,Response.SUCCESS);
+
     }
 
     @ResponseStatus(HttpStatus.OK)

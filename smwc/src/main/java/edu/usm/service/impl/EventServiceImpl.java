@@ -3,6 +3,7 @@ package edu.usm.service.impl;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
@@ -43,6 +44,9 @@ public class EventServiceImpl extends BasicService implements EventService {
 
     @Override
     public Event findById(String id) {
+        if (null == id) {
+            return null;
+        }
         return eventDao.findOne(id);
     }
 
@@ -64,8 +68,20 @@ public class EventServiceImpl extends BasicService implements EventService {
         return event.getId();
     }
 
+    private void uncheckedDelete(Event event) {
+        try {
+            delete(event);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
-    public void delete(Event event) {
+    public void delete(Event event) throws NullDomainReference.NullEvent, NullDomainReference.NullContact {
+
+        if (null ==  event) {
+            throw new NullDomainReference.NullEvent();
+        }
 
         Set<Contact> attendees = new HashSet<>(event.getAttendees());
 
@@ -79,7 +95,7 @@ public class EventServiceImpl extends BasicService implements EventService {
     public void deleteAll() {
         logger.debug("Deleting all events!");
         Set<Event> events = findAll();
-        events.stream().forEach(this::delete);
+        events.stream().forEach(this::uncheckedDelete);
     }
 
     @Override
@@ -91,7 +107,12 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public void update(Event event, EventDto eventDto) {
+    public void update(Event event, EventDto eventDto) throws NullDomainReference.NullEvent{
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
         if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
             event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));
         }

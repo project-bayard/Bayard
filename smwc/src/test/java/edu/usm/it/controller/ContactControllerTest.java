@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
@@ -108,8 +109,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         String json = new ObjectMapper().writeValueAsString(contact);
 
         mockMvc.perform(post("/contacts").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .andExpect(status().isOk());
 
         Set<Contact> fromDb = contactService.findAll();
         assertEquals(fromDb.size(), 2);
@@ -139,9 +139,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         mockMvc.perform(put("/contacts/" + contact.getId())
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)))
-                .andExpect(jsonPath("$.id", is(contact.getId())));
+                .andExpect(status().isOk());
 
         Contact fromDb = contactService.findById(contact.getId());
         assertEquals(fromDb.getFirstName(),details.getFirstName());
@@ -232,7 +230,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(fromDb);
-        assertEquals(fromDb.getOrganizations().iterator().next().getId(),organization.getId());
+        assertEquals(fromDb.getOrganizations().iterator().next().getId(), organization.getId());
         assertNotNull(orgFromDb);
         assertEquals(orgFromDb.getMembers().iterator().next().getId(), contact.getId());
 
@@ -240,7 +238,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         /*Bad Contact Id*/
         mockMvc.perform(put("/contacts/" + "badId" + "/organizations")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andExpect(jsonPath("status", is("FAILURE")));
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 
 
         /*Bad org ID*/
@@ -248,7 +246,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         json = mapper.writeValueAsString(organizationIdDto);
         mockMvc.perform(put(path)
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andExpect(jsonPath("status", is("FAILURE")));
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
     }
 
     @Test
@@ -276,11 +274,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String orgID = organizationService.create(organization);
 
-        mockMvc.perform(delete("/contacts/" + id + "/organizations/"+orgID)
+        mockMvc.perform(delete("/contacts/" + id + "/organizations/" + orgID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -297,13 +294,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
-
+        mockMvc.perform(put("/contacts/" + id + "/encounters")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -319,22 +314,19 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters")
+        mockMvc.perform(put("/contacts/" + id + "/encounters")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
 
         Contact contactFromDb = contactService.findById(id);
         Encounter encounter = contactFromDb.getEncounters().first();
 
-        mockMvc.perform(delete("/contacts/"+id+"/encounters/"+encounter.getId())
+        mockMvc.perform(delete("/contacts/" + id + "/encounters/" + encounter.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
-
+                .andExpect(status().isOk());
 
         contactFromDb = contactService.findById(id);
         assertEquals(0, contactFromDb.getEncounters().size());
@@ -354,12 +346,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters")
+        mockMvc.perform(put("/contacts/" + id + "/encounters")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
 
         Contact contactFromDb = contactService.findById(id);
         Encounter encounterFromDb = contactFromDb.getEncounters().first();
@@ -373,12 +364,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters/"+encounterFromDb.getId())
+        mockMvc.perform(put("/contacts/" + id + "/encounters/" + encounterFromDb.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
 
         encounterFromDb = encounterService.findById(encounterFromDb.getId());
         assertEquals("Updated Notes", encounterFromDb.getNotes());
@@ -460,9 +450,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         mockMvc.perform(put("/contacts/" + id + "/demographics")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
-    }
+                .andExpect(status().isOk());}
 
     public void testRemoveContactFromCommittee () throws Exception {
         String id = contactService.create(contact);
@@ -523,12 +511,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String json = new ObjectMapper().writeValueAsString(newInfo);
 
-        mockMvc.perform(put("/contacts/"+contact.getId()+"/memberinfo")
+        mockMvc.perform(put("/contacts/" + contact.getId() + "/memberinfo")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
     }
 
     @Test

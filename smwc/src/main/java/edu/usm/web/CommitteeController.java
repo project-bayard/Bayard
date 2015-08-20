@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.Response;
 import edu.usm.service.CommitteeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,48 +34,36 @@ public class CommitteeController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
     public Response createCommittee(@RequestBody Committee committee) {
-        try {
-            String id = committeeService.create(committee);
-            return new Response(id, Response.SUCCESS, null);
-        } catch (AccessDeniedException e) {
-            return Response.unauthorized();
-        }
-
+        String id = committeeService.create(committee);
+        return new Response(id, Response.SUCCESS);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces={"application/json"})
-    public Response updateCommitteeDetails(@PathVariable("id") String id, @RequestBody Committee committee) {
+    public Response updateCommitteeDetails(@PathVariable("id") String id, @RequestBody Committee committee) throws NullDomainReference{
         Committee fromDb = committeeService.findById(id);
         if (null == fromDb) {
-            return new Response(null, Response.FAILURE, "Committee with ID "+id+" does not exist.");
+            throw new NullDomainReference.NullCommittee(id);
         }
 
         if (null == committee.getMembers()) {
             committee.setMembers(fromDb.getMembers());
         }
 
-        try {
-            committeeService.update(committee);
-            return Response.successGeneric();
-        } catch (AccessDeniedException e) {
-            return Response.unauthorized();
-        }
+        committeeService.update(committee);
+        return Response.successGeneric();
+
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces={"application/json"})
-    public Response deleteCommittee(@PathVariable("id") String id) {
+    public Response deleteCommittee(@PathVariable("id") String id) throws NullDomainReference {
         Committee committee = committeeService.findById(id);
-        if (null == committee) {
-            return new Response(null, Response.FAILURE, "Committee with ID "+id+" does not exist.");
-        }
-
         try {
             committeeService.delete(committee);
             return Response.successGeneric();
-        } catch (AccessDeniedException e) {
-            return Response.unauthorized();
+        } catch (NullDomainReference e) {
+            throw new NullDomainReference.NullCommittee(id, e);
         }
     }
 

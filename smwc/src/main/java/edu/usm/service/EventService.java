@@ -2,6 +2,7 @@ package edu.usm.service;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -25,7 +26,7 @@ public interface EventService {
     Set<Event> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Event event);
+    void delete(Event event) throws NullDomainReference.NullEvent, NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
@@ -34,5 +35,5 @@ public interface EventService {
     void update(Event event);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update(Event event, EventDto eventDto);
+    void update(Event event, EventDto eventDto) throws NullDomainReference.NullEvent;
 }

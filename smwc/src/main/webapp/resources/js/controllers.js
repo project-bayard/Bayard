@@ -402,15 +402,12 @@
 
                 ContactService.addToOrganization({id: $scope.contact.id}, {id: organization.id},
                     function (data) {
-                        if (data.status == 'SUCCESS') {
                             ContactService.getOrganizations({id: $scope.contact.id}, function (data) {
                                 $scope.contact.organizations = data
                             }, function (err) {
                                 console.log(err);
                             });
-                        } else {
-                            console.log(data.message)
-                        }
+
                     }, function (err) {
                         console.log(err);
                     });
@@ -493,15 +490,13 @@
 
                 ContactService.addToCommittee({id: $scope.contact.id}, {id: committee.id},
                     function (data) {
-                        if (data.status == 'SUCCESS') {
+
                             ContactService.getCommittees({id: $scope.contact.id}, function (data) {
                                 $scope.contact.committees = data
                             }, function (err) {
                                 console.log(err);
                             });
-                        } else {
-                            console.log(data.message)
-                        }
+
                     }, function (err) {
                         console.log(err);
                     });

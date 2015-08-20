@@ -96,7 +96,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         IdDto dto = new IdDto(id);
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+contact.getId()+"committees")
+        mockMvc.perform(put("/contacts/"+contact.getId()+"/committees")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 

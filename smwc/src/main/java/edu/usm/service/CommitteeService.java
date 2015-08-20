@@ -1,6 +1,7 @@
 package edu.usm.service;
 
 import edu.usm.domain.Committee;
+import edu.usm.domain.exception.NullDomainReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -17,7 +18,7 @@ public interface CommitteeService {
     Set<Committee> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete (Committee committee);
+    void delete (Committee committee) throws NullDomainReference ;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update (Committee committee);

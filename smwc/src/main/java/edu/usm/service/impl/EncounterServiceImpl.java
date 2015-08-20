@@ -3,6 +3,7 @@ package edu.usm.service.impl;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.repository.EncounterDao;
 import edu.usm.service.BasicService;
@@ -27,6 +28,9 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
 
     @Override
     public Encounter findById(String id) {
+        if (null == id) {
+            return null;
+        }
         return encounterDao.findOne(id);
     }
 
@@ -35,7 +39,12 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     }
 
     @Override
-    public void deleteEncounter(Encounter encounter) {
+    public void deleteEncounter(Encounter encounter) throws NullDomainReference.NullEncounter{
+
+        if (null == encounter) {
+            throw new NullDomainReference.NullEncounter();
+        }
+
         if (null != encounter.getContact()) {
             contactService.removeEncounter(encounter.getContact(), encounter);
         }
@@ -48,11 +57,28 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     }
 
     /*
+    * Java 8 streams require called methods to throw only subclasses of RuntimeException.
+     * This is a utility wrapper method deleteEncounter that converts the NullDomainReference
+     * To a RuntimeException
+    */
+    private void uncheckedDeleteEncounter(Encounter encounter) {
+        try {
+            deleteEncounter(encounter);
+        } catch (NullDomainReference.NullEncounter e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
     * Updates the core fields of the Encounter. If this is the Contact's most recent encounter,
     * will also update that Contact's needsFollowUp and assessment fields
     */
     @Override
-    public void updateEncounter(Encounter existingEncounter, EncounterDto dto) {
+    public void updateEncounter(Encounter existingEncounter, EncounterDto dto) throws NullDomainReference.NullEncounter, NullDomainReference.NullContact{
+
+        if (null == existingEncounter) {
+            throw new NullDomainReference.NullEncounter();
+        }
 
         if (null == dto) {
             encounterDao.save(existingEncounter);
@@ -60,6 +86,10 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         }
 
         Contact initiator = contactService.findById(dto.getInitiatorId());
+        if (null == initiator) {
+            throw new NullDomainReference.NullContact();
+        }
+
         existingEncounter.setAssessment(dto.getAssessment());
         existingEncounter.setNotes(dto.getNotes());
         existingEncounter.setEncounterDate(dto.getEncounterDate());
@@ -80,6 +110,6 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     @Override
     public void deleteAll() {
         Set<Encounter> encounters = findAll();
-        encounters.stream().forEach(this::deleteEncounter);
+        encounters.stream().forEach(this::uncheckedDeleteEncounter);
     }
 }

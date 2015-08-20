@@ -96,8 +96,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
         String body = new ObjectMapper().writeValueAsString(newUser);
 
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(body))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .andExpect(status().isCreated());
 
         User fromDb = userService.findByEmail(email);
         assertNotNull(fromDb);
@@ -110,8 +109,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
     @Test
     public void testDeleteUser() throws Exception {
         mockMvc.perform(delete("/users/" + userID))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .andExpect(status().isOk());
 
         User fromDb = userService.findById(userID);
         assertNull(fromDb);

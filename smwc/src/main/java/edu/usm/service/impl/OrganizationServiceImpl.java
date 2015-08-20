@@ -2,6 +2,7 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
@@ -32,7 +33,9 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     @Override
     public Organization findById(String id) {
-        logger.debug("Finding organization with ID: " + id);
+        if (null == id) {
+            return null;
+        }
         return organizationDao.findOne(id);
     }
 
@@ -43,9 +46,12 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public void delete(Organization organization) {
-        logger.debug("Deleting organization with ID: " + organization.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public void delete(Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
+
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
         updateLastModified(organization);
 
         /*Remove references to */
@@ -76,12 +82,20 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         return organization.getId();
     }
 
+    private void uncheckedDelete(Organization organization) {
+        try {
+            delete(organization);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void deleteAll() {
 
         logger.debug("Deleting all Organizations");
         logger.debug("Time: " + LocalDateTime.now());
         Set<Organization> organizations = findAll();
-        organizations.stream().forEach(this::delete);
+        organizations.stream().forEach(this::uncheckedDelete);
     }
 }

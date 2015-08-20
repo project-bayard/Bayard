@@ -5,6 +5,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
@@ -140,7 +141,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
     @Test
     @Transactional
-    public void testDelete () {
+    public void testDelete () throws NullDomainReference{
         contactService.create(contact);
         contactService.create(contact2);
 

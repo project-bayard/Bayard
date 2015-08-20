@@ -2,6 +2,7 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.CommitteeDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.CommitteeService;
@@ -30,7 +31,9 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     @Override
     public Committee findById(String id) {
-        logger.debug("Finding committee with ID: " + id);
+        if (null == id) {
+            return null;
+        }
         return committeeDao.findOne(id);
     }
 
@@ -41,7 +44,12 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
-    public void delete(Committee committee) {
+    public void delete(Committee committee) throws NullDomainReference {
+
+        if (null == committee) {
+            throw new NullDomainReference.NullCommittee();
+        }
+
         logger.debug("Deleting committe with ID: " + committee.getId());
         updateLastModified(committee);
         if (committee.getMembers() != null) {
@@ -61,14 +69,21 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     @Override
     public String create(Committee committee) {
-        logger.debug("Creating committee with ID: " + committee.getId());
         committeeDao.save(committee);
         return committee.getId();
+    }
+
+    private void uncheckedDelete(Committee c) {
+        try {
+            delete(c);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteAll() {
         Set<Committee> committees = findAll();
-        committees.stream().forEach(this::delete);
+        committees.stream().forEach(this::uncheckedDelete);
     }
 }

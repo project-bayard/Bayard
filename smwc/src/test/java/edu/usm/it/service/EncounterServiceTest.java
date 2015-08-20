@@ -4,6 +4,7 @@ import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.service.ContactService;
 import edu.usm.service.EncounterService;
@@ -58,7 +59,7 @@ public class EncounterServiceTest extends WebAppConfigurationAware {
     }
 
     @After
-    public void teardown() {
+    public void teardown() throws NullDomainReference{
         contactService.deleteAll();
         encounterService.deleteAll();
     }

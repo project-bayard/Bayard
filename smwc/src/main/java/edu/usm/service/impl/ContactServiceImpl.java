@@ -1,14 +1,17 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.*;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.repository.ContactDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,7 +35,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
     @Override
-    public void attendEvent(Contact contact, Event event) {
+    public void attendEvent(Contact contact, Event event) throws NullDomainReference.NullContact, NullDomainReference.NullEvent {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
         Set<Event> attendedEvents = contact.getAttendedEvents();
         Set<Contact> attendees = event.getAttendees();
 
@@ -54,8 +66,10 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
 
     @Override
-    public Contact findById(String id) {
-        logger.debug("Finding contact with ID: " + id);
+    public Contact findById(String id)  {
+        if (null == id) {
+            return null;
+        }
         return contactDao.findOne(id);
     }
 
@@ -66,9 +80,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void delete(Contact contact) {
-        logger.debug("Deleting contact " + contact.getId() );
-        logger.debug("Time: " + LocalDateTime.now());
+    public void delete(Contact contact) throws NullDomainReference {
 
         updateLastModified(contact);
 
@@ -123,12 +135,23 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         return contact.getId();
     }
 
+    /*
+    Satisfies Java 8 method stream expectations of exception type
+     */
+    private void uncheckedDelete(Contact contact) {
+        try {
+            delete(contact);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void deleteAll() {
 
         logger.debug("Deleting all contacts.");
         Set<Contact> contacts = findAll();
-        contacts.stream().forEach(this::delete);
+        contacts.stream().forEach(this::uncheckedDelete);
     }
 
     @Override
@@ -138,7 +161,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addContactToOrganization(Contact contact, Organization organization) {
+    public void addContactToOrganization(Contact contact, Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
         Set<Organization> organizations = contact.getOrganizations();
         Set<Contact> members = organization.getMembers();
 
@@ -159,7 +191,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
 
     @Override
-    public void removeContactFromOrganization(Contact contact, Organization organization) {
+    public void removeContactFromOrganization(Contact contact, Organization organization) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
         Set<Organization> organizations = contact.getOrganizations();
         Set<Contact> members = organization.getMembers();
 
@@ -174,7 +215,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
 
     @Override
-    public void addContactToCommittee(Contact contact, Committee committee) {
+    public void addContactToCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == committee) {
+            throw new NullDomainReference.NullCommittee();
+        }
+
         Set<Committee> committees = contact.getCommittees();
         Set<Contact> members = committee.getMembers();
 
@@ -194,7 +244,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void removeContactFromCommittee(Contact contact, Committee committee) {
+    public void removeContactFromCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == committee) {
+            throw new NullDomainReference.NullCommittee();
+        }
+
         Set<Committee> committees = contact.getCommittees();
         Set<Contact> members = committee.getMembers();
 
@@ -208,7 +267,12 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void updateBasicDetails(Contact contact, Contact details) {
+    public void updateBasicDetails(Contact contact, Contact details) throws NullDomainReference.NullContact {
+
+        if (null == contact || null == details) {
+            throw new NullDomainReference.NullContact();
+        }
+
         contact.setFirstName(details.getFirstName());
         contact.setMiddleName(details.getMiddleName());
         contact.setLastName(details.getLastName());
@@ -231,7 +295,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void unattendEvent(Contact contact, Event event) {
+    public void unattendEvent(Contact contact, Event event) throws NullDomainReference.NullContact, NullDomainReference.NullEvent {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
         if (contact.getAttendedEvents() != null) {
             contact.getAttendedEvents().remove(event);
             event.getAttendees().remove(contact);
@@ -241,7 +314,11 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void updateDemographicDetails(Contact contact, Contact details) {
+    public void updateDemographicDetails(Contact contact, Contact details) throws NullDomainReference.NullContact {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
 
         contact.setRace(details.getRace());
         contact.setEthnicity(details.getEthnicity());
@@ -255,7 +332,15 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) {
+    public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) throws NullDomainReference.NullContact {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == initiator) {
+            throw new NullDomainReference.NullContact();
+        }
 
         Encounter encounter = new Encounter();
         encounter.setEncounterDate(dto.getEncounterDate());
@@ -319,13 +404,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void updateMemberInfo(Contact contact, MemberInfo memberInfo) {
+    public void updateMemberInfo(Contact contact, MemberInfo memberInfo) throws NullDomainReference.NullContact{
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
         contact.setMemberInfo(memberInfo);
         update(contact);
     }
 
     @Override
-    public void updateAssessment(Contact contact, int assessment) {
+    public void updateAssessment(Contact contact, int assessment){
         contact.setAssessment(assessment);
         update(contact);
     }
