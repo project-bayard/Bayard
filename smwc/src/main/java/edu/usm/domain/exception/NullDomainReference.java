@@ -93,6 +93,21 @@ public abstract class NullDomainReference extends Exception {
         }
     }
 
+    public static class NullEncounterType extends NullDomainReference {
+
+        public NullEncounterType(String id) {
+            super(messageConstructor(EncounterType.class.getSimpleName(),id));
+        }
+
+        public NullEncounterType() {
+            super(messageConstructor(EncounterType.class.getSimpleName()));
+        }
+
+        public NullEncounterType(String id, Throwable throwable) {
+            super(messageConstructor(EncounterType.class.getSimpleName(),id),throwable);
+        }
+    }
+
     protected static String messageConstructor(String domainClass, String id) {
         return domainClass+" with id : "+id+" does not exist";
     }

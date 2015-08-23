@@ -1,9 +1,9 @@
 package edu.usm.service.impl;
 
-import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.domain.EncounterType;
 import edu.usm.dto.EncounterDto;
 import edu.usm.repository.EncounterDao;
 import edu.usm.service.BasicService;
@@ -74,7 +74,8 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     * will also update that Contact's needsFollowUp and assessment fields
     */
     @Override
-    public void updateEncounter(Encounter existingEncounter, EncounterDto dto) throws NullDomainReference.NullEncounter, NullDomainReference.NullContact{
+    public void updateEncounter(Encounter existingEncounter,EncounterType encounterType,EncounterDto dto)
+            throws NullDomainReference.NullEncounter, NullDomainReference.NullContact, NullDomainReference.NullEncounterType{
 
         if (null == existingEncounter) {
             throw new NullDomainReference.NullEncounter();
@@ -85,6 +86,7 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
             return;
         }
 
+
         Contact initiator = contactService.findById(dto.getInitiatorId());
         if (null == initiator) {
             throw new NullDomainReference.NullContact();
@@ -93,9 +95,14 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         existingEncounter.setAssessment(dto.getAssessment());
         existingEncounter.setNotes(dto.getNotes());
         existingEncounter.setEncounterDate(dto.getEncounterDate());
-        existingEncounter.setType(dto.getType());
         existingEncounter.setInitiator(initiator);
         existingEncounter.setRequiresFollowUp(dto.requiresFollowUp());
+
+         if (encounterType != null) {
+            existingEncounter.setType(encounterType.getName());
+        }
+
+
         encounterDao.save(existingEncounter);
 
         Contact contact = existingEncounter.getContact();

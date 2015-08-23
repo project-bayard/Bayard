@@ -117,6 +117,13 @@ INSERT INTO contact_organization (contact_id, org_id) VALUES ('4028bb834eb7d6090
 -- Data for Name: donation; Type: TABLE DATA; Schema: public; Owner: smwc_postgres
 --
 
+--
+-- EncounterType
+--
+INSERT INTO ENCOUNTER_TYPE (id, created, deleted, lastmodified,name) VALUES ('4028cb834eb7d609014eb886cf3a0015', '2015-07-22T21:28:39.466', false, '2015-07-22T21:28:39.466', 'Call');
+INSERT INTO ENCOUNTER_TYPE (id, created, deleted, lastmodified,name) VALUES ('4028qb834eb7d609014eb886cf3a0015', '2015-07-22T21:28:39.466', false, '2015-07-22T21:28:39.466', 'Walk in');
+INSERT INTO ENCOUNTER_TYPE (id, created, deleted, lastmodified,name) VALUES ('4028nb834eb7d609014eb886cf3a0015', '2015-07-22T21:28:39.466', false, '2015-07-22T21:28:39.466', 'Other');
+
 
 
 --
@@ -147,7 +154,7 @@ SELECT pg_catalog.setval('hibernate_sequence', 1, true);
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: smwc_postgres
 --
 
-INSERT INTO users (id, email, firstname, lastname, passwordhash, role) VALUES (1, 'superuser@email.com', 'first', 'last', '$2a$10$gX9J1R193HlxRUQJu5K7VemGzd8OXOF6q137yAM/0FO0Rmb9Z6Nf2', 'ROLE_SUPERUSER');
+--INSERT INTO users (id, email, firstname, lastname, passwordhash, role) VALUES (1, 'superuser@email.com', 'first', 'last', '$2a$10$gX9J1R193HlxRUQJu5K7VemGzd8OXOF6q137yAM/0FO0Rmb9Z6Nf2', 'ROLE_SUPERUSER');
 
 
 --

@@ -1,9 +1,9 @@
 package edu.usm.it.service;
 
-import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.EncounterType;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
@@ -101,7 +101,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
 
         Set<Contact> contacts = contactService.findAll();
-        assertEquals(contacts.size(),2);
+        assertEquals(contacts.size(), 2);
         assertTrue(contacts.contains(contact));
         assertTrue(contacts.contains(contact2));
 
@@ -147,8 +147,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact,organization);
-        contactService.addContactToOrganization(contact2,organization);
+        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact2, organization);
 
         contactService.delete(contact);
 
@@ -167,7 +167,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
         organizationService.create(organization);
-        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact, organization);
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
@@ -243,11 +243,12 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         String initiatorId = contactService.create(contact2);
 
         EncounterDto dto = new EncounterDto();
-        dto.setType("CALL");
         dto.setEncounterDate("2012-01-01");
         dto.setNotes("Notes!");
 
-        contactService.addEncounter(contact, contact2, dto);
+        EncounterType encounterType = new EncounterType("CALL");
+
+        contactService.addEncounter(contact, contact2, encounterType, dto);
 
         Contact fromDb = contactService.findById(contact.getId());
 
@@ -269,31 +270,32 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.create(contact2);
 
         EncounterDto firstEncounter = new EncounterDto();
-        firstEncounter.setType("CALL");
         firstEncounter.setEncounterDate("2014-01-01");
         firstEncounter.setNotes("Notes!");
         firstEncounter.setAssessment(10);
         firstEncounter.setRequiresFollowUp(false);
 
-        contactService.addEncounter(contact, contact2, firstEncounter);
+        EncounterType encounterType = new EncounterType("CALL");
+
+
+        contactService.addEncounter(contact, contact2, encounterType, firstEncounter);
 
         EncounterDto secondEncounter = new EncounterDto();
         int mostRecentAssessment = 5;
         boolean mostRecentFollowUpIndicator = true;
-        secondEncounter.setType("OTHER");
         secondEncounter.setEncounterDate("2015-01-01");
         secondEncounter.setAssessment(mostRecentAssessment);
         secondEncounter.setNotes("More notes!");
         secondEncounter.setRequiresFollowUp(mostRecentFollowUpIndicator);
 
-        contactService.addEncounter(contact, contact2, secondEncounter);
+        contactService.addEncounter(contact, contact2, encounterType, secondEncounter);
 
         EncounterDto thirdEncounter = new EncounterDto();
         thirdEncounter.setEncounterDate("2013-01-01");
         thirdEncounter.setRequiresFollowUp(false);
         thirdEncounter.setAssessment(7);
 
-        contactService.addEncounter(contact, contact2, thirdEncounter);
+        contactService.addEncounter(contact, contact2,encounterType, thirdEncounter);
 
         Contact fromDb = contactService.findById(id);
         assertEquals(mostRecentAssessment, fromDb.getAssessment());

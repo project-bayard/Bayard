@@ -7,7 +7,6 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
-import edu.usm.dto.Response;
 import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
@@ -54,10 +53,14 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Autowired
     DateFormatConfig dateFormatConfig;
 
+    @Autowired
+    EncounterTypeService encounterTypeService;
+
 
     private Contact contact;
     private Contact initiator;
     private Event event;
+    private EncounterType encounterType;
 
     @Before
     public void setup() {
@@ -92,6 +95,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         event.setLocation("Test event location");
         event.setDateHeld(dateFormatConfig.formatDomainDate(LocalDate.of(2015, 01, 01)));
         event.setNotes("Test event notes");
+
+        encounterType = new EncounterType();
+        encounterType.setName("Name");
+        encounterTypeService.create(encounterType);
     }
 
     @After
@@ -100,6 +107,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         organizationService.deleteAll();
         contactService.deleteAll();
         eventService.deleteAll();
+        encounterTypeService.deleteAll();
     }
 
 
@@ -289,7 +297,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
         dto.setAssessment(9);
-        dto.setType("Call");
+        dto.setType(encounterType.getId());
         dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
@@ -309,7 +317,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
         dto.setAssessment(9);
-        dto.setType("Call");
+        dto.setType(encounterType.getId());
         dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
@@ -341,7 +349,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
         dto.setAssessment(9);
-        dto.setType("Call");
+        dto.setType(encounterType.getId());
         dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
@@ -359,7 +367,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         dto = new EncounterDto();
         dto.setAssessment(5);
         dto.setNotes("Updated Notes");
-        dto.setType("Other");
+        dto.setType(encounterType.getId());
         dto.setInitiatorId(newInitiatorId);
 
         json = new ObjectMapper().writeValueAsString(dto);

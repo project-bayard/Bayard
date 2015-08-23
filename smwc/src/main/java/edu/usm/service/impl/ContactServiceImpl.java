@@ -111,7 +111,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getEncountersInitiated() != null) {
             for (Encounter encounter : contact.getEncountersInitiated()) {
                 encounter.setInitiator(null);
-                encounterService.updateEncounter(encounter, null);
+                encounterService.updateEncounter(encounter,null, null);
             }
         }
 
@@ -331,8 +331,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         update(contact);
     }
 
-    @Override
-    public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) throws NullDomainReference.NullContact {
+
+    public void addEncounter(Contact contact, Contact initiator, EncounterType encounterType, EncounterDto dto) throws NullDomainReference.NullContact, NullDomainReference.NullEncounterType {
 
         if (null == contact) {
             throw new NullDomainReference.NullContact();
@@ -342,12 +342,15 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             throw new NullDomainReference.NullContact();
         }
 
+        if (null == encounterType) {
+            throw new NullDomainReference.NullEncounterType();
+        }
         Encounter encounter = new Encounter();
         encounter.setEncounterDate(dto.getEncounterDate());
         encounter.setContact(contact);
         encounter.setInitiator(initiator);
         encounter.setNotes(dto.getNotes());
-        encounter.setType(dto.getType());
+        encounter.setType(encounterType.getName());
         encounter.setAssessment(dto.getAssessment());
         encounter.setRequiresFollowUp(dto.requiresFollowUp());
 

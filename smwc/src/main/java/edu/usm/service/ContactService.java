@@ -56,7 +56,8 @@ public interface ContactService {
     void updateDemographicDetails(Contact contact, Contact details) throws NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addEncounter (Contact contact, Contact initiator, EncounterDto dto) throws NullDomainReference.NullContact;
+    void addEncounter (Contact contact, Contact initiator,EncounterType encounterType, EncounterDto dto)
+            throws NullDomainReference.NullContact, NullDomainReference.NullEncounterType;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateMemberInfo(Contact contact, MemberInfo memberInfo) throws NullDomainReference.NullContact;

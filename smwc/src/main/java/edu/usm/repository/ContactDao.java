@@ -15,7 +15,6 @@ import java.util.HashSet;
 public interface ContactDao extends CrudRepository<Contact, String> {
 
     @Override
-
     HashSet<Contact> findAll();
 
     @Query("select c from contact as c where initiator = 'true'")

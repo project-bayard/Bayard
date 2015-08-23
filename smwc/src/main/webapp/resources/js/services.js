@@ -227,5 +227,30 @@
             }
         });
     }]);
+    services.factory('EncounterTypeService',[ '$resource', function ($resource) {
+        return $resource('../encounterTypes/:id', {id : '@id'}, {
+
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id :"@id"
+                }
+            }
+
+        });
+    }]);
 
 }());

@@ -30,7 +30,8 @@ import org.junit.runners.Suite;
         EventControllerTest.class,
         CommitteeControllerTest.class,
         UserControllerTest.class,
-        EncounterServiceTest.class
+        EncounterServiceTest.class,
+        EncounterTypeControllerTest.class
 })
 public class TestSuite {
 }

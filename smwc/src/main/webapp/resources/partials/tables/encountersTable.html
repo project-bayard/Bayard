@@ -57,6 +57,7 @@
                         <div class="modal-footer">
                             <div ng-show="updatingEncounter">
                                 <button class="btn btn-success" ng-click="updateEncounter()" ng-disabled="formHolder.encounterFormModal.$invalid">Done</button>
+
                                 <button class="btn btn-danger" ng-click="cancelUpdateEncounter()">Cancel</button>
                             </div>
                             <div ng-show="!updatingEncounter">

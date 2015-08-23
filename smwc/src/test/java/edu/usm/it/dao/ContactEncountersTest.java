@@ -48,7 +48,9 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
         encounter.setContact(contact);
         encounter.setEncounterDate(LocalDate.now().toString());
         encounter.setNotes("Notes");
-        encounter.setType(EncounterType.EVENT);
+
+        EncounterType encounterType = new EncounterType("CALL");
+        encounter.setType(encounterType.getName());
 
 
 

@@ -46,6 +46,10 @@
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'
             })
+            .when('/encountertypes', {
+                templateUrl: 'resources/partials/encounterTypes.html',
+                controller: 'EncounterTypeCtrl'
+            })
             .otherwise({redirectTo: '/'});
 
 

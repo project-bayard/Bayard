@@ -5,6 +5,8 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.domain.EncounterType;
+
 import edu.usm.dto.EncounterDto;
 import edu.usm.service.ContactService;
 import edu.usm.service.EncounterService;
@@ -15,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.SortedSet;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
@@ -77,14 +78,16 @@ public class EncounterServiceTest extends WebAppConfigurationAware {
         dto.setInitiatorId(id2);
         dto.setType("Call");
         contact = contactService.findById(id1);
-        contactService.addEncounter(contact, contactService.findById(id2), dto);
+        EncounterType encounterType = new EncounterType("CALL");
+
+        contactService.addEncounter(contact, contactService.findById(id2),encounterType, dto);
         contact = contactService.findById(id1);
         assertNotNull(contact.getEncounters());
         assertTrue(contact.needsFollowUp());
 
         Encounter fromDb = contact.getEncounters().first();
         dto.setRequiresFollowUp(false);
-        encounterService.updateEncounter(fromDb, dto);
+        encounterService.updateEncounter(fromDb,null, dto);
         contact = contactService.findById(id1);
         assertFalse(contact.needsFollowUp());
 

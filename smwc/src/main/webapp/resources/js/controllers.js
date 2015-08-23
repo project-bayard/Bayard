@@ -69,8 +69,8 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope', '$routeParams', 'ContactService', '$timeout', '$location', 'OrganizationService',
-        'EventService', 'CommitteeService', 'DateFormatter', '$window',
-        function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window) {
+        'EventService', 'CommitteeService', 'DateFormatter', '$window','EncounterTypeService',
+        function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window, EncounterTypeService) {
 
             var setup = function () {
                 $scope.editingBasicDetails = false;
@@ -114,13 +114,9 @@
                 //TODO: decouple this knowledge
                 $scope.assessmentRange = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-                //TODO: decouple this knowledge
-                $scope.encounterTypes = ["Call", "Other"];
-
-
-                ContactService.find({id: $routeParams.id}, function (data) {
+                ContactService.find({id : $routeParams.id}, function(data) {
                     $scope.contact = data;
-                }, function (err) {
+                }, function(err) {
                     console.log(err);
                 });
 
@@ -167,10 +163,11 @@
             /*Encounters*/
             $scope.showEncounterForm = function () {
                 $scope.addingEncounter = !$scope.addingEncounter;
-                populateInitiatorList();
+                populateInitiatorAndEncounterTypeLists();
+
             };
 
-            var populateInitiatorList = function () {
+            var populateInitiatorAndEncounterTypeLists = function () {
                 if ($scope.initiators == null) {
 
                     ContactService.getInitiators({}, function (data) {
@@ -179,6 +176,15 @@
                     }, function (err) {
                         console.log(err);
                     });
+                }
+
+                if ($scope.encounterTypes == null) {
+                    EncounterTypeService.findAll({}, function (data) {
+                        $scope.encounterTypes = data;
+                    }, function (err) {
+                        console.log(err);
+                    });
+
                 }
             };
 
@@ -229,7 +235,7 @@
 
             $scope.showUpdateEncounterForm = function () {
                 $scope.updatingEncounter = true;
-                populateInitiatorList();
+                populateInitiatorAndEncounterTypeLists();
             };
 
             $scope.deleteEncounter = function (encounterId) {
@@ -250,8 +256,7 @@
             };
 
             $scope.updateEncounter = function () {
-
-                $scope.modelHolder.encounterModel.encounterDate = DateForbtter.formatDate($scope.modelHolder.encounterModel.jsDate);
+                $scope.modelHolder.encounterModel.encounterDate = DateFormatter.formatDate($scope.modelHolder.encounterModel.jsDate);
                 ContactService.updateEncounter({id: $scope.contact.id, entityId: $scope.modelHolder.encounterModel.id}, $scope.modelHolder.encounterModel, function (succ) {
                     $scope.updatingEncounter = false;
                     ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
@@ -270,8 +275,8 @@
                 }, function (err) {
                     console.log(err);
                 })
-
             };
+
 
             $scope.cancelUpdateEncounter = function () {
                 $scope.updatingEncounter = false;
@@ -993,6 +998,46 @@
                 }
             });
         };
+    }]);
+
+
+    controllers.controller ('EncounterTypeCtrl',['$scope', 'EncounterTypeService', function($scope, EncounterTypeService){
+
+        $scope.addEncounterType = {};
+        var setup = function () {
+            EncounterTypeService.findAll({}, function(data) {
+                $scope.encounterTypes = data;
+            }, function(err) {
+                console.log(err);
+            });
+
+            $scope.addEncounterType.hidden = true;
+        };
+
+        setup();
+
+
+        $scope.createEncounterType = function(name) {
+            var encounterType = {name : name};
+            EncounterTypeService.create( encounterType, function(data) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            });
+
+        };
+
+        $scope.deleteEncounterType = function(encounterType) {
+
+            EncounterTypeService.delete({id : encounterType.id}, function() {
+                setup();
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+
+
     }]);
 }());
 

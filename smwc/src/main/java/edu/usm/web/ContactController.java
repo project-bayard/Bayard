@@ -40,6 +40,9 @@ public class ContactController {
     @Autowired
     private EncounterService encounterService;
 
+    @Autowired
+    private EncounterTypeService encounterTypeService;
+
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
@@ -146,16 +149,23 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters/{encounterId}")
-    public Response updateEncounter(@PathVariable("id") String id, @PathVariable("encounterId") String encounterId, @RequestBody EncounterDto encounterDto) throws NullDomainReference, InvalidApiRequestException{
+    public Response updateEncounter(@PathVariable("id") String id, @PathVariable("encounterId") String encounterId, @RequestBody EncounterDto encounterDto)
+            throws NullDomainReference, InvalidApiRequestException{
         Contact contact = contactService.findById(id);
         Encounter encounter = encounterService.findById(encounterId);
+        EncounterType encounterType = encounterTypeService.findById(encounterDto.getType());
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact(id);
+        }
 
         if (!contact.getId().equals(encounter.getContact().getId())) {
             throw new InvalidApiRequestException("The encounter with id "+encounterId+" does not belong to contact with id "+id);
         }
 
+
         try {
-            encounterService.updateEncounter(encounter, encounterDto);
+            encounterService.updateEncounter(encounter, encounterType, encounterDto);
             return Response.successGeneric();
         } catch (NullDomainReference.NullEncounter e) {
             throw new NullDomainReference.NullEncounter(encounterId, e);
@@ -169,15 +179,15 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters")
     public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) throws NullDomainReference{
         Contact contact = contactService.findById(id);
+        EncounterType encounterType = encounterTypeService.findById(encounterDto.getType());
         Contact initiator = contactService.findById(encounterDto.getInitiatorId());
 
         try {
-            contactService.addEncounter(contact, initiator, encounterDto);
+            contactService.addEncounter(contact, initiator,encounterType, encounterDto);
             return Response.successGeneric();
         } catch (NullDomainReference.NullContact e) {
             throw new NullDomainReference.NullContact(id+" or "+encounterDto.getInitiatorId());
         }
-
     }
 
     @ResponseStatus(HttpStatus.OK)
