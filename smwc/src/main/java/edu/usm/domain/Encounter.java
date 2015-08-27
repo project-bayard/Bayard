@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.config.DateFormatConfig;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,11 +16,13 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     public static final int DEFAULT_ASSESSMENT = 0;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @NotNull
     @JoinColumn(name = "contact_id")
     @JsonView(Views.ContactEncounterDetails.class)
     private Contact contact;
 
     @Column
+    @NotNull
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String encounterDate;
 
@@ -37,6 +40,7 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     private int assessment;
 
     @Column
+    @NotNull
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String type;
 

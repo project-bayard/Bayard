@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.Response;
 import edu.usm.service.CommitteeService;
@@ -33,14 +34,14 @@ public class CommitteeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
-    public Response createCommittee(@RequestBody Committee committee) {
+    public Response createCommittee(@RequestBody Committee committee) throws ConstraintViolation{
         String id = committeeService.create(committee);
         return new Response(id, Response.SUCCESS);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces={"application/json"})
-    public Response updateCommitteeDetails(@PathVariable("id") String id, @RequestBody Committee committee) throws NullDomainReference{
+    public Response updateCommitteeDetails(@PathVariable("id") String id, @RequestBody Committee committee) throws ConstraintViolation, NullDomainReference{
         Committee fromDb = committeeService.findById(id);
         if (null == fromDb) {
             throw new NullDomainReference.NullCommittee(id);
@@ -57,7 +58,7 @@ public class CommitteeController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces={"application/json"})
-    public Response deleteCommittee(@PathVariable("id") String id) throws NullDomainReference {
+    public Response deleteCommittee(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference {
         Committee committee = committeeService.findById(id);
         try {
             committeeService.delete(committee);

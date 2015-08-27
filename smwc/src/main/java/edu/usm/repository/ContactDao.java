@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by scottkimball on 2/22/15.
@@ -19,4 +20,6 @@ public interface ContactDao extends CrudRepository<Contact, String> {
 
     @Query("select c from contact as c where initiator = 'true'")
     HashSet<Contact> findAllInitiators();
+
+    Set<Contact> findByFirstName(String firstName);
 }

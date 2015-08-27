@@ -2,6 +2,7 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.domain.EncounterType;
 import edu.usm.dto.EncounterDto;
@@ -49,11 +50,6 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
             contactService.removeEncounter(encounter.getContact(), encounter);
         }
 
-        if (null != encounter.getInitiator()) {
-            contactService.removeInitiator(encounter.getInitiator(), encounter);
-        }
-
-        encounterDao.delete(encounter);
     }
 
     /*
@@ -87,10 +83,18 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         }
 
 
+        boolean sameInitiator = null != existingEncounter.getInitiator() && existingEncounter.getInitiator().getId().equalsIgnoreCase(dto.getInitiatorId());
+        if (!sameInitiator) {
+            contactService.removeInitiator(existingEncounter.getInitiator(), existingEncounter);
+        }
+
         Contact initiator = contactService.findById(dto.getInitiatorId());
         if (null == initiator) {
             throw new NullDomainReference.NullContact();
         }
+
+        Contact contact = existingEncounter.getContact();
+        contact.getEncounters().remove(existingEncounter);
 
         existingEncounter.setAssessment(dto.getAssessment());
         existingEncounter.setNotes(dto.getNotes());
@@ -98,14 +102,12 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         existingEncounter.setInitiator(initiator);
         existingEncounter.setRequiresFollowUp(dto.requiresFollowUp());
 
+        contact.getEncounters().add(existingEncounter);
+
          if (encounterType != null) {
             existingEncounter.setType(encounterType.getName());
         }
 
-
-        encounterDao.save(existingEncounter);
-
-        Contact contact = existingEncounter.getContact();
         if (existingEncounter == contact.getEncounters().first()) {
             contactService.updateNeedsFollowUp(contact, existingEncounter.requiresFollowUp());
         }

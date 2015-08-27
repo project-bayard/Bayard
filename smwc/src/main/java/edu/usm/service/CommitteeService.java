@@ -1,9 +1,11 @@
 package edu.usm.service;
 
 import edu.usm.domain.Committee;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import javax.validation.constraints.Null;
 import java.util.Set;
 
 /**
@@ -21,10 +23,10 @@ public interface CommitteeService {
     void delete (Committee committee) throws NullDomainReference ;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update (Committee committee);
+    void update (Committee committee) throws NullDomainReference, ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    String create (Committee committee);
+    String create (Committee committee) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

@@ -1,6 +1,7 @@
 package edu.usm.service;
 
 import edu.usm.domain.Encounter;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.domain.EncounterType;
 import edu.usm.dto.EncounterDto;

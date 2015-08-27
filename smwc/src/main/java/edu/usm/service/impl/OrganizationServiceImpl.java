@@ -2,6 +2,8 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
@@ -66,20 +68,28 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public void update(Organization organization) {
-        logger.debug("Updating organization with ID: " + organization.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
+        validateOrganization(organization);
         updateLastModified(organization);
         organizationDao.save(organization);
     }
 
 
     @Override
-    public String create(Organization organization) {
-        logger.debug("Creating organization with ID: " + organization.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public String create(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
+        validateOrganization(organization);
         organizationDao.save(organization);
         return organization.getId();
+    }
+
+    private void validateOrganization(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
+        if (null == organization.getName()) {
+            throw new ConstraintViolation(ConstraintMessage.ORGANIZATION_REQUIRED_NAME);
+        }
     }
 
     private void uncheckedDelete(Organization organization) {

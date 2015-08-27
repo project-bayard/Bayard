@@ -6,6 +6,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.service.CommitteeService;
@@ -61,7 +62,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         return event;
     }
 
-    private void persistDummyEvent() throws NullDomainReference{
+    private void persistDummyEvent() throws NullDomainReference, ConstraintViolation{
         //Attendee
         Contact attendee = new Contact();
         attendee.setFirstName("Test");

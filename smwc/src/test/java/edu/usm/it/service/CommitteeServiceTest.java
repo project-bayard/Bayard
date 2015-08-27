@@ -3,11 +3,13 @@ package edu.usm.it.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
@@ -74,7 +76,7 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         Committee orgFromDb = committeeService.findById(committee.getId());
 
         assertNotNull(orgFromDb);
-        assertEquals(orgFromDb.getMembers().size(),2);
+        assertEquals(orgFromDb.getMembers().size(), 2);
     }
 
     @Test
@@ -100,5 +102,13 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         assertEquals(contactFromDb.getCommittees().size(), 0);
 
     }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateCommitteeNullName() throws ConstraintViolation {
+        committee.setName(null);
+        committeeService.create(committee);
+    }
+
+
 
 }

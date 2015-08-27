@@ -1,7 +1,9 @@
 package edu.usm.service;
 
 import edu.usm.domain.Committee;
+import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,23 +19,23 @@ public interface EventService {
     Event findById(String id);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    String create (Event event);
+    String create (Event event) throws ConstraintViolation, NullDomainReference.NullEvent;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    String create (EventDto dto, Committee committee);
+    String create (EventDto dto, Committee committee) throws ConstraintViolation, NullDomainReference.NullEvent;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Event> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Event event) throws NullDomainReference.NullEvent, NullDomainReference.NullContact;
+    void delete(Event event) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update(Event event);
+    void update(Event event) throws ConstraintViolation, NullDomainReference.NullEvent;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update(Event event, EventDto eventDto) throws NullDomainReference.NullEvent;
+    void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent;
 }

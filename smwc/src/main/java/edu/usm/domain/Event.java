@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -12,6 +14,8 @@ import java.util.Set;
 public class Event extends BasicEntity  implements Serializable {
 
     @Column
+    @NotNull
+    @Size(min = 1)
     @JsonView({Views.EventList.class})
     private String name;
 
@@ -38,6 +42,7 @@ public class Event extends BasicEntity  implements Serializable {
     private Set<Contact> attendees;
 
     @Column
+    @NotNull
     @JsonView({Views.EventList.class})
     private String dateHeld;
 

@@ -2,6 +2,8 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.CommitteeDao;
 import edu.usm.service.BasicService;
@@ -43,6 +45,14 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         return (Set<Committee>) committeeDao.findAll();
     }
 
+    private void validateFields(Committee committee) throws NullDomainReference, ConstraintViolation{
+        if (null == committee) {
+            throw new NullDomainReference.NullCommittee();
+        } else if (null == committee.getName()) {
+            throw new ConstraintViolation(ConstraintMessage.COMMITTEE_REQUIRED_NAME);
+        }
+    }
+
     @Override
     public void delete(Committee committee) throws NullDomainReference {
 
@@ -61,14 +71,21 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
-    public void update(Committee committee) {
-        logger.debug("Updating Committee with ID: " + committee.getId());
+    public void update(Committee committee) throws NullDomainReference, ConstraintViolation{
+
+        validateFields(committee);
+
         updateLastModified(committee);
         committeeDao.save(committee);
     }
 
     @Override
-    public String create(Committee committee) {
+    public String create(Committee committee) throws ConstraintViolation {
+
+        if (null == committee.getName()) {
+            throw new ConstraintViolation(ConstraintMessage.COMMITTEE_REQUIRED_NAME);
+        }
+
         committeeDao.save(committee);
         return committee.getId();
     }

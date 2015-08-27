@@ -2,6 +2,7 @@ package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.*;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
@@ -55,7 +56,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
-    public Response createContact(@RequestBody Contact contact) {
+    public Response createContact(@RequestBody Contact contact) throws ConstraintViolation {
         String id = contactService.create(contact);
         return new Response(id, Response.SUCCESS);
     }
@@ -70,7 +71,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
-    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) throws NullDomainReference {
+    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) throws  ConstraintViolation,  NullDomainReference {
         contactService.updateBasicDetails(contactService.findById(id), details);
         return Response.successGeneric();
     }
@@ -87,7 +88,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/events")
-    public Response attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) throws NullDomainReference{
+    public Response attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) throws ConstraintViolation,  NullDomainReference{
         Contact contact = contactService.findById(id);
         Event event = eventService.findById(eventIdDto.getId());
 
@@ -105,7 +106,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/events/{entityId}")
-    public Response removeFromEvent(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws NullDomainReference {
+    public Response removeFromEvent(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
 
         Contact contact =  contactService.findById(id);
         Event event = eventService.findById(entityId);
@@ -134,7 +135,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/encounters/{entityId}")
-    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws NullDomainReference {
+    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
 
         Encounter encounter = encounterService.findById(entityId);
 
@@ -150,7 +151,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters/{encounterId}")
     public Response updateEncounter(@PathVariable("id") String id, @PathVariable("encounterId") String encounterId, @RequestBody EncounterDto encounterDto)
-            throws NullDomainReference, InvalidApiRequestException{
+            throws ConstraintViolation,  NullDomainReference, InvalidApiRequestException{
         Contact contact = contactService.findById(id);
         Encounter encounter = encounterService.findById(encounterId);
         EncounterType encounterType = encounterTypeService.findById(encounterDto.getType());
@@ -177,7 +178,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters")
-    public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) throws NullDomainReference{
+    public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) throws  ConstraintViolation, NullDomainReference{
         Contact contact = contactService.findById(id);
         EncounterType encounterType = encounterTypeService.findById(encounterDto.getType());
         Contact initiator = contactService.findById(encounterDto.getInitiatorId());
@@ -212,7 +213,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
-    public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) throws NullDomainReference {
+    public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) throws ConstraintViolation,  NullDomainReference {
 
         Organization organization = organizationService.findById(idDto.getId());
         Contact contact = contactService.findById(id);
@@ -229,7 +230,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{entityId}")
-    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws NullDomainReference{
+    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation,  NullDomainReference{
 
         Organization organization = organizationService.findById(entityId);
         Contact contact = contactService.findById(id);
@@ -261,7 +262,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/memberinfo")
-    public Response updateMemberInfo(@PathVariable("id") String id, @RequestBody MemberInfo memberInfo) throws NullDomainReference{
+    public Response updateMemberInfo(@PathVariable("id") String id, @RequestBody MemberInfo memberInfo) throws  ConstraintViolation, NullDomainReference{
         Contact contact = contactService.findById(id);
         try {
             contactService.updateMemberInfo(contact, memberInfo);
@@ -281,7 +282,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/demographics")
-    public Response updateDemographicDetails(@PathVariable("id") String id, @RequestBody Contact details) throws NullDomainReference{
+    public Response updateDemographicDetails(@PathVariable("id") String id, @RequestBody Contact details) throws  ConstraintViolation, NullDomainReference{
         Contact contact = contactService.findById(id);
 
         try {
@@ -293,7 +294,7 @@ public class ContactController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/committees", consumes= {"application/json"})
-    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) throws NullDomainReference{
+    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) throws  ConstraintViolation, NullDomainReference{
 
         Committee committee = committeeService.findById(idDto.getId());
         Contact contact = contactService.findById(id);
@@ -310,7 +311,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{entityId}")
-    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws NullDomainReference {
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
 
         Committee committee = committeeService.findById(entityId);
         Contact contact = contactService.findById(id);

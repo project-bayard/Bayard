@@ -3,6 +3,8 @@ package edu.usm.service.impl;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.repository.EventDao;
@@ -51,7 +53,7 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public String create(EventDto dto, Committee committee) {
+    public String create(EventDto dto, Committee committee) throws ConstraintViolation, NullDomainReference.NullEvent {
         Event event = new Event();
         event.setName(dto.getName());
         event.setNotes(dto.getNotes());
@@ -62,10 +64,25 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public String create(Event event) {
-        logger.debug("creating event with ID: " + event.getId());
+    public String create(Event event) throws ConstraintViolation, NullDomainReference.NullEvent {
+        validateEvent(event);
         eventDao.save(event);
         return event.getId();
+    }
+
+    private void validateEvent(Event event) throws ConstraintViolation, NullDomainReference.NullEvent {
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
+        if (null == event.getName()) {
+            throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_NAME);
+        }
+
+        if (null == event.getDateHeld()) {
+            throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_DATE);
+        }
     }
 
     private void uncheckedDelete(Event event) {
@@ -73,11 +90,13 @@ public class EventServiceImpl extends BasicService implements EventService {
             delete(event);
         } catch (NullDomainReference e) {
             throw new RuntimeException(e);
+        } catch (ConstraintViolation e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void delete(Event event) throws NullDomainReference.NullEvent, NullDomainReference.NullContact {
+    public void delete(Event event) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullContact {
 
         if (null ==  event) {
             throw new NullDomainReference.NullEvent();
@@ -99,19 +118,14 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public void update(Event event) {
-        logger.debug("Updating contact with ID: " + event.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public void update(Event event) throws ConstraintViolation, NullDomainReference.NullEvent{
+        validateEvent(event);
         updateLastModified(event);
         eventDao.save(event);
     }
 
     @Override
-    public void update(Event event, EventDto eventDto) throws NullDomainReference.NullEvent{
-
-        if (null == event) {
-            throw new NullDomainReference.NullEvent();
-        }
+    public void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent{
 
         if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
             event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));

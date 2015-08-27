@@ -6,9 +6,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.SortNatural;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity(name = "contact")
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
@@ -16,6 +19,8 @@ public class Contact extends BasicEntity implements Serializable {
 
 
     @Column
+    @NotNull
+    @Size(min = 1)
     @JsonView({Views.ContactList.class,
             Views.OrganizationList.class,
             Views.CommitteeList.class,
@@ -240,9 +245,9 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Event> attendedEvents;
 
-    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @SortNatural
-    private SortedSet<Encounter> encounters;
+    private SortedSet<Encounter> encounters = new TreeSet<>();
 
     @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @SortNatural
@@ -374,8 +379,10 @@ public class Contact extends BasicEntity implements Serializable {
         return encounters;
     }
 
+    //Setters for a collection marked for orphanRemoval must not lose reference to the collection first instantiated by Hibernate
     public void setEncounters(SortedSet<Encounter> encounters) {
-        this.encounters = encounters;
+        this.encounters.clear();
+        this.encounters.addAll(encounters);
     }
 
     public String getAptNumber() {

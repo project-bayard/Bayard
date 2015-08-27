@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Organization;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.Response;
 import edu.usm.service.OrganizationService;
@@ -25,7 +26,7 @@ public class OrganizationController {
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteOrganization(@PathVariable("id") String id) throws NullDomainReference{
+    public Response deleteOrganization(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference{
 
         Organization organization = organizationService.findById(id);
 
@@ -40,7 +41,7 @@ public class OrganizationController {
 
     @RequestMapping(method = RequestMethod.PUT, value="/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateOrganizationDetails(@PathVariable("id") String id, @RequestBody Organization organization) throws NullDomainReference{
+    public Response updateOrganizationDetails(@PathVariable("id") String id, @RequestBody Organization organization) throws ConstraintViolation, NullDomainReference{
         Organization fromDb = organizationService.findById(id);
 
         if (null == fromDb) {
@@ -66,7 +67,7 @@ public class OrganizationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-    public Response createOrganization(@RequestBody Organization organization) {
+    public Response createOrganization(@RequestBody Organization organization) throws NullDomainReference, ConstraintViolation{
         String id = organizationService.create(organization);
         return new Response(id,Response.SUCCESS);
 

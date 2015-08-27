@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 /**
@@ -12,8 +13,6 @@ import java.io.Serializable;
 
 @Entity(name = "encounter_type")
 public class EncounterType extends BasicEntity implements Serializable {
-
-
 
     @Column(nullable = false, unique = true)
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})

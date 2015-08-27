@@ -1,6 +1,7 @@
 package edu.usm.service;
 
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -21,10 +22,10 @@ public interface OrganizationService {
     void delete (Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update (Organization organization);
+    void update (Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    String create(Organization organization);
+    String create(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

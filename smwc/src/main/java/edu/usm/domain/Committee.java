@@ -3,6 +3,7 @@ package edu.usm.domain;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class Committee extends BasicEntity implements Serializable {
     private Set<Event> events;
 
     @Column
+    @NotNull
     @JsonView({Views.CommitteeList.class,
             Views.ContactDetails.class,
             Views.ContactCommitteeDetails.class,

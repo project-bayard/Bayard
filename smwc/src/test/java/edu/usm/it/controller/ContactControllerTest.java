@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.service.*;
@@ -58,12 +59,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
 
     private Contact contact;
-    private Contact initiator;
     private Event event;
     private EncounterType encounterType;
 
     @Before
-    public void setup() {
+    public void setup() throws ConstraintViolation{
         contact = new Contact();
         contact.setFirstName("First");
         contact.setLastName("Last");
@@ -85,10 +85,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         memberInfo.setSignedAgreement(false);
         memberInfo.setStatus(MemberInfo.STATUS_GOOD);
         contact.setMemberInfo(memberInfo);
-
-        initiator = new Contact();
-        initiator.setFirstName("initiatorFirst");
-        contactService.create(initiator);
 
         event = new Event();
         event.setName("Test Event");
@@ -120,7 +116,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         Set<Contact> fromDb = contactService.findAll();
-        assertEquals(fromDb.size(), 2);
+        assertEquals(fromDb.size(), 1);
 
     }
 
@@ -292,7 +288,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Transactional
     public void testCreateEncounter() throws Exception {
         String id = contactService.create(contact);
-        String initiatorId = contactService.create(generateSecondcontact());
+        String initiatorId = contactService.create(generateSecondcontact("Initiator", "initiatorEmail"));
         EncounterDto dto = new EncounterDto();
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
@@ -312,7 +308,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     public void testDeleteEncounter() throws Exception {
         String id = contactService.create(contact);
-        String initiatorId = contactService.create(generateSecondcontact());
+        String initiatorId = contactService.create(generateSecondcontact("Initiator", "initiatorEmail"));
         EncounterDto dto = new EncounterDto();
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
@@ -344,7 +340,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Transactional
     public void testUpdateEncounter() throws Exception {
         String id = contactService.create(contact);
-        String initiatorId = contactService.create(generateSecondcontact());
+        String initiatorId = contactService.create(generateSecondcontact("Second", "secondEmail"));
         EncounterDto dto = new EncounterDto();
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
@@ -362,13 +358,14 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact contactFromDb = contactService.findById(id);
         Encounter encounterFromDb = contactFromDb.getEncounters().first();
-        String newInitiatorId = contactService.create(generateSecondcontact());
+        String newInitiatorId = contactService.create(generateSecondcontact("Third", "thirdEmail"));
 
         dto = new EncounterDto();
         dto.setAssessment(5);
         dto.setNotes("Updated Notes");
         dto.setType(encounterType.getId());
         dto.setInitiatorId(newInitiatorId);
+        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         json = new ObjectMapper().writeValueAsString(dto);
 
@@ -546,15 +543,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
-    private Contact generateSecondcontact() {
+    private Contact generateSecondcontact(String firstName, String email) {
         Contact secondContact = new Contact();
-        secondContact.setFirstName("Second");
+        secondContact.setFirstName(firstName);
         secondContact.setLastName("ToLast");
         secondContact.setStreetAddress("541 Downtown Abbey");
         secondContact.setAptNumber("# 9");
         secondContact.setCity("Yarmouth");
         secondContact.setZipCode("04096");
-        secondContact.setEmail("second@gmail.com");
+        secondContact.setEmail(email);
+        secondContact.setInitiator(true);
         return secondContact;
     }
 }

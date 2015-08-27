@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Event;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.dto.IdDto;
@@ -31,7 +32,7 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteEvent(@PathVariable("id") String id) throws NullDomainReference{
+    public Response deleteEvent(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference{
         Event event = eventService.findById(id);
 
         try {
@@ -44,7 +45,7 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody EventDto eventDto) throws NullDomainReference{
+    public Response updateEventDetails(@PathVariable("id") String id, @RequestBody EventDto eventDto) throws ConstraintViolation, NullDomainReference{
         Event event = eventService.findById(id);
 
         try {
@@ -65,7 +66,7 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createEvent(@RequestBody EventDto eventDto) throws NullDomainReference{
+    public Response createEvent(@RequestBody EventDto eventDto) throws ConstraintViolation, NullDomainReference{
         Committee committee = null;
 
         if (null != eventDto.getCommitteeId() && !eventDto.getCommitteeId().isEmpty()) {
@@ -77,8 +78,6 @@ public class EventController {
 
         String eventId = eventService.create(eventDto, committee);
         return new Response(eventId,Response.SUCCESS);
-
-
     }
 
     @ResponseStatus(HttpStatus.OK)

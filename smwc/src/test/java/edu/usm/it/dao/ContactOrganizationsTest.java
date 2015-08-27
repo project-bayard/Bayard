@@ -57,10 +57,6 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         organization.setPhoneNumber("123-456-7890");
         organization.setPrimaryContactName("Theo McCeo");
         organization.setDescription("A very good organization");
-
-
-
-
     }
 
     @After
@@ -69,7 +65,11 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         organizationDao.deleteAll();
     }
 
-
+    @Test(expected = Exception.class)
+    public void testCreateOrganizationNullName() {
+        organization.setName(null);
+        organizationDao.save(organization);
+    }
 
     @Test
     @Transactional
@@ -135,9 +135,6 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         assertEquals(contactFromDb.getOrganizations().size(),0);
         assertNull(organizationDao.findOne(organization.getId()));
 
-
-
-
     }
 
     @Test
@@ -191,6 +188,5 @@ public class ContactOrganizationsTest extends WebAppConfigurationAware {
         assertEquals(organizationDao.findAll().size(), 1);
 
     }
-
 
 }
