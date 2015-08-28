@@ -112,4 +112,31 @@ public class EventServiceTest extends WebAppConfigurationAware {
         eventService.update(event);
     }
 
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateEventNonUnique() throws ConstraintViolation, NullDomainReference {
+        eventService.create(event);
+        Event duplicate = generateDuplicate(event);
+        eventService.create(duplicate);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testUpdateEventNonUnique() throws ConstraintViolation, NullDomainReference {
+        eventService.create(event);
+        Event duplicate = generateDuplicate(event);
+        duplicate.setName("Initially unique name");
+        eventService.create(duplicate);
+
+        duplicate.setName(event.getName());
+        eventService.update(duplicate);
+    }
+
+    private Event generateDuplicate(Event event) {
+        Event duplicate = new Event();
+        duplicate.setDateHeld(event.getDateHeld());
+        duplicate.setName(event.getName());
+        duplicate.setNotes("Unique notes");
+        duplicate.setLocation("Unique location");
+        return duplicate;
+    }
+
 }

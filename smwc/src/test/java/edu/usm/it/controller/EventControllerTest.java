@@ -67,6 +67,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Contact attendee = new Contact();
         attendee.setFirstName("Test");
         attendee.setLastName("Attendee");
+        attendee.setEmail("email@email.com");
         contactService.create(attendee);
 
         //Event
@@ -123,6 +124,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Contact attendee = new Contact();
         attendee.setFirstName("Test");
         attendee.setLastName("Attendee");
+        attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
         contactService.attendEvent(attendee, event);
@@ -148,6 +150,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Contact attendee = new Contact();
         attendee.setFirstName("Test");
         attendee.setLastName("Attendee");
+        attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
         contactService.attendEvent(attendee, event);
@@ -191,6 +194,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Contact attendee = new Contact();
         attendee.setFirstName("Test");
         attendee.setLastName("Attendee");
+        attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
         contactService.attendEvent(attendee, event);

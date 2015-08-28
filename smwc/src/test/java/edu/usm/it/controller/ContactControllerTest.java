@@ -138,6 +138,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact details = new Contact();
         details.setFirstName("newFirstName");
+        details.setEmail("email@email.com");
 
         String json = new ObjectMapper().writeValueAsString(details);
 
@@ -178,6 +179,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("firstName");
         contact.setLastName("lastName");
+        contact.setEmail("email@email.com");
         contact.setInitiator(true);
 
         contactService.create(contact);

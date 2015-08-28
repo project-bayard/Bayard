@@ -1,5 +1,6 @@
 package edu.usm.web;
 
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.Response;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,10 @@ public class ControllerExceptionHandler {
         return new Response(null, e.getMessage());
     }
 
-
+    @ExceptionHandler(ConstraintViolation.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody Response handleConstraintViolation(ConstraintViolation e) {
+        return new Response(null, e.getMessage());
+    }
 
 }

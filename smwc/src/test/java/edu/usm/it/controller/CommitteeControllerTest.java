@@ -39,12 +39,14 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         committeeService.deleteAll();
         contactService.deleteAll();
     }
+
     @Test
     public void testGetAllCommittees() throws Exception {
 
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
 
@@ -87,6 +89,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();
@@ -119,6 +122,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();
@@ -146,6 +150,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();
@@ -168,6 +173,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();

@@ -20,6 +20,9 @@ public class EncounterTypeServiceImpl implements EncounterTypeService {
 
     @Override
     public EncounterType findById(String id) {
+        if (null == id) {
+            return null;
+        }
         return encounterTypeDao.findOne(id);
     }
 

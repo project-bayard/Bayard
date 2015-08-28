@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -70,6 +71,11 @@ public class EventServiceImpl extends BasicService implements EventService {
         return event.getId();
     }
 
+    @Override
+    public Set<Event> findByName(String name) {
+        return eventDao.findByName(name);
+    }
+
     private void validateEvent(Event event) throws ConstraintViolation, NullDomainReference.NullEvent {
 
         if (null == event) {
@@ -83,6 +89,19 @@ public class EventServiceImpl extends BasicService implements EventService {
         if (null == event.getDateHeld()) {
             throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_DATE);
         }
+
+        Set<Event> sharedName = findByName(event.getName());
+        if (null != sharedName) {
+            Iterator<Event> iterator = sharedName.iterator();
+            while (iterator.hasNext()) {
+                Event namedEvent = iterator.next();
+                boolean sameEvent = event.getId() != null && event.getId().equalsIgnoreCase(namedEvent.getId());
+                if (event.getDateHeld().equalsIgnoreCase(namedEvent.getDateHeld()) && !sameEvent) {
+                    throw new ConstraintViolation(ConstraintMessage.EVENT_NON_UNIQUE);
+                }
+            }
+        }
+
     }
 
     private void uncheckedDelete(Event event) {

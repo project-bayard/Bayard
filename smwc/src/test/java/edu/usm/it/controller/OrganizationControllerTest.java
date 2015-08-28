@@ -42,6 +42,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
 
         /*orgs*/
         organization = new Organization();

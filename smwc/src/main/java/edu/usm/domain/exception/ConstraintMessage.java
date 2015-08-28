@@ -14,7 +14,9 @@ public enum ConstraintMessage {
     ENCOUNTER_REQUIRED_DATE("An encounter must have an encounter date associated with it"),
     EVENT_REQUIRED_NAME("An event must have a name associated with it"),
     EVENT_REQUIRED_DATE("An event must have a date associated with it"),
+    EVENT_NON_UNIQUE("An event with this name and date already exists"),
     COMMITTEE_REQUIRED_NAME("A committee must have a name associated with it"),
+    COMMITTEE_NON_UNIQUE("A committee with this name already exists"),
     ORGANIZATION_REQUIRED_NAME("An organization must have a name associated with it");
 
     private final String enumText;

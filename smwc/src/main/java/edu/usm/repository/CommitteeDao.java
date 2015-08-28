@@ -16,4 +16,6 @@ public interface CommitteeDao extends CrudRepository<Committee, String> {
 
     @Override
     HashSet<Committee> findAll();
+
+    Committee findByName(String name);
 }

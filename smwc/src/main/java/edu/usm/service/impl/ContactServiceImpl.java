@@ -130,6 +130,11 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
         }
 
+        if (null == contact.getPhoneNumber1() && null == contact.getEmail()) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
+        }
+
+
         Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
 
         if (null != existingFirstNames) {
@@ -164,6 +169,10 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private void validateOnCreate(Contact contact) throws ConstraintViolation {
         if (null == contact.getFirstName()) {
             throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
+        }
+
+        if (null == contact.getPhoneNumber1() && null == contact.getEmail()) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
         }
 
         Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());

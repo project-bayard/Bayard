@@ -45,11 +45,24 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         return (Set<Committee>) committeeDao.findAll();
     }
 
+    @Override
+    public Committee findByName(String name) {
+        return committeeDao.findByName(name);
+    }
+
     private void validateFields(Committee committee) throws NullDomainReference, ConstraintViolation{
         if (null == committee) {
             throw new NullDomainReference.NullCommittee();
         } else if (null == committee.getName()) {
             throw new ConstraintViolation(ConstraintMessage.COMMITTEE_REQUIRED_NAME);
+        }
+        validateUniqueness(committee);
+    }
+
+    private void validateUniqueness(Committee committee) throws ConstraintViolation {
+        Committee existingName = findByName(committee.getName());
+        if (null != existingName && !existingName.getId().equalsIgnoreCase(committee.getId())) {
+            throw new ConstraintViolation(ConstraintMessage.COMMITTEE_NON_UNIQUE);
         }
     }
 
@@ -85,6 +98,8 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         if (null == committee.getName()) {
             throw new ConstraintViolation(ConstraintMessage.COMMITTEE_REQUIRED_NAME);
         }
+
+        validateUniqueness(committee);
 
         committeeDao.save(committee);
         return committee.getId();
