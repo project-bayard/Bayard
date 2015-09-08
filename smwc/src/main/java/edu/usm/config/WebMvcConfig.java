@@ -24,6 +24,7 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/favicon.ico").addResourceLocations("/");
     }
 
     @Override
@@ -68,6 +69,17 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
         return converter;
 
     }
+
+    /*
+    @Controller
+    static class FaviconController {
+        @RequestMapping("favicon.ico")
+        String favicon() {
+            return "forward:/webapp/resources/favicon.ico";
+        }
+    }
+
+*/
 
 
 

@@ -47,7 +47,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
         user.setLastName(LAST_NAME);
         user.setEmail(EMAIL);
         user.setPasswordHash(PASSWORD);
-        user.setRole(Role.USER);
+        user.setRole(Role.ROLE_USER);
         userID = userService.createUser(user);
     }
 
@@ -68,7 +68,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.email", is(EMAIL)))
                 .andExpect(jsonPath("$.firstName", is(FIRST_NAME)))
                 .andExpect(jsonPath("$.lastName", is(LAST_NAME)))
-                .andExpect(jsonPath("$.role", is("USER")))
+                .andExpect(jsonPath("$.role", is("ROLE_USER")))
                 .andExpect(jsonPath("$.password", is(nullValue())));
     }
 
@@ -79,7 +79,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.email", is(EMAIL)))
                 .andExpect(jsonPath("$.firstName", is(FIRST_NAME)))
                 .andExpect(jsonPath("$.lastName", is(LAST_NAME)))
-                .andExpect(jsonPath("$.role", is("USER")))
+                .andExpect(jsonPath("$.role", is("ROLE_USER")))
                 .andExpect(jsonPath("$.password", is(nullValue())));
     }
 
@@ -89,15 +89,14 @@ public class UserControllerTest extends WebAppConfigurationAware {
         User newUser = new User();
         newUser.setFirstName(LAST_NAME);
         newUser.setLastName(FIRST_NAME);
-        newUser.setRole(Role.SUPERUSER);
+        newUser.setRole(Role.ROLE_SUPERUSER);
         newUser.setPasswordHash(PASSWORD);
         newUser.setEmail(email);
 
         String body = new ObjectMapper().writeValueAsString(newUser);
 
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(body))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .andExpect(status().isCreated());
 
         User fromDb = userService.findByEmail(email);
         assertNotNull(fromDb);
@@ -110,8 +109,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
     @Test
     public void testDeleteUser() throws Exception {
         mockMvc.perform(delete("/users/" + userID))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .andExpect(status().isOk());
 
         User fromDb = userService.findById(userID);
         assertNull(fromDb);

@@ -42,6 +42,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
 
         /*orgs*/
         organization = new Organization();
@@ -131,18 +132,14 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     @Test
     public void testUpdatePrimitives() throws Exception {
 
-        organization.getMembers().add(contact);
-        Set<Organization> organizations = new HashSet<>();
-        organizations.add(organization);
-        contact.setOrganizations(organizations);
-        contactService.create(contact);
+        organizationService.create(organization);
 
         organization.setName("Updated Name");
         organization.setPrimaryContactName("Updated Primary Contact");
 
         String json = new ObjectMapper().writeValueAsString(organization);
 
-        MvcResult result = mockMvc.perform(put("/organizations/" + organization.getId())
+        mockMvc.perform(put("/organizations/" + organization.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))

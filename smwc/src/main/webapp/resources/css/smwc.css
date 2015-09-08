@@ -26,3 +26,8 @@ div.smwc-form {
 span.smwc-addon-span {
     width: 120px;
 }
+
+.form-group.required .control-label:after {
+    content:" *";
+    color:red;
+}

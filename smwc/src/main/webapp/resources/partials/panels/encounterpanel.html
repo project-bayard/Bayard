@@ -1,42 +1,29 @@
-<div class="panel panel-default">
-    <div class="panel-heading" ng-click="displayEncounters()">
-        <h3 class="panel-title">Encounters ({{encountersTable.length}})</h3>
-    </div>
-    <div class="panel-body" ng-show="showingEncounters">
-        <button class="btn btn-primary" ng-click="showEncounterForm()">Add Encounter</button>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="displayEncounters()">
+                    <h3 class="panel-title">Encounters</h3>
+                </div>
+                <div class="panel-body" ng-show="showingEncounters">
+                    <button class="btn btn-primary" ng-click="showEncounterForm()" ng-show="!addingEncounter">Add Encounter</button>
+                    <br/>
+                    <div ng-show="addingEncounter">
+                        <div ng-include src=" 'resources/partials/forms/encounterForm.html' "></div>
+                        <button class="btn btn-success" ng-click="addEncounter()" ng-disabled="formHolder.encounterForm.$invalid">Create</button>
+                        <button class="btn btn-danger" ng-click="cancelAddEncounter()">Cancel</button>
+                    </div>
+                    <br/>
+                    <div ng-if="newEncounterRequestFailure" class="alert alert-danger" role="alert">Failed to add encounter...</div>
+                    <div ng-if="newEncounterRequestSuccess" class="alert alert-success alert-dismissable" role="alert">Encounter Added</div>
 
-        <form name="newEncounterForm" id="newEncounterForm">
-            <div class="form-group" ng-show="addingEncounter">
-                <label>Initiator:
-                    <select class="form-control input-small" ng-model="newEncounter.initiatorId">
-                        <option ng-repeat="initiator in initiators | removeItemById:contact.id" value="{{initiator.id}}">{{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
-                    </select>
-                </label>
-                <label>Date
-                    <input type="date"  ng-model="newEncounter.jsDate">
-                </label>
-                <label>Assessment
-                    <select class="form-control input-small" ng-model="newEncounter.assessment">
-                        <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
-                    </select>
-                </label>
-                <label>Type
-                    <select class="form-control input-small" ng-model="newEncounter.type">
-                        <option ng-repeat="value in encounterTypes" value="{{value}}">{{value}}</option>
-                    </select>
-                </label>
-                <label>Notes
-                    <textarea  rows="3" cols="50" ng-model="newEncounter.notes" ></textarea>
-                </label>
-                <button class="btn btn-success" ng-click="addEncounter()">Complete Encounter</button>
+                    <div ng-if="encountersTable.length > 0">
+                        <div ng-include src=" 'resources/partials/tables/encountersTable.html' "></div>
+                    </div>
+
+
+                </div>
             </div>
-        </form>
-        <div ng-if="newEncounterRequestFailure" class="alert alert-danger" role="alert">Failed to add encounter...</div>
-        <div ng-if="newEncounterRequestSuccess" class="alert alert-success alert-dismissable" role="alert">Encounter Added</div>
-
-        <div ng-if="encountersTable.length > 0">
-            <div ng-include src=" 'resources/partials/tables/encountersTable.html' "></div>
         </div>
-
     </div>
 </div>

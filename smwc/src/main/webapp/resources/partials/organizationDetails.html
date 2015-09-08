@@ -7,100 +7,42 @@
     <div id="org-detail-attributes" ng-show="!updatingOrganizationDetails">
         <ul class="list-group">
             <li class="list-group-item">
-                Name: {{organization.name}}
+                Name: {{modelHolder.organizationModel.name}}
             </li>
             <li class="list-group-item">
-                Address: {{organization.streetAddress}}
+                Address: {{modelHolder.organizationModel.streetAddress}}
             </li>
             <li class="list-group-item">
-                City: {{organization.city}}
+                City: {{modelHolder.organizationModel.city}}
             </li>
             <li class="list-group-item">
-                State: {{organization.state}}
+                State: {{modelHolder.organizationModel.state}}
             </li>
             <li class="list-group-item">
-                Zip: {{organization.zipCode}}
+                Zip: {{modelHolder.organizationModel.zipCode}}
             </li>
             <li class="list-group-item">
-                Primary Contact: {{organization.primaryContactName}}
+                Primary Contact: {{modelHolder.organizationModel.primaryContactName}}
             </li>
             <li class="list-group-item">
-                Phone: {{organization.phoneNumber}}
+                Phone: {{modelHolder.organizationModel.phoneNumber}}
             </li>
             <li class="list-group-item">
-                Email: {{organization.email}}
+                Email: {{modelHolder.organizationModel.email}}
             </li>
             <li class="list-group-item">
-                Description: {{organization.description}}
+                Description: {{modelHolder.organizationModel.description}}
             </li>
         </ul>
     </div>
-    <div class="smwc-form" id="org-detail-update-input" ng-show="updatingOrganizationDetails">
-        <ul class="list-group">
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Name</span>
-                    <input type="text" class="form-control" placeholder="{{organization.name}}" ng-model="organization.name" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Address</span>
-                    <input type="text" class="form-control" placeholder="{{organization.streetAddress}}" ng-model="organization.streetAddress" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">City</span>
-                    <input type="text" class="form-control" placeholder="{{organization.city}}" ng-model="organization.city" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">State</span>
-                    <input type="text" class="form-control" placeholder="{{organization.state}}" ng-model="organization.state" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Zip</span>
-                    <input type="text" class="form-control" placeholder="{{organization.zipCode}}" ng-model="organization.zipCode" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Primary Contact</span>
-                    <input type="text" class="form-control" placeholder="{{organization.primaryContactName}}" ng-model="organization.primaryContactName" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Phone</span>
-                    <input type="text" class="form-control" placeholder="{{organization.phoneNumber}}" ng-model="organization.phoneNumber" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Email</span>
-                    <input type="text" class="form-control" placeholder="{{organization.email}}" ng-model="organization.email" >
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon smwc-addon-span">Description</span>
-                    <input type="text" class="form-control" placeholder="{{organization.description}}" ng-model="organization.description" >
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <div ng-show="!updatingOrganizationDetails">
+    <div ng-if="!updatingOrganizationDetails">
         <button class="btn btn-warning" ng-click="showUpdateForm()">Update Organization</button>
         <button class="btn btn-danger" ng-click="deleteOrganization()">Delete Organization</button>
     </div>
 
-    <div ng-show="updatingOrganizationDetails">
-        <button class="btn btn-success" ng-click="submitUpdate()">Done</button>
+    <div ng-if="updatingOrganizationDetails">
+        <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
+        <button class="btn btn-success" ng-click="submitUpdate()" ng-disabled="formHolder.organizationForm.$invalid">Done</button>
         <button class="btn btn-danger" ng-click="cancelUpdate()">Cancel</button>
     </div>
 

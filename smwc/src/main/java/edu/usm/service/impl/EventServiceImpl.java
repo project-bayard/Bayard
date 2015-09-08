@@ -3,6 +3,9 @@ package edu.usm.service.impl;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.repository.EventDao;
 import edu.usm.service.BasicService;
@@ -15,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -42,11 +47,14 @@ public class EventServiceImpl extends BasicService implements EventService {
 
     @Override
     public Event findById(String id) {
+        if (null == id) {
+            return null;
+        }
         return eventDao.findOne(id);
     }
 
     @Override
-    public String create(EventDto dto, Committee committee) {
+    public String create(EventDto dto, Committee committee) throws ConstraintViolation, NullDomainReference.NullEvent {
         Event event = new Event();
         event.setName(dto.getName());
         event.setNotes(dto.getNotes());
@@ -57,16 +65,65 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public String create(Event event) {
-        logger.debug("creating event with ID: " + event.getId());
+    public String create(Event event) throws ConstraintViolation, NullDomainReference.NullEvent {
+        validateEvent(event);
         eventDao.save(event);
         return event.getId();
     }
 
     @Override
-    public void delete(Event event) {
+    public Set<Event> findByName(String name) {
+        return eventDao.findByName(name);
+    }
 
-        for (Contact contact : event.getAttendees()) {
+    private void validateEvent(Event event) throws ConstraintViolation, NullDomainReference.NullEvent {
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
+        if (null == event.getName()) {
+            throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_NAME);
+        }
+
+        if (null == event.getDateHeld()) {
+            throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_DATE);
+        }
+
+        Set<Event> sharedName = findByName(event.getName());
+        if (null != sharedName) {
+            Iterator<Event> iterator = sharedName.iterator();
+            while (iterator.hasNext()) {
+                Event namedEvent = iterator.next();
+                boolean sameEvent = event.getId() != null && event.getId().equalsIgnoreCase(namedEvent.getId());
+                if (event.getDateHeld().equalsIgnoreCase(namedEvent.getDateHeld()) && !sameEvent) {
+                    throw new ConstraintViolation(ConstraintMessage.EVENT_NON_UNIQUE);
+                }
+            }
+        }
+
+    }
+
+    private void uncheckedDelete(Event event) {
+        try {
+            delete(event);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        } catch (ConstraintViolation e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void delete(Event event) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullContact {
+
+        if (null ==  event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
+        Set<Contact> attendees = new HashSet<>(event.getAttendees());
+
+        for (Contact contact : attendees) {
             contactService.unattendEvent(contact,event);
         }
         eventDao.delete(event);
@@ -76,19 +133,19 @@ public class EventServiceImpl extends BasicService implements EventService {
     public void deleteAll() {
         logger.debug("Deleting all events!");
         Set<Event> events = findAll();
-        events.stream().forEach(this::delete);
+        events.stream().forEach(this::uncheckedDelete);
     }
 
     @Override
-    public void update(Event event) {
-        logger.debug("Updating contact with ID: " + event.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public void update(Event event) throws ConstraintViolation, NullDomainReference.NullEvent{
+        validateEvent(event);
         updateLastModified(event);
         eventDao.save(event);
     }
 
     @Override
-    public void update(Event event, EventDto eventDto) {
+    public void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent{
+
         if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
             event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));
         }

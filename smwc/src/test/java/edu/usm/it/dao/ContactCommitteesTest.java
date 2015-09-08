@@ -93,6 +93,12 @@ public class ContactCommitteesTest extends WebAppConfigurationAware {
 
     }
 
+    @Test(expected = Exception.class)
+    public void testCreateCommitteeNullName() {
+        committee.setName(null);
+        committeeDao.save(committee);
+    }
+
     @Test
     @Transactional
     public void testDeleteOrganization() {

@@ -10,3 +10,9 @@ To set up a development or production environment that relies on a Postgres data
     dataSource.url=jdbc:postgresql://localhost/smwc
     dataSource.username=smwc_postgres
     dataSource.password=secretpassword
+
+To create a dump of the current state of the database (i.e. to refresh import.sql in a development environment)
+    1. cd ~/{path-to-repository}/smwc/src/main/resources
+    2. pg_dump -U smwc_postgres -f import.sql --attribute-inserts --no-security-labels --no-acl --data-only smwc
+
+    This will replace the contents of import.sql with the current state of the database

@@ -2,6 +2,9 @@ package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.*;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.InvalidApiRequestException;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
@@ -12,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -37,6 +41,9 @@ public class ContactController {
     @Autowired
     private EncounterService encounterService;
 
+    @Autowired
+    private EncounterTypeService encounterTypeService;
+
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
@@ -49,15 +56,9 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
-    public Response createContact(@RequestBody Contact contact) {
-        logger.debug("POST request to /contacts");
-        String id;
-        try {
-            id = (contactService.create(contact));
-            return new Response(id,Response.SUCCESS,null);
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Unable to create contact");
-        }
+    public Response createContact(@RequestBody Contact contact) throws ConstraintViolation {
+        String id = contactService.create(contact);
+        return new Response(id, Response.SUCCESS);
     }
 
 
@@ -65,63 +66,39 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView(Views.ContactDetails.class)
     public Contact getContactById(@PathVariable("id") String id) {
-        logger.debug("GET request to /contacts/contact/"+id);
         return contactService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
-    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) {
-        logger.debug("PUT request to /contacts/contact/"+id);
-
-        Contact contact = contactService.findById(id);
-
-        if (contact == null) {
-            return Response.failNonexistentContact(id);
-        }
-
-        try {
-            contactService.updateBasicDetails(contact, details);
-            return new Response(id, Response.SUCCESS, null);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return new Response(contact.getId(),Response.FAILURE,"Unable to update contact");
-        }
+    public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) throws  ConstraintViolation,  NullDomainReference {
+        contactService.updateBasicDetails(contactService.findById(id), details);
+        return Response.successGeneric();
     }
-
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/events")
     @JsonView(Views.EventList.class)
-    public Set<Event> getAttendedEvents(@PathVariable("id") String id) {
+    public Set<Event> getAttendedEvents(@PathVariable("id") String id) throws NullDomainReference{
         Contact contact = contactService.findById(id);
+        if (null == contact) {
+            throw new NullDomainReference.NullContact(id);
+        }
         return contact.getAttendedEvents();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/events")
-    public Response attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) {
-        logger.debug("POST to /contacts/"+id+"/attend");
+    public Response attendEvent(@PathVariable("id") String id, @RequestBody IdDto eventIdDto) throws ConstraintViolation,  NullDomainReference{
         Contact contact = contactService.findById(id);
-
-        if (null == contact) {
-            return Response.failNonexistentContact(id);
-        }
-
         Event event = eventService.findById(eventIdDto.getId());
-        if (null == event) {
-            return new Response(null, Response.FAILURE, "Event with ID "+eventIdDto.getId()+" does not exist");
-        }
-
-        if (null == contact.getAttendedEvents()) {
-            contact.setAttendedEvents(new HashSet<>());
-        }
 
         try {
             contactService.attendEvent(contact, event);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Contact with Event");
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
+        } catch (NullDomainReference.NullEvent e) {
+            throw new NullDomainReference.NullEvent(eventIdDto.getId(), e);
         }
 
     }
@@ -129,24 +106,18 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/events/{entityId}")
-    public Response removeFromEvent(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+    public Response removeFromEvent(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
 
         Contact contact =  contactService.findById(id);
-        if (null == contact) {
-            return Response.failNonexistentContact(id);
-        }
-
         Event event = eventService.findById(entityId);
-
-        if (null == event) {
-            return new Response(null, Response.FAILURE, "Event with id "+entityId+" does not exist!");
-        }
 
         try {
             contactService.unattendEvent(contact, event);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error removing Contact from Event");
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
+        } catch (NullDomainReference.NullEvent e) {
+            throw new NullDomainReference.NullEvent(entityId, e);
         }
 
     }
@@ -154,84 +125,69 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/encounters")
     @JsonView(Views.ContactEncounterDetails.class)
-    public SortedSet<Encounter> getAllEncountersForContact(@PathVariable("id") String id) {
+    public SortedSet<Encounter> getAllEncountersForContact(@PathVariable("id") String id) throws NullDomainReference {
         Contact c = contactService.findById(id);
+        if (null == c) {
+            throw new NullDomainReference.NullContact(id);
+        }
         return c.getEncounters();
     }
-//
-//    @ResponseStatus(HttpStatus.OK)
-//    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/encounters/{entityId}")
-//    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
-//
-//        Contact contact =  contactService.findById(id);
-//        if (null == contact) {
-//            return Response.failNonexistentContact(id);
-//        }
-//
-//        Encounter encounter = encounterService.findById(entityId);
-//        if (null == encounter) {
-//            return new Response(null, Response.FAILURE, "Encounter with ID "+entityId+" does not exist");
-//        }
-//
-//        try {
-//            encounterService.deleteEncounter(encounter);
-//            return Response.successGeneric();
-//        } catch (Exception e) {
-//            return new Response(null, Response.FAILURE, "Error deleting Encounter");
-//        }
-//
-//    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/encounters/{entityId}")
+    public Response deleteEncounter(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
+
+        Encounter encounter = encounterService.findById(entityId);
+
+        try {
+            encounterService.deleteEncounter(encounter);
+            return Response.successGeneric();
+        } catch (NullDomainReference.NullEncounter e) {
+            throw new NullDomainReference.NullEncounter(entityId, e);
+        }
+
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters/{encounterId}")
-    public Response updateEncounter(@PathVariable("id") String id, @PathVariable("encounterId") String encounterId, @RequestBody EncounterDto encounterDto) {
+    public Response updateEncounter(@PathVariable("id") String id, @PathVariable("encounterId") String encounterId, @RequestBody EncounterDto encounterDto)
+            throws ConstraintViolation,  NullDomainReference, InvalidApiRequestException{
         Contact contact = contactService.findById(id);
-        Contact initiator = contactService.findById(encounterDto.getInitiatorId());
         Encounter encounter = encounterService.findById(encounterId);
+        EncounterType encounterType = encounterTypeService.findById(encounterDto.getType());
+
         if (null == contact) {
-            return Response.failNonexistentContact(id);
-        }
-
-        if (null == encounter) {
-            return new Response(null, Response.FAILURE, "Encounter with ID "+encounterId+" does not exist");
-        }
-
-        if (null == initiator) {
-            return new Response(null, Response.FAILURE, "Initiator with ID "+id+" does not exist");
+            throw new NullDomainReference.NullContact(id);
         }
 
         if (!contact.getId().equals(encounter.getContact().getId())) {
-            return new Response(null, Response.FAILURE, "Discrepancy between Contact with ID "+id+" and Contact("+encounter.getContact().getId()+") associated with this Encounter. Unable to update.");
+            throw new InvalidApiRequestException("The encounter with id "+encounterId+" does not belong to contact with id "+id);
         }
 
+
         try {
-            encounterService.updateEncounter(encounter, encounterDto);
+            encounterService.updateEncounter(encounter, encounterType, encounterDto);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Encounter");
+        } catch (NullDomainReference.NullEncounter e) {
+            throw new NullDomainReference.NullEncounter(encounterId, e);
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(encounterDto.getInitiatorId(), e);
         }
 
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/encounters")
-    public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) {
+    public Response createEncounter(@PathVariable("id") String id, @RequestBody EncounterDto encounterDto) throws  ConstraintViolation, NullDomainReference{
         Contact contact = contactService.findById(id);
-
-        if (null == contact) {
-            return Response.failNonexistentContact(id);
-        }
-
+        EncounterType encounterType = encounterTypeService.findById(encounterDto.getType());
         Contact initiator = contactService.findById(encounterDto.getInitiatorId());
-        if (null == initiator) {
-            return new Response(null, Response.FAILURE, "Initiator with ID "+encounterDto.getInitiatorId()+" does not exist");
-        }
 
         try {
-            contactService.addEncounter(contact, initiator, encounterDto);
+            contactService.addEncounter(contact, initiator,encounterType, encounterDto);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Contact with new encounter");
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id+" or "+encounterDto.getInitiatorId());
         }
     }
 
@@ -245,62 +201,47 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/organizations")
     @JsonView(Views.ContactOrganizationDetails.class)
-    public Set<Organization> getAllOrganizationsForContact(@PathVariable("id") String id) {
-        return contactService.findById(id).getOrganizations();
+    public Set<Organization> getAllOrganizationsForContact(@PathVariable("id") String id) throws NullDomainReference{
+
+        Contact c = contactService.findById(id);
+        if (null == c) {
+            throw new NullDomainReference.NullContact(id);
+        }
+
+        return c.getOrganizations();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
-    public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+    public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) throws ConstraintViolation,  NullDomainReference {
 
-        String idStringed = idDto.getId();
-
-        Organization organization = organizationService.findById(idStringed);
+        Organization organization = organizationService.findById(idDto.getId());
         Contact contact = contactService.findById(id);
-
-        if (organization == null) {
-            logger.debug("No org");
-            return new Response(null,Response.FAILURE, "Organization with ID " + idStringed + " does not exist");
-
-        } else if (contact == null) {
-            logger.debug("No contact");
-            return Response.failNonexistentContact(id);
-        }
 
         try {
             contactService.addContactToOrganization(contact,organization);
             return Response.successGeneric();
-        } catch (Exception e) {
-            logger.debug("Bad service call");
-            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
-                    " to organization with ID " + organization.getId());
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
+        } catch (NullDomainReference.NullOrganization e) {
+            throw new NullDomainReference.NullOrganization(idDto.getId(), e);
         }
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{entityId}")
-    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation,  NullDomainReference{
 
         Organization organization = organizationService.findById(entityId);
         Contact contact = contactService.findById(id);
 
-        if (organization == null) {
-            logger.debug("No org");
-            return new Response(null,Response.FAILURE, "Organization with ID " + entityId + " does not exist");
-
-        } else if (contact == null) {
-            logger.debug("No contact");
-            return Response.failNonexistentContact(id);
-        }
-
         try {
             contactService.removeContactFromOrganization(contact,organization);
             return Response.successGeneric();
-
-        } catch (Exception e) {
-            logger.debug("Bad service call");
-            return new Response(null, Response.FAILURE, "Unable to remove contact with ID " + contact.getId() +
-                    " from organization with ID " + organization.getId());
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
+        } catch (NullDomainReference.NullOrganization e) {
+            throw new NullDomainReference.NullOrganization(entityId, e);
         }
 
     }
@@ -308,24 +249,26 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/memberinfo")
     @JsonView(Views.MemberInfo.class)
-    public MemberInfo getMemberInfo(@PathVariable("id") String id) {
-        Contact contact = contactService.findById(id);
-        return (null == contact) ? null : contact.getMemberInfo();
+    public MemberInfo getMemberInfo(@PathVariable("id") String id) throws NullDomainReference{
+
+        Contact c = contactService.findById(id);
+        if (null == c) {
+            throw new NullDomainReference.NullContact(id);
+        }
+
+        return c.getMemberInfo();
+
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/memberinfo")
-    public Response updateMemberInfo(@PathVariable("id") String id, @RequestBody MemberInfo memberInfo) {
+    public Response updateMemberInfo(@PathVariable("id") String id, @RequestBody MemberInfo memberInfo) throws  ConstraintViolation, NullDomainReference{
         Contact contact = contactService.findById(id);
-        if (null == contact) {
-            return Response.failNonexistentContact(id);
-        }
-
         try {
             contactService.updateMemberInfo(contact, memberInfo);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Contact's membership information");
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
         }
 
     }
@@ -339,71 +282,47 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/demographics")
-    public Response updateDemographicDetails(@PathVariable("id") String id, @RequestBody Contact details) {
+    public Response updateDemographicDetails(@PathVariable("id") String id, @RequestBody Contact details) throws  ConstraintViolation, NullDomainReference{
         Contact contact = contactService.findById(id);
-
-        if (null == contact) {
-            return Response.failNonexistentContact(id);
-        }
 
         try {
             contactService.updateDemographicDetails(contact, details);
             return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error updating Contact with demographic details");
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
         }
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/committees", consumes= {"application/json"})
-    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) {
+    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) throws  ConstraintViolation, NullDomainReference{
 
-        String idStringed = idDto.getId();
-
-        Committee committee = committeeService.findById(idStringed);
+        Committee committee = committeeService.findById(idDto.getId());
         Contact contact = contactService.findById(id);
-
-        if (committee == null) {
-            logger.debug("No committee");
-            return new Response(null,Response.FAILURE, "Committee with ID " + idStringed + " does not exist");
-
-        } else if (contact == null) {
-            logger.debug("No contact");
-            return Response.failNonexistentContact(id);
-        }
 
         try {
             contactService.addContactToCommittee(contact, committee);
             return Response.successGeneric();
-        } catch (Exception e) {
-            logger.debug("Bad service call");
-            return new Response(null, Response.FAILURE, "Unable to add contact with ID " + contact.getId() +
-                    " to committee with ID " + committee.getId());
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
+        } catch (NullDomainReference.NullCommittee e) {
+            throw new NullDomainReference.NullCommittee(idDto.getId(), e);
         }
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{entityId}")
-    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
 
         Committee committee = committeeService.findById(entityId);
         Contact contact = contactService.findById(id);
 
-        if (committee == null) {
-            logger.debug("No committee");
-            return new Response(null,Response.FAILURE, "Committee with ID " + entityId + " does not exist");
-
-        } else if (contact == null) {
-            logger.debug("No contact");
-            return Response.failNonexistentContact(id);
-        }
-
         try {
             contactService.removeContactFromCommittee(contact, committee);
             return Response.successGeneric();
-        } catch (Exception e) {
-            logger.debug("Bad service call");
-            return new Response(null, Response.FAILURE, "Unable to remove contact with ID " + contact.getId() +
-                    " from committee with ID " + committee.getId());
+        } catch (NullDomainReference.NullContact e) {
+            throw new NullDomainReference.NullContact(id, e);
+        } catch (NullDomainReference.NullCommittee e) {
+            throw new NullDomainReference.NullCommittee(id, e);
         }
 
     }
@@ -411,8 +330,12 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/committees")
     @JsonView(Views.ContactCommitteeDetails.class)
-    public Set<Committee> getAllCommitteesForContact(@PathVariable("id") String id) {
-        return contactService.findById(id).getCommittees();
+    public Set<Committee> getAllCommitteesForContact(@PathVariable("id") String id) throws NullDomainReference{
+        Contact c = contactService.findById(id);
+        if (null == c) {
+            throw new NullDomainReference.NullContact(id);
+        }
+        return c.getCommittees();
     }
 }
 

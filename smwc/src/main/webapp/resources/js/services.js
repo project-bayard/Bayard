@@ -85,7 +85,8 @@
                 url: "/contacts/:id/encounters/:entityId"
             },
             deleteEncounter : {
-                method: 'PUT'
+                method: 'DELETE',
+                url: '/contacts/:id/encounters/:entityId'
             },
             getDemographics : {
                 method : 'GET',
@@ -224,6 +225,31 @@
                 method : 'GET',
                 url : '/users/authenticate'
             }
+        });
+    }]);
+    services.factory('EncounterTypeService',[ '$resource', function ($resource) {
+        return $resource('../encounterTypes/:id', {id : '@id'}, {
+
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id :"@id"
+                }
+            }
+
         });
     }]);
 

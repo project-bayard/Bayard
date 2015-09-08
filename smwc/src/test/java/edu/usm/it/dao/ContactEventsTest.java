@@ -3,6 +3,7 @@ package edu.usm.it.dao;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.EventDao;
 import org.junit.After;
@@ -73,9 +74,6 @@ public class ContactEventsTest extends WebAppConfigurationAware{
 
     @Test
     public void testAttendDuplicateEvent() throws Exception {
-        tearDown();
-        setup();
-
         contactDao.save(contact);
         eventDao.save(event);
 
@@ -93,8 +91,6 @@ public class ContactEventsTest extends WebAppConfigurationAware{
 
     @Test
     public void testAddContactToEvent() throws Exception {
-        tearDown();
-        setup();
 
         eventDao.save(event);
         contactDao.save(contact);
@@ -107,6 +103,18 @@ public class ContactEventsTest extends WebAppConfigurationAware{
         assertNotNull(contact.getAttendedEvents());
         assertEquals(0, contact.getAttendedEvents().size());
 
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testEventNullDate() {
+        event.setDateHeld(null);
+        eventDao.save(event);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testEventNullName() {
+        event.setName(null);
+        eventDao.save(event);
     }
 
 

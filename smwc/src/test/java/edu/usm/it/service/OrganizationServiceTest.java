@@ -3,6 +3,8 @@ package edu.usm.it.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.Null;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +69,6 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     public void tearDown() {
         organizationService.deleteAll();
         contactService.deleteAll();
-
     }
 
     @Test
@@ -101,8 +103,8 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organization.setMembers(contacts);
         organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact,organization);
-        contactService.addContactToOrganization(contact2,organization);
+        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact2, organization);
 
         Contact contactFromDb = contactService.findById(contact.getId());
         assertEquals(contactFromDb.getOrganizations().size(),1); // before
@@ -112,5 +114,18 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         assertNotNull(contactFromDb);
         assertEquals(contactFromDb.getOrganizations().size(),0);
 
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateNullName() throws ConstraintViolation, NullDomainReference {
+        organization.setName(null);
+        organizationService.create(organization);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testUpdateNullName() throws ConstraintViolation, NullDomainReference {
+        organizationService.create(organization);
+        organization.setName(null);
+        organizationService.update(organization);
     }
 }

@@ -4,89 +4,93 @@
     <div ng-show="requestError" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
     <h1>Create New Contact</h1>
 
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <form id="newContactForm" name="newContactForm">
-                <div class="form-group">
-                    <label>First Name:
-                        <input type="text" class="form-control input-sm" ng-model="contact.firstName">
-                    </label>
-                </div>
-                <div class="form-group">
-                     <label>Middle Name:
-                        <input type="text" class="form-control input-sm" ng-model="contact.middleName">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Last Name:
-                        <input type="text" class="form-control input-sm" ng-model="contact.lastName">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Street Address:
-                        <input type="text" class="form-control input-sm" ng-model="contact.streetAddress">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Apt Number:
-                        <input type="text" class="form-control input-sm" ng-model="contact.aptNumber">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>City:
-                        <input type="text" class="form-control input-sm" ng-model="contact.city">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>State:
-                        <input type="text" class="form-control input-sm" ng-model="contact.state">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Zip:
-                        <input type="text" class="form-control input-sm" ng-model="contact.zipCode">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Primary Phone #:
-                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber1">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>Secondary Phone #:
-                        <input type="text" class="form-control input-sm" ng-model="contact.phoneNumber2">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Email:
-                        <input type="text" class="form-control input-sm" ng-model="contact.email">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Language:
-                        <input type="text" class="form-control input-sm" ng-model="contact.language">
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>Can this contact initiate encounters?
-                        <input type="checkbox" class="form-control input-sm" ng-model="contact.initiator">
-                    </label>
-                </div>
-
-                <button id="submitButton" class="btn btn-lg btn-block btn-success" ng-click="submit()">Submit</button>
-                <button id="submitAndViewDetailsButton" class="btn btn-lg btn-block btn-primary" ng-click="submitAndViewDetails()">Submit and View Details</button>
-
-            </form>
+    <form id="newContactForm" name="newContactForm" novalidate>
+        <div class="row">
+            <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : newContactForm.firstName.$invalid && !newContactForm.firstName.$pristine }">
+                <label class="control-label">First Name</label>
+                <input name="firstName" type="text" class="form-control" ng-model="newContact.firstName" ng-maxlength="80" required>
+                <p ng-show="newContactForm.firstName.$error.required && !newContactForm.firstName.$pristine" class="help-block">A first name is required</p>
+                <p ng-show="newContactForm.firstName.$error.maxlength" class="help-block">First name too long</p>
+            </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Middle Name</label>
+                <input name="middleName" type="text" class="form-control" ng-model="newContact.middleName">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Last Name</label>
+                <input name="lastName" type="text" class="form-control" ng-model="newContact.lastName">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Street Address</label>
+                <input name="streetAddress" type="text" class="form-control" ng-model="newContact.streetAddress">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Apt Number</label>
+                <input name="aptNumber" type="text" class="form-control" ng-model="newContact.aptNumber">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">City</label>
+                <input name="city" type="text" class="form-control" ng-model="newContact.city">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">State</label>
+                <input name="state" type="text" ui-mask="AA" class="form-control" ng-model="newContact.state">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Zip</label>
+                <input name="zipCode" type="text" ui-mask="99999" class="form-control" ng-model="newContact.zipCode">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Primary Phone #:</label>
+                <input name="phoneNumber1" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newContact.phoneNumber1">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Secondary Phone #:</label>
+                <input name="phoneNumber2" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newContact.phoneNumber2">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Email</label>
+                <input name="email" type="email" class="form-control" ng-model="newContact.email">
+                <p ng-show="newContactForm.$error.email" class="help-block">Enter a valid email address</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Language</label>
+                <input name="Language" type="text" class="form-control" ng-model="newContact.language">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label>Can this contact initiate encounters?
+                    <input type="checkbox" class="form-control" ng-model="contact.initiator">
+                </label>
+            </div>
+        </div>
+    </form>
+
+    <button id="submitButton" class="btn btn-lg btn-block btn-success" ng-click="submit()">Submit</button>
+    <button id="submitAndViewDetailsButton" class="btn btn-lg btn-block btn-primary" ng-click="submitAndViewDetails()">Submit and View Details</button>
 
     <p class="bg-danger">{{errorMessage}}</p>
 

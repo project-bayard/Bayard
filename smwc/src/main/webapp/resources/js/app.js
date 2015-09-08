@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['ngRoute', 'controllers','services','filters']);
+    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters']);
 
     app.config(function ($routeProvider, $httpProvider) {
 
@@ -46,7 +46,11 @@
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'
             })
-            .otherwise({redirectTo: '/login'});
+            .when('/encountertypes', {
+                templateUrl: 'resources/partials/encounterTypes.html',
+                controller: 'EncounterTypeCtrl'
+            })
+            .otherwise({redirectTo: '/'});
 
 
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';

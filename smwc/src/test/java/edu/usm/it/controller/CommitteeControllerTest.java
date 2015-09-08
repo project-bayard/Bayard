@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.dto.IdDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import org.junit.After;
@@ -38,12 +39,14 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         committeeService.deleteAll();
         contactService.deleteAll();
     }
+
     @Test
     public void testGetAllCommittees() throws Exception {
 
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
 
@@ -86,23 +89,32 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();
         committee.setName("name");
-        committeeService.create(committee);
-        contactService.addContactToCommittee(contact, committee);
+        String id = committeeService.create(committee);
+
+        IdDto dto = new IdDto(id);
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(put("/contacts/"+contact.getId()+"/committees")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
 
         committee.setName("newName");
-        String json = new ObjectMapper().writeValueAsString(committee);
+        json = new ObjectMapper().writeValueAsString(committee);
 
-        mockMvc.perform(put("/committees/" + committee.getId()).contentType(MediaType.APPLICATION_JSON).content(json))
+        mockMvc.perform(put("/committees/" + committee.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isOk());
 
         Set<Committee> committees = committeeService.findAll();
         assertNotNull(committees);
-        assertEquals(committees.size(),1);
-        assertEquals(committees.iterator().next().getName(),committee.getName());
+        assertEquals(1, committees.size());
+        assertEquals("newName",committees.iterator().next().getName());
     }
 
     @Test
@@ -110,6 +122,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();
@@ -137,6 +150,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();
@@ -159,6 +173,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
+        contact.setEmail("email@email.com");
         contactService.create(contact);
 
         Committee committee = new Committee();

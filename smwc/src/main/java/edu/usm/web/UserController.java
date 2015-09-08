@@ -29,9 +29,9 @@ public class UserController {
     public Response createUser(@RequestBody User user) {
         try {
             long id = userService.createUser(user);
-            return new Response(Long.toString(id),Response.SUCCESS,null);
+            return new Response(Long.toString(id),Response.SUCCESS);
         } catch (Exception e) {
-            return new Response(null,Response.FAILURE, "Failed to add new user");
+            return new Response(null, "Failed to add new user");
         }
     }
 
@@ -58,13 +58,13 @@ public class UserController {
     public Response deleteUser(@PathVariable("userId") long userId) {
         User user = userService.findById(userId);
         if (null == user) {
-            return new Response(null, Response.FAILURE, "User with ID " + userId + " does not exist.");
+            return new Response(null, "User with ID " + userId + " does not exist.");
         }
         try {
             userService.deleteUser(user);
             return Response.successGeneric();
         } catch (Exception e) {
-            return new Response(null, Response.FAILURE, "Error deleting user with ID " + userId + ".");
+            return new Response(null, "Error deleting user with ID " + userId + ".");
         }
     }
 

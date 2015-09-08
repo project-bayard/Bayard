@@ -1,8 +1,12 @@
 package edu.usm.service;
 
 import edu.usm.domain.Committee;
+import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
 
@@ -11,12 +15,30 @@ import java.util.Set;
  */
 public interface EventService {
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Event findById(String id);
-    String create (Event event);
-    String create (EventDto dto, Committee committee);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Event> findByName(String name);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    String create (Event event) throws ConstraintViolation, NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    String create (EventDto dto, Committee committee) throws ConstraintViolation, NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Event> findAll();
-    void delete(Event event);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void delete(Event event) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullContact;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
-    void update(Event event);
-    void update(Event event, EventDto eventDto);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void update(Event event) throws ConstraintViolation, NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent;
 }

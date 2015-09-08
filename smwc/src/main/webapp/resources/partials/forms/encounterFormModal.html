@@ -1,0 +1,51 @@
+<form name="formHolder.encounterFormModal" id="formHolder.encounterFormModal" novalidate>
+    <div class="row">
+        <div class="form-group col-xs-12 required"  ng-class="{ 'has-error' : formHolder.encounterFormModal.initiator.$invalid && !formHolder.encounterFormModal.initiator.$pristine }">
+            <label class="control-label">Initiator:</label>
+            <select class="form-control input-small" name="initiator" ng-model="modelHolder.encounterModel.initiatorId" required>
+                <option ng-repeat="initiator in initiators | removeItemById:contact.id" value="{{initiator.id}}">{{initiator.firstName + " " + initiator.middleName + " " + initiator.lastName}}</option>
+            </select>
+            <p ng-show="formHolder.encounterFormModal.initiator.$error.required && !formHolder.encounterFormModal.initiator.$pristine" class="help-block">An initiator is required</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12 required"  ng-class="{ 'has-error' : formHolder.encounterFormModal.jsDate.$invalid && !formHolder.encounterFormModal.jsDate.$pristine }">
+            <label class="control-label">Date</label>
+            <input name="jsDate" type="date" class="form-control " ng-model="modelHolder.encounterModel.jsDate" required>
+            <p ng-show="formHolder.encounterFormModal.jsDate.$error.required && !formHolder.encounterFormModal.jsDate.$pristine" class="help-block">The encounter date is required</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12 required"  ng-class="{ 'has-error' : formHolder.encounterFormModal.assessment.$invalid && !formHolder.encounterFormModal.assessment.$pristine }">
+            <label class="control-label">Assessment</label>
+            <select name="assessment" class="form-control input-small" ng-model="modelHolder.encounterModel.assessment" required>
+                <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
+            </select>
+            <p ng-show="formHolder.encounterFormModal.assessment.$error.required && !formHolder.encounterFormModal.assessment.$pristine" class="help-block">The assessment is required</p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12 required"  ng-class="{ 'has-error' : formHolder.encounterFormModal.type.$invalid && !formHolder.encounterFormModal.type.$pristine }">
+            <label class="control-label">Type</label>
+            <select name="type" class="form-control input-small" ng-model="modelHolder.encounterModel.type" required>
+                <option ng-repeat="encounterType in encounterTypes" value="{{encounterType.id}}">{{encounterType.name}}</option>
+            </select>
+            <p ng-show="formHolder.encounterFormModal.type.$error.required && !formHolder.encounterFormModal.type.$pristine" class="help-block">The encounter type is required</p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Notes</label>
+            <textarea class="form-control" rows="3" cols="50" ng-model="modelHolder.encounterModel.notes" ></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Does this encounter require a follow up?</label>
+            <select class="form-control " ng-model="modelHolder.encounterModel.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+            </select>
+        </div>
+    </div>
+</form>

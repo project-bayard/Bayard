@@ -1,6 +1,9 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.*;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.repository.ContactDao;
 import edu.usm.service.*;
@@ -9,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -26,11 +28,22 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private CommitteeService committeeService;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private EncounterService encounterService;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
     @Override
-    public void attendEvent(Contact contact, Event event) {
+    public void attendEvent(Contact contact, Event event) throws NullDomainReference.NullContact, NullDomainReference.NullEvent {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
         Set<Event> attendedEvents = contact.getAttendedEvents();
         Set<Contact> attendees = event.getAttendees();
 
@@ -46,14 +59,15 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         attendees.add(contact);
         attendedEvents.add(event);
+
         update(contact);
     }
 
-
-
     @Override
-    public Contact findById(String id) {
-        logger.debug("Finding contact with ID: " + id);
+    public Contact findById(String id)  {
+        if (null == id) {
+            return null;
+        }
         return contactDao.findOne(id);
     }
 
@@ -64,9 +78,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void delete(Contact contact) {
-        logger.debug("Deleting contact " + contact.getId() );
-        logger.debug("Time: " + LocalDateTime.now());
+    public void delete(Contact contact) throws ConstraintViolation, NullDomainReference {
 
         updateLastModified(contact);
 
@@ -94,31 +106,112 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             }
         }
 
+        contact.getEncounters().clear();
+
         if (contact.getEncountersInitiated() != null) {
             for (Encounter encounter : contact.getEncountersInitiated()) {
                 encounter.setInitiator(null);
-                this.update(encounter.getContact());
+                encounterService.updateEncounter(encounter,null, null);
             }
+            contact.getEncountersInitiated().clear();
         }
 
         contactDao.delete(contact);
     }
 
     private void update(Contact contact) {
-        logger.debug("Updating contact with ID: " + contact.getId());
-        logger.debug("Time: " + LocalDateTime.now());
         updateLastModified(contact);
         contactDao.save(contact);
+    }
+
+    private void validateOnUpdate(Contact contact) throws ConstraintViolation {
+
+        if (null == contact.getFirstName()) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
+        }
+
+        if (null == contact.getPhoneNumber1() && null == contact.getEmail()) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
+        }
+
+
+        Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
+
+        if (null != existingFirstNames) {
+            Iterator<Contact> iterator = existingFirstNames.iterator();
+            while(iterator.hasNext()) {
+                Contact sameFirstName = iterator.next();
+                if (sameFirstName.getId().equalsIgnoreCase(contact.getId())) {
+                    continue;
+                }
+
+                if (null != contact.getEmail() && contact.getEmail().equalsIgnoreCase(sameFirstName.getEmail())) {
+                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_EMAIL, sameFirstName);
+                }
+
+                if (null != contact.getPhoneNumber1() && contact.getPhoneNumber1().equalsIgnoreCase(sameFirstName.getPhoneNumber1())) {
+                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_PHONE_NUMBER, sameFirstName);
+                }
+
+            }
+        }
     }
 
 
 
     @Override
-    public String create(Contact contact) {
-        logger.debug("Creating contact with ID: " + contact.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public String create(Contact contact) throws ConstraintViolation {
+        validateOnCreate(contact);
         contactDao.save(contact);
         return contact.getId();
+    }
+
+    private void validateOnCreate(Contact contact) throws ConstraintViolation {
+        if (null == contact.getFirstName()) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
+        }
+
+        if (null == contact.getPhoneNumber1() && null == contact.getEmail()) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
+        }
+
+        Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
+
+        if (null != existingFirstNames) {
+            Iterator<Contact> iterator = existingFirstNames.iterator();
+            while(iterator.hasNext()) {
+                Contact sameFirstName = iterator.next();
+
+                if (null != contact.getEmail() && contact.getEmail().equalsIgnoreCase(sameFirstName.getEmail())) {
+                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_EMAIL, sameFirstName);
+                }
+
+                if (null != contact.getPhoneNumber1() && contact.getPhoneNumber1().equalsIgnoreCase(sameFirstName.getPhoneNumber1())) {
+                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_PHONE_NUMBER, sameFirstName);
+                }
+
+            }
+        }
+
+    }
+
+    public Set<Contact> findByFirstName(String firstName) {
+
+        return contactDao.findByFirstName(firstName);
+
+    }
+
+    /*
+    Satisfies Java 8 method stream expectations of exception type
+     */
+    private void uncheckedDelete(Contact contact) {
+        try {
+            delete(contact);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        } catch (ConstraintViolation e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -126,7 +219,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         logger.debug("Deleting all contacts.");
         Set<Contact> contacts = findAll();
-        contacts.stream().forEach(this::delete);
+        contacts.stream().forEach(this::uncheckedDelete);
     }
 
     @Override
@@ -136,7 +229,16 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addContactToOrganization(Contact contact, Organization organization) {
+    public void addContactToOrganization(Contact contact, Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
         Set<Organization> organizations = contact.getOrganizations();
         Set<Contact> members = organization.getMembers();
 
@@ -152,12 +254,22 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.add(contact);
         organizations.add(organization);
+
         update(contact);
     }
 
 
     @Override
-    public void removeContactFromOrganization(Contact contact, Organization organization) {
+    public void removeContactFromOrganization(Contact contact, Organization organization) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
         Set<Organization> organizations = contact.getOrganizations();
         Set<Contact> members = organization.getMembers();
 
@@ -167,12 +279,22 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.remove(contact);
         organizations.remove(organization);
+
         update(contact);
     }
 
 
     @Override
-    public void addContactToCommittee(Contact contact, Committee committee) {
+    public void addContactToCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == committee) {
+            throw new NullDomainReference.NullCommittee();
+        }
+
         Set<Committee> committees = contact.getCommittees();
         Set<Contact> members = committee.getMembers();
 
@@ -188,11 +310,22 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.add(contact);
         committees.add(committee);
+
+
         update(contact);
     }
 
     @Override
-    public void removeContactFromCommittee(Contact contact, Committee committee) {
+    public void removeContactFromCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == committee) {
+            throw new NullDomainReference.NullCommittee();
+        }
+
         Set<Committee> committees = contact.getCommittees();
         Set<Contact> members = committee.getMembers();
 
@@ -202,11 +335,17 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.remove(contact);
         committees.remove(committee);
+
         update(contact);
     }
 
     @Override
-    public void updateBasicDetails(Contact contact, Contact details) {
+    public void updateBasicDetails(Contact contact, Contact details) throws ConstraintViolation, NullDomainReference.NullContact {
+
+        if (null == contact || null == details) {
+            throw new NullDomainReference.NullContact();
+        }
+
         contact.setFirstName(details.getFirstName());
         contact.setMiddleName(details.getMiddleName());
         contact.setLastName(details.getLastName());
@@ -222,23 +361,40 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.setOccupation(details.getOccupation());
         contact.setInterests(details.getInterests());
         contact.setInitiator(details.isInitiator());
+        contact.setNeedsFollowUp(details.needsFollowUp());
 
+
+        validateOnUpdate(contact);
         update(contact);
 
     }
 
     @Override
-    public void unattendEvent(Contact contact, Event event) {
+    public void unattendEvent(Contact contact, Event event) throws  ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEvent {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == event) {
+            throw new NullDomainReference.NullEvent();
+        }
+
         if (contact.getAttendedEvents() != null) {
             contact.getAttendedEvents().remove(event);
             event.getAttendees().remove(contact);
+
             update(contact);
             eventService.update(event);
         }
     }
 
     @Override
-    public void updateDemographicDetails(Contact contact, Contact details) {
+    public void updateDemographicDetails(Contact contact, Contact details) throws  NullDomainReference.NullContact {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
 
         contact.setRace(details.getRace());
         contact.setEthnicity(details.getEthnicity());
@@ -248,36 +404,59 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.setIncomeBracket(details.getIncomeBracket());
         contact.setSexualOrientation(details.getSexualOrientation());
 
+
         update(contact);
     }
 
     @Override
-    public void addEncounter(Contact contact, Contact initiator, EncounterDto dto) {
+    public void addEncounter(Contact contact, Contact initiator, EncounterType encounterType, EncounterDto dto)
+            throws ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEncounterType {
+
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
+
+        if (null == initiator) {
+            throw new NullDomainReference.NullContact();
+        } else if (!initiator.isInitiator()) {
+            throw new ConstraintViolation(ConstraintMessage.ENCOUNTER_CONTACT_NOT_INITIATOR);
+        }
+
+        if (null == encounterType) {
+            throw new NullDomainReference.NullEncounterType();
+        }
 
         Encounter encounter = new Encounter();
         encounter.setEncounterDate(dto.getEncounterDate());
         encounter.setContact(contact);
         encounter.setInitiator(initiator);
         encounter.setNotes(dto.getNotes());
-        encounter.setType(dto.getType());
+        encounter.setType(encounterType.getName());
         encounter.setAssessment(dto.getAssessment());
+        encounter.setRequiresFollowUp(dto.requiresFollowUp());
 
-        if (null == contact.getEncounters()) {
-            contact.setEncounters(new TreeSet<>());
+        if (null == encounter.getEncounterDate()) {
+            throw new ConstraintViolation(ConstraintMessage.ENCOUNTER_REQUIRED_DATE);
         }
 
+        //update assessment and follow up indicator if this is the most recent encounter
         contact.getEncounters().add(encounter);
+        contact.setNeedsFollowUp(contact.getEncounters().first().requiresFollowUp());
         contact.setAssessment(getUpdatedAssessment(contact));
+
         update(contact);
 
-//        if (null == initiator.getEncountersInitiated()) {
-//            initiator.setEncountersInitiated(new TreeSet<>());
-//        }
-//        initiator.getEncountersInitiated().add(encounter);
-//        update(initiator);
+        if (null == initiator.getEncountersInitiated()) {
+            initiator.setEncountersInitiated(new TreeSet<>());
+        }
+        initiator.getEncountersInitiated().add(encounter);
+
+
+        update(initiator);
     }
 
-    private int getUpdatedAssessment(Contact contact) {
+    @Override
+    public int getUpdatedAssessment(Contact contact) {
         /*Sets assessment to most recent encounter assessment */
         if (null == contact.getEncounters() || contact.getEncounters().isEmpty()) {
             return contact.getAssessment();
@@ -290,21 +469,49 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void removeEncounter(Contact contact, Encounter encounter) {
-        contact.getEncounters().remove(encounter);
-        contact.setAssessment(getUpdatedAssessment(contact));
+    public void updateNeedsFollowUp(Contact contact, boolean followUp)   {
+        contact.setNeedsFollowUp(followUp);
+
         update(contact);
     }
 
     @Override
-    public void removeInitiator(Contact initiator, Encounter encounter) {
+    public void removeEncounter(Contact contact, Encounter encounter)   {
+        contact.getEncounters().remove(encounter);
+        contact.setAssessment(getUpdatedAssessment(contact));
+        encounter.setContact(null);
+
+        Contact initiator = encounter.getInitiator();
+        if (null != initiator) {
+            initiator.getEncountersInitiated().remove(encounter);
+            encounter.setInitiator(null);
+            update(initiator);
+        }
+
+        update(contact);
+    }
+
+    @Override
+    public void removeInitiator(Contact initiator, Encounter encounter)  {
         initiator.getEncountersInitiated().remove(encounter);
+        encounter.setInitiator(null);
         update(initiator);
     }
 
     @Override
-    public void updateMemberInfo(Contact contact, MemberInfo memberInfo) {
+    public void updateMemberInfo(Contact contact, MemberInfo memberInfo) throws NullDomainReference.NullContact{
+        if (null == contact) {
+            throw new NullDomainReference.NullContact();
+        }
         contact.setMemberInfo(memberInfo);
+
+        update(contact);
+    }
+
+    @Override
+    public void updateAssessment(Contact contact, int assessment) {
+        contact.setAssessment(assessment);
+
         update(contact);
     }
 }

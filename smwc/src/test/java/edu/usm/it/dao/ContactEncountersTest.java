@@ -15,8 +15,10 @@ import java.time.LocalDate;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by scottkimball on 5/13/15.
@@ -28,6 +30,7 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
 
     private Contact contact;
     private Encounter encounter;
+    private Contact initiator;
 
     @Before
     public void setup() {
@@ -42,13 +45,21 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
         contact.setAssessment(1);
         contact.setPhoneNumber1("phone number");
         contact.setInterests("interests");
+        contactDao.save(contact);
+
+        initiator = new Contact();
+        initiator.setFirstName("Initiator");
+        initiator.setEmail("email@email.com");
+        initiator.setInitiator(true);
+        contactDao.save(initiator);
 
         encounter = new Encounter();
         encounter.setAssessment(0);
-        encounter.setContact(contact);
         encounter.setEncounterDate(LocalDate.now().toString());
         encounter.setNotes("Notes");
-        encounter.setType(EncounterType.EVENT);
+
+        EncounterType encounterType = new EncounterType("CALL");
+        encounter.setType(encounterType.getName());
 
 
 
@@ -63,21 +74,7 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testSaveEncounter() {
-        Contact initiator = new Contact();
-        initiator.setFirstName("initiator");
-        SortedSet<Encounter> encountersInitiated = new TreeSet<>();
-        encountersInitiated.add(encounter);
-        initiator.setEncountersInitiated(encountersInitiated);
-        contactDao.save(initiator);
-
-
-
-        encounter.setInitiator(initiator);
-        SortedSet<Encounter> encounters = new TreeSet<>();
-        encounters.add(encounter);
-        contact.setEncounters(encounters);
-        contactDao.save(contact);
-
+        createEncounter(contact, initiator, encounter);
         Contact fromDb = contactDao.findOne(contact.getId());
         assertNotNull(fromDb.getEncounters());
         assertEquals(fromDb.getEncounters().size(), 1);
@@ -90,25 +87,48 @@ public class ContactEncountersTest extends WebAppConfigurationAware {
     @Test
     @Transactional
     public void testDeleteContact() {
-        contactDao.save(contact);
-        Contact initiator = new Contact();
-        initiator.setFirstName("initiator");
-        SortedSet<Encounter> encountersInitiated = new TreeSet<>();
-        encountersInitiated.add(encounter);
-        initiator.setEncountersInitiated(encountersInitiated);
-        contactDao.save(initiator);
-
-        encounter.setInitiator(initiator);
-        SortedSet<Encounter> encounters = new TreeSet<>();
-        encounters.add(encounter);
-        contact.setEncounters(encounters);
-        contactDao.save(contact);
-
+        createEncounter(contact, initiator, encounter);
         contactDao.delete(contact);
         Contact fromDb = contactDao.findOne(initiator.getId());
         assertNotNull(fromDb);
+    }
+
+    private void createEncounter(Contact contact, Contact initiator, Encounter encounter) {
+        encounter.setInitiator(initiator);
+        encounter.setContact(contact);
+        SortedSet<Encounter> encountersInitiated = new TreeSet<>();
+        encountersInitiated.add(encounter);
+        initiator.setEncountersInitiated(encountersInitiated);
+        contact.getEncounters().add(encounter);
+        contactDao.save(contact);
+        contactDao.save(initiator);
+    }
 
 
+    @Test(expected = Exception.class)
+    public void testCreateEncounterNullContact() {
+        createEncounter(contact, initiator, encounter);
+        Encounter encounter = contact.getEncounters().first();
+        encounter.setContact(null);
 
+        contactDao.save(contact);
+    }
+
+    @Test(expected = Exception.class)
+    public void testCreateEncounterNullDate() {
+        createEncounter(contact, initiator, encounter);
+        Encounter encounter = contact.getEncounters().first();
+        encounter.setEncounterDate(null);
+
+        contactDao.save(contact);
+    }
+
+    @Test(expected = Exception.class)
+    public void testCreateEncounterNullType() {
+        createEncounter(contact, initiator, encounter);
+        Encounter encounter = contact.getEncounters().first();
+        encounter.setType(null);
+
+        contactDao.save(contact);
     }
 }

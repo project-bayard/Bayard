@@ -1,21 +1,22 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
 
 @Entity(name = "organization")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="organization_id")
 public class Organization extends BasicEntity  implements Serializable {
 
 
     @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactOrganizationDetails.class})
     @Column
+    @NotNull
+    @Size(min = 1)
     private String name;
 
     @JsonView({Views.ContactList.class, Views.OrganizationList.class})

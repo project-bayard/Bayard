@@ -129,12 +129,11 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         encounter.setContact(contact);
         encounter.setEncounterDate(LocalDate.now().toString());
         encounter.setNotes("Notes");
-        encounter.setType(EncounterType.EVENT);
 
-        SortedSet<Encounter> encounters = new TreeSet<>();
-        encounters.add(encounter);
-        contact.setEncounters(encounters);
+        EncounterType encounterType = new EncounterType("CALL");
 
+        encounter.setType(encounterType.getName());
+        contact.getEncounters().add(encounter);
         contactDao.save(contact);
 
         Contact fromDb = contactDao.findOne(contact.getId());
@@ -187,8 +186,10 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
     @Test
     public void testFilterByInitiator() throws Exception {
         Contact contact = new Contact();
+        contact.setFirstName("First");
         contact.setInitiator(true);
         Contact contact1 = new Contact();
+        contact1.setFirstName("Second");
         contact1.setInitiator(true);
         contact1.setDeleted(true);
         contactDao.save(contact1);

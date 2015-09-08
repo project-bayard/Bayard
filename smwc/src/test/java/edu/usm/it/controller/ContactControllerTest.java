@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
-import edu.usm.dto.Response;
 import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import javax.transaction.Transactional;
@@ -53,13 +54,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Autowired
     DateFormatConfig dateFormatConfig;
 
+    @Autowired
+    EncounterTypeService encounterTypeService;
+
 
     private Contact contact;
-    private Contact initiator;
     private Event event;
+    private EncounterType encounterType;
 
     @Before
-    public void setup() {
+    public void setup() throws ConstraintViolation{
         contact = new Contact();
         contact.setFirstName("First");
         contact.setLastName("Last");
@@ -82,15 +86,15 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         memberInfo.setStatus(MemberInfo.STATUS_GOOD);
         contact.setMemberInfo(memberInfo);
 
-        initiator = new Contact();
-        initiator.setFirstName("initiatorFirst");
-        contactService.create(initiator);
-
         event = new Event();
         event.setName("Test Event");
         event.setLocation("Test event location");
         event.setDateHeld(dateFormatConfig.formatDomainDate(LocalDate.of(2015, 01, 01)));
         event.setNotes("Test event notes");
+
+        encounterType = new EncounterType();
+        encounterType.setName("Name");
+        encounterTypeService.create(encounterType);
     }
 
     @After
@@ -99,6 +103,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         organizationService.deleteAll();
         contactService.deleteAll();
         eventService.deleteAll();
+        encounterTypeService.deleteAll();
     }
 
 
@@ -108,11 +113,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         String json = new ObjectMapper().writeValueAsString(contact);
 
         mockMvc.perform(post("/contacts").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
+                .andExpect(status().isOk());
 
         Set<Contact> fromDb = contactService.findAll();
-        assertEquals(fromDb.size(), 2);
+        assertEquals(fromDb.size(), 1);
 
     }
 
@@ -134,14 +138,13 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact details = new Contact();
         details.setFirstName("newFirstName");
+        details.setEmail("email@email.com");
 
         String json = new ObjectMapper().writeValueAsString(details);
 
         mockMvc.perform(put("/contacts/" + contact.getId())
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)))
-                .andExpect(jsonPath("$.id", is(contact.getId())));
+                .andExpect(status().isOk());
 
         Contact fromDb = contactService.findById(contact.getId());
         assertEquals(fromDb.getFirstName(),details.getFirstName());
@@ -176,6 +179,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Contact contact = new Contact();
         contact.setFirstName("firstName");
         contact.setLastName("lastName");
+        contact.setEmail("email@email.com");
         contact.setInitiator(true);
 
         contactService.create(contact);
@@ -232,7 +236,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(fromDb);
-        assertEquals(fromDb.getOrganizations().iterator().next().getId(),organization.getId());
+        assertEquals(fromDb.getOrganizations().iterator().next().getId(), organization.getId());
         assertNotNull(orgFromDb);
         assertEquals(orgFromDb.getMembers().iterator().next().getId(), contact.getId());
 
@@ -240,7 +244,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         /*Bad Contact Id*/
         mockMvc.perform(put("/contacts/" + "badId" + "/organizations")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andExpect(jsonPath("status", is("FAILURE")));
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 
 
         /*Bad org ID*/
@@ -248,7 +252,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         json = mapper.writeValueAsString(organizationIdDto);
         mockMvc.perform(put(path)
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andExpect(jsonPath("status", is("FAILURE")));
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
     }
 
     @Test
@@ -276,109 +280,102 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String orgID = organizationService.create(organization);
 
-        mockMvc.perform(delete("/contacts/" + id + "/organizations/"+orgID)
+        mockMvc.perform(delete("/contacts/" + id + "/organizations/" + orgID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
     }
 
     @Test
     @Transactional
     public void testCreateEncounter() throws Exception {
         String id = contactService.create(contact);
-        String initiatorId = contactService.create(generateSecondcontact());
+        String initiatorId = contactService.create(generateSecondcontact("Initiator", "initiatorEmail"));
         EncounterDto dto = new EncounterDto();
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
         dto.setAssessment(9);
-        dto.setType("Call");
+        dto.setType(encounterType.getId());
         dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
-
+        mockMvc.perform(put("/contacts/" + id + "/encounters")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
     }
 
-//    @Test
-//    public void testDeleteEncounter() throws Exception {
-//        String id = contactService.create(contact);
-//        String initiatorId = contactService.create(generateSecondcontact());
-//        EncounterDto dto = new EncounterDto();
-//        dto.setInitiatorId(initiatorId);
-//        dto.setNotes("Notes");
-//        dto.setAssessment(9);
-//        dto.setType("Call");
-//        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
-//
-//        String json = new ObjectMapper().writeValueAsString(dto);
-//
-//        mockMvc.perform(put("/contacts/"+id+"/encounters")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(json))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.status", is("SUCCESS")));
-//
-//        Contact contactFromDb = contactService.findById(id);
-//        Encounter encounter = contactFromDb.getEncounters().first();
-//
-//        mockMvc.perform(delete("/contacts/"+id+"/encounters/"+encounter.getId())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.status", is("SUCCESS")));
-//
-//
-//        contactFromDb = contactService.findById(id);
-//        assertEquals(0, contactFromDb.getEncounters().size());
-//    }
+    @Test
+    public void testDeleteEncounter() throws Exception {
+        String id = contactService.create(contact);
+        String initiatorId = contactService.create(generateSecondcontact("Initiator", "initiatorEmail"));
+        EncounterDto dto = new EncounterDto();
+        dto.setInitiatorId(initiatorId);
+        dto.setNotes("Notes");
+        dto.setAssessment(9);
+        dto.setType(encounterType.getId());
+        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(put("/contacts/" + id + "/encounters")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+
+        Contact contactFromDb = contactService.findById(id);
+        Encounter encounter = contactFromDb.getEncounters().first();
+
+        mockMvc.perform(delete("/contacts/" + id + "/encounters/" + encounter.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        contactFromDb = contactService.findById(id);
+        assertEquals(0, contactFromDb.getEncounters().size());
+    }
 
     @Test
     @Transactional
     public void testUpdateEncounter() throws Exception {
         String id = contactService.create(contact);
-        String initiatorId = contactService.create(generateSecondcontact());
+        String initiatorId = contactService.create(generateSecondcontact("Second", "secondEmail"));
         EncounterDto dto = new EncounterDto();
         dto.setInitiatorId(initiatorId);
         dto.setNotes("Notes");
         dto.setAssessment(9);
-        dto.setType("Call");
+        dto.setType(encounterType.getId());
         dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters")
+        mockMvc.perform(put("/contacts/" + id + "/encounters")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
 
         Contact contactFromDb = contactService.findById(id);
         Encounter encounterFromDb = contactFromDb.getEncounters().first();
-        String newInitiatorId = contactService.create(generateSecondcontact());
+        String newInitiatorId = contactService.create(generateSecondcontact("Third", "thirdEmail"));
 
         dto = new EncounterDto();
         dto.setAssessment(5);
         dto.setNotes("Updated Notes");
-        dto.setType("Other");
+        dto.setType(encounterType.getId());
         dto.setInitiatorId(newInitiatorId);
+        dto.setEncounterDate(dateFormatConfig.formatDomainDate(LocalDate.now()));
 
         json = new ObjectMapper().writeValueAsString(dto);
 
-        mockMvc.perform(put("/contacts/"+id+"/encounters/"+encounterFromDb.getId())
+        mockMvc.perform(put("/contacts/" + id + "/encounters/" + encounterFromDb.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
 
         encounterFromDb = encounterService.findById(encounterFromDb.getId());
         assertEquals("Updated Notes", encounterFromDb.getNotes());
@@ -460,9 +457,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         mockMvc.perform(put("/contacts/" + id + "/demographics")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(Response.SUCCESS)));
-    }
+                .andExpect(status().isOk());}
 
     public void testRemoveContactFromCommittee () throws Exception {
         String id = contactService.create(contact);
@@ -523,12 +518,11 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         String json = new ObjectMapper().writeValueAsString(newInfo);
 
-        mockMvc.perform(put("/contacts/"+contact.getId()+"/memberinfo")
+        mockMvc.perform(put("/contacts/" + contact.getId() + "/memberinfo")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -551,15 +545,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
-    private Contact generateSecondcontact() {
+    private Contact generateSecondcontact(String firstName, String email) {
         Contact secondContact = new Contact();
-        secondContact.setFirstName("Second");
+        secondContact.setFirstName(firstName);
         secondContact.setLastName("ToLast");
         secondContact.setStreetAddress("541 Downtown Abbey");
         secondContact.setAptNumber("# 9");
         secondContact.setCity("Yarmouth");
         secondContact.setZipCode("04096");
-        secondContact.setEmail("second@gmail.com");
+        secondContact.setEmail(email);
+        secondContact.setInitiator(true);
         return secondContact;
     }
 }

@@ -1,46 +1,62 @@
-<div class="panel panel-default">
-    <div class="panel-heading" ng-click="checkIfMember()">
-        <h3 class="panel-title">Member Information</h3>
-    </div>
-    <div class="panel-body" ng-show="memberInfoPanel.showingPanel">
-        <div ng-show="memberInfoPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Member information updated</div>
-        <div ng-show="promptNotMember">
-            <div class="alert alert-warning">This contact is not currently a member.</div>
-            <button class="btn btn-success" ng-click="becomeMember()">Make Member</button>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="toggleMemberInfoPanel()">
+                    <h3 class="panel-title">Member Information</h3>
+                </div>
+                <div class="panel-body" ng-show="memberInfoPanel.showingPanel">
+                    <div ng-show="memberInfoPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Member information updated</div>
+                    <div ng-show="promptNotMember">
+                        <div class="alert alert-warning">This contact is not currently a member.</div>
+                        <button class="btn btn-success" ng-click="becomeMember()">Make Member</button>
+                    </div>
+                    <div ng-show="memberInfoPanel.showingMemberInfo">
+                        <form name="memberInfoPanel.form" id="memberInfoPanel.form" novalidate>
+                            <fieldset ng-disabled="!memberInfoPanel.editingMemberInfo">
+                                <div class="row">
+                                    <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : memberInfoPanel.form.paidDues.$invalid && !memberInfoPanel.form.paidDues.$pristine }">
+                                        <label class="control-label">Paid Dues?:</label>
+                                        <select class="form-control input-small" name="paidDues" ng-model="memberInfo.paidDues" ng-options="booleanToString(value) for value in [true, false]" required>
+                                        </select>
+                                        <p ng-show="memberInfoPanel.form.paidDues.$error.required && !memberInfoPanel.form.paidDues.$pristine" class="help-block">This answer is required</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : memberInfoPanel.form.signedAgreement.$invalid && !memberInfoPanel.form.signedAgreement.$pristine }">
+                                        <label class="control-label">Signed Agreement?:</label>
+                                        <select class="form-control input-small" name="signedAgreement" ng-model="memberInfo.signedAgreement" ng-options="booleanToString(value) for value in [true, false]" required>
+                                        </select>
+                                        <p ng-show="memberInfoPanel.form.edAgreement.$error.required && !memberInfoPanel.form.signedAgreement.$pristine" class="help-block">This answer is required</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : memberInfoPanel.form.attendedOrientation.$invalid && !memberInfoPanel.form.attendedOrientation.$pristine }">
+                                        <label class="control-label">Attended Orientation?:</label>
+                                        <select class="form-control input-small" name="attendedOrientation" ng-model="memberInfo.attendedOrientation" ng-options="booleanToString(value) for value in [true, false]" required>
+                                        </select>
+                                        <p ng-show="memberInfoPanel.form.attendedOrientation.$error.required && !memberInfoPanel.form.attendedOrientation.$pristine" class="help-block">This answer is required</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : memberInfoPanel.form.status.$invalid && !memberInfoPanel.form.status.$pristine }">
+                                        <label class="control-label">Standing:</label>
+                                        <select class="form-control input-small" name="status" ng-model="memberInfo.status" required>
+                                            <option ng-repeat="standing in memberInfoPanel.standings" value="{{standing.value}}">{{standing.label}}</option>
+                                        </select>
+                                        <p ng-show="memberInfoPanel.form.status.$error.required && !memberInfoPanel.form.status.$pristine" class="help-block">This answer is required</p>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                        <button class="btn btn-primary" ng-click="toggleEditingMemberInfo()" ng-show="!memberInfoPanel.editingMemberInfo && contact.member">Edit Member Info</button>
+                        <button class="btn btn-success" ng-click="updateMembershipInfo()" ng-show="memberInfoPanel.editingMemberInfo" ng-disabled="memberInfoPanel.form.$invalid">Submit</button>
+                        <button class="btn btn-danger" ng-click="cancelUpdateMemberInfo()" ng-show="memberInfoPanel.editingMemberInfo">Cancel</button>
+                    </div>
+
+                    <div ng-if="memberInfoPanel.updateRequest.failure" class="alert alert-danger" role="alert">Failed to update member information...</div>
+                </div>
+            </div>
         </div>
-        <div ng-show="memberInfoPanel.showingMemberInfo">
-            <div class="form-group">
-                <label>Paid Dues?
-                    <select class="form-control input-sm" ng-model="memberInfo.paidDues" ng-readonly="!memberInfoPanel.editingMemberInfo" ng-options="booleanToString(value) for value in [true, false]">
-                    </select>
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Signed Agreement?
-                    <select class="form-control input-sm" ng-model="memberInfo.signedAgreement" ng-readonly="!memberInfoPanel.editingMemberInfo" ng-options="booleanToString(value) for value in [true, false]">
-                    </select>
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Attended Orientation?
-                    <select class="form-control input-sm" ng-model="memberInfo.attendedOrientation" ng-readonly="!memberInfoPanel.editingMemberInfo" ng-options="booleanToString(value) for value in [true, false]">
-                    </select>
-                </label>
-            </div>
-            <div class="form-group">
-                <label>Standing
-                    <select class="form-control input-small" ng-model="memberInfo.status" ng-readonly="!memberInfoPanel.editingMemberInfo">
-                        <option ng-repeat="standing in memberInfoPanel.standings" value="{{standing.value}}">{{standing.label}}</option>
-                    </select>
-                </label>
-            </div>
-
-            <button class="btn btn-primary" ng-click="toggleEditingMemberInfo()" ng-show="!memberInfoPanel.editingMemberInfo">Edit Member Info</button>
-            <button class="btn btn-success" ng-click="updateMembershipInfo()" ng-show="memberInfoPanel.editingMemberInfo">Submit</button>
-            <button class="btn btn-danger" ng-click="cancelUpdateMemberInfo()" ng-show="memberInfoPanel.editingMemberInfo">Cancel</button>
-
-            <div ng-if="memberInfoPanel.updateRequest.failure" class="alert alert-danger" role="alert">Failed to update member information...</div>
-        </div>
-
     </div>
 </div>

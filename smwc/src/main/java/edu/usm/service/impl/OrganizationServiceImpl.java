@@ -2,6 +2,9 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
@@ -32,7 +35,9 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     @Override
     public Organization findById(String id) {
-        logger.debug("Finding organization with ID: " + id);
+        if (null == id) {
+            return null;
+        }
         return organizationDao.findOne(id);
     }
 
@@ -43,9 +48,12 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public void delete(Organization organization) {
-        logger.debug("Deleting organization with ID: " + organization.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public void delete(Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
+
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
         updateLastModified(organization);
 
         /*Remove references to */
@@ -60,20 +68,36 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public void update(Organization organization) {
-        logger.debug("Updating organization with ID: " + organization.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
+        validateOrganization(organization);
         updateLastModified(organization);
         organizationDao.save(organization);
     }
 
 
     @Override
-    public String create(Organization organization) {
-        logger.debug("Creating organization with ID: " + organization.getId());
-        logger.debug("Time: " + LocalDateTime.now());
+    public String create(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
+        validateOrganization(organization);
         organizationDao.save(organization);
         return organization.getId();
+    }
+
+    private void validateOrganization(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
+        if (null == organization) {
+            throw new NullDomainReference.NullOrganization();
+        }
+
+        if (null == organization.getName()) {
+            throw new ConstraintViolation(ConstraintMessage.ORGANIZATION_REQUIRED_NAME);
+        }
+    }
+
+    private void uncheckedDelete(Organization organization) {
+        try {
+            delete(organization);
+        } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -82,6 +106,6 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         logger.debug("Deleting all Organizations");
         logger.debug("Time: " + LocalDateTime.now());
         Set<Organization> organizations = findAll();
-        organizations.stream().forEach(this::delete);
+        organizations.stream().forEach(this::uncheckedDelete);
     }
 }

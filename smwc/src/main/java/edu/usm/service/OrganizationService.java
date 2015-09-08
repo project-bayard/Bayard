@@ -1,6 +1,9 @@
 package edu.usm.service;
 
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
 
@@ -9,10 +12,21 @@ import java.util.Set;
  */
 public interface OrganizationService {
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Organization findById (String id);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Organization> findAll();
-    void delete (Organization organization);
-    void update (Organization organization);
-    String create(Organization organization);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void delete (Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void update (Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    String create(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
 }

@@ -3,7 +3,10 @@ package edu.usm.it.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.EncounterType;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
@@ -52,6 +55,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+        contact.setNeedsFollowUp(false);
+        contact.setPhoneNumber1("123-456-7891");
 
         contact2 = new Contact();
         contact2.setFirstName("FirstName");
@@ -61,6 +66,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact2.setCity("Lewiston");
         contact2.setZipCode("04108");
         contact2.setEmail("email@gmail.com");
+        contact2.setInitiator(true);
+        contact2.setPhoneNumber1("890-121-3231");
 
         organization = new Organization();
         organization.setName("organization");
@@ -86,7 +93,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
-        assertEquals(fromDb,contact);
+        assertEquals(fromDb, contact);
         assertEquals(fromDb.getId(), contact.getId());
         assertEquals(fromDb.getLastName(), contact.getLastName());
         assertEquals(fromDb.getFirstName(), contact.getFirstName());
@@ -98,7 +105,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
 
         Set<Contact> contacts = contactService.findAll();
-        assertEquals(contacts.size(),2);
+        assertEquals(contacts.size(), 2);
         assertTrue(contacts.contains(contact));
         assertTrue(contacts.contains(contact2));
 
@@ -133,19 +140,19 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         Set<Contact> contacts = contactService.findAll();
 
         assertNotNull(contacts);
-        assertEquals(contacts.size(),2);
+        assertEquals(contacts.size(), 2);
     }
 
     @Test
     @Transactional
-    public void testDelete () {
+    public void testDelete () throws NullDomainReference, ConstraintViolation{
         contactService.create(contact);
         contactService.create(contact2);
 
         organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact,organization);
-        contactService.addContactToOrganization(contact2,organization);
+        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact2, organization);
 
         contactService.delete(contact);
 
@@ -164,7 +171,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
         organizationService.create(organization);
-        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact, organization);
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
@@ -237,26 +244,151 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Transactional
     public void testAddEncounter () throws Exception {
         String id = contactService.create(contact);
-
         String initiatorId = contactService.create(contact2);
 
         EncounterDto dto = new EncounterDto();
-        dto.setType("CALL");
         dto.setEncounterDate("2012-01-01");
         dto.setNotes("Notes!");
-
-        contactService.addEncounter(contact,contact2, dto);
+        EncounterType encounterType = new EncounterType("CALL");
+        contactService.addEncounter(contact, contact2, encounterType, dto);
 
         Contact fromDb = contactService.findById(contact.getId());
 
         assertNotNull(fromDb.getEncounters());
-        assertEquals(fromDb.getEncounters().first().getContact().getId(),contact.getId());
+        assertEquals(fromDb.getEncounters().first().getContact().getId(), contact.getId());
         assertEquals(fromDb.getEncounters().first().getInitiator().getId(), contact2.getId());
         assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
 
         Contact initiatorFromDb = contactService.findById(initiatorId);
-//        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
+        assertNotNull(initiatorFromDb.getEncountersInitiated());
+        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
 
     }
 
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateEncounterNullDate() throws ConstraintViolation, NullDomainReference {
+        String id = contactService.create(contact);
+        contactService.create(contact2);
+
+        EncounterDto dto = new EncounterDto();
+        dto.setNotes("Notes!");
+        EncounterType encounterType = new EncounterType("CALL");
+        contactService.addEncounter(contact, contact2, encounterType, dto);
+
+    }
+
+    @Test(expected = NullDomainReference.class)
+    public void testCreateEncounterNullType() throws ConstraintViolation, NullDomainReference {
+        String id = contactService.create(contact);
+        contactService.create(contact2);
+
+        EncounterDto dto = new EncounterDto();
+        dto.setNotes("Notes!");
+        contactService.addEncounter(contact, contact2, null, dto);
+
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateEncounterNotInitiator() throws ConstraintViolation, NullDomainReference {
+        String id = contactService.create(contact);
+        contact2.setInitiator(false);
+        contactService.create(contact2);
+
+        EncounterDto dto = new EncounterDto();
+        dto.setNotes("Notes!");
+        EncounterType encounterType = new EncounterType("CALL");
+        contactService.addEncounter(contact, contact2, encounterType, dto);
+
+    }
+
+    @Test
+    @Transactional
+    public void testAddMultipleEncounters() throws Exception {
+        String id = contactService.create(contact);
+        contactService.create(contact2);
+
+        EncounterDto firstEncounter = new EncounterDto();
+        firstEncounter.setEncounterDate("2014-01-01");
+        firstEncounter.setNotes("Notes!");
+        firstEncounter.setAssessment(10);
+        firstEncounter.setRequiresFollowUp(false);
+
+        EncounterType encounterType = new EncounterType("CALL");
+
+
+        contactService.addEncounter(contact, contact2, encounterType, firstEncounter);
+
+        EncounterDto secondEncounter = new EncounterDto();
+        int mostRecentAssessment = 5;
+        boolean mostRecentFollowUpIndicator = true;
+        secondEncounter.setEncounterDate("2015-01-01");
+        secondEncounter.setAssessment(mostRecentAssessment);
+        secondEncounter.setNotes("More notes!");
+        secondEncounter.setRequiresFollowUp(mostRecentFollowUpIndicator);
+
+        contactService.addEncounter(contact, contact2, encounterType, secondEncounter);
+
+        EncounterDto thirdEncounter = new EncounterDto();
+        thirdEncounter.setEncounterDate("2013-01-01");
+        thirdEncounter.setRequiresFollowUp(false);
+        thirdEncounter.setAssessment(7);
+
+        contactService.addEncounter(contact, contact2,encounterType, thirdEncounter);
+
+        Contact fromDb = contactService.findById(id);
+        assertEquals(mostRecentAssessment, fromDb.getAssessment());
+        assertEquals(mostRecentFollowUpIndicator, fromDb.needsFollowUp());
+
+    }
+
+    @Test
+    public void testUpdateFollowUp() throws Exception {
+        String id = contactService.create(contact);
+        Contact fromDb = contactService.findById(id);
+        assertFalse(fromDb.needsFollowUp());
+        contactService.updateNeedsFollowUp(contact, true);
+        fromDb = contactService.findById(id);
+        assertTrue(fromDb.needsFollowUp());
+
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactDuplicateNameEmail() throws ConstraintViolation, NullDomainReference {
+        contactService.create(contact);
+        contact2.setFirstName(contact.getFirstName());
+        contact2.setEmail(contact.getEmail());
+        contactService.create(contact2);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactDuplicateNamePhone() throws ConstraintViolation, NullDomainReference {
+        contactService.create(contact);
+        contact2.setFirstName(contact.getFirstName());
+        contact2.setPhoneNumber1(contact.getPhoneNumber1());
+        contactService.create(contact2);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testUpdateContactDuplicateNameEmail() throws ConstraintViolation, NullDomainReference {
+        contactService.create(contact);
+        contactService.create(contact2);
+
+        Contact details = new Contact();
+        details.setFirstName(contact.getFirstName());
+        details.setEmail(contact.getEmail());
+
+        contactService.updateBasicDetails(contact2, details);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testUpdateContactDuplicateNamePhone() throws ConstraintViolation, NullDomainReference {
+        contactService.create(contact);
+        contactService.create(contact2);
+
+        Contact details = new Contact();
+        details.setFirstName(contact.getFirstName());
+        details.setPhoneNumber1(contact.getPhoneNumber1());
+
+        contactService.updateBasicDetails(contact2, details);
+    }
 }
