@@ -257,6 +257,7 @@
                     ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
                         $scope.newEncounterRequestSuccess = true;
                         $scope.modelHolder.encounterModel = {};
+                        $scope.formHolder.encounterForm.$setPristine();
 
                         $timeout(function () {
                             $scope.newEncounterRequestSuccess = false;
@@ -290,6 +291,7 @@
 
             $scope.cancelAddEncounter = function() {
                 $scope.modelHolder.encounterModel = {};
+                $scope.formHolder.encounterForm.$setPristine();
                 $scope.addingEncounter = false;
             };
 
