@@ -2,8 +2,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-9">
-            <div ng-if="contactUpdated" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
-            <div ng-if="success===false" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
+            <div ng-if="basicDetailsPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
+            <div ng-if="basicDetailsPanel.updateRequest.failure" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
             <div class="page-header">
                 <h1>Contact Details</h1>
             </div>
@@ -13,7 +13,7 @@
                 </div>
                 <div class="panel-body" ng-show="!hideBasicDetails">
                     <form id="contactDetailsForm" name="contactDetailsForm" novalidate>
-                        <fieldset ng-disabled="!editingBasicDetails">
+                        <fieldset ng-disabled="!basicDetailsPanel.editingBasicDetails">
                             <div class="row">
                                 <div class=" col-xs-4 form-group required" ng-class="{ 'has-error' : newContactForm.firstName.$invalid && !newContactForm.firstName.$pristine }">
                                     <label class="control-label">First Name</label>
@@ -25,6 +25,11 @@
                                     <label class="control-label">Assessment</label>
                                     <input type="text" class="form-control  " ng-model="contact.assessment" ng-disabled="true">
                                 </div>
+                                <div class="col-xs-4">
+                                    <div class="alert alert-dismissable alert-danger" ng-if="basicDetailsPanel.updateRequest.constraintViolation">
+                                        {{basicDetailsPanel.updateRequest.constraintViolation}}
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
@@ -35,7 +40,11 @@
                                     <label class="control-label">Street Address</label>
                                     <input type="text" class="form-control  " ng-model="contact.streetAddress">
                                 </div>
-
+                                <div class="col-xs-4">
+                                    <button class="btn btn-primary" ng-show="basicDetailsPanel.updateRequest.clashingDomainId" ng-click="viewDetails(basicDetailsPanel.updateRequest.clashingDomainId)">
+                                        Go to existing contact
+                                    </button>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
@@ -105,10 +114,10 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <div ng-show="!editingBasicDetails">
-                            <button class="btn btn-primary" ng-click="editingBasicDetails=true">Edit Basic Details</button>
+                        <div ng-show="!basicDetailsPanel.editingBasicDetails">
+                            <button class="btn btn-primary" ng-click="basicDetailsPanel.editingBasicDetails=true">Edit Basic Details</button>
                         </div>
-                        <div ng-show="editingBasicDetails" >
+                        <div ng-show="basicDetailsPanel.editingBasicDetails" >
                             <button class="btn btn-success" ng-click="updateBasicDetails()" ng-disabled="contactDetailsForm.$invalid || contactDetailsForm.$pristine">Submit</button>
                             <button class="btn btn-danger" ng-click="cancelUpdateBasicDetails()">Cancel</button>
                         </div>

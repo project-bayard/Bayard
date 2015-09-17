@@ -1,5 +1,6 @@
 package edu.usm.service.impl;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintMessage;
@@ -82,6 +83,15 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         return organization.getId();
     }
 
+    private void validateUniqueness(Organization organization) throws ConstraintViolation {
+        Set<Organization> existingOrganizations = organizationDao.findByName(organization.getName());
+        for (Organization sameName : existingOrganizations) {
+            if (null == organization.getId() || !organization.getId().equalsIgnoreCase(sameName.getId())) {
+                throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, sameName);
+            }
+        }
+    }
+
     private void validateOrganization(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
@@ -90,6 +100,9 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         if (null == organization.getName()) {
             throw new ConstraintViolation(ConstraintMessage.ORGANIZATION_REQUIRED_NAME);
         }
+
+        validateUniqueness(organization);
+
     }
 
     private void uncheckedDelete(Organization organization) {

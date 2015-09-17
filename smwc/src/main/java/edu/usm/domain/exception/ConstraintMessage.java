@@ -17,6 +17,7 @@ public enum ConstraintMessage {
     EVENT_NON_UNIQUE("An event with this name and date already exists"),
     COMMITTEE_REQUIRED_NAME("A committee must have a name associated with it"),
     COMMITTEE_NON_UNIQUE("A committee with this name already exists"),
+    ORGANIZATION_NON_UNIQUE("An organization with this name already exists"),
     ORGANIZATION_REQUIRED_NAME("An organization must have a name associated with it");
 
     private final String enumText;

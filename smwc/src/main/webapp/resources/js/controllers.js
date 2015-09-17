@@ -1,6 +1,25 @@
 (function () {
     'use strict';
 
+    function ResponseErrorInterpreter (response) {
+        this.response = response;
+        this.message = response.data.message;
+        this.id = response.data.id;
+        this.type = response.data.type;
+
+        this.isConstraintViolation = function() {
+            return this.type == "Constraint Violation";
+        };
+
+        this.isAccessDenied = function() {
+            return this.type == "Access Denied";
+        };
+
+        this.isNullReference = function() {
+            return this.type == "Null Reference";
+        }
+    }
+
     var controllers = angular.module('controllers', []);
 
     controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$location', function($scope, ContactService, $location) {
@@ -23,48 +42,66 @@
 
     controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', function($scope, ContactService, $location, $timeout) {
 
-        $scope.errorMessage = "";
-        $scope.success = null;
+        $scope.crudRequest = {
+            success : false,
+            failure : false,
+            constraintViolation : null,
+            clashingDomainId : null,
+            clear : function() {
+                this.success = false;
+                this.failure = false;
+                this.constraintViolation = null;
+                this.clashingDomainId = null;
+            }
+        };
 
         $scope.submit = function() {
 
             ContactService.create({}, $scope.newContact, function(data) {
-                console.log(data);
                 $scope.newContactForm.$setPristine();
                 $scope.newContact = {};
-
-                $scope.requestSuccess = true;
+                $scope.crudRequest.success = true;
+                $scope.crudRequest.constraintViolation = null;
+                $scope.crudRequest.clashingDomainId = null;
                 $timeout(function() {
-                    $scope.requestSuccess = false;
-                }, 3000)
+                    $scope.crudRequest.success = false;
+                    $scope.crudRequest.clear();
+                }, 3000);
             }, function (err) {
-                console.log(err);
-                $scope.errorMessage = err;
-
-                $scope.requestError = true;
-                $timeout(function() {
-                    $scope.requestError = false;
-                }, 3000)
+                handleCrudError(err);
             });
+        };
+
+        var handleCrudError = function(err) {
+            var errorResponse = new ResponseErrorInterpreter(err);
+            if (errorResponse.isConstraintViolation()) {
+                $scope.crudRequest.constraintViolation = errorResponse.message;
+                if (errorResponse.id != null) {
+                    $scope.crudRequest.clashingDomainId = errorResponse.id;
+                }
+            }
+            $scope.crudRequest.failure = true;
+            $timeout(function() {
+                $scope.crudRequest.failure = false;
+            }, 3000);
         };
 
         $scope.submitAndViewDetails = function() {
 
             ContactService.create({}, $scope.newContact, function(postSuccess) {
-                postSuccess.$promise.then(function(createdId) {
-                    var detailsPath = "/contacts/contact/" + createdId.id;
-                    $location.path(detailsPath);
+                postSuccess.$promise.then(function(response) {
+                    $scope.viewDetails(response.id);
                 });
             }, function(err) {
-                console.log(err);
-                $scope.errorMessage = err;
-                $scope.requestError = true;
-                $timeout(function() {
-                    $scope.requestError = false;
-                }, 3000)
+                handleCrudError(err);
             });
 
-        }
+        };
+
+        $scope.viewDetails = function(contactId) {
+            var detailsPath = "/contacts/contact/" + contactId;
+            $location.path(detailsPath);
+        };
 
     }]);
 
@@ -73,8 +110,6 @@
         function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window, EncounterTypeService) {
 
             var setup = function () {
-                $scope.editingBasicDetails = false;
-                $scope.success = null;
                 $scope.errorMessage = "";
                 $scope.addingEncounter = false;
                 $scope.encounterSuccess = true;
@@ -86,7 +121,22 @@
                 $scope.addCommittee = {hidden: true};
                 $scope.modelHolder = {encounterModel : {},
                                         organizationModel : {}};
-                $scope.showingDemographics = false;
+
+                $scope.basicDetailsPanel =  {
+                    editingBasicDetails : false,
+                    updateRequest : {
+                        success : false,
+                        failure : false,
+                        constraintViolation : null,
+                        clashingDomainId : null
+                    },
+                    wipeErrors : function() {
+                        this.updateRequest.failure = false;
+                        this.updateRequest.constraintViolation = null;
+                        this.updateRequest.clashingDomainId = null;
+                    }
+                };
+
                 $scope.demographicPanel = {
                     updateRequest: {success: false, failure: false},
                     editingDemographics: false,
@@ -140,17 +190,27 @@
             $scope.updateBasicDetails = function () {
                 ContactService.update({id: $scope.contact.id}, $scope.contact, function (data) {
                     establishBasicDetails($scope.contact.id);
-                    $scope.contactUpdated = true;
-                    $timeout(function () {
-                        $scope.contactUpdated = false;
+                    $scope.basicDetailsPanel.updateRequest.success = true;
+                    $timeout(function() {
+                        $scope.basicDetailsPanel.updateRequest.success = false;
                     }, 3000);
+                    $scope.basicDetailsPanel.wipeErrors();
+                    $scope.basicDetailsPanel.editingBasicDetails = false;
                 }, function (err) {
+                    var errorResponse = new ResponseErrorInterpreter(err);
+                    if (errorResponse.isConstraintViolation()) {
+                        $scope.basicDetailsPanel.updateRequest.constraintViolation = errorResponse.message;
+                        if (errorResponse.id != null) {
+                            $scope.basicDetailsPanel.updateRequest.clashingDomainId = errorResponse.id;
+                        }
+                    }
                     console.log(err);
                 });
             };
 
             $scope.cancelUpdateBasicDetails = function() {
-                $scope.editingBasicDetails = false;
+                $scope.basicDetailsPanel.editingBasicDetails = false;
+                $scope.basicDetailsPanel.wipeErrors();
                 establishBasicDetails($scope.contact.id);
             };
 
@@ -432,15 +492,16 @@
                             $scope.modelHolder.organizationModel = {};
                         }, function (err) {
                             console.log(err);
-                            $scope.organizationSuccess = false;
                         });
                     }, function (err) {
                         console.log(err);
-                        $scope.organizationSuccess = false;
                     });
                 }, function (err) {
+                    var errorResponse = new ResponseErrorInterpreter(err);
+                    if (errorResponse.isConstraintViolation()) {
+                        $scope.modelHolder.organizationModel.constraintViolation = errorResponse.message;
+                    }
                     console.log(err);
-                    $scope.organizationSuccess = false;
                 });
 
                 //Refresh list of all organizations known to the app
@@ -691,7 +752,10 @@
                     populateEvents();
                     $scope.modelHolder.eventModel = {};
                 }, function(err) {
-                    //TODO inspect error response for validation failures
+                    var errorResponse = new ResponseErrorInterpreter(err);
+                    if (errorResponse.isConstraintViolation()) {
+                        $scope.modelHolder.eventModel.constraintViolation = errorResponse.message;
+                    }
                     console.log(err);
                 });
         };
@@ -739,6 +803,10 @@
                         console.log(err);
                     });
                 }, function(err) {
+                    var errorResponse = new ResponseErrorInterpreter(err);
+                    if (errorResponse.isConstraintViolation()) {
+                        $scope.modelHolder.eventModel.constraintViolation = errorResponse.message;
+                    }
                     $scope.requestFail = true;
                     $timeout(function() {
                         $scope.requestFail = false;
@@ -750,7 +818,6 @@
 
             $scope.cancelUpdate = function() {
                 $scope.updatingEventDetails = false;
-
                 EventService.find({id : $scope.modelHolder.eventModel.id}, function(event) {
                     $scope.modelHolder.eventModel = formatEvent(event)
                 }, function(err) {
@@ -816,12 +883,17 @@
                     console.log(err);
                 });
             }, function(err) {
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    $scope.modelHolder.organizationModel.constraintViolation = errorResponse.message;
+                }
                 console.log(err);
             });
         };
 
         $scope.cancelCreateOrganization = function() {
             $scope.hideForm = true;
+            $scope.modelHolder.organizationModel = null;
         };
 
     }]);
@@ -832,23 +904,8 @@
         $scope.formHolder = {};
         $scope.modelHolder = {};
 
-        OrganizationService.find({id : $routeParams.id}, function(data) {
-            $scope.modelHolder.organizationModel = data;
-            if ($scope.modelHolder.organizationModel.members == null) {
-                $scope.modelHolder.organizationModel.members = [];
-            }
-        }, function(err) {
-            console.log(err);
-        });
-
-        $scope.showUpdateForm = function() {
-            $scope.updatingOrganizationDetails = true;
-        };
-
-        $scope.cancelUpdate = function() {
-            $scope.updatingOrganizationDetails = false;
-
-            OrganizationService.find({id : $routeParams.id}, function(data) {
+        var establishDetails = function(id) {
+            OrganizationService.find({id : id}, function(data) {
                 $scope.modelHolder.organizationModel = data;
                 if ($scope.modelHolder.organizationModel.members == null) {
                     $scope.modelHolder.organizationModel.members = [];
@@ -856,6 +913,17 @@
             }, function(err) {
                 console.log(err);
             });
+        };
+
+            establishDetails($routeParams.id);
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingOrganizationDetails = true;
+        };
+
+        $scope.cancelUpdate = function() {
+            $scope.updatingOrganizationDetails = false;
+            establishDetails($scope.modelHolder.organizationModel.id);
         };
 
         $scope.deleteOrganization = function() {
@@ -873,11 +941,16 @@
         $scope.submitUpdate = function() {
             OrganizationService.update({id : $scope.modelHolder.organizationModel.id}, $scope.modelHolder.organizationModel, function(data) {
                 $scope.updatingOrganizationDetails = false;
+                establishDetails($scope.modelHolder.organizationModel.id);
                 $scope.requestSuccess = true;
                 $timeout(function() {
                     $scope.requestSuccess = false;
                 }, 3000)
             }, function(err) {
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    $scope.modelHolder.organizationModel.constraintViolation = errorResponse.message;
+                }
                 $scope.requestFail = true;
                 $timeout(function() {
                     $scope.requestFail = false;
@@ -915,28 +988,38 @@
                 setup();
 
             }, function(err) {
-                console.log(err);
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    $scope.addCommittee.constraintViolation = errorResponse.message;
+                }
             });
         };
 
-        $scope.showUpdateForm = function() {
-            $scope.updatingCommittee = true;
+        $scope.showUpdateForm = function(committee) {
+            committee.updatingCommittee = true;
             $scope.newCommitteeName = "";
 
         };
 
-        $scope.cancelUpdate = function() {
-            $scope.updatingCommittee = false;
+        $scope.cancelUpdate = function(committee) {
+            committee.updatingCommittee = false;
+            committee.constraintViolation = null;
 
         };
 
         $scope.submitUpdate = function(committee, name) {
+            var oldName = committee.name;
             committee.name = name;
 
             CommitteeService.update({id : committee.id}, committee, function(success) {
-                $scope.updatingCommittee = false;
+                committee.updatingCommittee = false;
+                committee.constraintViolation = null;
             }, function(err) {
-                console.log(err);
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    committee.constraintViolation = errorResponse.message;
+                }
+                committee.name = oldName;
             });
         };
 

@@ -7,6 +7,11 @@
                 <p ng-show="formHolder.eventForm.name.$error.maxlength" class="help-block">Event name too long</p>
                 <p ng-show="formHolder.eventForm.name.$error.minlength" class="help-block">Event name too short</p>
             </div>
+            <div class="col-md-3"  >
+                <div class="alert alert-dismissable alert-danger" ng-if="modelHolder.eventModel.constraintViolation">
+                    {{modelHolder.eventModel.constraintViolation}}
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="form-group col-md-3">

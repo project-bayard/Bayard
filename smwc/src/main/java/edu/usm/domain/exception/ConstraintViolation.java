@@ -7,8 +7,11 @@ import edu.usm.domain.BasicEntity;
  */
 public class ConstraintViolation extends Exception {
 
-    public ConstraintViolation(String message) {
+    private String clashingDomainId;
+
+    public ConstraintViolation(String message, String clashingDomainId) {
         super(message);
+        this.clashingDomainId = clashingDomainId;
     }
 
     public ConstraintViolation(ConstraintMessage message) {
@@ -18,13 +21,16 @@ public class ConstraintViolation extends Exception {
     public static class NonUniqueDomainEntity extends ConstraintViolation {
 
         public NonUniqueDomainEntity(ConstraintMessage message, BasicEntity existingEntity) {
-            super(messageConstructor(message, existingEntity));
-        }
-
-        private static String messageConstructor(ConstraintMessage message, BasicEntity entity) {
-            return message.toString() + " -- ID: "+entity.getId();
+            super(message.toString(), existingEntity.getId());
         }
 
     }
 
+    public String getClashingDomainId() {
+        return clashingDomainId;
+    }
+
+    public void setClashingDomainId(String clashingDomainId) {
+        this.clashingDomainId = clashingDomainId;
+    }
 }

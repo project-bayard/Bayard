@@ -82,11 +82,11 @@ public class EventServiceImpl extends BasicService implements EventService {
             throw new NullDomainReference.NullEvent();
         }
 
-        if (null == event.getName()) {
+        if (null == event.getName() || event.getName().isEmpty()) {
             throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_NAME);
         }
 
-        if (null == event.getDateHeld()) {
+        if (null == event.getDateHeld() || event.getDateHeld().isEmpty()) {
             throw new ConstraintViolation(ConstraintMessage.EVENT_REQUIRED_DATE);
         }
 
