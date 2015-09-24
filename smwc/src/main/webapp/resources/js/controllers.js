@@ -781,6 +781,7 @@
 
             EventService.find({id : $routeParams.id}, function(event) {
                 $scope.modelHolder.eventModel = formatEvent(event);
+                $scope.event = $scope.modelHolder.eventModel;
             }, function(err) {
                 console.log(err);
             });
@@ -912,6 +913,7 @@
                 if ($scope.modelHolder.organizationModel.members == null) {
                     $scope.modelHolder.organizationModel.members = [];
                 }
+                $scope.organization = $scope.modelHolder.organizationModel;
             }, function(err) {
                 console.log(err);
             });
