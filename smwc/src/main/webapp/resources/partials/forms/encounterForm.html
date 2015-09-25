@@ -22,7 +22,6 @@
                         <option ng-repeat="value in assessmentRange" value="{{value}}">{{value}}</option>
                     </select>
                 <p ng-show="formHolder.encounterForm.assessment.$error.required && !formHolder.encounterForm.assessment.$pristine" class="help-block">The assessment is required</p>
-
             </div>
         </div>
         <div class="row">
@@ -32,7 +31,6 @@
                         <option ng-repeat="encounterType in encounterTypes" value="{{encounterType.id}}">{{encounterType.name}}</option>
                     </select>
                 <p ng-show="formHolder.encounterForm.type.$error.required && !formHolder.encounterForm.type.$pristine" class="help-block">The encounter type is required</p>
-
             </div>
         </div>
         <div class="row">
@@ -42,7 +40,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-xs-3">
+            <div class="form-group col-xs-3 required">
                 <label class="control-label">Does this encounter require a follow up?</label>
                     <select name="requiresFollowUp" class="form-control " required ng-model="modelHolder.encounterModel.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
                         <p ng-show="formHolder.encounterForm.requiresFollowUp.$error.required && !formHolder.encounterForm.requiresFollowUp.$pristine" class="help-block">This answer is required.</p>

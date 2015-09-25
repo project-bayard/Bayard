@@ -305,29 +305,22 @@
                 var deleteConfirmed = $window.confirm('Are you sure you want to delete this encounter?');
                 if (deleteConfirmed) {
                     ContactService.deleteEncounter({id: $scope.contact.id, entityId: encounterId}, function (succ) {
+                        $('#encounterModal').modal('hide');
                         ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
                             $scope.encountersTable = encounters;
                         }, function (err) {
                             console.log(err);
-                        })
+                        });
                     }, function (err) {
                         console.log(err);
                     });
                 }
-
             };
 
             $scope.updateEncounter = function () {
                 $scope.modelHolder.encounterModel.encounterDate = DateFormatter.formatDate($scope.modelHolder.encounterModel.jsDate);
                 ContactService.updateEncounter({id: $scope.contact.id, entityId: $scope.modelHolder.encounterModel.id}, $scope.modelHolder.encounterModel, function (succ) {
                     $scope.updatingEncounter = false;
-                    ContactService.getEncounters({id: $scope.contact.id}, function (encounters) {
-                        $scope.modelHolder.encounterModel = {};
-                        $scope.encountersTable = encounters;
-                    }, function (err) {
-                        console.log(err);
-                    });
-
                     //Fetch updated assessment and follow up
                     ContactService.find({id: $scope.contact.id}, function (contact) {
                         $scope.contact = contact;
@@ -338,7 +331,6 @@
                     console.log(err);
                 })
             };
-
 
             $scope.cancelUpdateEncounter = function () {
                 $scope.updatingEncounter = false;
