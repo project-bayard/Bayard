@@ -1050,13 +1050,19 @@
 
             $http.get('/users/authenticate', {headers : headers}).success(function(data) {
                 if (data.email) {
+
+                    sessionStorage.setItem('authenticated', 'true');
+                    sessionStorage.setItem('user', data);
+
                     $rootScope.authenticated = true;
                     $rootScope.user = data;
                 } else {
+                    sessionStorage.setItem('authenticated', 'false');
                     $rootScope.authenticated = false;
                 }
                 callback && callback();
             }).error(function() {
+                sessionStorage.setItem('authenticated', 'false');
                 $rootScope.authenticated = false;
                 callback && callback();
             });
@@ -1068,7 +1074,7 @@
 
         $scope.login = function() {
             authenticate($scope.credentials, function() {
-                if ($rootScope.authenticated) {
+                if (sessionStorage.getItem('authenticated') == 'true') {
                     $location.path("/");
                     $scope.error = false;
                 } else {
