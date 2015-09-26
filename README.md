@@ -2,7 +2,16 @@
 
 
 # Change Log
-All notable changes to this project will be documented in this file.
+
+## [September30Milestone] - 2015-07-26
+### Added
+- Client code presentation of constraint violation responses
+
+### Fixed
+- Default form action when creating new contacts
+- Encounters: form set pristine on success or cancellation
+- Encounters: dismissing the detail modal no longer breaks scrolling
+- Authentication is maintained throughout browser session
 
 ## [August31stMilestone] - 2015-08-31
 ### Added
@@ -37,3 +46,5 @@ All notable changes to this project will be documented in this file.
 [July29thMilestone]: https://github.com/ScottKimball/SMWC/compare/July8th2015Milestone...July29th2015Milestone
 
 [August31stMilestone]: https://github.com/ScottKimball/SMWC/compare/July29th2015Milestone...August31Milestone
+
+[September30Milestone]: https://github.com/ScottKimball/SMWC/compare/August31Milestone...September30Milestone
