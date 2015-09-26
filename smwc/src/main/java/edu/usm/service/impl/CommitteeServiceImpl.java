@@ -2,6 +2,7 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
@@ -9,11 +10,13 @@ import edu.usm.repository.CommitteeDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
+import edu.usm.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -28,6 +31,9 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private EventService eventService;
 
     private Logger logger = LoggerFactory.getLogger(CommitteeServiceImpl.class);
 
@@ -67,7 +73,7 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
-    public void delete(Committee committee) throws NullDomainReference {
+    public void delete(Committee committee) throws NullDomainReference, ConstraintViolation {
 
         if (null == committee) {
             throw new NullDomainReference.NullCommittee();
@@ -76,11 +82,23 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         logger.debug("Deleting committe with ID: " + committee.getId());
         updateLastModified(committee);
         if (committee.getMembers() != null) {
-            for(Contact contact : committee.getMembers()) {
+            Set<Contact> members = new HashSet<>(committee.getMembers());
+            for(Contact contact : members) {
                 contactService.removeContactFromCommittee(contact,committee);
             }
         }
+
+        if (committee.getEvents() != null) {
+            Set<Event> events = new HashSet<>(committee.getEvents());
+            for (Event event : events) {
+                event.setCommittee(null);
+                eventService.update(event);
+                committee.getEvents().remove(event);
+            }
+
+        }
         committeeDao.delete(committee);
+
     }
 
     @Override
@@ -109,6 +127,8 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         try {
             delete(c);
         } catch (NullDomainReference e) {
+            throw new RuntimeException(e);
+        } catch (ConstraintViolation e) {
             throw new RuntimeException(e);
         }
     }

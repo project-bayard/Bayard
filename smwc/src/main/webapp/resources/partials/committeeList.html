@@ -1,14 +1,26 @@
 <div class="container-fluid">
     <h1>Committees</h1>
 
-    <button class="btn btn-md btn-primary"ng-model="addCommittee.hidden" ng-click="addCommittee.hidden = !addCommittee.hidden">Create Committee</button>
-
-    <div class="form-group" ng-if="addCommittee.hidden == false">
-        <label>Name
-            <input type="text" class="form-control input-sm" ng-model="addCommittee.name">
-        </label>
-        <button class="btn btn-md btn-success" ng-click="createCommittee(addCommittee.name)">Submit</button>
-    </div>
+    <button class="btn btn-md btn-primary" ng-model="addCommittee.hidden" ng-click="addCommittee.hidden = !addCommittee.hidden">Create Committee</button>
+    <form id="committeeForm" name="committeeForm" novalidate ng-if="addCommittee.hidden == false">
+        <div class="row">
+            <div class="form-group col-md-3 required">
+                <label class="control-label">Name</label>
+                    <input name="name" type="text" class="form-control" ng-model="addCommittee.name" required>
+                    <p ng-show="committeeForm.name.$error.required && !committeeForm.name.$pristine" class="help-block">The committee name is required</p>
+            </div>
+            <div class="col-md-3">
+                <div class="alert alert-dismissable alert-danger" ng-if="addCommittee.constraintViolation">
+                    {{addCommittee.constraintViolation}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn btn-md btn-success" ng-click="createCommittee(addCommittee.name)" ng-disabled="committeeForm.$invalid">Submit</button>
+            </div>
+        </div>
+    </form>
 
     <br><br>
 
@@ -20,19 +32,27 @@
             <div class="panel-body" ng-show="!panels[$index].hidden">
                 <br>
                 <div ng-show="!updatingCommittee">
-                    <button class="btn btn-warning" ng-click="showUpdateForm()">Rename Committee</button>
+                    <button class="btn btn-warning" ng-click="showUpdateForm(committee)">Rename Committee</button>
                     <button class="btn btn-danger" ng-click="deleteCommittee(committee)">Delete Committee</button>
                 </div>
 
-                <div ng-show="updatingCommittee">
-                    <label>Update Name
-                        <input type="text" class="form-control input-sm" ng-model="newCommitteeName">
-                    </label>
+                <div ng-show="committee.updatingCommittee">
+                    <div class="row">
+                        <div class="form-group col-md-3 required">
+                            <label class="control-label">New Name</label>
+                            <input name="name" type="text" class="form-control" ng-model="newCommitteeName" required>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-dismissable alert-danger" ng-if="committee.constraintViolation">
+                                {{committee.constraintViolation}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div ng-show="updatingCommittee">
+                <div ng-show="committee.updatingCommittee">
                     <button class="btn btn-success" ng-click="submitUpdate(committee, newCommitteeName)">Done</button>
-                    <button class="btn btn-danger" ng-click="cancelUpdate()">Cancel</button>
+                    <button class="btn btn-danger" ng-click="cancelUpdate(committee)">Cancel</button>
                 </div>
 
                 <h3>Members:</h3>

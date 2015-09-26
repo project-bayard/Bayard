@@ -19,19 +19,19 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NullDomainReference.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody Response handleNullDomainReference(NullDomainReference e) {
-        return new Response(null, e.getMessage());
+        return new Response(null, e.getMessage(), Response.TYPE_NULL_DOMAIN_REFERENCE);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public @ResponseBody Response handleUnauthorizedUser(AccessDeniedException e) {
-        return new Response(null, e.getMessage());
+        return new Response(null, e.getMessage(), Response.TYPE_ACCESS_DENIED);
     }
 
     @ExceptionHandler(ConstraintViolation.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody Response handleConstraintViolation(ConstraintViolation e) {
-        return new Response(null, e.getMessage());
+        return new Response(e.getClashingDomainId(), e.getMessage(), Response.TYPE_CONSTRAINT_VIOLATION);
     }
 
 }

@@ -24,9 +24,6 @@
                             <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(modelHolder.organizationModel)" ng-disabled="formHolder.organizationForm.$invalid">Submit</button>
                         </div>
                     </div>
-                    <div ng-show="organizationSuccess == false" class="alert alert-danger alert-dismissable" role="alert">
-                        Unable to add Organization
-                    </div>
 
                     <div ng-if="contact.organizations.length > 0">
                         <table class="bootstrap-table table table-striped table-hover table-responsive"

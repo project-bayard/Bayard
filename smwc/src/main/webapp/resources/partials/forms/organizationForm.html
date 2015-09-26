@@ -7,6 +7,11 @@
             <p ng-show="formHolder.organizationForm.name.$error.maxlength" class="help-block">Organization name too long</p>
             <p ng-show="formHolder.organizationForm.name.$error.minlength" class="help-block">Organization name too short</p>
         </div>
+        <div class="col-md-3">
+            <div class="alert alert-dismissable alert-danger" ng-if="modelHolder.organizationModel.constraintViolation">
+                {{modelHolder.organizationModel.constraintViolation}}
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="form-group col-md-3">

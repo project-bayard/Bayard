@@ -57,11 +57,11 @@
     });
 
     app.run(function($rootScope, $location) {
-        $rootScope.authenticated = false;
-        $rootScope.user = {};
+        $rootScope.user = sessionStorage.getItem('user');
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
-            if ($rootScope.authenticated == false) {
+            $rootScope.authenticated = sessionStorage.getItem('authenticated');
+            if ($rootScope.authenticated == null || $rootScope.authenticated == 'false') {
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
                     $location.path('/login');

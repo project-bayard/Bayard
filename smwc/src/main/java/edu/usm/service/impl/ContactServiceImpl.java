@@ -124,16 +124,22 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contactDao.save(contact);
     }
 
-    private void validateOnUpdate(Contact contact) throws ConstraintViolation {
-
+    private void validateCoreFields(Contact contact) throws ConstraintViolation{
         if (null == contact.getFirstName()) {
             throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
         }
 
-        if (null == contact.getPhoneNumber1() && null == contact.getEmail()) {
+        boolean hasPhoneNumber = contact.getPhoneNumber1() != null && !contact.getPhoneNumber1().isEmpty();
+        boolean hasEmail = contact.getEmail() != null && !contact.getEmail().isEmpty();
+
+        if (!hasPhoneNumber && !hasEmail) {
             throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
         }
+    }
 
+    private void validateOnUpdate(Contact contact) throws ConstraintViolation {
+
+        validateCoreFields(contact);
 
         Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
 
@@ -158,7 +164,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
 
-
     @Override
     public String create(Contact contact) throws ConstraintViolation {
         validateOnCreate(contact);
@@ -167,13 +172,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     private void validateOnCreate(Contact contact) throws ConstraintViolation {
-        if (null == contact.getFirstName()) {
-            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
-        }
 
-        if (null == contact.getPhoneNumber1() && null == contact.getEmail()) {
-            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
-        }
+        validateCoreFields(contact);
 
         Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
 

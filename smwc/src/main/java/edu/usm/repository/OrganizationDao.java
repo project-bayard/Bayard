@@ -15,4 +15,6 @@ public interface OrganizationDao extends CrudRepository<Organization, String> {
 
     @Override
     HashSet<Organization> findAll();
+
+    HashSet<Organization> findByName(String name);
 }
