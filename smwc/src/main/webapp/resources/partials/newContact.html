@@ -1,108 +1,120 @@
 <div class="container-fluid">
+    <h1>Create New Contact</h1>
     <div class="row">
-        <div class="col-xs-9">
-            <div ng-if="crudRequest.success" class="alert alert-success alert-dismissable" role="alert">Contact Saved</div>
-            <div ng-if="crudRequest.failure" class="alert alert-danger alert-dismissable" role="alert">Error saving new contact...</div>
-            <h1>Create New Contact</h1>
-
+        <div class="col-xs-4">
             <form id="newContactForm" name="newContactForm" novalidate>
                 <div class="row">
-                    <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : newContactForm.firstName.$invalid && !newContactForm.firstName.$pristine }">
+                    <div class="form-group col-xs-10 required"  ng-class="{ 'has-error' : newContactForm.firstName.$invalid && !newContactForm.firstName.$pristine }">
+                        <div ng-if="crudRequest.success" class="alert alert-success alert-dismissable" role="alert">Contact Saved</div>
+                        <div ng-if="crudRequest.failure" class="alert alert-danger alert-dismissable" role="alert">Error saving new contact...</div>
                         <label class="control-label">First Name</label>
                         <input name="firstName" type="text" class="form-control" ng-model="newContact.firstName" ng-maxlength="80" required>
                         <p ng-show="newContactForm.firstName.$error.required && !newContactForm.firstName.$pristine" class="help-block">A first name is required</p>
                         <p ng-show="newContactForm.firstName.$error.maxlength" class="help-block">First name too long</p>
                     </div>
-                    <div class="col-md-3">
-                        <div class="alert alert-dismissable alert-danger" ng-show="crudRequest.constraintViolation">
-                            {{crudRequest.constraintViolation}}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-primary" ng-show="crudRequest.clashingDomainId" ng-click="viewDetails(crudRequest.clashingDomainId)">
-                            Go to existing contact
-                        </button>
-                    </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Middle Name</label>
                         <input name="middleName" type="text" class="form-control" ng-model="newContact.middleName">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Last Name</label>
                         <input name="lastName" type="text" class="form-control" ng-model="newContact.lastName">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Street Address</label>
                         <input name="streetAddress" type="text" class="form-control" ng-model="newContact.streetAddress">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Apt Number</label>
                         <input name="aptNumber" type="text" class="form-control" ng-model="newContact.aptNumber">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">City</label>
                         <input name="city" type="text" class="form-control" ng-model="newContact.city">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">State</label>
                         <input name="state" type="text" ui-mask="AA" class="form-control" ng-model="newContact.state">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Zip</label>
                         <input name="zipCode" type="text" ui-mask="99999" class="form-control" ng-model="newContact.zipCode">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Primary Phone #:</label>
                         <input name="phoneNumber1" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newContact.phoneNumber1">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Secondary Phone #:</label>
                         <input name="phoneNumber2" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newContact.phoneNumber2">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Email</label>
                         <input name="email" type="email" class="form-control" ng-model="newContact.email">
                         <p ng-show="newContactForm.$error.email" class="help-block">Enter a valid email address</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-xs-10">
                         <label class="control-label">Language</label>
                         <input name="Language" type="text" class="form-control" ng-model="newContact.language">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-3">
-                        <label>Can this contact initiate encounters?
-                            <input type="checkbox" class="form-control" ng-model="contact.initiator">
+                    <div class="form-group col-xs-10">
+                        <label>
+                            <input type="checkbox"  ng-model="contact.initiator"> Can this contact initiate encounters?
                         </label>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xs-10">
+                        <button id="submitButton" type="submit" class="btn btn-success form-control" ng-click="submit()" ng-disabled="newContactForm.$invalid">Submit</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-10">
+                        <br/>
+                        <button id="submitAndViewDetailsButton" class="btn btn-primary form-control" ng-click="submitAndViewDetails()" ng-disabled="newContactForm.$invalid">Submit and View Details</button>
+                    </div>
+                </div>
             </form>
-
-            <button id="submitButton" class="btn btn-lg btn-block btn-success" ng-click="submit()" ng-disabled="newContactForm.$invalid">Submit</button>
-            <button id="submitAndViewDetailsButton" class="btn btn-lg btn-block btn-primary" ng-click="submitAndViewDetails()" ng-disabled="newContactForm.$invalid">Submit and View Details</button>
-
+        </div>
+        <div class="col-xs-4">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="alert alert-dismissable alert-danger" ng-show="crudRequest.constraintViolation">
+                        {{crudRequest.constraintViolation}}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-primary" ng-show="crudRequest.clashingDomainId" ng-click="viewDetails(crudRequest.clashingDomainId)">
+                        Go to existing contact
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
