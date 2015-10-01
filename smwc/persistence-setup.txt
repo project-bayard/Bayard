@@ -1,5 +1,10 @@
 To set up a development or production environment that relies on a Postgres data source:
 
+
+.5 Allow Postgres to accept login credentials from local apps
+    Edit pg_hba.conf file:
+        local	all	all	trust
+        host	all	127.0.0.1/32	trust
 1. Create the user that the application will use to communicate with Postgres
     create user smwc_postgres with password 'secretpassword';
 2. Create the database that the application will use
