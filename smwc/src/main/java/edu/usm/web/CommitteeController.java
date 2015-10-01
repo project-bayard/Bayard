@@ -9,7 +9,6 @@ import edu.usm.dto.Response;
 import edu.usm.service.CommitteeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -47,11 +46,9 @@ public class CommitteeController {
             throw new NullDomainReference.NullCommittee(id);
         }
 
-        if (null == committee.getMembers()) {
-            committee.setMembers(fromDb.getMembers());
-        }
+        fromDb.setName(committee.getName());
 
-        committeeService.update(committee);
+        committeeService.update(fromDb);
         return Response.successGeneric();
 
     }
