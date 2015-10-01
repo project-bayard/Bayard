@@ -1,10 +1,7 @@
 package edu.usm.it;
 
 import edu.usm.it.controller.*;
-import edu.usm.it.dao.ContactCommitteesTest;
-import edu.usm.it.dao.ContactEncountersTest;
-import edu.usm.it.dao.ContactOrganizationsTest;
-import edu.usm.it.dao.DaoPersistenceTest;
+import edu.usm.it.dao.*;
 import edu.usm.it.service.*;
 import edu.usm.service.EventService;
 import org.junit.runner.RunWith;
@@ -31,7 +28,8 @@ import org.junit.runners.Suite;
         EncounterServiceTest.class,
         EventServiceTest.class,
         EncounterTypeControllerTest.class,
-        ControllerExceptionHandlerTest.class
+        ControllerExceptionHandlerTest.class,
+        ContactEventsTest.class
 })
 public class TestSuite {
 }

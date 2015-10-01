@@ -6,6 +6,7 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,8 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         contact.setEmail("email@gmail.com");
 
         contact2 = new Contact();
-        contact2.setFirstName("FirstName");
-        contact2.setLastName("LastNAme");
+        contact2.setFirstName("Second");
+        contact2.setLastName("Last");
         contact2.setStreetAddress("456 Fake St");
         contact2.setAptNumber("# 4");
         contact2.setCity("Lewiston");
@@ -57,8 +58,10 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         contact2.setEmail("email@gmail.com");
     }
 
-    @Before public void tearDown() {
+    @After
+    public void tearDown() {
         contactService.deleteAll();
+        committeeService.deleteAll();
     }
 
     @Test
@@ -80,26 +83,45 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testDelete () throws Exception {
 
-
-        Set<Contact> contacts = new HashSet<>();
-        contacts.add(contact);
-        contacts.add(contact2);
-
         committeeService.create(committee);
+        contactService.create(contact);
+        contactService.create(contact2);
 
         contactService.addContactToCommittee(contact, committee);
         contactService.addContactToCommittee(contact2, committee);
 
         Contact contactFromDb = contactService.findById(contact.getId());
         assertEquals(contactFromDb.getCommittees().size(), 1); // before
-        committeeService.deleteAll();
+        committeeService.delete(committee);
 
         contactFromDb = contactService.findById(contact.getId()); // after
         assertNotNull(contactFromDb);
         assertEquals(contactFromDb.getCommittees().size(), 0);
+
+    }
+
+    @Test
+    public void testDeleteAll() throws Exception {
+        committeeService.create(committee);
+        contactService.create(contact);
+        contactService.create(contact2);
+
+        Committee another = new Committee();
+        another.setName("Another Committee");
+        committeeService.create(another);
+
+        contactService.addContactToCommittee(contact, another);
+        contactService.addContactToCommittee(contact2, another);
+
+        Set<Committee> allCommittees = committeeService.findAll();
+        assertEquals(2, allCommittees.size());
+
+        committeeService.deleteAll();
+
+        allCommittees = committeeService.findAll();
+        assertEquals(0, allCommittees.size());
 
     }
 

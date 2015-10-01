@@ -8,6 +8,8 @@ import edu.usm.dto.IdDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,6 +36,11 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
     @Autowired
     ContactService contactService;
 
+    @Before
+    public void setup() {
+
+    }
+
     @After
     public void teardown() {
         committeeService.deleteAll();
@@ -43,18 +50,25 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
     @Test
     public void testGetAllCommittees() throws Exception {
 
+        committeeService.deleteAll();
+        contactService.deleteAll();
+
+        Set<Contact> all = contactService.findAll();
+        Assert.assertEquals(0, all.size());
+
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
         contact.setEmail("email@email.com");
         contactService.create(contact);
 
-
         Committee committee = new Committee();
         committee.setName("committeeName");
         committeeService.create(committee);
-        contactService.addContactToCommittee(contact,committee);
+        contactService.addContactToCommittee(contact, committee);
 
+        Set<Committee> allCommittees = committeeService.findAll();
+        Assert.assertEquals(1, allCommittees.size());
 
         mockMvc.perform(get("/committees").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -69,6 +83,10 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
 
     @Test
     public void testCreateCommittee() throws Exception {
+
+        committeeService.deleteAll();
+        contactService.deleteAll();
+
         Committee committee = new Committee();
         committee.setName("committeeName");
         committee.setMembers(new HashSet<Contact>());
@@ -86,6 +104,10 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
 
     @Test
     public void testUpdateDetails() throws Exception {
+
+        committeeService.deleteAll();
+        contactService.deleteAll();
+
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
@@ -111,14 +133,23 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
                 .content(json))
                 .andExpect(status().isOk());
 
+        mockMvc.perform(put("/committees/" + committee.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+
         Set<Committee> committees = committeeService.findAll();
         assertNotNull(committees);
         assertEquals(1, committees.size());
-        assertEquals("newName",committees.iterator().next().getName());
+        assertEquals("newName", committees.iterator().next().getName());
     }
 
     @Test
-    public void testUpdateTruncatedObjectGraph() throws Exception {
+    public void testGetCommittee () throws Exception {
+
+        committeeService.deleteAll();
+        contactService.deleteAll();
+
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");
@@ -129,34 +160,6 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         committee.setName("name");
         committeeService.create(committee);
         contactService.addContactToCommittee(contact, committee);
-
-        committee.setName("newName");
-        committee.setMembers(null);
-        String json = new ObjectMapper().writeValueAsString(committee);
-
-        mockMvc.perform(put("/committees/" + committee.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isOk());
-
-        Set<Committee> committees = committeeService.findAll();
-        assertNotNull(committees);
-        assertEquals(committees.size(),1);
-        assertEquals(committees.iterator().next().getName(),committee.getName());
-    }
-
-    @Test
-    public void testGetCommittee () throws Exception {
-        Contact contact = new Contact();
-        contact.setFirstName("first");
-        contact.setLastName("last");
-        contact.setEmail("email@email.com");
-        contactService.create(contact);
-
-        Committee committee = new Committee();
-        committee.setName("name");
-        committeeService.create(committee);
-        contactService.addContactToCommittee(contact,committee);
 
         mockMvc.perform(get("/committees/" + committee.getId())
                 .accept(MediaType.APPLICATION_JSON))
@@ -170,6 +173,10 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
 
     @Test
     public void testDeleteCommittee () throws Exception {
+
+        committeeService.deleteAll();
+        contactService.deleteAll();
+
         Contact contact = new Contact();
         contact.setFirstName("first");
         contact.setLastName("last");

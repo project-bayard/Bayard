@@ -1,6 +1,5 @@
 package edu.usm.service.impl;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintMessage;

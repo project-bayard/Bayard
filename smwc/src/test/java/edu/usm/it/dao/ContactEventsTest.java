@@ -48,6 +48,7 @@ public class ContactEventsTest extends WebAppConfigurationAware{
 
         event = new Event();
         event.setName("Test Event");
+        event.setDateHeld("2015-06-06");
     }
 
     @After
@@ -105,13 +106,13 @@ public class ContactEventsTest extends WebAppConfigurationAware{
 
     }
 
-    @Test(expected = ConstraintViolation.class)
+    @Test(expected = Exception.class)
     public void testEventNullDate() {
         event.setDateHeld(null);
         eventDao.save(event);
     }
 
-    @Test(expected = ConstraintViolation.class)
+    @Test(expected = Exception.class)
     public void testEventNullName() {
         event.setName(null);
         eventDao.save(event);
