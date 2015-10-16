@@ -1,0 +1,132 @@
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>Group Details: {{modelHolder.groupModel.groupName}}</h1>
+    </div>
+    <div class="row">
+        <div id="group-detail-left-panel" class="col-md-3">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Group Updated</div>
+            <div ng-show="requestFail" class="alert alert-danger alert-dismissable" role="alert">Unable to update Group...</div>
+            <div class="row" ng-show="!updatingGroup">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Name: {{modelHolder.groupModel.groupName}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div ng-if="!updatingGroup">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-block smwc-margined" ng-click="showUpdateForm()">Change Group Name</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-block smwc-margined" ng-click="showAggregationForm()">Add to the Group</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-danger btn-block smwc-margined" ng-click="deleteGroup()">Delete Group</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="updatingGroup && updatingGroupName">
+                <div>
+                    <form id="formHolder.groupForm" name="formHolder.groupForm" novalidate>
+                        <div class="row">
+                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : formHolder.groupForm.name.$invalid && !formHolder.groupForm.name.$pristine }">
+                                <label class="control-label">Name of Group</label>
+                                <input name="name" type="text" class="form-control" ng-model="modelHolder.groupModel.groupName" ng-minlength="2" required>
+                                <p ng-show="formHolder.groupForm.name.$error.required && !formHolder.groupForm.name.$pristine" class="help-block">The group name is required</p>
+                                <p ng-show="formHolder.groupForm.name.$error.min" class="help-block">Group name not long enough</p>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-success btn-block smwc-margined" ng-click="submitUpdate()" ng-disabled="formHolder.groupForm.$invalid">Ok</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelUpdate()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+            </div>
+
+            <div ng-if="updatingGroup && updatingAggregations">
+                <form name="aggregationForm" novalidate>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <div class="input-group">
+                                <label class="control-label">Committees: </label>
+                                <select name="committees" class="form-control" ng-model="newAggregation.committeeId">
+                                    <option ng-repeat="committee in committees | byAlreadyBelongsTo:modelHolder.groupModel.aggregations" value="{{committee.id}}">{{committee.name}}</option>
+                                </select>
+                                <button class="btn btn-md btn-primary" ng-click="addCommittee(newAggregation.committeeId)" ng-disabled="aggregationForm.committees.$pristine">Add a Committee</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <div class="input-group">
+                                <label class="control-label">Organizations</label>
+                                <select name="organizations" class="form-control" ng-model="newAggregation.organizationId">
+                                    <option ng-repeat="organization in organizations | byAlreadyBelongsTo:modelHolder.groupModel.aggregations" value="{{organization.id}}">{{organization.name}}</option>
+                                </select>
+                                <button class="btn btn-md btn-primary" ng-click="addOrganization(newAggregation.organizationId)" ng-disabled="aggregationForm.organizations.$pristine">Add an Organization</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <div class="input-group">
+                                <label class="control-label">Events</label>
+                                <select name="events" class="form-control" ng-model="newAggregation.eventId">
+                                    <option ng-repeat="event in events | byAlreadyBelongsTo:modelHolder.groupModel.aggregations" value="{{event.id}}">{{event.name}}</option>
+                                </select>
+                                <button class="btn btn-md btn-primary" ng-click="addEvent(newAggregation.eventId)" ng-disabled="aggregationForm.events.$pristine">Add an Event</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <br/>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-block smwc-margined" ng-click="cancelUpdateAggregations()">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <p>Group Constituents</p>
+                        <li class="list-group-item" ng-repeat="agg in modelHolder.groupModel.aggregations">
+                            {{agg.aggregationType}} : {{agg.name}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <br><br>
+    <h2>Members:</h2>
+    <div ng-include src=" 'resources/partials/tables/groupMembersTable.html' "></div>
+
+</div>

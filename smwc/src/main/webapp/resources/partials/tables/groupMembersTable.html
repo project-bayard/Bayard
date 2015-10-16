@@ -1,0 +1,19 @@
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Telephone</th>
+        <th>Email</th>
+        <th>Details</th>
+    </tr>
+    <tr ng-repeat="member in modelHolder.groupModel.groupMembers">
+        <td>{{member.firstName}}</td>
+        <td>{{member.lastName}}</td>
+        <td>{{member.phoneNumber1}}</td>
+        <td>{{member.email}}</td>
+        <td><a class="btn btn-md btn-info" href="#/contacts/contact/{{member.id}}">View Details</a></td>
+    </tr>
+</table>

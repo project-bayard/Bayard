@@ -11,12 +11,14 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Entity(name = "event")
-public class Event extends BasicEntity  implements Serializable {
+public class Event extends Aggregation implements Serializable {
 
     @Column
     @NotNull
     @Size(min = 1)
-    @JsonView({Views.EventList.class})
+    @JsonView({Views.EventList.class,
+            Views.GroupListView.class,
+            Views.GroupDetailsView.class})
     private String name;
 
     @Column
@@ -38,7 +40,8 @@ public class Event extends BasicEntity  implements Serializable {
 
      */
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JsonView({Views.EventList.class})
+    @JsonView({Views.EventList.class,
+            Views.GroupDetailsView.class})
     private Set<Contact> attendees;
 
     @Column
@@ -52,6 +55,26 @@ public class Event extends BasicEntity  implements Serializable {
 
     public Event() {
         super();
+    }
+
+    @Override
+    public String getAggregationType() {
+        return Aggregation.TYPE_EVENT;
+    }
+
+    @Override
+    public Set<Contact> getAggregationMembers() {
+        return attendees;
+    }
+
+    @Override
+    public void setAggregationType(String aggregationType) {
+        this.aggregationType = aggregationType;
+    }
+
+    @Override
+    public void setAggregationMembers(Set<Contact> aggregationMembers) {
+        attendees = aggregationMembers;
     }
 
     public Committee getCommittee() {

@@ -29,7 +29,9 @@ import org.junit.runners.Suite;
         EventServiceTest.class,
         EncounterTypeControllerTest.class,
         ControllerExceptionHandlerTest.class,
-        ContactEventsTest.class
+        ContactEventsTest.class,
+        GroupServiceTest.class,
+        GroupControllerTest.class
 })
 public class TestSuite {
 }

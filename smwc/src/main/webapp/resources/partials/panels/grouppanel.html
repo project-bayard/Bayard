@@ -1,0 +1,54 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="getContactGroups()">
+                    <h3 class="panel-title">Groups</h3>
+                </div>
+                <div class="panel-body" ng-show="showingGroups">
+                    <button class="btn btn-md btn-primary" ng-click="showAddingGroup()">Add to a Group</button>
+                    <br/>
+
+                    <div ng-if="addingGroup">
+                        <div class="form-group">
+                            <label>Groups:
+                                <select class="form-control input-small" ng-model="newGroupId">
+                                    <option ng-repeat="group in groups | byAlreadyBelongsTo:contact.groups"
+                                            value="{{group.id}}">{{group.groupName}}
+                                    </option>
+                                </select>
+                            </label>
+                            <button class="btn btn-md btn-success" ng-click="addToGroup(newGroupId)">Submit
+                            </button>
+                        </div>
+                    </div>
+
+                    <div ng-if="contact.groups.length > 0">
+                        <table class="bootstrap-table table table-striped table-hover table-responsive"
+                               data-toggle="table"
+                               data-pagination="true"
+                               data-search="true">
+                            <tr>
+                                <th>Name</th>
+                                <th>Remove from Group</th>
+                            </tr>
+                            <tr ng-repeat="group in contact.groups">
+                                <td>{{group.groupName}}</td>
+                                <td><a class="btn btn-md btn-info" href="#/groups/group/{{group.id}}">View
+                                    Details</a></td>
+                                <td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromGroup(group.id)">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -10,16 +10,17 @@ import java.util.Set;
 
 
 @Entity(name = "organization")
-public class Organization extends BasicEntity  implements Serializable {
+public class Organization extends Aggregation implements Serializable {
 
 
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactOrganizationDetails.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactOrganizationDetails.class, Views.GroupListView.class,
+            Views.GroupDetailsView.class,})
     @Column
     @NotNull
     @Size(min = 1)
     private String name;
 
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.GroupDetailsView.class})
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Contact> members;
 
@@ -57,6 +58,26 @@ public class Organization extends BasicEntity  implements Serializable {
 
     public Organization(String id) {
         setId(id);
+    }
+
+    @Override
+    public String getAggregationType() {
+        return Aggregation.TYPE_ORGANIZATION;
+    }
+
+    @Override
+    public Set<Contact> getAggregationMembers() {
+        return members;
+    }
+
+    @Override
+    public void setAggregationType(String aggregationType) {
+        this.aggregationType = aggregationType;
+    }
+
+    @Override
+    public void setAggregationMembers(Set<Contact> aggregationMembers) {
+        members = aggregationMembers;
     }
 
     public String getEmail() {

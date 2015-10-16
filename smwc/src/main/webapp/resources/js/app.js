@@ -50,6 +50,14 @@
                 templateUrl: 'resources/partials/encounterTypes.html',
                 controller: 'EncounterTypeCtrl'
             })
+            .when('/groups', {
+                templateUrl: 'resources/partials/groupList.html',
+                controller: 'GroupsCtrl'
+            })
+            .when('/groups/group/:id', {
+                templateUrl: 'resources/partials/groupDetails.html',
+                controller: 'GroupDetailsCtrl'
+            })
             .otherwise({redirectTo: '/'});
 
 

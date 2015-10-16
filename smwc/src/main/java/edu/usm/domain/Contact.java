@@ -26,7 +26,9 @@ public class Contact extends BasicEntity implements Serializable {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.ContactEncounterDetails.class})
+            Views.ContactEncounterDetails.class,
+            Views.GroupListView.class,
+            Views.GroupDetailsView.class})
     private String firstName;
 
     @Column
@@ -35,7 +37,9 @@ public class Contact extends BasicEntity implements Serializable {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.ContactEncounterDetails.class})
+            Views.ContactEncounterDetails.class,
+            Views.GroupListView.class,
+            Views.GroupDetailsView.class})
     private String middleName;
 
     @Column
@@ -44,7 +48,9 @@ public class Contact extends BasicEntity implements Serializable {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.ContactEncounterDetails.class})
+            Views.ContactEncounterDetails.class,
+            Views.GroupListView.class,
+            Views.GroupDetailsView.class})
     private String lastName;
 
     @Column
@@ -92,7 +98,8 @@ public class Contact extends BasicEntity implements Serializable {
             Views.OrganizationList.class,
             Views.CommitteeList.class,
             Views.EventList.class,
-            Views.ContactDetails.class})
+            Views.ContactDetails.class,
+            Views.GroupDetailsView.class})
     private String phoneNumber1;
 
     @Column
@@ -108,7 +115,8 @@ public class Contact extends BasicEntity implements Serializable {
             Views.OrganizationList.class,
             Views.CommitteeList.class,
             Views.EventList.class,
-            Views.ContactDetails.class})
+            Views.ContactDetails.class,
+            Views.GroupDetailsView.class})
     private String email;
 
     @Column
@@ -229,6 +237,14 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Organization> organizations;
 
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinTable(
+            name="contact_alinskygroup",
+            joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
+            inverseJoinColumns={@JoinColumn(name="alinskygroup_id", referencedColumnName = "id")}
+    )
+    private Set<Group> groups;
+
     @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
@@ -252,6 +268,14 @@ public class Contact extends BasicEntity implements Serializable {
     @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @SortNatural
     private SortedSet<Encounter> encountersInitiated;
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
 
     public void setInitiator(boolean initiator) {
         this.initiator = initiator;

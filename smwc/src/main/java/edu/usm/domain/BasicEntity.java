@@ -28,7 +28,10 @@ public abstract class BasicEntity {
             Views.ContactDetails.class,
             Views.ContactEncounterDetails.class,
             Views.ContactOrganizationDetails.class,
-            Views.ContactCommitteeDetails.class})
+            Views.ContactCommitteeDetails.class,
+            Views.GroupListView.class,
+            Views.GroupDetailsView.class,
+            Views.GroupPanelView.class})
     private String id;
 
     @Column
@@ -44,7 +47,6 @@ public abstract class BasicEntity {
         this.created = LocalDateTime.now().toString();
         this.lastModified = this.created;
     }
-
 
     public String getId() {
         return id;

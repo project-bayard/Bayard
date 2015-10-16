@@ -106,8 +106,9 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope', '$routeParams', 'ContactService', '$timeout', '$location', 'OrganizationService',
-        'EventService', 'CommitteeService', 'DateFormatter', '$window','EncounterTypeService',
-        function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter, $window, EncounterTypeService) {
+        'EventService', 'CommitteeService', 'DateFormatter', '$window','EncounterTypeService', 'GroupService',
+        function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter,
+                  $window, EncounterTypeService, GroupService) {
 
             var setup = function () {
                 $scope.errorMessage = "";
@@ -515,6 +516,57 @@
                         console.log(err);
                     })
                 }, function (err) {
+                    console.log(err);
+                })
+            };
+
+            /* Groups */
+            $scope.getContactGroups = function() {
+                $scope.showingGroups = !$scope.showingGroups;
+                if ($scope.contact.groups == null) {
+                    ContactService.getGroups({id: $scope.contact.id}, function(groups) {
+                        $scope.contact.groups = groups;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }
+            };
+
+            $scope.showAddingGroup = function() {
+                $scope.addingGroup = !$scope.addingGroup;
+                if ($scope.groups == null) {
+                    GroupService.findAll({}, function(groups) {
+                        $scope.groups = groups;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }
+            };
+
+            $scope.addToGroup = function(groupId) {
+
+                ContactService.addToGroup({id: $scope.contact.id}, {id: groupId}, function(succ) {
+                    ContactService.getGroups({id: $scope.contact.id}, function(groups) {
+                        $scope.contact.groups = groups;
+                        $scope.addingGroup = false;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }, function(err) {
+                    console.log(err);
+                })
+
+            };
+
+            $scope.removeFromGroup = function(groupId) {
+
+                ContactService.removeFromGroup({id:$scope.contact.id, entityId:groupId}, function(succ) {
+                    ContactService.getGroups({id:$scope.contact.id}, function(groups) {
+                        $scope.contact.groups = groups;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
                     console.log(err);
                 })
             };
@@ -1121,9 +1173,202 @@
             });
         };
 
+    }]);
 
+    controllers.controller('GroupsCtrl', ['$scope', 'GroupService', function($scope, GroupService) {
+
+        $scope.modelHolder = {};
+        $scope.formHolder = {};
+        $scope.hideForm = true;
+
+        GroupService.findAll({}, function(data) {
+            $scope.groups = data;
+        }, function(err) {
+            console.log(err);
+        });
+
+        $scope.showGroupForm = function() {
+            $scope.hideForm = false;
+        };
+
+        $scope.createGroup = function() {
+
+            GroupService.create( $scope.modelHolder.groupModel, function(data) {
+                $scope.hideForm = true;
+                $scope.modelHolder.groupModel = {};
+                GroupService.findAll({}, function(data) {
+                    $scope.groups = data;
+                }, function(err) {
+                    console.log(err);
+                });
+            }, function(err) {
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    $scope.modelHolder.groupModel.constraintViolation = errorResponse.message;
+                }
+                console.log(err);
+            });
+        };
+
+        $scope.cancelCreateGroup = function() {
+            $scope.hideForm = true;
+            $scope.modelHolder.groupModel = null;
+        };
 
     }]);
+
+    controllers.controller('GroupDetailsCtrl', ['$scope', 'GroupService', '$routeParams', '$location', '$timeout', '$window', 'OrganizationService', 'CommitteeService', 'EventService',
+        function($scope, GroupService, $routeParams, $location, $timeout, $window, OrganizationService, CommitteeService, EventService) {
+
+            $scope.formHolder = {};
+            $scope.modelHolder = {};
+
+            var establishGroupMembers = function() {
+                GroupService.getAllContacts({id: $scope.modelHolder.groupModel.id}, function(contacts) {
+                    $scope.modelHolder.groupModel.groupMembers = contacts;
+
+                    if ($scope.modelHolder.groupModel.aggregations.length == 0 && $scope.modelHolder.groupModel.groupMembers.length == 0) {
+                        $scope.showAggregationForm();
+                    }
+
+                }, function(err) {
+                    console.log(err);
+                })
+            };
+
+            var establishGroup = function(groupId) {
+                GroupService.find({id: groupId}, function(group) {
+                    $scope.modelHolder.groupModel = group;
+                    establishGroupMembers();
+                }, function(err) {
+                    console.log(err);
+                });
+            };
+
+            var establishGroupDetails = function(groupId) {
+                GroupService.find({id: groupId}, function(group) {
+                    $scope.modelHolder.groupModel.groupName = group.groupName;
+                    GroupService.getAllContacts({id: $routeParams.id}, function(members) {
+                        $scope.modelHolder.groupModel.topLevelMembers = members;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }, function(err) {
+                    console.log(err);
+                });
+            };
+
+            establishGroup($routeParams.id);
+
+            OrganizationService.findAll({}, function(orgs) {
+                $scope.organizations = orgs;
+            }, function(err) {
+                console.log(err);
+            });
+
+            EventService.findAll({}, function(events) {
+                $scope.events = events;
+            }, function(err) {
+                console.log(err);
+            });
+
+            CommitteeService.findAll({}, function(comms) {
+                $scope.committees = comms;
+            }, function(err) {
+                console.log(err);
+            });
+
+            $scope.deleteGroup = function() {
+                var deleteConfirmed = $window.confirm('Are you sure you want to delete this group?');
+                if (deleteConfirmed) {
+                    GroupService.deleteGroup({id : $scope.modelHolder.groupModel.id}, function(resp) {
+                        $location.path("/groups");
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }
+            };
+
+            $scope.showUpdateForm = function() {
+                $scope.updatingGroup = true;
+                $scope.updatingGroupName = true;
+            };
+
+            $scope.cancelUpdate = function() {
+                $scope.updatingGroup = false;
+                $scope.updatingGroupName = false;
+                establishGroupDetails($scope.modelHolder.groupModel.id);
+            };
+
+            $scope.showAggregationForm = function() {
+                $scope.updatingGroup = true;
+                $scope.updatingAggregations = true;
+            };
+
+            $scope.cancelUpdateAggregations = function() {
+                $scope.updatingGroup = false;
+                $scope.updatingAggregations = false;
+            };
+
+            $scope.submitUpdate = function() {
+                GroupService.update({id : $scope.modelHolder.groupModel.id}, {groupName : $scope.modelHolder.groupModel.groupName}, function(succ) {
+                    handleSuccessfulUpdate();
+                }, function(err) {
+                    handleFailedUpdate(err);
+                });
+            };
+
+            var handleFailedUpdate = function(err) {
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    $scope.modelHolder.groupModel.constraintViolation = errorResponse.message;
+                }
+                $scope.requestFail = true;
+                $timeout(function() {
+                    $scope.requestFail = false;
+                }, 3000);
+                console.log(err);
+            };
+
+            var handleSuccessfulUpdate = function() {
+                $scope.updatingGroup = false;
+                $scope.updatingGroupName = false;
+                establishGroupDetails($scope.modelHolder.groupModel.id);
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000)
+            };
+
+            var addAggregation = function(id) {
+                GroupService.addAggregation({id : $scope.modelHolder.groupModel.id, entityId:id}, function(succ) {
+                    $scope.updatingGroup = false;
+                    $scope.updatingAggregations = false;
+                    $scope.requestSuccess = true;
+                    $timeout(function() {
+                        $scope.requestSuccess = false;
+                    }, 3000);
+                    establishGroup($scope.modelHolder.groupModel.id);
+                    $scope.newAggregation = null;
+                }, function(err) {
+                    handleFailedUpdate(err);
+                });
+            };
+
+            $scope.addCommittee = function(id) {
+                addAggregation(id);
+            };
+
+            $scope.addOrganization = function(id) {
+                addAggregation(id);
+            };
+
+            $scope.addEvent = function(id) {
+                addAggregation(id);
+            };
+
+        }]);
+
 }());
 
 
