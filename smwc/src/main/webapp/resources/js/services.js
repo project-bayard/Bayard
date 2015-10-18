@@ -307,4 +307,23 @@
         });
     }]);
 
+    services.factory('DemographicService',[ '$resource', function ($resource) {
+        return $resource('../demographics/:categoryName', {categoryName : '@categoryName'}, {
+            find : {
+                method: 'GET',
+                params: {
+                    categoryName : "@categoryName"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            createOption : {
+                method: 'POST',
+                url: '/demographics/:categoryName/options'
+            }
+        });
+    }]);
+
 }());

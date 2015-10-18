@@ -31,7 +31,8 @@ public abstract class BasicEntity {
             Views.ContactCommitteeDetails.class,
             Views.GroupListView.class,
             Views.GroupDetailsView.class,
-            Views.GroupPanelView.class})
+            Views.GroupPanelView.class,
+            Views.DemographicDetails.class})
     private String id;
 
     @Column

@@ -106,9 +106,9 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope', '$routeParams', 'ContactService', '$timeout', '$location', 'OrganizationService',
-        'EventService', 'CommitteeService', 'DateFormatter', '$window','EncounterTypeService', 'GroupService',
+        'EventService', 'CommitteeService', 'DateFormatter', '$window','EncounterTypeService', 'GroupService', 'DemographicService',
         function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter,
-                  $window, EncounterTypeService, GroupService) {
+                  $window, EncounterTypeService, GroupService, DemographicService) {
 
             var setup = function () {
                 $scope.errorMessage = "";
@@ -141,8 +141,16 @@
                 $scope.demographicPanel = {
                     updateRequest: {success: false, failure: false},
                     editingDemographics: false,
-                    showingDemographics: false
+                    showingDemographics: false,
+                    addingOption : {
+                        race:false,
+                        ethnicity:false,
+                        gender:false,
+                        incomeBracket:false,
+                        sexualOrientation:false
+                    }
                 };
+
                 $scope.memberInfoPanel = {
                     showingPanel: false, updateRequest: {success: false, failure: false},
                     showingMemberInfo: false, editingMemberInfo: false,
@@ -644,7 +652,7 @@
                 return "No";
             };
 
-            var retrieveDemographics = function () {
+            var retrieveContactDemographics = function () {
                 return ContactService.getDemographics({id: $scope.contact.id}, function (demographics) {
                     $scope.demographics = demographics;
                     $scope.demographics.dobAsDate = DateFormatter.asDate($scope.demographics.dateOfBirth);
@@ -655,16 +663,53 @@
                 });
             };
 
+            var retrieveDemographicOptions = function() {
+                DemographicService.findAll({}, function(categories) {
+                    formatDemographicOptions(categories);
+                }, function(err) {
+                    console.log(err);
+                })
+            };
+
+            var formatDemographicOptions = function(categories) {
+                for (var i = 0; i < categories.length; i++) {
+                    var key = categories[i].name;
+                    var value = categories[i].options;
+                    $scope[key] = value;
+                }
+            };
+
             $scope.displayDemographics = function () {
                 $scope.demographicPanel.showingDemographics = !$scope.demographicPanel.showingDemographics;
-                retrieveDemographics();
+                retrieveContactDemographics();
+                retrieveDemographicOptions();
+            };
+
+            $scope.showAddDemographicOption = function(addingCategoryFlag) {
+                $scope[addingCategoryFlag] = true;
+            };
+
+            $scope.addDemographicOption = function(addingCategoryFlag, category, newOption) {
+                console.log("Category: "+category);
+                console.log("Option: "+newOption);
+                DemographicService.createOption({categoryName: category}, {name : newOption}, function(succ) {
+                    $scope[addingCategoryFlag] = false;
+                    newOption = null;
+                    retrieveDemographicOptions();
+                }, function(err) {
+                    console.log(err);
+                })
+            };
+
+            $scope.cancelAddDemographicOption = function(addingCategoryFlag) {
+                $scope[addingCategoryFlag] = false;
             };
 
             $scope.updateDemographics = function () {
 
                 $scope.demographics.dateOfBirth = DateFormatter.formatDate($scope.demographics.dobAsDate);
                 ContactService.updateDemographics({id: $scope.contact.id}, $scope.demographics, function (data) {
-                    if (retrieveDemographics()) {
+                    if (retrieveContactDemographics()) {
                         $scope.demographicPanel.editingDemographics = false;
                         $scope.demographicPanel.updateRequest.success = true;
                         $timeout(function () {
@@ -686,7 +731,7 @@
             };
 
             $scope.cancelUpdateDemographics = function () {
-                if (retrieveDemographics()) {
+                if (retrieveContactDemographics()) {
                     $scope.demographicPanel.editingDemographics = false;
                 }
             };

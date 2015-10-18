@@ -31,7 +31,9 @@ import org.junit.runners.Suite;
         ControllerExceptionHandlerTest.class,
         ContactEventsTest.class,
         GroupServiceTest.class,
-        GroupControllerTest.class
+        GroupControllerTest.class,
+        DemographicCategoryServiceTest.class,
+        DemographicCategoryControllerTest.class
 })
 public class TestSuite {
 }
