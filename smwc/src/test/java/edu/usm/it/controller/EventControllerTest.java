@@ -12,6 +12,7 @@ import edu.usm.dto.EventDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.EventService;
+import edu.usm.service.OrganizationService;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Test;
@@ -46,10 +47,10 @@ public class EventControllerTest extends WebAppConfigurationAware {
     private ObjectWriter writer = new ObjectMapper().writer();
 
     @After
-    public void wipeData(){
+    public void tearDown(){
         eventService.deleteAll();
-        contactService.deleteAll();
         committeeService.deleteAll();
+        contactService.deleteAll();
     }
 
 
@@ -78,7 +79,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Set<Event> events = new HashSet<>();
         events.add(event);
         attendee.setAttendedEvents(events);
-        contactService.attendEvent(attendee,event);
+        contactService.attendEvent(attendee, event);
     }
 
 

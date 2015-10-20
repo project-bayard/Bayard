@@ -25,3 +25,8 @@ span.smwc-addon-span {
     content:" *";
     color:red;
 }
+
+.smwc-margined {
+    margin-top:2px;
+    margin-bottom:2px;
+}

@@ -71,6 +71,7 @@ public class OrganizationController {
         String id = organizationService.create(organization);
         return new Response(id,Response.SUCCESS);
 
+
     }
 
     @ResponseStatus(HttpStatus.OK)

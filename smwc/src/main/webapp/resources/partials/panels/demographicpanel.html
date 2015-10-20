@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-xs-9">
+        <div class="col-xs-9 col-sm-9 col-md-9">
             <div class="panel panel-default">
                 <div class="panel-heading" ng-click="displayDemographics()">
                     <h3 class="panel-title">Demographics</h3>
@@ -10,51 +10,185 @@
                     <form id="demographicPanel.form" name="demographicPanel.form" novalidate>
                         <fieldset ng-disabled="!demographicPanel.editingDemographics">
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Race</label>
-                                    <input name="race" type="text" class="form-control" ng-model="demographics.race">
+                                        <select name="race" class="form-control input-sm" ng-model="demographics.race">
+                                            <option ng-repeat="option in race"
+                                                    value="{{option.name}}">{{option.name}}
+                                            </option>
+                                        </select>
+                                </div>
+                                <div ng-if="!addingRaceOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-primary" ng-click="showAddDemographicOption('addingRaceOption')">Add an option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="addingRaceOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-success" ng-click="addDemographicOption('addingRaceOption', 'race', newRaceOption)">Create option</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-5 col-sm-5 col-md-5">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <input ng-model="newRaceOption" type="text" class="form-control" placeholder="New option...">
+                                            <span class="input-group-addon" aria-hidden="true" ng-click="cancelAddDemographicOption('addingRaceOption')"> X </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Ethnicity</label>
-                                    <input name="ethnicity" type="text" class="form-control" ng-model="demographics.ethnicity">
+                                    <select name="ethnicity" class="form-control input-sm" ng-model="demographics.ethnicity">
+                                        <option ng-repeat="option in ethnicity"
+                                                value="{{option.name}}">{{option.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div ng-if="!addingEthnicityOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-primary" ng-click="showAddDemographicOption('addingEthnicityOption')">Add an option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="addingEthnicityOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-success" ng-click="addDemographicOption('addingEthnicityOption', 'ethnicity', newEthnicityOption)">Create option</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-5 col-sm-5 col-md-5">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <input ng-model="newEthnicityOption" type="text" class="form-control" placeholder="New option...">
+                                            <span class="input-group-addon" aria-hidden="true" ng-click="cancelAddDemographicOption('addingEthnicityOption')"> X </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Date of Birth</label>
-                                    <input name="race" type="date" class="form-control" ng-model="demographics.dobAsDate">
+                                    <input name="dob" type="date" class="form-control" ng-model="demographics.dobAsDate">
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label class="control-label">Disabled</label>
-                                    <select name="disabled" class="form-control input-sm" ng-model="demographics.disabled" ng-options="booleanToString(value) for value in [true, false]">
+                                <div class="form-group col-xs-3 col-sm-3 col-md-3">
+                                    <label class="control-label">Has a Disability</label>
+                                    <select name="disabled" class="form-control input-sm" ng-model="demographics.disabled"
+                                            ng-options="booleanToString(value) for value in [true, false]">
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Gender</label>
-                                    <input name="gender" type="text" class="form-control" ng-model="demographics.gender">
+                                    <select name="gender" class="form-control input-sm" ng-model="demographics.gender">
+                                        <option ng-repeat="option in gender"
+                                                value="{{option.name}}">{{option.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div ng-if="!addingGenderOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-primary" ng-click="showAddDemographicOption('addingGenderOption')">Add an option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="addingGenderOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-success" ng-click="addDemographicOption('addingGenderOption', 'gender', newGenderOption)">Create option</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-5 col-sm-5 col-md-5">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <input ng-model="newGenderOption" type="text" class="form-control" placeholder="New option...">
+                                            <span class="input-group-addon" aria-hidden="true" ng-click="cancelAddDemographicOption('addingGenderOption')"> X </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Sexual Orientation</label>
-                                    <input name="sexualOrientation" type="text" class="form-control" ng-model="demographics.sexualOrientation">
+                                    <select name="sexualOrientation" class="form-control input-sm" ng-model="demographics.sexualOrientation">
+                                        <option ng-repeat="option in sexualOrientation"
+                                                value="{{option.name}}">{{option.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div ng-if="!addingSexualOrientationOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-primary" ng-click="showAddDemographicOption('addingSexualOrientationOption')">Add an option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="addingSexualOrientationOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-success" ng-click="addDemographicOption('addingSexualOrientationOption', 'sexualOrientation', newSexualOrientationOption)">Create option</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-5 col-sm-5 col-md-5">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <input ng-model="newSexualOrientationOption" type="text" class="form-control" placeholder="New option...">
+                                            <span class="input-group-addon" aria-hidden="true" ng-click="cancelAddDemographicOption('addingSexualOrientationOption')"> X </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Income Bracket</label>
-                                    <input name="incomeBracket" type="text" class="form-control" ng-model="demographics.incomeBracket">
+                                    <select name="incomeBracket" class="form-control input-sm" ng-model="demographics.incomeBracket">
+                                        <option ng-repeat="option in incomeBracket"
+                                                value="{{option.name}}">{{option.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div ng-if="!addingIncomeBracketOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-primary" ng-click="showAddDemographicOption('addingIncomeBracketOption')">Add an option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="addingIncomeBracketOption && demographicPanel.editingDemographics">
+                                    <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <button class="btn btn-success" ng-click="addDemographicOption('addingIncomeBracketOption', 'incomeBracket', newIncomeBracketOption)">Create option</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-5 col-sm-5 col-md-5">
+                                        <label class="control-label"> </label>
+                                        <div class="input-group">
+                                            <input ng-model="newIncomeBracketOption" type="text" class="form-control" placeholder="New option...">
+                                            <span class="input-group-addon" aria-hidden="true" ng-click="cancelAddDemographicOption('addingIncomeBracketOption')"> X </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
                         </fieldset>
-
                     </form>
 
                     <div ng-show="!demographicPanel.editingDemographics">

@@ -30,6 +30,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private EventService eventService;
     @Autowired
     private EncounterService encounterService;
+    @Autowired
+    private GroupService groupService;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -103,6 +105,13 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             for(Event event : contact.getAttendedEvents()) {
                 event.getAttendees().remove(contact);
                 eventService.update(event);
+            }
+        }
+
+        if (contact.getGroups() != null) {
+            for (Group group: contact.getGroups()) {
+                group.getTopLevelMembers().remove(contact);
+                groupService.update(group);
             }
         }
 
@@ -226,6 +235,23 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     public Set<Contact> findAllInitiators() {
         logger.debug("Getting all Initiators");
         return contactDao.findAllInitiators();
+    }
+
+    @Override
+    public void removeFromGroup(Contact contact, Group group) {
+        contact.getGroups().remove(group);
+        group.getTopLevelMembers().remove(contact);
+        update(contact);
+    }
+
+    @Override
+    public void addToGroup(Contact contact, Group group) {
+        group.getTopLevelMembers().add(contact);
+        if (null == contact.getGroups()) {
+            contact.setGroups(new HashSet<>());
+        }
+        contact.getGroups().add(group);
+        update(contact);
     }
 
     @Override

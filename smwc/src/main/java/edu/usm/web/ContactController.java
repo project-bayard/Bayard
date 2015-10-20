@@ -44,6 +44,9 @@ public class ContactController {
     @Autowired
     private EncounterTypeService encounterTypeService;
 
+    @Autowired
+    private GroupService groupService;
+
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
@@ -184,7 +187,7 @@ public class ContactController {
         Contact initiator = contactService.findById(encounterDto.getInitiatorId());
 
         try {
-            contactService.addEncounter(contact, initiator,encounterType, encounterDto);
+            contactService.addEncounter(contact, initiator, encounterType, encounterDto);
             return Response.successGeneric();
         } catch (NullDomainReference.NullContact e) {
             throw new NullDomainReference.NullContact(id+" or "+encounterDto.getInitiatorId());
@@ -236,7 +239,7 @@ public class ContactController {
         Contact contact = contactService.findById(id);
 
         try {
-            contactService.removeContactFromOrganization(contact,organization);
+            contactService.removeContactFromOrganization(contact, organization);
             return Response.successGeneric();
         } catch (NullDomainReference.NullContact e) {
             throw new NullDomainReference.NullContact(id, e);
@@ -336,6 +339,43 @@ public class ContactController {
             throw new NullDomainReference.NullContact(id);
         }
         return c.getCommittees();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/groups")
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.GroupPanelView.class)
+    public Set<Group> getContactGroups(@PathVariable("id") String id) throws NullDomainReference{
+        Contact c = contactService.findById(id);
+        if (null == c) {
+            throw new NullDomainReference.NullContact(id);
+        }
+        return c.getGroups();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/groups", consumes= {"application/json"})
+    public Response addContactToGroup(@PathVariable("id") String id, @RequestBody IdDto idDto) throws NullDomainReference{
+        Contact c = contactService.findById(id);
+        if (null == c) {
+            throw new NullDomainReference.NullContact(id);
+        }
+        Group g = groupService.findById(idDto.getId());
+        if (null == g) {
+            throw new NullDomainReference.NullGroup(idDto.getId());
+        }
+        contactService.addToGroup(c, g);
+        return Response.successGeneric();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/groups/{entityId}")
+    public Response removeContactFromGroup(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+
+        Group group = groupService.findById(entityId);
+        Contact contact = contactService.findById(id);
+
+        contactService.removeFromGroup(contact, group);
+        return Response.successGeneric();
+
     }
 }
 

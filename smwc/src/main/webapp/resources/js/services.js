@@ -48,6 +48,19 @@
                 method: 'PUT',
                 url: "../contacts/:id/events"
             },
+            addToGroup: {
+                method: 'PUT',
+                url: "../contacts/:id/groups"
+            },
+            removeFromGroup: {
+                method: 'DELETE',
+                url: "../contacts/:id/groups/:entityId"
+            },
+            getGroups: {
+                method: 'GET',
+                url: "../contacts/:id/groups",
+                isArray: true
+            },
             removeFromEvent : {
                 method: 'DELETE',
                 url: "../contacts/:id/events/:entityId"
@@ -227,6 +240,47 @@
             }
         });
     }]);
+
+    services.factory('GroupService',[ '$resource', function ($resource) {
+        return $resource('../groups/:id', {id : '@id', entityId : '@entityId'}, {
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            update : {
+                method : 'PUT',
+                url : '/groups/:id'
+            },
+            deleteGroup : {
+                method : 'DELETE',
+                url : '/groups/:id'
+            },
+            getAllContacts : {
+                method : 'GET',
+                url : '/groups/:id/all',
+                isArray : true
+            },
+            addAggregation : {
+                method : 'PUT',
+                url : '/groups/:id/aggregations/:entityId'
+            },
+            removeAggregation : {
+                method : 'PUT',
+                url : '/groups/:id/aggregations/:entityId'
+            }
+
+        });
+    }]);
+
     services.factory('EncounterTypeService',[ '$resource', function ($resource) {
         return $resource('../encounterTypes/:id', {id : '@id'}, {
 
@@ -250,6 +304,25 @@
                 }
             }
 
+        });
+    }]);
+
+    services.factory('DemographicService',[ '$resource', function ($resource) {
+        return $resource('../demographics/:categoryName', {categoryName : '@categoryName'}, {
+            find : {
+                method: 'GET',
+                params: {
+                    categoryName : "@categoryName"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            createOption : {
+                method: 'POST',
+                url: '/demographics/:categoryName/options'
+            }
         });
     }]);
 

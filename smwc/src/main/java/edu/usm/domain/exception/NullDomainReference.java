@@ -108,6 +108,21 @@ public abstract class NullDomainReference extends Exception {
         }
     }
 
+    public static class NullGroup extends NullDomainReference {
+
+        public NullGroup(String id) {
+            super(messageConstructor(EncounterType.class.getSimpleName(),id));
+        }
+
+        public NullGroup() {
+            super(messageConstructor(EncounterType.class.getSimpleName()));
+        }
+
+        public NullGroup(String id, Throwable throwable) {
+            super(messageConstructor(EncounterType.class.getSimpleName(),id),throwable);
+        }
+    }
+
     protected static String messageConstructor(String domainClass, String id) {
         return domainClass+" with id : "+id+" does not exist";
     }

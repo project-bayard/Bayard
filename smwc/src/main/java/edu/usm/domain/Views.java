@@ -19,6 +19,8 @@ public class Views {
 
     public interface UserDetails {}
 
-
+    public interface GroupListView{}
+    public interface GroupDetailsView {}
+    public interface GroupPanelView {}
 
 }

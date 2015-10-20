@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <h1>Groups</h1>
+    <button class="btn btn-md btn-primary" ng-show="hideForm" ng-click="showGroupForm()">Create Group</button>
+
+    <div ng-if="!hideForm">
+        <form id="formHolder.groupForm" name="formHolder.groupForm" novalidate>
+            <div class="row">
+                <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : formHolder.groupForm.name.$invalid && !formHolder.groupForm.name.$pristine }">
+                    <label class="control-label">Name of Group</label>
+                    <input name="name" type="text" class="form-control" ng-model="modelHolder.groupModel.groupName" ng-minlength="2" required>
+                    <p ng-show="formHolder.groupForm.name.$error.required && !formHolder.groupForm.name.$pristine" class="help-block">The group name is required</p>
+                    <p ng-show="formHolder.groupForm.name.$error.min" class="help-block">Group name not long enough</p>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn btn-md btn-success" ng-click="createGroup()" ng-disabled="formHolder.groupForm.$invalid">Submit</button>
+                <button class="btn btn-md btn-danger" ng-click="cancelCreateGroup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <br><br>
+
+    <table class="bootstrap-table table table-striped table-hover table-responsive"
+           data-toggle="table"
+           data-pagination="true"
+           data-search="true">
+        <tr>
+            <th>Name</th>
+            <th>Details</th>
+        </tr>
+        <tr ng-repeat="group in groups">
+            <td>{{group.groupName}}</td>
+            <td><a class="btn btn-md btn-info" href="#/groups/group/{{group.id}}">View Details</a></td>
+        </tr>
+    </table>
+</div>

@@ -57,10 +57,14 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Autowired
     EncounterTypeService encounterTypeService;
 
+    @Autowired
+    GroupService groupService;
+
 
     private Contact contact;
     private Event event;
     private EncounterType encounterType;
+    private Group group;
 
     @Before
     public void setup() throws ConstraintViolation{
@@ -95,11 +99,15 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         encounterType = new EncounterType();
         encounterType.setName("Name");
         encounterTypeService.create(encounterType);
+
+        group = new Group();
+        group.setGroupName("Test Group");
     }
 
     @After
     public void teardown () {
 
+        groupService.deleteAll();
         organizationService.deleteAll();
         contactService.deleteAll();
         eventService.deleteAll();
@@ -147,7 +155,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         Contact fromDb = contactService.findById(contact.getId());
-        assertEquals(fromDb.getFirstName(),details.getFirstName());
+        assertEquals(fromDb.getFirstName(), details.getFirstName());
 
         //TODO: Test all fields
 
@@ -557,4 +565,75 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         secondContact.setInitiator(true);
         return secondContact;
     }
+
+    @Test
+    public void testAddContactToGroup () throws  Exception {
+        String id = contactService.create(contact);
+        String groupId = groupService.create(group);
+        eventService.create(event);
+        contactService.attendEvent(contact, event);
+
+        group = groupService.findById(groupId);
+        groupService.addAggregation(event, group);
+
+        IdDto idDto = new IdDto(groupId);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(idDto);
+        String path = "/contacts/" + id + "/groups";
+
+        mockMvc.perform(put(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+
+        group = groupService.findById(groupId);
+        assertEquals(1, group.getTopLevelMembers().size());
+
+        contact = contactService.findById(id);
+        assertEquals(1, contact.getGroups().size());
+
+    }
+
+    @Test
+    public void testRemoveContactFromGroup() throws Exception {
+        String id = contactService.create(contact);
+        String groupId = groupService.create(group);
+        eventService.create(event);
+        contactService.attendEvent(contact, event);
+        group = groupService.findById(groupId);
+        groupService.addAggregation(event, group);
+        group = groupService.findById(groupId);
+        contact = contactService.findById(contact.getId());
+        contactService.addToGroup(contact, group);
+
+        mockMvc.perform(delete("/contacts/" + id + "/groups/" + groupId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        group = groupService.findById(groupId);
+        assertEquals(0, group.getTopLevelMembers().size());
+
+        contact = contactService.findById(id);
+        assertEquals(0, contact.getGroups().size());
+    }
+    @Test
+    public void testGetAllContactGroups () throws Exception {
+        String id = contactService.create(contact);
+        String groupId = groupService.create(group);
+        eventService.create(event);
+        contactService.attendEvent(contact, event);
+        group = groupService.findById(groupId);
+        groupService.addAggregation(event, group);
+        group = groupService.findById(groupId);
+        contact = contactService.findById(contact.getId());
+        contactService.addToGroup(contact, group);
+
+        mockMvc.perform(get("/contacts/" + contact.getId() + "/groups")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("[0].id", is(groupId)))
+                .andExpect(jsonPath("[0].groupName", is(group.getGroupName())));
+    }
+
+
 }
