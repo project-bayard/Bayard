@@ -1,7 +1,16 @@
-# SMWC
+# Bayard
 
+A simple platform for community organizing.
+
+Check us out on github.io: [project-bayard.github.io/Bayard]
 
 # Change Log
+
+## [October15Milestone] - 2015-10-20
+### Added
+- Addition of Groups, which define a set of Organizations, Committees, and/or Events
+- Customizable options for certain demographic categories
+
 
 ## [September30Milestone] - 2015-07-26
 ### Added
@@ -42,6 +51,10 @@
 
 ### Fixed
 - Various UI improvements
+
+[project-bayard.github.io/Bayard]: http://project-bayard.github.io/Bayard/
+
+[October15Milestone]: https://github.com/project-bayard/Bayard/compare/July29th2015Milestone...project-bayard:October15Milestone
 
 [July29thMilestone]: https://github.com/ScottKimball/SMWC/compare/July8th2015Milestone...July29th2015Milestone
 
