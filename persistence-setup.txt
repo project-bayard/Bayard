@@ -6,18 +6,18 @@ To set up a development or production environment that relies on a Postgres data
         local	all	all	trust
         host	all	127.0.0.1/32	trust
 1. Create the user that the application will use to communicate with Postgres
-    create user smwc_postgres with password 'secretpassword';
+    create user bayard_postgres with password 'secretpassword';
 2. Create the database that the application will use
-    create database smwc;
+    create database bayard;
 3. Grant privileges to the application user on the application database
-    grant all privileges on database smwc to smwc_postgres;
+    grant all privileges on database bayard to bayard_postgres;
 4. Configure the data source defined in persistence.properties
-    dataSource.url=jdbc:postgresql://localhost/smwc
-    dataSource.username=smwc_postgres
+    dataSource.url=jdbc:postgresql://localhost/bayard
+    dataSource.username=bayard_postgres
     dataSource.password=secretpassword
 
 To create a dump of the current state of the database (i.e. to refresh import.sql in a development environment)
-    1. cd ~/{path-to-repository}/smwc/src/main/resources
-    2. pg_dump -U smwc_postgres -f import.sql --attribute-inserts --no-security-labels --no-acl --data-only smwc
+    1. cd ~/{path-to-repository}/src/main/resources
+    2. pg_dump -U bayard_postgres -f import.sql --attribute-inserts --no-security-labels --no-acl --data-only bayard
 
     This will replace the contents of import.sql with the current state of the database
