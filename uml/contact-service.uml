@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.usm.web.ContactController</OriginalElement>
+  <nodes>
+    <node x="829.3571428571428" y="357.5714285714285">edu.usm.repository.ContactDao</node>
+    <node x="8.571428571428555" y="8.571428571428555">edu.usm.service.ContactService</node>
+    <node x="811.4285714285712" y="13.000000000000114">org.springframework.data.repository.CrudRepository</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.repository.ContactDao" target="org.springframework.data.repository.CrudRepository">
+      <point x="0.0" y="-52.0" />
+      <point x="0.0" y="148.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="635.4285714285713" y="316.1428571428571" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

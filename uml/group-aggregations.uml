@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.usm.domain.Organization</OriginalElement>
+  <nodes>
+    <node x="77.0" y="-7.0">edu.usm.domain.Aggregation</node>
+    <node x="93.0" y="323.0">edu.usm.domain.Committee</node>
+    <node x="-347.0" y="318.0">edu.usm.domain.Organization</node>
+    <node x="42.0" y="-174.0">edu.usm.domain.Group</node>
+    <node x="401.0" y="331.0">edu.usm.domain.Event</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.domain.Organization" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="-159.5" />
+      <point x="0.0" y="51.5" />
+    </edge>
+    <edge source="edu.usm.domain.Aggregation" target="edu.usm.domain.Group">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Committee" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Event" target="edu.usm.domain.Committee">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Group" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Committee" target="edu.usm.domain.Event">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Event" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="266.0" y="238.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

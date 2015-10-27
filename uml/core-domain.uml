@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.usm.domain</OriginalElement>
+  <nodes>
+    <node x="125.8691697761194" y="282.06809701492534">edu.usm.domain.Contact</node>
+    <node x="1136.8561433901918" y="404.7660581023454">edu.usm.domain.Encounter</node>
+    <node x="-267.9247184447364" y="647.6143762086577">edu.usm.domain.Committee</node>
+    <node x="-356.60158303168527" y="286.9095939529926">edu.usm.domain.Organization</node>
+    <node x="1146.0155405489168" y="884.3712128725145">edu.usm.domain.Group</node>
+    <node x="-275.4869402985076" y="953.5782931273866">edu.usm.domain.Event</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.domain.Contact" target="edu.usm.domain.Encounter">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Event" target="edu.usm.domain.Contact">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Contact" target="edu.usm.domain.Group">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Contact" target="edu.usm.domain.Committee">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Event" target="edu.usm.domain.Committee">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Encounter" target="edu.usm.domain.Contact">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Committee" target="edu.usm.domain.Contact">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Organization" target="edu.usm.domain.Contact">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Contact" target="edu.usm.domain.Organization">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Group" target="edu.usm.domain.Contact">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Contact" target="edu.usm.domain.Event">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Committee" target="edu.usm.domain.Event">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7710485133020344" x="591.2991678506191" y="708.5662675055815" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

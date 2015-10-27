@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.usm.domain</OriginalElement>
+  <nodes>
+    <node x="1586.6921420882668" y="521.0150699677072">edu.usm.domain.Contact</node>
+    <node x="1037.7884822389665" y="282.4004305705059">edu.usm.domain.BasicEntity</node>
+    <node x="1254.0" y="501.0">edu.usm.domain.MemberInfo</node>
+    <node x="597.0" y="477.0">edu.usm.domain.Encounter</node>
+    <node x="251.0" y="525.0">edu.usm.domain.Aggregation</node>
+    <node x="592.0" y="1158.0">edu.usm.domain.Committee</node>
+    <node x="256.0" y="1074.0">edu.usm.domain.Organization</node>
+    <node x="1014.0" y="549.0">edu.usm.domain.Group</node>
+    <node x="0.0" y="1122.0">edu.usm.domain.Event</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.domain.Organization" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="-135.5" />
+      <point x="0.0" y="75.5" />
+    </edge>
+    <edge source="edu.usm.domain.MemberInfo" target="edu.usm.domain.BasicEntity">
+      <point x="0.0" y="-99.5" />
+      <point x="1394.9424111948333" y="437.6889128094724" />
+      <point x="1168.0691065662002" y="437.6889128094725" />
+      <point x="33.799999999999955" y="63.5" />
+    </edge>
+    <edge source="edu.usm.domain.Aggregation" target="edu.usm.domain.BasicEntity">
+      <point x="0.0" y="-75.5" />
+      <point x="420.8460710441335" y="371.2088266953714" />
+      <point x="916.0555435952638" y="400.3046286329386" />
+      <point x="-67.59999999999991" y="63.5" />
+    </edge>
+    <edge source="edu.usm.domain.Committee" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="-51.5" />
+      <point x="720.5" y="1049.0" />
+      <point x="522.6666666666667" y="1049.0" />
+      <point x="108.66666666666674" y="75.5" />
+    </edge>
+    <edge source="edu.usm.domain.Group" target="edu.usm.domain.BasicEntity">
+      <point x="0.0" y="-51.5" />
+      <point x="0.0" y="63.5" />
+    </edge>
+    <edge source="edu.usm.domain.Contact" target="edu.usm.domain.BasicEntity">
+      <point x="0.0" y="-423.5" />
+      <point x="1996.2691065662002" y="381.4779332615716" />
+      <point x="1388.4245425188374" y="402.016146393972" />
+      <point x="67.59999999999991" y="63.5" />
+    </edge>
+    <edge source="edu.usm.domain.Encounter" target="edu.usm.domain.BasicEntity">
+      <point x="0.0" y="-123.5" />
+      <point x="819.4612486544671" y="418.8622174381054" />
+      <point x="920.7597416576966" y="418.86221743810546" />
+      <point x="-33.799999999999955" y="63.5" />
+    </edge>
+    <edge source="edu.usm.domain.Event" target="edu.usm.domain.Aggregation">
+      <point x="0.0" y="-87.5" />
+      <point x="118.0" y="1049.0" />
+      <point x="305.33333333333337" y="1049.0" />
+      <point x="-108.66666666666669" y="75.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.5842767295597485" x="1201.5984930032291" y="768.7502691065661" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

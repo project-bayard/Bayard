@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.usm.web</OriginalElement>
+  <nodes>
+    <node x="-658.5714285714286" y="274.2857142857142">edu.usm.web.GroupController</node>
+    <node x="178.57142857142844" y="283.2857142857143">edu.usm.web.CommitteeController</node>
+    <node x="590.2857142857142" y="286.00000000000006">edu.usm.web.EventController</node>
+    <node x="-235.71428571428578" y="280.2857142857142">edu.usm.web.OrganizationController</node>
+    <node x="-95.71428571428555" y="108.71428571428572">edu.usm.web.ControllerExceptionHandler</node>
+  </nodes>
+  <notes />
+  <edges />
+  <settings layout="Hierarchic Group" zoom="0.9" x="199.66666666666663" y="566.9999999999999" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

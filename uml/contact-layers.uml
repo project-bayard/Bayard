@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.usm.web.ContactController</OriginalElement>
+  <nodes>
+    <node x="-357.14285714285705" y="247.1428571428571">edu.usm.web.ContactController</node>
+    <node x="1315.0714285714284" y="670.1428571428571">edu.usm.repository.ContactDao</node>
+    <node x="-126.14285714285717" y="-18.571428571428555">org.springframework.web.bind.annotation.RequestMapping</node>
+    <node x="469.285714285714" y="262.8571428571428">edu.usm.service.ContactService</node>
+    <node x="1302.8571428571427" y="298.42857142857133">org.springframework.data.repository.CrudRepository</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.repository.ContactDao" target="org.springframework.data.repository.CrudRepository">
+      <point x="0.0" y="-52.0" />
+      <point x="0.0" y="148.0" />
+    </edge>
+    <edge source="edu.usm.web.ContactController" target="org.springframework.web.bind.annotation.RequestMapping">
+      <point x="0.0" y="-316.0" />
+      <point x="0.0" y="100.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="752.7142857142856" y="576.9999999999999" />
+  <SelectedNodes>
+    <node>org.springframework.web.bind.annotation.RequestMapping</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
