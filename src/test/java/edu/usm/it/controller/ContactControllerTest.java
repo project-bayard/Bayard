@@ -109,6 +109,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         groupService.deleteAll();
         organizationService.deleteAll();
+        committeeService.deleteAll();
         contactService.deleteAll();
         eventService.deleteAll();
         encounterTypeService.deleteAll();
