@@ -7,6 +7,7 @@ import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -18,10 +19,15 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * Created by andrew on 10/28/15.
+ */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = Application.class)
-class JpaConfig implements TransactionManagementConfigurer {
+@Profile("test")
+public class TestJpaConfig implements TransactionManagementConfigurer{
+
 
     @Value("${spring.dataSource.driverClassName}")
     private String driver;
@@ -79,3 +85,6 @@ class JpaConfig implements TransactionManagementConfigurer {
 
 
 }
+
+
+

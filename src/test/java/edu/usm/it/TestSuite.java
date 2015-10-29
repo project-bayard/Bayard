@@ -6,6 +6,7 @@ import edu.usm.it.service.*;
 import edu.usm.service.EventService;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Created by scottkimball on 4/11/15.
@@ -35,5 +36,6 @@ import org.junit.runners.Suite;
         DemographicCategoryServiceTest.class,
         DemographicCategoryControllerTest.class
 })
+@ActiveProfiles("test")
 public class TestSuite {
 }
