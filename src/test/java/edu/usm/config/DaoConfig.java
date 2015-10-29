@@ -16,7 +16,7 @@ import javax.inject.Inject;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {
         ApplicationConfig.class,
-        JpaConfig.class,
+        TestJpaConfig.class,
         EmbeddedDataSourceConfig.class
 
 })
