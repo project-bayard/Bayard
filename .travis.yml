@@ -1,3 +1,13 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
+deploy:
+  provider: heroku
+  api_key:
+    secure: muP3GXM08rh65pAg+eZpKBQ2J+wv2fTEom0DOY5ZcXcXv4ek5xBPA3oqzsVDkSoA1Gf+0WO5Yt30F7l5WOD8mNcTLOa7VAKGbPLDK2csyRW0wgHmfK2YkfgG6ixPnbE6vZ52DolmIS0rFV7z+tJK8yNSLrfjbHXfcqJswW3jJaOd65yK3pvY6ZMMvDCj4wCzWP0wfw9WSFHeJ+1JwjaRYgIjrstPgCo4mjT9+7Ya4UU/oKM+AMcrlPoB6HJpkjt1WifCOv9+Sp9u7vqz1gyeOQnTlDsIl3ez5LWuzDWBR2s/xxza8NlQIjJZTOmjq6pqvOnC+OscophJ58z6+92IeK704RQW6AvreJ4jkZJ0CIZdKVjKKWGEGoPQUmU/hxoRtWLr1whmzgVAig2ayxTOEWlgWxnXd0iXnIoTllc5bm3+Obm7LWPYouRFd3pGWh/Zhv4vLw97evmT/7dacdEtCuaalGgrkbt6btDCBzPEZFoaaxARbg0OPisZ8nth6//5X7kjPZyuyG5kjt1eMR+b0XfaHgH/ZuLUsQnQaBlZLTGXtvG0DJMr1VuabqWootZ/qkqwOn1/lwZEPCjPhVRAvrsbYRCC7aHygyDt+6h/6ChneB7m+gaEJ8/CVr1aaFxBmw+iFy5n1zCQltVS3exmC1TKB0GztXl0E55rRKOIwfE=
+  app: mysterious-everglades-5022
+  on:
+    repo: project-bayard/Bayard
+    branch: staging
+  run:
+    - "heroku ps:scale web=1"
