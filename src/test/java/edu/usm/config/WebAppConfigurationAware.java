@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 @ContextConfiguration(classes = {
         ApplicationConfig.class,
-        JpaConfig.class,
+        TestJpaConfig.class,
         EmbeddedDataSourceConfig.class,
         WebMvcConfig.class,
         ApplicationStartup.class
