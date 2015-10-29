@@ -3,7 +3,7 @@
 The application's staging branch [is hosted here]. Any changes to the staging branch are immediately deployed.
 This is an unstable deployment of the application for development purposes only.
 
-To configure the application to work with a heroku account of your own off from a local branch:
+To configure the application to work with a heroku account of your own from a local branch:
 
 1.) Install the heroku toolbelt: `wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh`
 
