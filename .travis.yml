@@ -9,3 +9,5 @@ deploy:
   on:
     repo: project-bayard/Bayard
     branch: staging
+  run:
+    - "heroku ps:scale web=1"
