@@ -4,6 +4,8 @@ A simple platform for community organizing.
 
 Check us out on github.io: [project-bayard.github.io/Bayard]
 
+Want to contribute? [Check out our workflow]
+
 # Change Log
 
 ## [October15Milestone] - 2015-10-20
@@ -51,6 +53,8 @@ Check us out on github.io: [project-bayard.github.io/Bayard]
 
 ### Fixed
 - Various UI improvements
+
+[Check out our workflow]: https://github.com/project-bayard/Bayard/blob/master/workflow.md
 
 [project-bayard.github.io/Bayard]: http://project-bayard.github.io/Bayard/
 
