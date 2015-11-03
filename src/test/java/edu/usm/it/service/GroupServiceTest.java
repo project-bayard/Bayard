@@ -103,7 +103,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testCreateGroupFromCommittee() {
+    public void testCreateGroupFromCommittee() throws Exception{
         String id = groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -115,7 +115,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testCreateGroupFromOrganization() {
+    public void testCreateGroupFromOrganization() throws Exception{
         String id = groupService.create(group);
         groupService.addAggregation(organization, group);
 
@@ -127,7 +127,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testCreateGroupFromEvent() {
+    public void testCreateGroupFromEvent() throws Exception{
         String id = groupService.create(group);
         groupService.addAggregation(event, group);
 
@@ -140,7 +140,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testCreateGroupFromMultipleAggregations() {
+    public void testCreateGroupFromMultipleAggregations() throws Exception{
         String id = groupService.create(group);
         groupService.addAggregation(committee, group);
         group = groupService.findById(group.getId());
@@ -164,7 +164,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testDeleteGroup() {
+    public void testDeleteGroup() throws Exception{
         groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -219,7 +219,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testRemoveContactFromGroup() {
+    public void testRemoveContactFromGroup() throws Exception{
         groupService.create(group);
         groupService.addAggregation(committee, group);
         contactService.addToGroup(topLevel, group);
@@ -236,7 +236,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testAddAggregation() {
+    public void testAddAggregation() throws Exception{
         groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -247,7 +247,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testRemoveAggregation() {
+    public void testRemoveAggregation() throws Exception{
         String id = groupService.create(group);
         groupService.addAggregation(committee, group);
 

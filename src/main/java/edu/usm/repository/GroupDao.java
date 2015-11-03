@@ -15,4 +15,6 @@ public interface GroupDao extends CrudRepository<Group, String>{
     @Override
     HashSet<Group> findAll();
 
+    Group findByGroupName(String groupName);
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.DemographicCategory;
 import edu.usm.domain.DemographicOption;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.Response;
 import edu.usm.service.DemographicCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class DemographicCategoryController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/{categoryName}/options", method = RequestMethod.POST, consumes = "application/json")
-    public Response createCategoryOption(@PathVariable("categoryName")String categoryName, @RequestBody DemographicOption option) {
+    public Response createCategoryOption(@PathVariable("categoryName")String categoryName, @RequestBody DemographicOption option) throws ConstraintViolation {
         DemographicCategory c = service.findByName(categoryName);
         if (c == null) {
             c = new DemographicCategory();

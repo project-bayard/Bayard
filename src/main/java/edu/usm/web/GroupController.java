@@ -5,6 +5,7 @@ import edu.usm.domain.Aggregation;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.GroupDto;
 import edu.usm.dto.Response;
 import edu.usm.service.GroupService;
@@ -34,7 +35,7 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateGroupName(@PathVariable("id") String id, @RequestBody GroupDto dto) {
+    public Response updateGroupName(@PathVariable("id") String id, @RequestBody GroupDto dto) throws ConstraintViolation{
         Group group = groupService.findById(id);
         group.setGroupName(dto.getGroupName());
         groupService.update(group);
@@ -43,7 +44,7 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createGroup(@RequestBody Group group) {
+    public Response createGroup(@RequestBody Group group) throws ConstraintViolation{
         String id = groupService.create(group);
         return new Response(id, Response.SUCCESS);
     }
@@ -76,7 +77,7 @@ public class GroupController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/aggregations/{entityId}", consumes= {"application/json"}, produces = "application/json")
-    public Response addAggregation(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+    public Response addAggregation(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation{
         Group group = groupService.findById(id);
         groupService.addAggregation(entityId, group);
         return new Response(id, Response.SUCCESS);
@@ -84,7 +85,7 @@ public class GroupController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/aggregations/{entityId}")
-    public Response removeAggregation(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+    public Response removeAggregation(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation{
         Group group = groupService.findById(id);
         groupService.removeAggregation(entityId, group);
         return Response.successGeneric();

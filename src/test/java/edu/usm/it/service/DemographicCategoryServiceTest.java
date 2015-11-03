@@ -3,6 +3,7 @@ package edu.usm.it.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.DemographicCategory;
 import edu.usm.domain.DemographicOption;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.service.DemographicCategoryService;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception{
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
         DemographicOption option = new DemographicOption();
@@ -62,7 +63,7 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testDelete() {
+    public void testDelete() throws Exception{
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
         demographicCategory.setOptions(options);
@@ -78,7 +79,7 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testAddOption() {
+    public void testAddOption() throws Exception{
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
         demographicCategory.setOptions(options);
@@ -95,7 +96,7 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testAddOptionSameName() {
+    public void testAddOptionSameName() throws Exception{
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
         demographicCategory.setOptions(options);
@@ -115,8 +116,40 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
         service.addOption(optionDuplicateName, fromDb);
     }
 
+    @Test(expected = ConstraintViolation.class)
+    public void testAddOptionWithoutName() throws ConstraintViolation{
+        DemographicCategory demographicCategory = new DemographicCategory();
+        demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
+        demographicCategory.setOptions(options);
+        String id = service.create(demographicCategory);
+
+        DemographicOption option = new DemographicOption();
+
+        DemographicCategory fromDb = service.findById(id);
+        service.addOption(option, fromDb);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateCategoryWithoutName() throws ConstraintViolation{
+        DemographicCategory demographicCategory = new DemographicCategory();
+        demographicCategory.setName(null);
+        demographicCategory.setOptions(options);
+        service.create(demographicCategory);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testUpdateCategoryWithoutName() throws ConstraintViolation {
+        DemographicCategory demographicCategory = new DemographicCategory();
+        demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
+        demographicCategory.setOptions(options);
+        String id = service.create(demographicCategory);
+        DemographicCategory fromDb = service.findById(id);
+        fromDb.setName(null);
+        service.update(fromDb);
+    }
+
     @Test
-    public void testFindByCategory() {
+    public void testFindByCategory() throws Exception{
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
         demographicCategory.setOptions(options);
