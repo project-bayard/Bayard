@@ -2,12 +2,17 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Role;
 import edu.usm.domain.User;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.InvalidApiRequestException;
+import edu.usm.domain.exception.SecurityConstraintException;
 import edu.usm.repository.UserDao;
 import edu.usm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 /**
@@ -26,16 +31,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long createUser(User user) {
+    public long createUser(User user) throws ConstraintViolation{
         if (user.getRole() == Role.ROLE_USER || user.getRole() == Role.ROLE_DEVELOPMENT) {
             String password = user.getPasswordHash();
             user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+            validateUniqueness(user);
             userDao.save(user);
             return user.getId();
         } else {
             return createAdministrativeUser(user);
         }
+    }
 
+    @Override
+    public void updateUser(User user) throws ConstraintViolation {
+        validateUniqueness(user);
+        userDao.save(user);
+    }
+
+    @Override
+    public void updatePassword(User user, String currentPassword, String newPassword) throws ConstraintViolation, SecurityConstraintException{
+
+        boolean matches = new BCryptPasswordEncoder().matches(user.getPasswordHash(), currentPassword);
+        if (!matches) {
+            throw new SecurityConstraintException("The current password does not match");
+        }
+
+        user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
+        updateUser(user);
+    }
+
+    private void validateUniqueness(User user) throws ConstraintViolation {
+        User existingEmail = findByEmail(user.getEmail());
+        if (null != existingEmail && !existingEmail.getId().equals(user.getId())) {
+            throw new ConstraintViolation(ConstraintMessage.USER_DUPLICATE_EMAIL);
+        }
     }
 
     @Override
