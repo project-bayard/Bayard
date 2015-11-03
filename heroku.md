@@ -1,7 +1,6 @@
 ##Configuration for Heroku
 
-The application's staging branch [is hosted here]. Any changes to the staging branch are immediately deployed.
-This is an unstable deployment of the application for development purposes only.
+The application's staging branch [is hosted here]. Recent pull requests to master that are merged into staging are immediately deployed by our heroku hook.
 
 To configure the application to work with a heroku account of your own from a local branch:
 
