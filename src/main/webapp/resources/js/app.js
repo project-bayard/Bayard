@@ -58,6 +58,10 @@
                 templateUrl: 'resources/partials/groupDetails.html',
                 controller: 'GroupDetailsCtrl'
             })
+            .when('/users', {
+                templateUrl: 'resources/partials/users.html',
+                controller: 'UserCtrl'
+            })
             .otherwise({redirectTo: '/'});
 
 
