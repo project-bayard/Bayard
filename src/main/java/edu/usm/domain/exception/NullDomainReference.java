@@ -46,6 +46,22 @@ public abstract class NullDomainReference extends Exception {
 
     }
 
+    public static class NullGroup extends NullDomainReference {
+
+        public NullGroup(String id) {
+            super(messageConstructor(Group.class.getSimpleName(), id));
+        }
+
+        public NullGroup() {
+            super(messageConstructor(Group.class.getSimpleName()));
+        }
+
+        public NullGroup(String id, Throwable throwable) {
+            super(messageConstructor(Group.class.getSimpleName(), id), throwable);
+        }
+
+    }
+
     public static class NullCommittee extends NullDomainReference {
 
         public NullCommittee(String id) {
@@ -104,21 +120,6 @@ public abstract class NullDomainReference extends Exception {
         }
 
         public NullEncounterType(String id, Throwable throwable) {
-            super(messageConstructor(EncounterType.class.getSimpleName(),id),throwable);
-        }
-    }
-
-    public static class NullGroup extends NullDomainReference {
-
-        public NullGroup(String id) {
-            super(messageConstructor(EncounterType.class.getSimpleName(),id));
-        }
-
-        public NullGroup() {
-            super(messageConstructor(EncounterType.class.getSimpleName()));
-        }
-
-        public NullGroup(String id, Throwable throwable) {
             super(messageConstructor(EncounterType.class.getSimpleName(),id),throwable);
         }
     }
