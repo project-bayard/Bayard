@@ -18,7 +18,11 @@ public enum ConstraintMessage {
     COMMITTEE_REQUIRED_NAME("A committee must have a name associated with it"),
     COMMITTEE_NON_UNIQUE("A committee with this name already exists"),
     ORGANIZATION_NON_UNIQUE("An organization with this name already exists"),
-    ORGANIZATION_REQUIRED_NAME("An organization must have a name associated with it");
+    ORGANIZATION_REQUIRED_NAME("An organization must have a name associated with it"),
+    GROUP_NON_UNIQUE("A group with this name already exists."),
+    GROUP_REQUIRED_NAME("A group must have a name associated with it."),
+    DEMOGRAPHIC_OPTION_REQUIRED_NAME("A demographic option must have a name associated with it."),
+    DEMOGRAPHIC_CATEGORY_REQUIRED_NAME("A demographic category must have a name associated with it.");
 
     private final String enumText;
 
