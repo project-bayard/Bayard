@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Role;
 import edu.usm.domain.User;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.Response;
 import edu.usm.service.UserService;
 import org.junit.After;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import java.util.Base64;
+import java.util.ConcurrentModificationException;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -41,7 +43,7 @@ public class UserControllerTest extends WebAppConfigurationAware {
     private long userID;
 
     @Before
-    public void setup() {
+    public void setup() throws ConstraintViolation{
         user = new User();
         user.setFirstName(FIRST_NAME);
         user.setLastName(LAST_NAME);

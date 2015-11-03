@@ -3,7 +3,11 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.User;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.InvalidApiRequestException;
+import edu.usm.domain.exception.SecurityConstraintException;
 import edu.usm.dto.Response;
+import edu.usm.dto.UserPasswordDto;
 import edu.usm.service.UserService;
 import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +30,34 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createUser(@RequestBody User user) {
-        try {
-            long id = userService.createUser(user);
-            return new Response(Long.toString(id),Response.SUCCESS);
-        } catch (Exception e) {
-            return new Response(null, "Failed to add new user");
+    public Response createUser(@RequestBody User user) throws ConstraintViolation {
+        long id = userService.createUser(user);
+        return new Response(Long.toString(id),Response.SUCCESS);
+    }
+
+    @RequestMapping(value="/{userId}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public Response updateUser(@PathVariable("userId") long userId, @RequestBody User user) throws ConstraintViolation, InvalidApiRequestException {
+        User fromDb = userService.findById(userId);
+        if (null == user) {
+            throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
         }
+        fromDb.setFirstName(user.getFirstName());
+        fromDb.setLastName(user.getLastName());
+        fromDb.setEmail(user.getEmail());
+        userService.updateUser(fromDb);
+        return Response.successGeneric();
+    }
+
+    @RequestMapping(value="/{userId}/password", method = RequestMethod.PATCH)
+    @ResponseStatus(HttpStatus.OK)
+    public Response updatePassword(@PathVariable("userId") long userId, @RequestBody UserPasswordDto dto) throws ConstraintViolation, SecurityConstraintException, InvalidApiRequestException {
+        User user = userService.findById(userId);
+        if (null == user) {
+            throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
+        }
+        userService.updatePassword(user, dto.getCurrentpassword(), dto.getNewPassword());
+        return Response.successGeneric();
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.GET)
@@ -55,10 +80,10 @@ public class UserController {
 
     @RequestMapping(value = "/{userId}" , method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteUser(@PathVariable("userId") long userId) {
+    public Response deleteUser(@PathVariable("userId") long userId) throws InvalidApiRequestException{
         User user = userService.findById(userId);
         if (null == user) {
-            return new Response(null, "User with ID " + userId + " does not exist.");
+            throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
         }
         try {
             userService.deleteUser(user);

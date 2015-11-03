@@ -3,6 +3,7 @@ package edu.usm.config;
 
 import edu.usm.domain.Role;
 import edu.usm.domain.User;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -28,14 +29,18 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     private String password = "password";
 
     @Override
-    public void onApplicationEvent(final ContextRefreshedEvent event) {
+    public void onApplicationEvent(final ContextRefreshedEvent event){
         configureAuthentication();
-        createSuperuser();
-        createUser();
+        try {
+            createSuperuser();
+            createUser();
+        } catch (ConstraintViolation e) {
+            System.err.print("Error creating users on startup");
+        }
         clearAuthentication();
     }
 
-    private void createSuperuser() {
+    private void createSuperuser() throws ConstraintViolation{
         User superUser = userService.findByEmail(email);
         if (superUser == null) {
             superUser = new User();
@@ -62,7 +67,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         SecurityContextHolder.clearContext();
     }
 
-    private void createUser () {
+    private void createUser () throws ConstraintViolation{
         User user = userService.findByEmail("user@email.com");
         if (user == null) {
             user = new User();
