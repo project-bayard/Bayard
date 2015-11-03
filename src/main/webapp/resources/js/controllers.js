@@ -20,6 +20,19 @@
         }
     }
 
+    function PermissionInterpreter (currentUser) {
+        this.user = currentUser;
+
+        this.isSuperUser = function() {
+            return this.user.role == "ROLE_SUPERUSER";
+        };
+
+        this.isElevated = function() {
+            return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
+        };
+
+    }
+
     var controllers = angular.module('controllers', []);
 
     controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$location', function($scope, ContactService, $location) {
@@ -1413,6 +1426,43 @@
             };
 
         }]);
+
+    controllers.controller('UserCtrl', ['$scope', 'UserService', function($scope, UserService) {
+
+        var userPermissionLevel = new PermissionInterpreter($rootScope.user);
+
+        if (userPermissionLevel.isSuperUser()) {
+            UserService.findAll({}, function(users) {
+                $scope.users = users;
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+        $scope.viewInDetail = function(user) {
+            $scope.userInDetail = user;
+        };
+        $scope.viewInDetail($rootScope.user);
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingUser = true;
+        };
+
+        $scope.submitUpdate = function() {
+
+        };
+
+        $scope.cancelUpdate = function() {
+
+            $scope.updatingUser = false;
+
+        };
+
+        $scope.deleteUser = function() {
+
+        }
+
+    }]);
 
 }());
 

@@ -1,0 +1,117 @@
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>Users</h1>
+    </div>
+    <div class="row">
+        <div id="group-detail-left-panel" class="col-md-3">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">User Updated</div>
+            <div ng-show="requestFail" class="alert alert-danger alert-dismissable" role="alert">Unable to update User...</div>
+            <div ng-show="!updatingUser">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                First: {{userInDetail.firstName}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                Last: {{userInDetail.lastName}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                Email: {{userInDetail.email}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                Role: {{userInDetail.role}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-primary btn-block smwc-margined" ng-click="showUpdateForm()">Update</button>
+                </div>
+            </div>
+            <div class="row" ng-show="userPermissionLevel.isSuperUser()">
+                <div class="col-md-12">
+                    <button class="btn btn-danger btn-block smwc-margined" ng-click="deleteUser()">Delete</button>
+                </div>
+            </div>
+
+            <div ng-if="updatingUser">
+                <div>
+                    <form id="userForm" name="userForm" novalidate>
+                        <div class="row">
+                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : userForm.firstName.$invalid && !userForm.firstName.name.$pristine }">
+                                <label class="control-label">First Name</label>
+                                <input name="firstName" type="text" class="form-control" ng-model="userInDetail.firstName" ng-minlength="2" required>
+                                <p ng-show="userForm.firstName.$error.required && !userForm.firstName.$pristine" class="help-block">A first name is required</p>
+                                <p ng-show="userForm.firstName.$error.min" class="help-block">First name not long enough</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : userForm.lastName.$invalid && !userForm.lastName.name.$pristine }">
+                                <label class="control-label">Last Name</label>
+                                <input name="lastName" type="text" class="form-control" ng-model="userInDetail.lastName" ng-minlength="2" required>
+                                <p ng-show="userForm.lastName.$error.required && !userForm.lastName.$pristine" class="help-block">A Last name is required</p>
+                                <p ng-show="userForm.lastName.$error.min" class="help-block">Last name not long enough</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : formHolder.groupForm.name.$invalid && !formHolder.groupForm.name.$pristine }">
+                                <label class="control-label">Email</label>
+                                <input name="email" type="email" class="form-control" ng-model="userInDetail.email">
+                                <p ng-show="userForm.$error.email" class="help-block">Enter a valid email address</p>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-success btn-block smwc-margined" ng-click="submitUpdate()" ng-disabled="formHolder.groupForm.$invalid">Ok</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelUpdate()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <p>Users</p>
+                        <li class="list-group-item" ng-repeat="user in users">
+                            <div ng-click="viewInDetail(user)">
+                                {{user.firstName}} {{user.lastName}}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
