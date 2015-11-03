@@ -34,7 +34,8 @@ import org.springframework.test.context.ActiveProfiles;
         GroupServiceTest.class,
         GroupControllerTest.class,
         DemographicCategoryServiceTest.class,
-        DemographicCategoryControllerTest.class
+        DemographicCategoryControllerTest.class,
+        UserServiceTest.class
 })
 @ActiveProfiles("test")
 public class TestSuite {

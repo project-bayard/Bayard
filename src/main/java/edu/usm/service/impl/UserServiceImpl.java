@@ -4,7 +4,6 @@ import edu.usm.domain.Role;
 import edu.usm.domain.User;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.SecurityConstraintException;
 import edu.usm.repository.UserDao;
 import edu.usm.service.UserService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 /**
@@ -31,10 +29,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public long createUser(User user, String password) throws ConstraintViolation {
+        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+        return createUser(user);
+    }
+
+    @Override
     public long createUser(User user) throws ConstraintViolation{
         if (user.getRole() == Role.ROLE_USER || user.getRole() == Role.ROLE_DEVELOPMENT) {
-            String password = user.getPasswordHash();
-            user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
             validateUniqueness(user);
             userDao.save(user);
             return user.getId();
@@ -90,8 +92,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long createAdministrativeUser(User user) {
-        String password = user.getPasswordHash();
-        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
         userDao.save(user);
         return user.getId();
     }

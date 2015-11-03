@@ -28,10 +28,14 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    /*
+    * When creating a User, its passwordHash will be considered a plaintext password yet to be encoded
+    */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Response createUser(@RequestBody User user) throws ConstraintViolation {
-        long id = userService.createUser(user);
+        String password = user.getPasswordHash();
+        long id = userService.createUser(user, password);
         return new Response(Long.toString(id),Response.SUCCESS);
     }
 
