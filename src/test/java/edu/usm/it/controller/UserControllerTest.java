@@ -6,6 +6,7 @@ import edu.usm.domain.Role;
 import edu.usm.domain.User;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.NewUserDto;
+import edu.usm.dto.PasswordChangeDto;
 import edu.usm.dto.Response;
 import edu.usm.service.UserService;
 import org.junit.After;
@@ -22,9 +23,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -142,4 +141,68 @@ public class UserControllerTest extends WebAppConfigurationAware {
         mockMvc.perform(get("/users").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void testUpdatePassword() throws Exception {
+
+        String newPassword = "123ASD902";
+        PasswordChangeDto dto = new PasswordChangeDto();
+        dto.setCurrentPassword(PASSWORD);
+        dto.setNewPassword(newPassword);
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mockMvc.perform(patch("/users/"+userID+"/password").contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+
+        String auth =  EMAIL + ":" + newPassword;
+        byte[] bytesEncoded = Base64.getEncoder().encode(auth.getBytes());
+        String authHeader = "Basic " + new String( bytesEncoded );
+
+        mockMvc.perform(get("/users/authenticate").accept(MediaType.APPLICATION_JSON).header("Authorization", authHeader))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void testUpdateUserDetails() throws Exception {
+        String email = "newemail@email.com";
+        String firstName = "New First Name";
+        user.setFirstName(firstName);
+        user.setEmail(email);
+
+        String body = new ObjectMapper().writeValueAsString(user);
+
+        mockMvc.perform(put("/users/"+userID).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isOk());
+
+        User fromDb = userService.findById(user.getId());
+        assertEquals(email, fromDb.getEmail());
+        assertEquals(firstName, fromDb.getFirstName());
+
+    }
+
+    @Test
+    public void testUpdateUserDetailsDuplicateEmail() throws Exception {
+
+        String email = "newemail@email.com";
+        User secondUser = new User();
+        secondUser.setEmail(email);
+        secondUser.setFirstName("First");
+        secondUser.setLastName("Last");
+        secondUser.setRole(Role.ROLE_USER);
+
+        userService.createUser(secondUser, "password");
+
+        user.setEmail(email);
+
+        String body = new ObjectMapper().writeValueAsString(user);
+
+        mockMvc.perform(put("/users/"+userID).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+
+    }
+
+
 }

@@ -20,6 +20,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static Integer minimumPasswordLength = 6;
+
     @Autowired
     UserDao userDao;
 
@@ -30,11 +32,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long createUser(User user, String password) throws ConstraintViolation {
+        validatePassword(password);
+        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+        return createUser(user);
+    }
+
+    private void validatePassword(String password) throws ConstraintViolation{
         if (null == password || password.isEmpty()) {
             throw new ConstraintViolation(ConstraintMessage.USER_NO_PASSWORD);
         }
-        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
-        return createUser(user);
+
+        if (password.length() < minimumPasswordLength) {
+            throw new ConstraintViolation(ConstraintMessage.USER_PASSWORD_TOO_SHORT);
+        }
+    }
+
+    private void validateUniqueness(User user) throws ConstraintViolation {
+        User existingEmail = findByEmail(user.getEmail());
+        if (null != existingEmail && !existingEmail.getId().equals(user.getId())) {
+            throw new ConstraintViolation(ConstraintMessage.USER_DUPLICATE_EMAIL);
+        }
     }
 
     private long createUser(User user) throws ConstraintViolation {
@@ -59,20 +76,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(User user, String currentPassword, String newPassword) throws ConstraintViolation, SecurityConstraintException{
 
-        boolean matches = new BCryptPasswordEncoder().matches(user.getPasswordHash(), currentPassword);
+        boolean matches = new BCryptPasswordEncoder().matches(currentPassword, user.getPasswordHash());
         if (!matches) {
             throw new SecurityConstraintException("The current password does not match.");
         }
 
         user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
         updateUser(user);
-    }
-
-    private void validateUniqueness(User user) throws ConstraintViolation {
-        User existingEmail = findByEmail(user.getEmail());
-        if (null != existingEmail && !existingEmail.getId().equals(user.getId())) {
-            throw new ConstraintViolation(ConstraintMessage.USER_DUPLICATE_EMAIL);
-        }
     }
 
     @Override

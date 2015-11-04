@@ -43,7 +43,7 @@ public class UserController {
 
     @RequestMapping(value="/{userId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Response updateUser(@PathVariable("userId") long userId, @RequestBody User user) throws ConstraintViolation, InvalidApiRequestException {
+    public Response updateUserDetails(@PathVariable("userId") long userId, @RequestBody User user) throws ConstraintViolation, InvalidApiRequestException {
         User fromDb = userService.findById(userId);
         if (null == user) {
             throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
