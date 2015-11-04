@@ -71,4 +71,17 @@ public class UserServiceTest extends WebAppConfigurationAware {
         userService.createUser(newUser, "a password");
     }
 
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateSuperUserDuplicateEmail() throws Exception{
+        testUser.setRole(Role.ROLE_SUPERUSER);
+        userService.createUser(testUser, password);
+
+        User newUser = new User();
+        newUser.setFirstName("New");
+        newUser.setLastName("User");
+        newUser.setEmail(testUser.getEmail());
+        newUser.setRole(Role.ROLE_SUPERUSER);
+        userService.createUser(newUser, "a password");
+    }
+
 }

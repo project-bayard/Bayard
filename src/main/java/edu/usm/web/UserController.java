@@ -6,8 +6,9 @@ import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.SecurityConstraintException;
+import edu.usm.dto.NewUserDto;
 import edu.usm.dto.Response;
-import edu.usm.dto.UserPasswordDto;
+import edu.usm.dto.PasswordChangeDto;
 import edu.usm.service.UserService;
 import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,15 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    /*
-    * When creating a User, its passwordHash will be considered a plaintext password yet to be encoded
-    */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createUser(@RequestBody User user) throws ConstraintViolation {
-        String password = user.getPasswordHash();
-        long id = userService.createUser(user, password);
+    public Response createUser(@RequestBody NewUserDto dto) throws ConstraintViolation {
+        User newUser = new User();
+        newUser.setFirstName(dto.getFirstName());
+        newUser.setLastName(dto.getLastName());
+        newUser.setEmail(dto.getEmail());
+        newUser.setRole(dto.getRole());
+        long id = userService.createUser(newUser, dto.getPassword());
         return new Response(Long.toString(id),Response.SUCCESS);
     }
 
@@ -55,12 +57,12 @@ public class UserController {
 
     @RequestMapping(value="/{userId}/password", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.OK)
-    public Response updatePassword(@PathVariable("userId") long userId, @RequestBody UserPasswordDto dto) throws ConstraintViolation, SecurityConstraintException, InvalidApiRequestException {
+    public Response updatePassword(@PathVariable("userId") long userId, @RequestBody PasswordChangeDto dto) throws ConstraintViolation, SecurityConstraintException, InvalidApiRequestException {
         User user = userService.findById(userId);
         if (null == user) {
             throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
         }
-        userService.updatePassword(user, dto.getCurrentpassword(), dto.getNewPassword());
+        userService.updatePassword(user, dto.getCurrentPassword(), dto.getNewPassword());
         return Response.successGeneric();
     }
 

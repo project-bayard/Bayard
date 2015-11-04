@@ -5,17 +5,17 @@ import java.io.Serializable;
 /**
  * Created by andrew on 11/3/15.
  */
-public class UserPasswordDto implements Serializable {
+public class PasswordChangeDto implements Serializable {
 
-    private String currentpassword;
+    private String currentPassword;
     private String newPassword;
 
-    public String getCurrentpassword() {
-        return currentpassword;
+    public String getCurrentPassword() {
+        return currentPassword;
     }
 
-    public void setCurrentpassword(String currentpassword) {
-        this.currentpassword = currentpassword;
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
     }
 
     public String getNewPassword() {

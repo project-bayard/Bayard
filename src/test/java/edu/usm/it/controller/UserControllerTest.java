@@ -5,6 +5,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Role;
 import edu.usm.domain.User;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.dto.NewUserDto;
 import edu.usm.dto.Response;
 import edu.usm.service.UserService;
 import org.junit.After;
@@ -48,9 +49,8 @@ public class UserControllerTest extends WebAppConfigurationAware {
         user.setFirstName(FIRST_NAME);
         user.setLastName(LAST_NAME);
         user.setEmail(EMAIL);
-        user.setPasswordHash(PASSWORD);
         user.setRole(Role.ROLE_USER);
-        userID = userService.createUser(user);
+        userID = userService.createUser(user, PASSWORD);
     }
 
     @After
@@ -88,11 +88,11 @@ public class UserControllerTest extends WebAppConfigurationAware {
     @Test
     public void testCreateUser () throws Exception {
         String email = "newemail@email.com";
-        User newUser = new User();
+        NewUserDto newUser = new NewUserDto();
         newUser.setFirstName(LAST_NAME);
         newUser.setLastName(FIRST_NAME);
         newUser.setRole(Role.ROLE_SUPERUSER);
-        newUser.setPasswordHash(PASSWORD);
+        newUser.setPassword(PASSWORD);
         newUser.setEmail(email);
 
         String body = new ObjectMapper().writeValueAsString(newUser);
@@ -106,6 +106,26 @@ public class UserControllerTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getLastName(), newUser.getLastName());
         assertEquals(fromDb.getRole(), newUser.getRole());
         assertEquals(fromDb.getEmail(), newUser.getEmail());
+    }
+
+    @Test
+    public void testCreateDuplicateUser() throws Exception {
+        String email = "newemail@email.com";
+        NewUserDto newUser = new NewUserDto();
+        newUser.setFirstName(LAST_NAME);
+        newUser.setLastName(FIRST_NAME);
+        newUser.setRole(Role.ROLE_SUPERUSER);
+        newUser.setPassword(PASSWORD);
+        newUser.setEmail(email);
+
+        String body = new ObjectMapper().writeValueAsString(newUser);
+
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+
     }
 
     @Test
