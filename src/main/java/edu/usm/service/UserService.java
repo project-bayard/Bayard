@@ -15,9 +15,6 @@ public interface UserService {
     User findByEmail(String email);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    long createUser(User user) throws ConstraintViolation;
-
-    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     long createUser(User user, String password) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")

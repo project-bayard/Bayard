@@ -47,9 +47,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             superUser.setFirstName(firstName);
             superUser.setLastName(lastName);
             superUser.setEmail(email);
-            superUser.setPasswordHash(password);
             superUser.setRole(Role.ROLE_SUPERUSER);
-            userService.createUser(superUser);
+            userService.createUser(superUser, password);
        }
     }
 
@@ -72,9 +71,8 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         if (user == null) {
             user = new User();
             user.setEmail("user@email.com");
-            user.setPasswordHash("password");
             user.setRole(Role.ROLE_USER);
-            userService.createUser(user);
+            userService.createUser(user, "password");
         }
     }
 

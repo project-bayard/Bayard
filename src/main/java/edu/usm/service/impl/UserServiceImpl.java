@@ -30,12 +30,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long createUser(User user, String password) throws ConstraintViolation {
+        if (null == password || password.isEmpty()) {
+            throw new ConstraintViolation(ConstraintMessage.USER_NO_PASSWORD);
+        }
         user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
         return createUser(user);
     }
 
-    @Override
-    public long createUser(User user) throws ConstraintViolation{
+    private long createUser(User user) throws ConstraintViolation {
+        if (null == user.getPasswordHash()) {
+            throw new ConstraintViolation(ConstraintMessage.USER_NO_PASSWORD);
+        }
         if (user.getRole() == Role.ROLE_USER || user.getRole() == Role.ROLE_DEVELOPMENT) {
             validateUniqueness(user);
             userDao.save(user);
@@ -56,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
         boolean matches = new BCryptPasswordEncoder().matches(user.getPasswordHash(), currentPassword);
         if (!matches) {
-            throw new SecurityConstraintException("The current password does not match");
+            throw new SecurityConstraintException("The current password does not match.");
         }
 
         user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
@@ -91,7 +96,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long createAdministrativeUser(User user) {
+    public long createAdministrativeUser(User user) throws ConstraintViolation{
+        validateUniqueness(user);
         userDao.save(user);
         return user.getId();
     }
