@@ -1427,22 +1427,48 @@
 
         }]);
 
-    controllers.controller('UserCtrl', ['$scope', 'UserService', function($scope, UserService) {
 
-        var userPermissionLevel = new PermissionInterpreter($rootScope.user);
+    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', 'UserService', function($scope, $rootScope, $location, UserService) {
 
-        if (userPermissionLevel.isSuperUser()) {
-            UserService.findAll({}, function(users) {
-                $scope.users = users;
-            }, function(err) {
-                console.log(err);
-            })
-        }
+        $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
+
+        $scope.roles = ["ROLE_USER", "ROLE_ELEVATED", "ROLE_SUPERUSER"];
+
+        $scope.getUserList = function() {
+            if ($scope.userPermissionLevel.isSuperUser()) {
+                UserService.findAll({}, function(users) {
+                    $scope.users = users;
+                }, function(err) {
+                    console.log(err);
+                })
+            }
+        };
+
+        $scope.getUserList();
 
         $scope.viewInDetail = function(user) {
             $scope.userInDetail = user;
         };
         $scope.viewInDetail($rootScope.user);
+
+        $scope.showNewUserForm = function() {
+            $scope.creatingUser = true;
+        };
+
+        $scope.cancelNewUserForm = function() {
+            $scope.creatingUser = false;
+            $scope.newUser = [];
+        };
+
+        $scope.createNewUser = function() {
+
+            UserService.create({}, $scope.newUser, function(succ) {
+                $scope.creatingUser = false;
+                $scope.getUserList();
+            }, function(err) {
+                console.log(err);
+            })
+        };
 
         $scope.showUpdateForm = function() {
             $scope.updatingUser = true;
@@ -1450,12 +1476,27 @@
 
         $scope.submitUpdate = function() {
 
+            UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function(succ) {
+                UserService.find({id: $scope.userInDetail.id}, function(user) {
+                    $scope.userInDetail = user;
+                    $scope.getUserList();
+                    $scope.updatingUser = false;
+                }, function(err) {
+                    console.log(err);
+                })
+            }, function(err) {
+                console.log(err);
+            })
+
         };
 
         $scope.cancelUpdate = function() {
-
             $scope.updatingUser = false;
-
+            UserService.find({id: $scope.userInDetail.id}, function(user) {
+                $scope.userInDetail = user;
+            }, function(err) {
+                console.log(err);
+            })
         };
 
         $scope.deleteUser = function() {
@@ -1463,7 +1504,6 @@
         }
 
     }]);
-
 }());
 
 

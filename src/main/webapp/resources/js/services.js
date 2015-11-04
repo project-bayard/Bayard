@@ -220,7 +220,6 @@
 
     services.factory('UserService',[ '$resource', function ($resource) {
         return $resource('../users/:id', {id : '@id'}, {
-
             find : {
                 method: 'GET',
                 params: {
@@ -233,6 +232,14 @@
             },
             create : {
                 method: 'POST'
+            },
+            updateDetails : {
+                method: 'PUT',
+                url: '/users/:id'
+            },
+            changePassword : {
+                method: 'PATCH',
+                url: '/users/:id/password'
             },
             authenticate : {
                 method : 'GET',
