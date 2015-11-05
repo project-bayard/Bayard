@@ -70,6 +70,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(User user) throws ConstraintViolation {
         validateUniqueness(user);
+        if (user.getRole() == Role.ROLE_ELEVATED) {
+            updateElevatedUser(user);
+        } else if (user.getRole() == Role.ROLE_SUPERUSER) {
+            updateSuperUser(user);
+        } else {
+            userDao.save(user);
+        }
+    }
+
+    //Make use of interface's @PreAuthorize
+    @Override
+    public void updateElevatedUser(User user) throws ConstraintViolation {
+        userDao.save(user);
+    }
+
+    //Make use of interface's @PreAuthorize
+    @Override
+    public void updateSuperUser(User user) throws ConstraintViolation {
         userDao.save(user);
     }
 

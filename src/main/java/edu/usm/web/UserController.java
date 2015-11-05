@@ -3,6 +3,7 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.User;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.SecurityConstraintException;
@@ -13,6 +14,7 @@ import edu.usm.service.UserService;
 import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
@@ -91,12 +93,8 @@ public class UserController {
         if (null == user) {
             throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
         }
-        try {
-            userService.deleteUser(user);
-            return Response.successGeneric();
-        } catch (Exception e) {
-            return new Response(null, "Error deleting user with ID " + userId + ".");
-        }
+        userService.deleteUser(user);
+        return Response.successGeneric();
     }
 
     @RequestMapping(method = RequestMethod.GET)

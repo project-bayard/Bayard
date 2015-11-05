@@ -20,6 +20,12 @@ public interface UserService {
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateUser(User user) throws ConstraintViolation;
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void updateElevatedUser(User user) throws ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
+    void updateSuperUser(User user) throws ConstraintViolation;
+
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updatePassword(User user, String currentPassword, String newPassword) throws ConstraintViolation, SecurityConstraintException;
 
