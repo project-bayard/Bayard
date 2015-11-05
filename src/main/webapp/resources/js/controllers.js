@@ -1440,7 +1440,11 @@
         $scope.viewingUser = true;
         $scope.violations = {};
 
-        $scope.roles = ["ROLE_USER", "ROLE_ELEVATED", "ROLE_SUPERUSER"];
+        $scope.roles = ["ROLE_USER", "ROLE_ELEVATED"];
+
+        if ($scope.userPermissionLevel.isSuperUser()) {
+            $scope.roles.push("ROLE_SUPERUSER");
+        }
 
         $scope.getUserList = function() {
             if ($scope.userPermissionLevel.isElevatedUser()) {

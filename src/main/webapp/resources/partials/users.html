@@ -152,7 +152,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="row" ng-show="userPermissionLevel.isSuperUser()">
+            <div class="row" ng-show="userPermissionLevel.isElevatedUser()">
                 <div class="row" ng-show="!creatingUser">
                     <div class="col-md-12">
                         <button class="btn btn-primary btn-block smwc-margined" ng-click="showNewUserForm()">Create a User</button>
