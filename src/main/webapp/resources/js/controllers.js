@@ -35,6 +35,18 @@
             return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
         };
 
+        this.isUser = function() {
+            return this.user.role == "ROLE_USER" || this.isElevatedUser() || this.isSuperUser();
+        };
+
+        this.canChangeRole = function(other) {
+            var otherPermissions = new PermissionInterpreter(other);
+            if (this.isSuperUser()) {
+                return true;
+            }
+            return this.isElevatedUser() && !otherPermissions.isSuperUser();
+        }
+
     }
 
     var controllers = angular.module('controllers', []);

@@ -121,6 +121,13 @@
                                 <p ng-show="updateUserForm.$error.email" class="help-block">Enter a valid email address</p>
                             </div>
                         </div>
+                        <div class="row" ng-show="userPermissionLevel.canChangeRole(userInDetail)">
+                            <div class="form-group col-md-12">
+                                <label class="control-label">Role</label>
+                                <select name="role" class="form-control input-small" ng-model="userInDetail.role" ng-options="role for role in roles" ng-selected="userInDetail.role === role">
+                                </select>
+                            </div>
+                        </div>
                     </form>
                     <div class="row">
                         <div class="col-md-12">
