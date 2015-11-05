@@ -4,8 +4,8 @@
     </div>
     <div class="row">
         <div id="group-detail-left-panel" class="col-md-3">
-            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">User Updated</div>
-            <div ng-show="requestFail" class="alert alert-danger alert-dismissable" role="alert">Unable to update User...</div>
+            <div ng-show="requestSuccess && !creatingUser" class="alert alert-success alert-dismissable" role="alert">User Updated</div>
+            <div ng-show="requestFail && !creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to update User...</div>
             <div ng-show="!updatingUser">
                 <div class="row">
                     <div class="col-md-12">
@@ -49,7 +49,7 @@
                     <button class="btn btn-primary btn-block smwc-margined" ng-click="showUpdateForm()">Update</button>
                 </div>
             </div>
-            <div class="row" ng-show="userPermissionLevel.isSuperUser()">
+            <div class="row" ng-show="userPermissionLevel.isSuperUser() && !updatingUser">
                 <div class="col-md-12">
                     <button class="btn btn-danger btn-block smwc-margined" ng-click="deleteUser()">Delete</button>
                 </div>
@@ -120,9 +120,11 @@
                 </div>
                 <div ng-if="creatingUser">
                     <div>
+                        <div ng-show="requestSuccess && creatingUser" class="alert alert-success alert-dismissable" role="alert">User Created</div>
+                        <div ng-show="requestFail && creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to create user...</div>
                         <form id="newUserForm" name="newUserForm" novalidate>
                             <div class="row">
-                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.firstName.$invalid && !newUserForm.firstName.name.$pristine }">
+                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.firstName.$invalid && !newUserForm.firstName.$pristine }">
                                     <label class="control-label">First Name</label>
                                     <input name="firstName" type="text" class="form-control" ng-model="newUser.firstName" ng-minlength="2" required>
                                     <p ng-show="newUserForm.firstName.$error.required && !newUserForm.firstName.$pristine" class="help-block">A first name is required</p>
@@ -130,7 +132,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.lastName.$invalid && !newUserForm.lastName.name.$pristine }">
+                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.lastName.$invalid && !newUserForm.lastName.$pristine }">
                                     <label class="control-label">Last Name</label>
                                     <input name="lastName" type="text" class="form-control" ng-model="newUser.lastName" ng-minlength="2" required>
                                     <p ng-show="newUserForm.lastName.$error.required && !newUserForm.lastName.$pristine" class="help-block">A Last name is required</p>
@@ -169,7 +171,7 @@
                         </form>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-success btn-block smwc-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid">Create</button>
+                                <button class="btn btn-success btn-block smwc-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid && newUser.password !== newUser.repeatPassword">Create</button>
                             </div>
                         </div>
                         <div class="row">
@@ -179,6 +181,15 @@
                         </div>
                     </div>
                     <br/>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-dismissable alert-danger" ng-show="newUser.constraintViolation">
+                        {{newUser.constraintViolation}}
+                    </div>
                 </div>
             </div>
         </div>

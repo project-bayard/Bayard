@@ -1428,9 +1428,10 @@
         }]);
 
 
-    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', 'UserService', function($scope, $rootScope, $location, UserService) {
+    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', 'UserService', function($scope, $rootScope, $location, $timeout, UserService) {
 
         $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
+        $scope.newUser = {};
 
         $scope.roles = ["ROLE_USER", "ROLE_ELEVATED", "ROLE_SUPERUSER"];
 
@@ -1457,17 +1458,33 @@
 
         $scope.cancelNewUserForm = function() {
             $scope.creatingUser = false;
-            $scope.newUser = [];
+            $scope.newUser = {};
         };
 
         $scope.createNewUser = function() {
 
             UserService.create({}, $scope.newUser, function(succ) {
-                $scope.creatingUser = false;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                    $scope.creatingUser = false;
+                }, 3000);
                 $scope.getUserList();
             }, function(err) {
+                handleCrudError(err);
                 console.log(err);
             })
+        };
+
+        var handleCrudError = function(err) {
+            var errorResponse = new ResponseErrorInterpreter(err);
+            if (errorResponse.isConstraintViolation()) {
+                $scope.newUser.constraintViolation = errorResponse.message;
+            }
+            $scope.requestFail = true;
+            $timeout(function() {
+                $scope.requestFail = false;
+            }, 3000);
         };
 
         $scope.showUpdateForm = function() {
@@ -1477,14 +1494,19 @@
         $scope.submitUpdate = function() {
 
             UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                    $scope.updatingUser = false;
+                }, 3000);
                 UserService.find({id: $scope.userInDetail.id}, function(user) {
                     $scope.userInDetail = user;
                     $scope.getUserList();
-                    $scope.updatingUser = false;
                 }, function(err) {
                     console.log(err);
                 })
             }, function(err) {
+                handleCrudError(err);
                 console.log(err);
             })
 
