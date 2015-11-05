@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         if (!matches) {
             throw new SecurityConstraintException("The current password does not match.");
         }
-
+        validatePassword(newPassword);
         user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
         updateUser(user);
     }
