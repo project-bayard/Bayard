@@ -11,6 +11,10 @@
             return this.type == "Constraint Violation";
         };
 
+        this.isSecurityConstraint = function() {
+            return this.type == "Security Constraint"
+        }
+
         this.isAccessDenied = function() {
             return this.type == "Access Denied";
         };
@@ -27,7 +31,7 @@
             return this.user.role == "ROLE_SUPERUSER";
         };
 
-        this.isElevated = function() {
+        this.isElevatedUser = function() {
             return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
         };
 
@@ -1434,11 +1438,12 @@
         $scope.newUser = {};
         $scope.passwordChange = {};
         $scope.viewingUser = true;
+        $scope.violations = {};
 
         $scope.roles = ["ROLE_USER", "ROLE_ELEVATED", "ROLE_SUPERUSER"];
 
         $scope.getUserList = function() {
-            if ($scope.userPermissionLevel.isSuperUser()) {
+            if ($scope.userPermissionLevel.isElevatedUser()) {
                 UserService.findAll({}, function(users) {
                     $scope.users = users;
                 }, function(err) {
@@ -1459,7 +1464,7 @@
         };
 
         $scope.cancelNewUserForm = function() {
-            $scope.constraintViolation = null;
+            $scope.violations = {};
             $scope.creatingUser = false;
             $scope.newUser = {};
         };
@@ -1467,11 +1472,12 @@
         $scope.createNewUser = function() {
 
             UserService.create({}, $scope.newUser, function(succ) {
-                $scope.constraintViolation = null;
+                $scope.violations = {};
                 $scope.requestSuccess = true;
                 $timeout(function() {
                     $scope.requestSuccess = false;
                     $scope.creatingUser = false;
+                    $scope.newUser = {}
                 }, 3000);
                 $scope.getUserList();
             }, function(err) {
@@ -1483,7 +1489,10 @@
         var handleCrudError = function(err) {
             var errorResponse = new ResponseErrorInterpreter(err);
             if (errorResponse.isConstraintViolation()) {
-                $scope.constraintViolation = errorResponse.message;
+                $scope.violations.constraintViolation = errorResponse.message;
+            }
+            if (errorResponse.isSecurityConstraint()) {
+                $scope.violations.securityViolation = errorResponse.message;
             }
             $scope.requestFail = true;
             $timeout(function() {
@@ -1500,7 +1509,7 @@
 
             UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function(succ) {
                 $scope.requestSuccess = true;
-                $scope.constraintViolation = null;
+                $scope.violations = {};
                 $timeout(function() {
                     $scope.requestSuccess = false;
                     $scope.updatingUser = false;
@@ -1522,7 +1531,7 @@
         $scope.cancelUpdate = function() {
             $scope.updatingUser = false;
             $scope.viewingUser = true;
-            $scope.constraintViolation = null;
+            $scope.violations = {};
             UserService.find({id: $scope.userInDetail.id}, function(user) {
                 $scope.userInDetail = user;
             }, function(err) {
@@ -1541,7 +1550,7 @@
 
         $scope.submitPasswordChange = function() {
             UserService.changePassword({id : $scope.userInDetail.id}, $scope.passwordChange, function(succ) {
-                $scope.constraintViolation = null;
+                $scope.violations = {};
                 $scope.requestSuccess = true;
                 $timeout(function() {
                     $scope.requestSuccess = false;
@@ -1556,7 +1565,7 @@
         };
 
         $scope.cancelPasswordChange = function() {
-            $scope.constraintViolation = null;
+            $scope.violations = {};
             $scope.changingPassword = false;
             $scope.viewingUser = true;
             $scope.passwordChange = {};

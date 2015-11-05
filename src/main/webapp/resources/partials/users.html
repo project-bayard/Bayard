@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="page-header">
-        <h1>Users</h1>
+        <h1>{{userInDetail.firstName}} {{userInDetail.lastName}}</h1>
     </div>
     <div class="row">
         <div id="group-detail-left-panel" class="col-md-3">
@@ -138,7 +138,7 @@
 
         </div>
         <div class="col-md-3">
-            <div class="row" ng-show="userPermissionLevel.isSuperUser()">
+            <div class="row" ng-show="userPermissionLevel.isElevatedUser()">
                 <div class="col-md-12">
                     <h3>All Users</h3>
                     <ul class="list-group">
@@ -227,8 +227,11 @@
         <div class="col-md-3">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="alert alert-dismissable alert-danger" ng-show="constraintViolation">
-                        {{constraintViolation}}
+                    <div class="alert alert-dismissable alert-danger" ng-show="violations.constraintViolation">
+                        {{violations.constraintViolation}}
+                    </div>
+                    <div class="alert alert-dismissable alert-danger" ng-show="violations.securityViolation">
+                        {{violations.securityViolation}}
                     </div>
                 </div>
             </div>
