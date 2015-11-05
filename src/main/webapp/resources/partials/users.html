@@ -6,7 +6,7 @@
         <div id="group-detail-left-panel" class="col-md-3">
             <div ng-show="requestSuccess && !creatingUser" class="alert alert-success alert-dismissable" role="alert">User Updated</div>
             <div ng-show="requestFail && !creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to update User...</div>
-            <div ng-show="!updatingUser">
+            <div ng-show="viewingUser">
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-group">
@@ -44,15 +44,55 @@
                     </div>
                 </div>
             </div>
-            <div class="row" ng-show="!updatingUser">
+            <div class="row" ng-show="viewingUser">
                 <div class="col-md-12">
                     <button class="btn btn-primary btn-block smwc-margined" ng-click="showUpdateForm()">Update</button>
                 </div>
             </div>
-            <div class="row" ng-show="userPermissionLevel.isSuperUser() && !updatingUser">
+            <div class="row" ng-show="viewingUser">
+                <div class="col-md-12">
+                    <button class="btn btn-primary btn-block smwc-margined" ng-click="showPasswordChangeForm()">Change Password</button>
+                </div>
+            </div>
+            <div class="row" ng-show="userPermissionLevel.isSuperUser() && viewingUser">
                 <div class="col-md-12">
                     <button class="btn btn-danger btn-block smwc-margined" ng-click="deleteUser()">Delete</button>
                 </div>
+            </div>
+
+            <div ng-if="changingPassword">
+                <form id="changePasswordForm" name="changePasswordForm" novalidate>
+                    <div class="row">
+                        <div class="form-group col-md-12 required">
+                            <label class="control-label">Current Password</label>
+                            <input name="currentPassword" type="password" class="form-control" ng-model="passwordChange.currentPassword">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12 required">
+                            <label class="control-label">New Password</label>
+                            <input name="newPassword" type="password" class="form-control" ng-model="passwordChange.newPassword">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12 required">
+                            <label class="control-label">Repeat New Password</label>
+                            <input name="repeat" type="password" class="form-control" ng-model="passwordChange.repeat">
+                            <p ng-show="passwordChange.newPassword !== passwordChange.repeat && !changePasswordForm.repeat.$pristine" class="help-block">Passwords do not match</p>
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-success btn-block smwc-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid">Ok</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelPasswordChange()">Cancel</button>
+                    </div>
+                </div>
+                
             </div>
 
             <div ng-if="updatingUser">
@@ -100,12 +140,12 @@
         <div class="col-md-3">
             <div class="row" ng-show="userPermissionLevel.isSuperUser()">
                 <div class="col-md-12">
+                    <h3>All Users</h3>
                     <ul class="list-group">
-                        <p>Users</p>
                         <li class="list-group-item" ng-repeat="user in users">
-                            <div ng-click="viewInDetail(user)">
+                            <a href="" ng-click="viewInDetail(user)">
                                 {{user.firstName}} {{user.lastName}}
-                            </div>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -187,8 +227,8 @@
         <div class="col-md-3">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="alert alert-dismissable alert-danger" ng-show="newUser.constraintViolation">
-                        {{newUser.constraintViolation}}
+                    <div class="alert alert-dismissable alert-danger" ng-show="constraintViolation">
+                        {{constraintViolation}}
                     </div>
                 </div>
             </div>

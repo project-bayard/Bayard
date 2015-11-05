@@ -1432,6 +1432,8 @@
 
         $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
         $scope.newUser = {};
+        $scope.passwordChange = {};
+        $scope.viewingUser = true;
 
         $scope.roles = ["ROLE_USER", "ROLE_ELEVATED", "ROLE_SUPERUSER"];
 
@@ -1457,6 +1459,7 @@
         };
 
         $scope.cancelNewUserForm = function() {
+            $scope.constraintViolation = null;
             $scope.creatingUser = false;
             $scope.newUser = {};
         };
@@ -1464,6 +1467,7 @@
         $scope.createNewUser = function() {
 
             UserService.create({}, $scope.newUser, function(succ) {
+                $scope.constraintViolation = null;
                 $scope.requestSuccess = true;
                 $timeout(function() {
                     $scope.requestSuccess = false;
@@ -1479,7 +1483,7 @@
         var handleCrudError = function(err) {
             var errorResponse = new ResponseErrorInterpreter(err);
             if (errorResponse.isConstraintViolation()) {
-                $scope.newUser.constraintViolation = errorResponse.message;
+                $scope.constraintViolation = errorResponse.message;
             }
             $scope.requestFail = true;
             $timeout(function() {
@@ -1489,15 +1493,18 @@
 
         $scope.showUpdateForm = function() {
             $scope.updatingUser = true;
+            $scope.viewingUser = false;
         };
 
         $scope.submitUpdate = function() {
 
             UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function(succ) {
                 $scope.requestSuccess = true;
+                $scope.constraintViolation = null;
                 $timeout(function() {
                     $scope.requestSuccess = false;
                     $scope.updatingUser = false;
+                    $scope.viewingUser = true;
                 }, 3000);
                 UserService.find({id: $scope.userInDetail.id}, function(user) {
                     $scope.userInDetail = user;
@@ -1514,6 +1521,8 @@
 
         $scope.cancelUpdate = function() {
             $scope.updatingUser = false;
+            $scope.viewingUser = true;
+            $scope.constraintViolation = null;
             UserService.find({id: $scope.userInDetail.id}, function(user) {
                 $scope.userInDetail = user;
             }, function(err) {
@@ -1523,7 +1532,35 @@
 
         $scope.deleteUser = function() {
 
-        }
+        };
+
+        $scope.showPasswordChangeForm = function() {
+            $scope.changingPassword = true;
+            $scope.viewingUser = false;
+        };
+
+        $scope.submitPasswordChange = function() {
+            UserService.changePassword({id : $scope.userInDetail.id}, $scope.passwordChange, function(succ) {
+                $scope.constraintViolation = null;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                    $scope.changingPassword = false;
+                    $scope.viewingUser = true;
+                    $scope.passwordChange = {};
+                }, 3000);
+            }, function(err) {
+                handleCrudError(err);
+                console.log(err);
+            })
+        };
+
+        $scope.cancelPasswordChange = function() {
+            $scope.constraintViolation = null;
+            $scope.changingPassword = false;
+            $scope.viewingUser = true;
+            $scope.passwordChange = {};
+        };
 
     }]);
 }());
