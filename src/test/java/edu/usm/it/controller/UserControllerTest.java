@@ -204,5 +204,20 @@ public class UserControllerTest extends WebAppConfigurationAware {
 
     }
 
+    @Test
+    public void testUpdateUserRole() throws Exception {
+        user.setRole(Role.ROLE_ELEVATED);
+
+        String json = new ObjectMapper().writeValueAsString(user);
+
+        mockMvc.perform(put("/users/"+userID).contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
+
+        user = userService.findById(userID);
+        assertEquals(Role.ROLE_ELEVATED, user.getRole());
+
+
+    }
+
 
 }

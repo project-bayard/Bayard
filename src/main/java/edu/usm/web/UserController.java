@@ -53,6 +53,7 @@ public class UserController {
         fromDb.setFirstName(user.getFirstName());
         fromDb.setLastName(user.getLastName());
         fromDb.setEmail(user.getEmail());
+        fromDb.setRole(user.getRole());
         userService.updateUser(fromDb);
         return Response.successGeneric();
     }
