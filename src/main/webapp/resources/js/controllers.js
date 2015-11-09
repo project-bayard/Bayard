@@ -27,6 +27,10 @@
     function PermissionInterpreter (currentUser) {
         this.user = currentUser;
 
+        this.getId = function() {
+            return this.user.id;
+        };
+
         this.isSuperUser = function() {
             return this.user.role == "ROLE_SUPERUSER";
         };
@@ -1452,7 +1456,7 @@
         }]);
 
 
-    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', 'UserService', function($scope, $rootScope, $location, $timeout, UserService) {
+    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function($scope, $rootScope, $location, $timeout, $window, UserService) {
 
         $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
         $scope.newUser = {};

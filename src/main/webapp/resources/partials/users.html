@@ -54,7 +54,7 @@
                     <button class="btn btn-primary btn-block smwc-margined" ng-click="showPasswordChangeForm()">Change Password</button>
                 </div>
             </div>
-            <div class="row" ng-show="userPermissionLevel.isSuperUser() && viewingUser">
+            <div class="row" ng-show="userPermissionLevel.isSuperUser() && viewingUser && userInDetail.id !== userPermissionLevel.getId()">
                 <div class="col-md-12">
                     <button class="btn btn-danger btn-block smwc-margined" ng-click="deleteUser(userInDetail.id)">Delete</button>
                 </div>
