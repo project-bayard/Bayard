@@ -62,6 +62,10 @@
                 templateUrl: 'resources/partials/users.html',
                 controller: 'UserCtrl'
             })
+            .when('/logout', {
+                templateUrl: 'resources/partials/login.html',
+                controller: 'LogoutCtrl'
+            })
             .otherwise({redirectTo: '/'});
 
 
@@ -69,10 +73,10 @@
     });
 
     app.run(function($rootScope, $location) {
-        $rootScope.user = sessionStorage.getItem('user');
+        $rootScope.user = sessionStorage.getItem('bayard-user');
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
-            $rootScope.authenticated = sessionStorage.getItem('authenticated');
+            $rootScope.authenticated = sessionStorage.getItem('bayard-user-authenticated');
             if ($rootScope.authenticated == null || $rootScope.authenticated == 'false') {
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {

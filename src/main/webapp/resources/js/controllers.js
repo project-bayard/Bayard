@@ -65,8 +65,16 @@
 
     }]);
 
-    controllers.controller('MainCtrl', ['$scope', function($scope) {
-        $scope.testMessage = "Check out our home!";
+    controllers.controller('MainCtrl', ['$scope', '$location', function($scope, $location) {
+
+    }]);
+
+    controllers.controller('LogoutCtrl', ['$scope', '$location', '$rootScope', function($scope, $location, $rootScope) {
+        console.log("Logging out");
+        sessionStorage.setItem('bayard-user-authenticated', 'false');
+        sessionStorage.setItem('bayard-user', {});
+        $rootScope.authenticated = null;
+        $location.path("/login");
     }]);
 
     controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', function($scope, ContactService, $location, $timeout) {
@@ -1177,18 +1185,18 @@
             $http.get('/users/authenticate', {headers : headers}).success(function(data) {
                 if (data.email) {
 
-                    sessionStorage.setItem('authenticated', 'true');
-                    sessionStorage.setItem('user', data);
+                    sessionStorage.setItem('bayard-user-authenticated', 'true');
+                    sessionStorage.setItem('bayard-user', data);
 
                     $rootScope.authenticated = true;
                     $rootScope.user = data;
                 } else {
-                    sessionStorage.setItem('authenticated', 'false');
+                    sessionStorage.setItem('bayard-user-authenticated', 'false');
                     $rootScope.authenticated = false;
                 }
                 callback && callback();
             }).error(function() {
-                sessionStorage.setItem('authenticated', 'false');
+                sessionStorage.setItem('bayard-user-authenticated', 'false');
                 $rootScope.authenticated = false;
                 callback && callback();
             });
@@ -1200,7 +1208,7 @@
 
         $scope.login = function() {
             authenticate($scope.credentials, function() {
-                if (sessionStorage.getItem('authenticated') == 'true') {
+                if (sessionStorage.getItem('bayard-user-authenticated') == 'true') {
                     $location.path("/");
                     $scope.error = false;
                 } else {
