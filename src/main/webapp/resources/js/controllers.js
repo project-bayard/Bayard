@@ -1563,7 +1563,18 @@
             })
         };
 
-        $scope.deleteUser = function() {
+        $scope.deleteUser = function(userId) {
+
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this user?');
+            if (deleteConfirmed) {
+                UserService.delete({id : userId}, function(succ) {
+                    $scope.viewInDetail($rootScope.user);
+                    $scope.getUserList();
+                }, function(err) {
+                    handleCrudError(err);
+                    console.log(err);
+                })
+            }
 
         };
 

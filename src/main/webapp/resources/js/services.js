@@ -233,6 +233,10 @@
             create : {
                 method: 'POST'
             },
+            delete : {
+                method: 'DELETE',
+                url: '/users/:id'
+            },
             updateDetails : {
                 method: 'PUT',
                 url: '/users/:id'

@@ -216,7 +216,6 @@ public class UserControllerTest extends WebAppConfigurationAware {
         user = userService.findById(userID);
         assertEquals(Role.ROLE_ELEVATED, user.getRole());
 
-
     }
 
 
