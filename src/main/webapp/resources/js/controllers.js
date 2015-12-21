@@ -11,6 +11,10 @@
             return this.type == "Constraint Violation";
         };
 
+        this.isSecurityConstraint = function() {
+            return this.type == "Security Constraint"
+        }
+
         this.isAccessDenied = function() {
             return this.type == "Access Denied";
         };
@@ -18,6 +22,35 @@
         this.isNullReference = function() {
             return this.type == "Null Reference";
         }
+    }
+
+    function PermissionInterpreter (currentUser) {
+        this.user = currentUser;
+
+        this.getId = function() {
+            return this.user.id;
+        };
+
+        this.isSuperUser = function() {
+            return this.user.role == "ROLE_SUPERUSER";
+        };
+
+        this.isElevatedUser = function() {
+            return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
+        };
+
+        this.isUser = function() {
+            return this.user.role == "ROLE_USER" || this.isElevatedUser() || this.isSuperUser();
+        };
+
+        this.canChangeRole = function(other) {
+            var otherPermissions = new PermissionInterpreter(other);
+            if (this.isSuperUser()) {
+                return true;
+            }
+            return this.isElevatedUser() && !otherPermissions.isSuperUser();
+        }
+
     }
 
     var controllers = angular.module('controllers', []);
@@ -36,8 +69,16 @@
 
     }]);
 
-    controllers.controller('MainCtrl', ['$scope', function($scope) {
-        $scope.testMessage = "Check out our home!";
+    controllers.controller('MainCtrl', ['$scope', '$location', function($scope, $location) {
+
+    }]);
+
+    controllers.controller('LogoutCtrl', ['$scope', '$location', '$rootScope', function($scope, $location, $rootScope) {
+        console.log("Logging out");
+        sessionStorage.setItem('bayard-user-authenticated', 'false');
+        sessionStorage.setItem('bayard-user', {});
+        $rootScope.authenticated = null;
+        $location.path("/login");
     }]);
 
     controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', function($scope, ContactService, $location, $timeout) {
@@ -1148,18 +1189,18 @@
             $http.get('/users/authenticate', {headers : headers}).success(function(data) {
                 if (data.email) {
 
-                    sessionStorage.setItem('authenticated', 'true');
-                    sessionStorage.setItem('user', data);
+                    sessionStorage.setItem('bayard-user-authenticated', 'true');
+                    sessionStorage.setItem('bayard-user', data);
 
                     $rootScope.authenticated = true;
                     $rootScope.user = data;
                 } else {
-                    sessionStorage.setItem('authenticated', 'false');
+                    sessionStorage.setItem('bayard-user-authenticated', 'false');
                     $rootScope.authenticated = false;
                 }
                 callback && callback();
             }).error(function() {
-                sessionStorage.setItem('authenticated', 'false');
+                sessionStorage.setItem('bayard-user-authenticated', 'false');
                 $rootScope.authenticated = false;
                 callback && callback();
             });
@@ -1171,7 +1212,7 @@
 
         $scope.login = function() {
             authenticate($scope.credentials, function() {
-                if (sessionStorage.getItem('authenticated') == 'true') {
+                if (sessionStorage.getItem('bayard-user-authenticated') == 'true') {
                     $location.path("/");
                     $scope.error = false;
                 } else {
@@ -1414,6 +1455,162 @@
 
         }]);
 
+
+    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function($scope, $rootScope, $location, $timeout, $window, UserService) {
+
+        $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
+        $scope.newUser = {};
+        $scope.passwordChange = {};
+        $scope.viewingUser = true;
+        $scope.violations = {};
+
+        $scope.roles = ["ROLE_USER", "ROLE_ELEVATED"];
+
+        if ($scope.userPermissionLevel.isSuperUser()) {
+            $scope.roles.push("ROLE_SUPERUSER");
+        }
+
+        $scope.getUserList = function() {
+            if ($scope.userPermissionLevel.isElevatedUser()) {
+                UserService.findAll({}, function(users) {
+                    $scope.users = users;
+                }, function(err) {
+                    console.log(err);
+                })
+            }
+        };
+
+        $scope.getUserList();
+
+        $scope.viewInDetail = function(user) {
+            $scope.userInDetail = user;
+        };
+        $scope.viewInDetail($rootScope.user);
+
+        $scope.showNewUserForm = function() {
+            $scope.creatingUser = true;
+        };
+
+        $scope.cancelNewUserForm = function() {
+            $scope.violations = {};
+            $scope.creatingUser = false;
+            $scope.newUser = {};
+        };
+
+        $scope.createNewUser = function() {
+
+            UserService.create({}, $scope.newUser, function(succ) {
+                $scope.violations = {};
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                    $scope.creatingUser = false;
+                    $scope.newUser = {}
+                }, 3000);
+                $scope.getUserList();
+            }, function(err) {
+                handleCrudError(err);
+                console.log(err);
+            })
+        };
+
+        var handleCrudError = function(err) {
+            var errorResponse = new ResponseErrorInterpreter(err);
+            if (errorResponse.isConstraintViolation()) {
+                $scope.violations.constraintViolation = errorResponse.message;
+            }
+            if (errorResponse.isSecurityConstraint()) {
+                $scope.violations.securityViolation = errorResponse.message;
+            }
+            $scope.requestFail = true;
+            $timeout(function() {
+                $scope.requestFail = false;
+            }, 3000);
+        };
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingUser = true;
+            $scope.viewingUser = false;
+        };
+
+        $scope.submitUpdate = function() {
+
+            UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function(succ) {
+                $scope.requestSuccess = true;
+                $scope.violations = {};
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                    $scope.updatingUser = false;
+                    $scope.viewingUser = true;
+                }, 3000);
+                UserService.find({id: $scope.userInDetail.id}, function(user) {
+                    $scope.userInDetail = user;
+                    $scope.getUserList();
+                }, function(err) {
+                    console.log(err);
+                })
+            }, function(err) {
+                handleCrudError(err);
+                console.log(err);
+            })
+
+        };
+
+        $scope.cancelUpdate = function() {
+            $scope.updatingUser = false;
+            $scope.viewingUser = true;
+            $scope.violations = {};
+            UserService.find({id: $scope.userInDetail.id}, function(user) {
+                $scope.userInDetail = user;
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.deleteUser = function(userId) {
+
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this user?');
+            if (deleteConfirmed) {
+                UserService.delete({id : userId}, function(succ) {
+                    $scope.viewInDetail($rootScope.user);
+                    $scope.getUserList();
+                }, function(err) {
+                    handleCrudError(err);
+                    console.log(err);
+                })
+            }
+
+        };
+
+        $scope.showPasswordChangeForm = function() {
+            $scope.changingPassword = true;
+            $scope.viewingUser = false;
+        };
+
+        $scope.submitPasswordChange = function() {
+            UserService.changePassword({id : $scope.userInDetail.id}, $scope.passwordChange, function(succ) {
+                $scope.violations = {};
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                    $scope.changingPassword = false;
+                    $scope.viewingUser = true;
+                    $scope.passwordChange = {};
+                }, 3000);
+            }, function(err) {
+                handleCrudError(err);
+                console.log(err);
+            })
+        };
+
+        $scope.cancelPasswordChange = function() {
+            $scope.violations = {};
+            $scope.changingPassword = false;
+            $scope.viewingUser = true;
+            $scope.passwordChange = {};
+        };
+
+    }]);
 }());
 
 

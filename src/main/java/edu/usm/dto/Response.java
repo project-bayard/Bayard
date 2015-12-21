@@ -9,6 +9,8 @@ public class Response {
     public static final String TYPE_CONSTRAINT_VIOLATION = "Constraint Violation";
     public static final String TYPE_NULL_DOMAIN_REFERENCE = "Null Reference";
     public static final String TYPE_ACCESS_DENIED = "Access Denied";
+    public static final String INVALID_API_REQUEST = "Invalid Request";
+    public static final String SECURITY_CONSTRAINT = "Security Constraint";
     private static final String TYPE_NOT_PROVIDED = "N/A";
 
     private String id;
