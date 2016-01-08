@@ -901,11 +901,16 @@
             $scope.modelHolder = {};
             $scope.formHolder = {};
 
+            $scope.viewContactDetails = function(contactId) {
+                $location.path("/contacts/contact/"+contactId);
+            };
+
             var formatEvent = function(event) {
                 event.jsDate = DateFormatter.asDate(event.dateHeld);
                 if (event.attendees == null) {
                     event.attendees = [];
                 }
+                $scope.contactCollection = event.attendees;
                 return event;
             };
 
@@ -1037,6 +1042,8 @@
         $scope.formHolder = {};
         $scope.modelHolder = {};
 
+            $scope.contactCollection = {};
+
         var establishDetails = function(id) {
             OrganizationService.find({id : id}, function(data) {
                 $scope.modelHolder.organizationModel = data;
@@ -1044,6 +1051,7 @@
                     $scope.modelHolder.organizationModel.members = [];
                 }
                 $scope.organization = $scope.modelHolder.organizationModel;
+                $scope.contactCollection = $scope.organization.members;
             }, function(err) {
                 console.log(err);
             });
@@ -1092,6 +1100,10 @@
                 console.log(err);
             })
         };
+
+            $scope.viewContactDetails = function(contactId) {
+                $location.path("/contacts/contact/"+contactId);
+            }
 
     }]);
 
@@ -1309,9 +1321,14 @@
             $scope.formHolder = {};
             $scope.modelHolder = {};
 
+            $scope.viewContactDetails = function(contactId) {
+                $location.path("/contacts/contact/"+contactId);
+            };
+
             var establishGroupMembers = function() {
                 GroupService.getAllContacts({id: $scope.modelHolder.groupModel.id}, function(contacts) {
                     $scope.modelHolder.groupModel.groupMembers = contacts;
+                    $scope.contactCollection = contacts;
 
                     if ($scope.modelHolder.groupModel.aggregations.length == 0 && $scope.modelHolder.groupModel.groupMembers.length == 0) {
                         $scope.showAggregationForm();

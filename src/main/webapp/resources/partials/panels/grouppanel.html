@@ -31,17 +31,18 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Remove from Group</th>
+                                <th>Details</th>
                             </tr>
                             <tr ng-repeat="group in contact.groups">
                                 <td>{{group.groupName}}</td>
-                                <td><a class="btn btn-md btn-info" href="#/groups/group/{{group.id}}">View
-                                    Details</a></td>
-                                <td>
                                 <td>
                                     <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromGroup(group.id)">
                                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
                                     </button>
                                 </td>
+                                <td><a class="btn btn-md btn-info" href="#/groups/group/{{group.id}}">View
+                                    Details</a></td>
+                                <td>
                             </tr>
                         </table>
                     </div>

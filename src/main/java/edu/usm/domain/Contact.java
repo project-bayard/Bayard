@@ -164,7 +164,8 @@ public class Contact extends BasicEntity implements Serializable {
             Views.OrganizationList.class,
             Views.CommitteeList.class,
             Views.EventList.class,
-            Views.ContactDetails.class})
+            Views.ContactDetails.class,
+            Views.GroupDetailsView.class})
     private int assessment;
 
     @Column
