@@ -64,6 +64,7 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
         contact.setAssessment(1);
+        contact.setOccupation("Machinist");
         contact.setPhoneNumber1("phone number");
         contact.setInterests("interests");
 
