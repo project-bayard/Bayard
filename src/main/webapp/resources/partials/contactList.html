@@ -1,46 +1,50 @@
 
-<div class="container-fluid">
+<div class="container-fluid" ng-controller="TableCtrl">
     <h1>Contacts</h1>
     <div>
         <label>Search</label>
         <input type="text" ng-model="search" >
     </div>
-    <table class="bootstrap-table table table-striped table-hover"
-           data-toggle="table"
-           data-query-params="queryParams"
-           data-pagination="true"
-           data-search="true"
-           data-height="300">
+    <button ng-show="user.role == 'ROLE_SUPERUSER' || user.role == 'ROLE_ELEVATED' " class="btn btn-md btn-info" ng-click="exportData()">Export</button>
 
-        <th>Assessment</th>
-        <th >First Name</th>
-        <th >Last Name</th>
-        <th>Address</th>
-        <th>Apt #</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Primary phone</th>
-        <th>Email</th>
-        <th>Needs Follow Up</th>
-        <th>Details</th>
+    <div id="exportable">
+        <table class="bootstrap-table table table-striped table-hover"
+               data-toggle="table"
+               data-query-params="queryParams"
+               data-pagination="true"
+               data-search="true"
+               data-height="300">
 
-        <tr ng-repeat="contact in contacts | filter:search" ng-click="viewContactDetails(contact.id)">
-            <td>{{contact.assessment}}</td>
-            <td>{{contact.firstName}}</td>
-            <td>{{contact.lastName}}</td>
-            <td>{{contact.streetAddress}}</td>
-            <td>{{contact.aptNumber}}</td>
-            <td>{{contact.city}}</td>
-            <td>{{contact.state}}</td>
-            <td>{{contact.phoneNumber1}}</td>
-            <td>{{contact.email}}</td>
-            <td>
-                <span class="glyphicon glyphicon-earphone" ng-if="contact.needsFollowUp" aria-hidden="true"></span>
-            </td>
-            <td>
-                <a class="btn btn-md btn-info" href="#/contacts/contact/{{contact.id}}">View Details</a>
-            </td>
-        </tr>
+            <th>Assessment</th>
+            <th >First Name</th>
+            <th >Last Name</th>
+            <th>Address</th>
+            <th>Apt #</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Primary phone</th>
+            <th>Email</th>
+            <th>Needs Follow Up</th>
+            <th>Details</th>
 
-    </table>
+            <tr ng-repeat="contact in contacts | filter:search" ng-click="viewContactDetails(contact.id)">
+                <td>{{contact.assessment}}</td>
+                <td>{{contact.firstName}}</td>
+                <td>{{contact.lastName}}</td>
+                <td>{{contact.streetAddress}}</td>
+                <td>{{contact.aptNumber}}</td>
+                <td>{{contact.city}}</td>
+                <td>{{contact.state}}</td>
+                <td>{{contact.phoneNumber1}}</td>
+                <td>{{contact.email}}</td>
+                <td>
+                    <span class="glyphicon glyphicon-earphone" ng-if="contact.needsFollowUp" aria-hidden="true"></span>
+                </td>
+                <td>
+                    <a class="btn btn-md btn-info" href="#/contacts/contact/{{contact.id}}">View Details</a>
+                </td>
+            </tr>
+
+        </table>
+    </div>
 </div>
