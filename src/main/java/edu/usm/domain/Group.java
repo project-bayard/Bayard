@@ -16,9 +16,9 @@ import java.util.Set;
 public class Group extends BasicEntity implements Serializable {
 
     @Column
-    @JsonView({Views.GroupListView.class,
-            Views.GroupDetailsView.class,
-            Views.GroupPanelView.class})
+    @JsonView({Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.GroupPanel.class})
     private String groupName;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
@@ -27,13 +27,13 @@ public class Group extends BasicEntity implements Serializable {
             joinColumns={@JoinColumn(name="alinskygroup_id", referencedColumnName = "id")},
             inverseJoinColumns={@JoinColumn(name="aggregation_id", referencedColumnName = "id")}
     )
-    @JsonView({Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+    @JsonView({Views.GroupList.class,
+            Views.GroupDetails.class})
     private Set<Aggregation> aggregations = new HashSet<>();
 
     @ManyToMany(mappedBy = "groups", cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JsonView({Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+    @JsonView({Views.GroupList.class,
+            Views.GroupDetails.class})
     private Set<Contact> topLevelMembers = new HashSet<>();
 
     public Group() {

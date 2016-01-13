@@ -1,0 +1,79 @@
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>Committee Details: {{committee.name}}</h1>
+    </div>
+    <div class="row">
+        <div id="group-detail-left-panel" class="col-md-3">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Committee Updated</div>
+            <div class="row" ng-show="!updatingCommittee">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Name: {{committee.name}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div ng-if="!updatingCommittee">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-block smwc-margined" ng-click="showUpdateForm()">Change Committee Name</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="updatingCommittee">
+                <div>
+                    <form id="committeeForm" name="committeeForm" novalidate>
+                        <div class="row">
+                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : committeeForm.name.$invalid && !committeeForm.name.$pristine }">
+                                <label class="control-label">Name of Committee</label>
+                                <input name="name" type="text" class="form-control" ng-model="committee.name" ng-minlength="2" required>
+                                <p ng-show="committeeForm.name.$error.required && !committeeForm.name.$pristine" class="help-block">The committee name is required</p>
+                                <p ng-show="committeeForm.name.$error.min" class="help-block">Committee name not long enough</p>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-success btn-block smwc-margined" ng-click="submitUpdate()" ng-disabled="committeeForm.$invalid">Ok</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelUpdate()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6"  >
+                    <div class="alert alert-dismissable alert-danger" ng-if="committee.constraintViolation">
+                        {{committee.constraintViolation}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <h3>Recent Committee Events</h3>
+                        <li class="list-group-item" ng-repeat="event in committee.events | orderBy: '-dateHeld' | limitTo: 5" ng-click="viewEventDetails(event.id)">
+                            <a href="">{{event.name}} : {{event.dateHeld}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+    <h2>Members:</h2>
+    <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
+
+</div>

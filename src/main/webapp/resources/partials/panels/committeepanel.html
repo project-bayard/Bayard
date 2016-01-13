@@ -33,6 +33,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Remove from Committee</th>
+                                <th>Details</th>
                             </tr>
                             <tr ng-repeat="committee in contact.committees">
                                 <td>{{committee.name}}</td>
@@ -41,6 +42,7 @@
                                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
                                     </button>
                                 </td>
+                                <td><a class="btn btn-md btn-info" href="#/committees/committee/{{committee.id}}">View Details</a></td>
                             </tr>
                         </table>
                     </div>

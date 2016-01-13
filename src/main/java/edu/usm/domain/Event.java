@@ -1,8 +1,6 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,8 +15,9 @@ public class Event extends Aggregation implements Serializable {
     @NotNull
     @Size(min = 1)
     @JsonView({Views.EventList.class,
-            Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String name;
 
     @Column
@@ -41,12 +40,13 @@ public class Event extends Aggregation implements Serializable {
      */
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JsonView({Views.EventList.class,
-            Views.GroupDetailsView.class})
+            Views.GroupDetails.class})
     private Set<Contact> attendees;
 
     @Column
     @NotNull
-    @JsonView({Views.EventList.class})
+    @JsonView({Views.EventList.class,
+            Views.CommitteeDetails.class})
     private String dateHeld;
 
     public Event(String id) {

@@ -343,7 +343,7 @@ public class ContactController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/groups")
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.GroupPanelView.class)
+    @JsonView(Views.GroupPanel.class)
     public Set<Group> getContactGroups(@PathVariable("id") String id) throws NullDomainReference{
         Contact c = contactService.findById(id);
         if (null == c) {

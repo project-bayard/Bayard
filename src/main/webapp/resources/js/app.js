@@ -38,6 +38,10 @@
                 templateUrl:'resources/partials/committeeList.html',
                 controller: 'CommitteesCtrl'
             })
+            .when('/committees/committee/:id', {
+                templateUrl: 'resources/partials/committeeDetails.html',
+                controller: 'CommitteeDetailsCtrl'
+            })
             .when('/events/event/:id', {
                 templateUrl: 'resources/partials/eventDetails.html',
                 controller: 'EventDetailsCtrl'

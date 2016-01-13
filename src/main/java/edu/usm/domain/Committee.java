@@ -11,11 +11,13 @@ import java.util.Set;
 public class Committee extends Aggregation implements Serializable {
 
     @ManyToMany(mappedBy = "committees" , cascade = {CascadeType.REFRESH,CascadeType.MERGE} , fetch = FetchType.EAGER)
-    @JsonView({Views.GroupDetailsView.class,
-            Views.CommitteeList.class})
+    @JsonView({Views.GroupDetails.class,
+            Views.CommitteeList.class,
+            Views.CommitteeDetails.class})
     private Set<Contact> members;
 
     @OneToMany(mappedBy="committee", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JsonView({Views.CommitteeDetails.class})
     private Set<Event> events;
 
     @Column
@@ -24,8 +26,9 @@ public class Committee extends Aggregation implements Serializable {
             Views.ContactDetails.class,
             Views.ContactCommitteeDetails.class,
             Views.EventList.class,
-            Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String name;
 
     @Override

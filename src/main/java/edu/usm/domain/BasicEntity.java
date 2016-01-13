@@ -29,10 +29,11 @@ public abstract class BasicEntity {
             Views.ContactEncounterDetails.class,
             Views.ContactOrganizationDetails.class,
             Views.ContactCommitteeDetails.class,
-            Views.GroupListView.class,
-            Views.GroupDetailsView.class,
-            Views.GroupPanelView.class,
-            Views.DemographicDetails.class})
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.GroupPanel.class,
+            Views.DemographicDetails.class,
+            Views.CommitteeDetails.class})
     private String id;
 
     @Column
