@@ -72,12 +72,22 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Preferred Language</label>
-                                    <input type="text" class="form-control  " ng-model="contact.language">
+                                    <label class="control-label">Occupation</label>
+                                    <input type="text" class="form-control  " ng-model="contact.occupation">
                                 </div>
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">State</label>
                                     <input type="text" class="form-control  " ui-mask="AA" ng-model="contact.state">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Preferred Language</label>
+                                    <input type="text" class="form-control  " ng-model="contact.language">
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Zip Code</label>
+                                    <input type="text" class="form-control  " ui-mask="99999" ng-model="contact.zipCode">
                                 </div>
                             </div>
                             <div class="row">
@@ -89,8 +99,8 @@
                                     </div>
                                 </div>
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Zip Code</label>
-                                    <input type="text" class="form-control  " ui-mask="99999" ng-model="contact.zipCode">
+                                    <label class="control-label">Phone Number 1</label>
+                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber1">
                                 </div>
                             </div>
                             <div class="row">
@@ -100,15 +110,7 @@
                                             <input type="checkbox" ng-checked="contact.needsFollowUp" ng-model="contact.needsFollowUp"> This contact needs a follow up
                                         </label>
                                     </div>
-                                </div>
-                                <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Phone Number 1</label>
-                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber1">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-4"></div>
-                                <div class="col-xs-4">
+                                </div>                                <div class="col-xs-4">
                                     <label class="control-label">Phone Number 2</label>
                                     <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber2">
                                 </div>
