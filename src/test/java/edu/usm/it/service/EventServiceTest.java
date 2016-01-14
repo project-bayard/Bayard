@@ -2,26 +2,23 @@ package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
-import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.EventDto;
 import edu.usm.service.CommitteeService;
-import edu.usm.service.ContactService;
-import edu.usm.service.EncounterService;
 import edu.usm.service.EventService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.format;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by andrew on 8/26/15.
@@ -128,6 +125,29 @@ public class EventServiceTest extends WebAppConfigurationAware {
 
         duplicate.setName(event.getName());
         eventService.update(duplicate);
+    }
+
+    @Test
+    public void removeCommitteeFromEvent() throws Exception {
+        eventService.create(event);
+        committee = committeeService.findById(committee.getId());
+        assertTrue(!committee.getEvents().isEmpty());
+
+        EventDto dto = new EventDto();
+        dto.setCommitteeId("");
+        dto.setDateHeld(event.getDateHeld());
+        dto.setName(event.getName());
+        dto.setLocation(event.getLocation());
+        dto.setNotes(event.getNotes());
+
+        eventService.update(event, dto);
+
+        event = eventService.findById(event.getId());
+        assertNull(event.getCommittee());
+
+        committee = committeeService.findById(committee.getId());
+        assertTrue(committee.getEvents().isEmpty());
+
     }
 
     private Event generateDuplicate(Event event) {

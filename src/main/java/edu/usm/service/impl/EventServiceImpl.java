@@ -148,9 +148,9 @@ public class EventServiceImpl extends BasicService implements EventService {
 
         if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
             event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));
+        } else {
+            event.setCommittee(null);
         }
-
-        //TODO: Account for empty getCommitteeId string that would indicate, set this event's committee to null
 
         event.setNotes(eventDto.getNotes());
         event.setLocation(eventDto.getLocation());
