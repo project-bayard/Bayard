@@ -1,6 +1,6 @@
 ##Configuration for Heroku
 
-The application's staging branch [is hosted here]. Recent pull requests to master that are merged into staging are immediately deployed by our heroku hook.
+Commits to master are immediately deployed by our heroku hook [here].
 
 To configure the application to work with a heroku account of your own from a local branch:
 
@@ -18,7 +18,7 @@ To configure the application to work with a heroku account of your own from a lo
 
 7.) Push your branch to the heroku remote: `git push heroku {your-branch-name}:master`
 
-8.) Once the app has successfully installed, scale heroku: `herok ps:scale web=1`
+8.) Once the app has successfully installed, scale heroku: `heroku ps:scale web=1`
 
 9.) Check out heroku's logs to see the Tomcat container's startup progress: `heroku logs`
 
@@ -28,4 +28,4 @@ Note: It could take a while for the container to start, given the current memory
 might show a series of Error R14: (Memory quota exceeded) for this reason. Don't worry, the application will still
 deploy, but heroku is paging memory to disk and will be quite slow.
 
-[is hosted here]: https://mysterious-everglades-5022.herokuapp.com
+[here]: https://mysterious-everglades-5022.herokuapp.com
