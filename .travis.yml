@@ -8,6 +8,6 @@ deploy:
   app: mysterious-everglades-5022
   on:
     repo: project-bayard/Bayard
-    branch: staging
+    branch: master
   run:
     - "heroku ps:scale web=1"
