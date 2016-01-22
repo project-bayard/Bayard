@@ -27,8 +27,9 @@ public class Contact extends BasicEntity implements Serializable {
             Views.EventList.class,
             Views.ContactDetails.class,
             Views.ContactEncounterDetails.class,
-            Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String firstName;
 
     @Column
@@ -38,8 +39,9 @@ public class Contact extends BasicEntity implements Serializable {
             Views.EventList.class,
             Views.ContactDetails.class,
             Views.ContactEncounterDetails.class,
-            Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String middleName;
 
     @Column
@@ -49,8 +51,9 @@ public class Contact extends BasicEntity implements Serializable {
             Views.EventList.class,
             Views.ContactDetails.class,
             Views.ContactEncounterDetails.class,
-            Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String lastName;
 
     @Column
@@ -99,7 +102,8 @@ public class Contact extends BasicEntity implements Serializable {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.GroupDetailsView.class})
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String phoneNumber1;
 
     @Column
@@ -116,7 +120,8 @@ public class Contact extends BasicEntity implements Serializable {
             Views.CommitteeList.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.GroupDetailsView.class})
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
     private String email;
 
     @Column
@@ -163,9 +168,10 @@ public class Contact extends BasicEntity implements Serializable {
     @JsonView({Views.ContactList.class,
             Views.OrganizationList.class,
             Views.CommitteeList.class,
+            Views.CommitteeDetails.class,
             Views.EventList.class,
             Views.ContactDetails.class,
-            Views.GroupDetailsView.class})
+            Views.GroupDetails.class})
     private int assessment;
 
     @Column

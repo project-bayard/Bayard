@@ -51,21 +51,21 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.GroupListView.class)
+    @JsonView(Views.GroupList.class)
     public Set<Group> getGroups() {
         return groupService.findAll();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.GroupDetailsView.class)
+    @JsonView(Views.GroupDetails.class)
     public Group getGroupById(@PathVariable("id") String id) {
         return groupService.findById(id);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/all", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.GroupDetailsView.class)
+    @JsonView(Views.GroupDetails.class)
     public Set<Contact> getAllContactsInGroup(@PathVariable("id") String id) {
         Group g = groupService.findById(id);
         Set<Contact> allContacts = g.getTopLevelMembers();

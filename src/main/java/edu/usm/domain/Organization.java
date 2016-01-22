@@ -13,14 +13,14 @@ import java.util.Set;
 public class Organization extends Aggregation implements Serializable {
 
 
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactOrganizationDetails.class, Views.GroupListView.class,
-            Views.GroupDetailsView.class,})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.ContactOrganizationDetails.class, Views.GroupList.class,
+            Views.GroupDetails.class,})
     @Column
     @NotNull
     @Size(min = 1)
     private String name;
 
-    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.GroupDetailsView.class})
+    @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.GroupDetails.class})
     @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Contact> members;
 

@@ -1110,15 +1110,10 @@
     controllers.controller ('CommitteesCtrl',['$scope', 'CommitteeService', '$window', function($scope, CommitteeService, $window){
 
         var setup = function () {
-            $scope.panels = [];
-            $scope.addCommittee = {hidden: true};
-
+            $scope.hideForm = true;
+            $scope.newCommittee = {};
             CommitteeService.findAll({}, function(data) {
                 $scope.committees = data;
-                for (var i = 0; i < $scope.committees.size; i++) {
-                    $scope.panels.push({"hidden" : true});
-                }
-
             }, function(err) {
                 console.log(err);
             });
@@ -1126,64 +1121,90 @@
 
         setup();
 
-        $scope.createCommittee = function(name) {
-            var committee = {name: name, members: []};
-
-            CommitteeService.create( committee, function(data) {
-                $scope.addCommittee = {hidden: true};
-                setup();
-
-            }, function(err) {
-                var errorResponse = new ResponseErrorInterpreter(err);
-                if (errorResponse.isConstraintViolation()) {
-                    $scope.addCommittee.constraintViolation = errorResponse.message;
-                }
-            });
+        $scope.showCommitteeForm = function() {
+            $scope.hideForm = false;
         };
 
-        $scope.showUpdateForm = function(committee) {
-            committee.updatingCommittee = true;
-            $scope.newCommitteeName = "";
-
+        $scope.cancelCreateCommittee = function() {
+            $scope.newCommittee = {};
+            $scope.hideForm = true;
         };
 
-        $scope.cancelUpdate = function(committee) {
-            committee.updatingCommittee = false;
-            committee.constraintViolation = null;
+        $scope.createCommittee = function() {
 
-        };
-
-        $scope.submitUpdate = function(committee, name) {
-            var oldName = committee.name;
-            committee.name = name;
-
-            CommitteeService.update({id : committee.id}, committee, function(success) {
-                committee.updatingCommittee = false;
-                committee.constraintViolation = null;
-            }, function(err) {
-                var errorResponse = new ResponseErrorInterpreter(err);
-                if (errorResponse.isConstraintViolation()) {
-                    committee.constraintViolation = errorResponse.message;
-                }
-                committee.name = oldName;
-            });
-        };
-
-        $scope.deleteCommittee = function(committee) {
-
-            var deleteConfirmed = $window.confirm('Are you sure you want to delete this committee?');
-            if (deleteConfirmed) {
-                CommitteeService.delete({id : committee.id}, function(success) {
-                    CommitteeService.findAll({}, function(data) {
-                        $scope.committees = data;
-                    }, function(err) {
-                        console.log(err);
-                    })
+            CommitteeService.create({name : $scope.newCommittee.name, members : []}, function(succ) {
+                $scope.hideForm = true;
+                $scope.newCommittee = {};
+                CommitteeService.findAll({}, function(committees) {
+                   $scope.committees = committees;
                 }, function(err) {
                     console.log(err);
                 });
-            }
+            }, function(err) {
+                var errorResponse = new ResponseErrorInterpreter(err);
+                if (errorResponse.isConstraintViolation()) {
+                    $scope.newCommittee.constraintViolation = errorResponse.message;
+                }
+                console.log(err);
+            });
 
+        };
+
+    }]);
+
+    controllers.controller('CommitteeDetailsCtrl', ['$scope', 'CommitteeService', '$location', '$routeParams', function($scope, CommitteeService, $location, $routeParams) {
+
+        var establishCommittee = function(id) {
+            CommitteeService.find({id: id}, function(committee) {
+                $scope.committee = committee;
+                $scope.contactCollection = $scope.committee.members;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.viewContactDetails = function(id) {
+            $location.path("/contacts/contact/"+id);
+        };
+
+        $scope.viewEventDetails = function(id) {
+            $location.path("/events/event/"+id);
+        };
+
+        var setup = function() {
+            $scope.updatingCommittee = false;
+            establishCommittee($routeParams.id)
+        };
+
+        var handleFailedUpdate = function(err) {
+            var errorResponse = new ResponseErrorInterpreter(err);
+            if (errorResponse.isConstraintViolation()) {
+                $scope.committee.constraintViolation = errorResponse.message;
+            }
+            $scope.requestFail = true;
+            $timeout(function() {
+                $scope.requestFail = false;
+            }, 3000);
+
+            console.log(err);
+        };
+
+        setup();
+
+        $scope.showUpdateForm = function() {
+            $scope.updatingCommittee = true;
+        };
+
+        $scope.submitUpdate = function() {
+            CommitteeService.update({id: $scope.committee.id}, $scope.committee, function(succ) {
+                setup();
+            }, function(err) {
+                handleFailedUpdate(err);
+            })
+        };
+
+        $scope.cancelUpdate = function() {
+            setup();
         };
 
     }]);

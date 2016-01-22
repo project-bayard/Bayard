@@ -8,6 +8,7 @@ public class Views {
     public interface EventList {}
     public interface OrganizationList {}
     public interface CommitteeList {}
+    public interface CommitteeDetails{}
     public interface ContactDetails {}
     public interface ContactEncounterDetails {}
     public interface DemographicDetails {}
@@ -19,8 +20,9 @@ public class Views {
 
     public interface UserDetails {}
 
-    public interface GroupListView{}
-    public interface GroupDetailsView {}
-    public interface GroupPanelView {}
+    public interface GroupList {}
+    public interface GroupDetails {}
+    public interface GroupPanel {}
+
 
 }

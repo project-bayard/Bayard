@@ -18,8 +18,8 @@ public abstract class Aggregation extends BasicEntity{
     static final String TYPE_EVENT = "Event";
 
     @Column
-    @JsonView({Views.GroupListView.class,
-            Views.GroupDetailsView.class})
+    @JsonView({Views.GroupList.class,
+            Views.GroupDetails.class})
     protected String aggregationType;
 
     @ManyToMany(mappedBy = "aggregations" , cascade = {CascadeType.REFRESH, CascadeType.MERGE} , fetch = FetchType.EAGER)
