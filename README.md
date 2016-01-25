@@ -8,6 +8,13 @@ Want to contribute? [Check out our workflow]
 
 # Change Log
 
+## [January Milestone] - 2016-01-18
+### Added
+- Administrative functions added to the UI: user creation, password management
+- Ability to export Angular-generated tables of Contacts to spreadsheets
+- Normalized appearance of Contact tables throughout the app
+- Refactored Committees in the UI
+
 ## [October15Milestone] - 2015-10-20
 ### Added
 - Addition of Groups, which define a set of Organizations, Committees, and/or Events
@@ -57,6 +64,8 @@ Want to contribute? [Check out our workflow]
 [Check out our workflow]: https://github.com/project-bayard/Bayard/blob/master/workflow.md
 
 [project-bayard.github.io/Bayard]: http://project-bayard.github.io/Bayard/
+
+[January Milestone]: https://github.com/project-bayard/Bayard/compare/899ead5e6ff7375fd7549044ded0cf8f73f030c0...c9fbbcfea057cce8611e9bed395a595754530979
 
 [October15Milestone]: https://github.com/project-bayard/Bayard/compare/July29th2015Milestone...project-bayard:October15Milestone
 
