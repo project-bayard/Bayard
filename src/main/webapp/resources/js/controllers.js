@@ -1209,6 +1209,17 @@
 
     }]);
 
+    controllers.controller('CommitteeEventsCtrl', ['$scope', '$routeParams', 'CommitteeService', function($scope, $routeParams, CommitteeService) {
+
+        CommitteeService.find({id : $routeParams.id}, function(committee) {
+            $scope.committee = committee;
+            $scope.eventsTable = committee.events;
+        }, function(err) {
+            console.log(err);
+        });
+
+    }]);
+
 
     controllers.controller ('LoginCtrl',['$scope','$rootScope', '$location', 'UserService','$http', function($scope,$rootScope, $location, UserService, $http){
         $scope.error = false;
