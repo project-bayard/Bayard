@@ -334,6 +334,39 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         newContact = contactService.findById(newContact.getId());
         assertTrue(newContact.getAttendedEvents().contains(event));
 
+    }
+
+    @Test
+    @Transactional
+    public void testAddContactToOrganizationMultipleGroups() throws Exception {
+
+        groupService.create(group);
+        groupService.addAggregation(organization, group);
+
+        Group secondGroup = new Group();
+        secondGroup.setGroupName("Second Group");
+        groupService.create(secondGroup);
+        groupService.addAggregation(organization, secondGroup);
+
+        Contact newContact = new Contact();
+        newContact.setFirstName("Fresh Contact");
+        newContact.setEmail("Fresh email");
+        contactService.create(newContact);
+
+        contactService.addContactToOrganization(newContact, organization);
+
+        newContact = contactService.findById(newContact.getId());
+        assertTrue(newContact.getOrganizations().contains(organization));
+
+        group = groupService.findById(group.getId());
+        assertTrue(group.getAggregations().contains(organization));
+
+        secondGroup = groupService.findById(secondGroup.getId());
+        assertTrue(secondGroup.getAggregations().contains(organization));
+
+        organization = organizationService.findById(organization.getId());
+        assertTrue(organization.getMembers().contains(newContact));
+
 
     }
 
