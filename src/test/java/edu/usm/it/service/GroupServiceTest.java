@@ -9,13 +9,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by andrew on 10/8/15.
@@ -219,7 +218,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testRemoveContactFromGroup() throws Exception{
+    public void testRemoveContactFromGroup() throws Exception {
         groupService.create(group);
         groupService.addAggregation(committee, group);
         contactService.addToGroup(topLevel, group);
@@ -236,7 +235,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testAddAggregation() throws Exception{
+    public void testAddAggregation() throws Exception {
         groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -247,7 +246,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testRemoveAggregation() throws Exception{
+    public void testRemoveAggregation() throws Exception {
         String id = groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -269,7 +268,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
-    public void testRemoveContactFromAggregation() throws Exception{
+    public void testRemoveContactFromAggregation() throws Exception {
         groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -281,6 +280,59 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         committee = committeeService.findById(committee.getId());
         group = groupService.findById(group.getId());
         assertEquals(committee.getMembers().size(), group.getAggregations().iterator().next().getAggregationMembers().size());
+
+    }
+
+    @Test
+    @Transactional
+    public void testAddEventMultipleGroups() throws Exception {
+
+        groupService.create(group);
+        groupService.addAggregation(event, group);
+        groupService.addAggregation(committee, group);
+
+        Group secondGroup = new Group();
+        secondGroup.setGroupName("Second Group");
+        groupService.create(secondGroup);
+        groupService.addAggregation(event, secondGroup);
+        groupService.addAggregation(organization, secondGroup);
+
+        event = eventService.findById(event.getId());
+        assertTrue(event.getGroups().contains(group));
+        assertTrue(event.getGroups().contains(secondGroup));
+
+        group = groupService.findById(group.getId());
+        assertTrue(group.getAggregations().contains(event));
+
+        secondGroup = groupService.findById(secondGroup.getId());
+        assertTrue(secondGroup.getAggregations().contains(event));
+
+    }
+
+    @Test
+    @Transactional
+    public void testAddContactToEventMultipleGroups() throws Exception {
+
+        groupService.create(group);
+        groupService.addAggregation(event, group);
+
+        Group secondGroup = new Group();
+        secondGroup.setGroupName("Second Group");
+        groupService.create(secondGroup);
+        groupService.addAggregation(event, secondGroup);
+
+        Contact newContact = new Contact();
+        newContact.setFirstName("Fresh Contact");
+        newContact.setEmail("Fresh email");
+        contactService.create(newContact);
+
+        contactService.attendEvent(newContact, event);
+
+        event = eventService.findById(event.getId());
+        assertTrue(event.getAttendees().contains(newContact));
+
+        newContact = contactService.findById(newContact.getId());
+        assertTrue(newContact.getAttendedEvents().contains(event));
 
 
     }
