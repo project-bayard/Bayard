@@ -367,7 +367,116 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         organization = organizationService.findById(organization.getId());
         assertTrue(organization.getMembers().contains(newContact));
 
+    }
 
+    @Test
+    @Transactional
+    public void testRemoveContactFromEventMultipleGroups() throws Exception {
+
+        groupService.create(group);
+        groupService.addAggregation(event, group);
+
+        Group secondGroup = new Group();
+        secondGroup.setGroupName("Second Group");
+        groupService.create(secondGroup);
+        groupService.addAggregation(event, secondGroup);
+
+        Contact newContact = new Contact();
+        newContact.setFirstName("Fresh Contact");
+        newContact.setEmail("Fresh email");
+        contactService.create(newContact);
+
+        event = eventService.findById(event.getId());
+        contactService.attendEvent(newContact, event);
+
+        newContact = contactService.findById(newContact.getId());
+        contactService.unattendEvent(newContact, event);
+
+        event = eventService.findById(event.getId());
+        assertFalse(event.getAttendees().contains(newContact));
+
+        newContact = contactService.findById(newContact.getId());
+        assertFalse(newContact.getAttendedEvents().contains(event));
+
+    }
+
+    @Test
+    @Transactional
+    public void testAddContactToGroupAndGroupConstituent() throws Exception {
+
+        groupService.create(group);
+        groupService.addAggregation(committee, group);
+
+        Contact contact = new Contact();
+        contact.setFirstName("Test Contact");
+        contact.setEmail("test@email.com");
+        contactService.create(contact);
+
+        contactService.addContactToCommittee(contact, committee);
+        contactService.addToGroup(contact, group);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contact.getGroups().contains(group));
+        assertTrue(contact.getCommittees().contains(committee));
+
+        committee = committeeService.findById(committee.getId());
+        assertTrue(committee.getMembers().contains(contact));
+
+        group = groupService.findById(group.getId());
+        assertTrue(group.getTopLevelMembers().contains(contact));
+
+    }
+
+    @Test
+    @Transactional
+    public void testAddContactToMultipleGroupsMultipleConstituents() throws Exception {
+
+        groupService.create(group);
+        groupService.addAggregation(committee, group);
+        groupService.addAggregation(event, group);
+
+        Group secondGroup = new Group();
+        secondGroup.setGroupName("Second Group");
+        groupService.create(secondGroup);
+        groupService.addAggregation(committee, secondGroup);
+        groupService.addAggregation(event, secondGroup);
+
+        Contact contact = new Contact();
+        contact.setFirstName("Test Contact");
+        contact.setEmail("test@email.com");
+        contactService.create(contact);
+
+        contactService.addContactToCommittee(contact, committee);
+        contactService.attendEvent(contact, event);
+        contactService.addToGroup(contact, group);
+        contactService.addToGroup(contact, secondGroup);
+
+        contact = contactService.findById(contact.getId());
+        group = groupService.findById(group.getId());
+        secondGroup = groupService.findById(secondGroup.getId());
+        event = eventService.findById(event.getId());
+        committee = committeeService.findById(committee.getId());
+
+        assertTrue(contact.getGroups().contains(group));
+        assertTrue(contact.getGroups().contains(secondGroup));
+        assertTrue(contact.getCommittees().contains(committee));
+        assertTrue(contact.getAttendedEvents().contains(event));
+
+        assertTrue(event.getAttendees().contains(contact));
+        assertTrue(event.getGroups().contains(group));
+        assertTrue(event.getGroups().contains(secondGroup));
+
+        assertTrue(committee.getMembers().contains(contact));
+        assertTrue(committee.getGroups().contains(group));
+        assertTrue(committee.getGroups().contains(secondGroup));
+
+        assertTrue(group.getTopLevelMembers().contains(contact));
+        assertTrue(group.getAggregations().contains(committee));
+        assertTrue(group.getAggregations().contains(event));
+
+        assertTrue(secondGroup.getTopLevelMembers().contains(contact));
+        assertTrue(secondGroup.getAggregations().contains(committee));
+        assertTrue(secondGroup.getAggregations().contains(event));
     }
 
 }
