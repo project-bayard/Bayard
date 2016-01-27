@@ -61,19 +61,18 @@
         <div class="col-md-3">
             <div class="row">
                 <div class="col-md-12">
+                    <h3>Recent Committee Events</h3>
                     <ul class="list-group">
-                        <h3>Recent Committee Events</h3>
                         <li class="list-group-item" ng-repeat="event in committee.events | orderBy: '-dateHeld' | limitTo: 5" ng-click="viewEventDetails(event.id)">
                             <a href="">{{event.name}} : {{event.dateHeld}}</a>
                         </li>
                     </ul>
+                    <a href="#/committees/committee/{{committee.id}}/events">See all Events</a>
                 </div>
             </div>
         </div>
     </div>
-
     <br><br>
     <h2>Members:</h2>
     <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
-
 </div>
