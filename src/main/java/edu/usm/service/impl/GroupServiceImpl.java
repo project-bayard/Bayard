@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by andrew on 10/8/15.
@@ -65,9 +66,9 @@ public class GroupServiceImpl implements GroupService {
     public void delete(Group group) {
 
         if (null != group.getAggregations()) {
-            for (Aggregation aggregation: group.getAggregations()) {
+            Set<Aggregation> aggregations = new HashSet<>(group.getAggregations());
+            for (Aggregation aggregation: aggregations) {
                 aggregation.getGroups().remove(group);
-                aggregationDao.save(aggregation);
             }
         }
 

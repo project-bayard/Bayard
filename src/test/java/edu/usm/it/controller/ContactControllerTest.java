@@ -115,7 +115,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         encounterTypeService.deleteAll();
     }
 
-
     @Test
     @Transactional
     public void testPostContact() throws Exception {
@@ -468,6 +467,8 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());}
 
+
+    @Test
     public void testRemoveContactFromCommittee () throws Exception {
         String id = contactService.create(contact);
 
@@ -484,8 +485,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         mockMvc.perform(delete("/contacts/" + id + "/committees/"+committeeID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("SUCCESS")));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -634,6 +634,38 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("[0].id", is(groupId)))
                 .andExpect(jsonPath("[0].groupName", is(group.getGroupName())));
+    }
+
+    @Test
+    public void testAddContactToEventMultipleGroups() throws Exception {
+
+        contactService.create(contact);
+        eventService.create(event);
+
+        groupService.create(group);
+        Group secondGroup = new Group();
+        secondGroup.setGroupName("Second Group");
+        groupService.create(group);
+
+        groupService.addAggregation(event, group);
+        groupService.addAggregation(event, secondGroup);
+
+        IdDto eventIdDto = new IdDto(event.getId());
+        String requestBody = new ObjectMapper().writeValueAsString(eventIdDto);
+        String path = "/contacts/"+contact.getId()+"/events";
+
+        mockMvc.perform(put(path)
+                .contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isOk());
+
+        event = eventService.findById(event.getId());
+        assertTrue(event.getGroups().contains(group));
+        assertTrue(event.getGroups().contains(secondGroup));
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contact.getAttendedEvents().contains(event));
+
+
     }
 
 
