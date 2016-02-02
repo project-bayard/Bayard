@@ -5,7 +5,7 @@
         >
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.usm</groupId>
-    <artifactId>smwc</artifactId>
+    <artifactId>bayard</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>Spring MVC Application</name>
@@ -176,6 +176,13 @@
 
     </dependencies>
     <build>
+        <resources>
+            <!-- Writes project.version to version.properties file -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
