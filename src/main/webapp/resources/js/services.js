@@ -337,4 +337,12 @@
         });
     }]);
 
+    services.factory('ConfigService',[ '$resource', function ($resource) {
+        return $resource('../config/:option', {categoryName : '@categoryName'}, {
+            getImplementationConfig : {
+                method: 'GET'
+            }
+        });
+    }]);
+
 }());

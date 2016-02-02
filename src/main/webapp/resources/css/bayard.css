@@ -12,21 +12,12 @@
     margin-bottom: 2.5em;
 }
 
-div.smwc-form {
-    margin-top:  1.5em;
-    width: 600px;
-}
-
-span.smwc-addon-span {
-    width: 120px;
-}
-
 .form-group.required .control-label:after {
     content:" *";
     color:red;
 }
 
-.smwc-margined {
+.bayard-margined {
     margin-top:2px;
     margin-bottom:2px;
 }

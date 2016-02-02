@@ -46,17 +46,17 @@
             </div>
             <div class="row" ng-show="viewingUser">
                 <div class="col-md-12">
-                    <button class="btn btn-primary btn-block smwc-margined" ng-click="showUpdateForm()">Update</button>
+                    <button class="btn btn-primary btn-block bayard-margined" ng-click="showUpdateForm()">Update</button>
                 </div>
             </div>
             <div class="row" ng-show="viewingUser">
                 <div class="col-md-12">
-                    <button class="btn btn-primary btn-block smwc-margined" ng-click="showPasswordChangeForm()">Change Password</button>
+                    <button class="btn btn-primary btn-block bayard-margined" ng-click="showPasswordChangeForm()">Change Password</button>
                 </div>
             </div>
             <div class="row" ng-show="userPermissionLevel.isSuperUser() && viewingUser && userInDetail.id !== userPermissionLevel.getId()">
                 <div class="col-md-12">
-                    <button class="btn btn-danger btn-block smwc-margined" ng-click="deleteUser(userInDetail.id)">Delete</button>
+                    <button class="btn btn-danger btn-block bayard-margined" ng-click="deleteUser(userInDetail.id)">Delete</button>
                 </div>
             </div>
 
@@ -84,12 +84,12 @@
                 </form>
                 <div class="row">
                     <div class="col-md-12">
-                        <button class="btn btn-success btn-block smwc-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid">Ok</button>
+                        <button class="btn btn-success btn-block bayard-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid">Ok</button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelPasswordChange()">Cancel</button>
+                        <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelPasswordChange()">Cancel</button>
                     </div>
                 </div>
                 
@@ -131,12 +131,12 @@
                     </form>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-success btn-block smwc-margined" ng-click="submitUpdate()" ng-disabled="updateUserForm.$invalid">Ok</button>
+                            <button class="btn btn-success btn-block bayard-margined" ng-click="submitUpdate()" ng-disabled="updateUserForm.$invalid">Ok</button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelUpdate()">Cancel</button>
+                            <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelUpdate()">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
             <div class="row" ng-show="userPermissionLevel.isElevatedUser()">
                 <div class="row" ng-show="!creatingUser">
                     <div class="col-md-12">
-                        <button class="btn btn-primary btn-block smwc-margined" ng-click="showNewUserForm()">Create a User</button>
+                        <button class="btn btn-primary btn-block bayard-margined" ng-click="showNewUserForm()">Create a User</button>
                     </div>
                 </div>
                 <div ng-if="creatingUser">
@@ -218,12 +218,12 @@
                         </form>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-success btn-block smwc-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid && newUser.password !== newUser.repeatPassword">Create</button>
+                                <button class="btn btn-success btn-block bayard-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid && newUser.password !== newUser.repeatPassword">Create</button>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-danger btn-block smwc-margined" ng-click="cancelNewUserForm()">Cancel</button>
+                                <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelNewUserForm()">Cancel</button>
                             </div>
                         </div>
                     </div>

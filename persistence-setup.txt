@@ -11,7 +11,7 @@ To set up a development or production environment that relies on a Postgres data
     create database bayard;
 3. Grant privileges to the application user on the application database
     grant all privileges on database bayard to bayard_postgres;
-4. Configure the data source defined in persistence.properties
+4. Configure the data source defined in application.properties
     dataSource.url=jdbc:postgresql://localhost/bayard
     dataSource.username=bayard_postgres
     dataSource.password=secretpassword

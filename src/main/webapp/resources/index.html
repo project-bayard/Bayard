@@ -2,7 +2,7 @@
 <html ng-app="app">
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Southern Maine Workers' Center</title>
+    <title>{{config.implementationName}}</title>
 
     <!--Angular Libs -->
     <script src="resources/js/libs/angular/angular.js"></script>
@@ -29,11 +29,11 @@
     <!--CSS -->
     <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="resources/bootstrap/css/bootstrap-table.min.css">
-    <link rel="stylesheet" href="resources/css/smwc.css">
+    <link rel="stylesheet" href="resources/css/bayard.css">
 
 
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" ng-href="{{config.faviconFilePath}}" type="image/x-icon">
+    <link rel="shortcut icon" ng-href="{{config.faviconFilePath}}" type="image/x-icon">
 </head>
 <body>
 
@@ -43,7 +43,7 @@
     <nav class="navbar navbar-inverse">
         <div>
             <div class="navbar-header">
-                <a class="navbar-brand" href="#/">Southern Maine Workers' Center</a>
+                <a class="navbar-brand" href="#/">{{config.implementationName}}</a>
             </div>
 
 

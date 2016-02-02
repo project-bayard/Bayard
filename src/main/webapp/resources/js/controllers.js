@@ -69,7 +69,14 @@
 
     }]);
 
-    controllers.controller('MainCtrl', ['$scope', '$location', function($scope, $location) {
+    controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', function($scope, $location, ConfigService) {
+
+        ConfigService.getImplementationConfig({}, function(config) {
+            $scope.config = config;
+            console.log("Config: "+config.implementationName+", "+config.largeLogoFilePath+", "+config.faviconFilePath);
+        }, function(err) {
+           console.log(err);
+        });
 
     }]);
 
@@ -1210,7 +1217,13 @@
     }]);
 
 
-    controllers.controller ('LoginCtrl',['$scope','$rootScope', '$location', 'UserService','$http', function($scope,$rootScope, $location, UserService, $http){
+    controllers.controller ('LoginCtrl',['$scope','$rootScope', '$location', 'UserService','$http', 'ConfigService', function($scope,$rootScope, $location, UserService, $http, ConfigService) {
+
+        //Placeholder title before login is successful and implementation name is fetched from the server
+        if ($rootScope.config == null) {
+            $rootScope.config = {implementationName: "Login"}
+        }
+
         $scope.error = false;
 
         var authenticate = function(credentials, callback) {
@@ -1227,6 +1240,13 @@
 
                     $rootScope.authenticated = true;
                     $rootScope.user = data;
+
+                    ConfigService.getImplementationConfig({}, function(config) {
+                        $rootScope.config = config;
+                    }, function(err) {
+                        console.log(err);
+                    });
+
                 } else {
                     sessionStorage.setItem('bayard-user-authenticated', 'false');
                     $rootScope.authenticated = false;
