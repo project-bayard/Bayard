@@ -25,7 +25,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = Application.class)
-@Profile("test")
+@Profile(BayardSpringProfiles.TEST_PROFILE)
 public class TestJpaConfig implements TransactionManagementConfigurer{
 
 

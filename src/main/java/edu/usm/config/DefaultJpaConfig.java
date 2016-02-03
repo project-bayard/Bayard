@@ -22,8 +22,8 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = Application.class)
-@Profile({"production", "default"})
-class ProductionJpaConfig implements TransactionManagementConfigurer {
+@Profile({BayardSpringProfiles.PRODUCTION_PROFILE, BayardSpringProfiles.DEV_PROFILE, BayardSpringProfiles.DEFAULT_PROFILE})
+class DefaultJpaConfig implements TransactionManagementConfigurer {
 
     @Value("${spring.dataSource.driverClassName}")
     private String driver;

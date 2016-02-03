@@ -14,7 +14,7 @@ To configure the application to work with a heroku account of your own from a lo
 
 5.) Make a commit to your local branch
 
-6.) Set up the dev profile environment variable: `heroku config:set spring.profiles.active=dev`
+6.) Set up the heroku spring profile environment variable: `heroku config:set spring.profiles.active=heroku`
 
 7.) Push your branch to the heroku remote: `git push heroku {your-branch-name}:master`
 
