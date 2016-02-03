@@ -60,7 +60,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     private void createUsers() throws ConstraintViolation{
         createSuperuser();
         for (String profile: env.getActiveProfiles()) {
-            if (profile.equals("dev")) {
+            if (profile.equals(BayardSpringProfiles.DEV_PROFILE)) {
                 User user = userService.findByEmail(devEmail);
                 if (user == null) {
                     user = new User();

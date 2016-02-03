@@ -12,7 +12,7 @@ import javax.sql.DataSource;
  * The data source config that can be used in integration tests.
  */
 @Configuration
-@Profile("test")
+@Profile(BayardSpringProfiles.TEST_PROFILE)
 public class EmbeddedDataSourceConfig {
 
     @Bean

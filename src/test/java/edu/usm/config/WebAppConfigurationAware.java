@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("test")
+@ActiveProfiles(BayardSpringProfiles.TEST_PROFILE)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
         ApplicationConfig.class,

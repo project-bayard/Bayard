@@ -13,7 +13,7 @@ import javax.inject.Inject;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("test")
+@ActiveProfiles(BayardSpringProfiles.TEST_PROFILE)
 @ContextConfiguration(classes = {
         ApplicationConfig.class,
         TestJpaConfig.class,

@@ -27,7 +27,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = Application.class)
-@Profile("heroku")
+@Profile(BayardSpringProfiles.HEROKU_PROFILE)
 class HerokuDevelopmentJpaConfig implements TransactionManagementConfigurer{
 
     @Value("${spring.dataSource.driverClassName}")
