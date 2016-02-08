@@ -2,41 +2,37 @@ package edu.usm.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity(name = "donation")
-public class Donation extends BasicEntity implements Serializable {
+public class Donation extends BasicEntity implements MonetaryContribution, Serializable {
 
     @Column
     private int amount;
+
     @Column
     private String type;
+
     @Column
-    private LocalDate date;
+    private LocalDate dateOfReceipt;
+
     @Column
-    private String comment;
+    private LocalDate dateOfDeposit;
 
-    public Donation(String id) {
-        setId(id);
-    }
+    @Column
+    private String restrictedToCategory;
 
-    public Donation() {
-        super();
-    }
+    @Column
+    private String budgetItem;
 
-    @ManyToOne
-    private DonorInfo donor;
+    @Column
+    private boolean anonymous;
 
-    public DonorInfo getDonorInfo() {
-        return donor;
-    }
+    @Column
+    private boolean standalone;
 
-    public void setDonorInfo(DonorInfo donorInfo) {
-        this.donor = donorInfo;
-    }
-
+    @Override
     public int getAmount() {
         return amount;
     }
@@ -53,23 +49,60 @@ public class Donation extends BasicEntity implements Serializable {
         this.type = type;
     }
 
-    public LocalDate getDate() {
-        return date;
+    @Override
+    public LocalDate getDateOfReceipt() {
+        return dateOfReceipt;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateOfReceipt(LocalDate dateOfReceipt) {
+        this.dateOfReceipt = dateOfReceipt;
     }
 
-    public String getComment() {
-        return comment;
+    public LocalDate getDateOfDeposit() {
+        return dateOfDeposit;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDateOfDeposit(LocalDate dateOfDeposit) {
+        this.dateOfDeposit = dateOfDeposit;
     }
 
+    public String getRestrictedToCategory() {
+        return restrictedToCategory;
+    }
 
+    public void setRestrictedToCategory(String restrictedToCategory) {
+        this.restrictedToCategory = restrictedToCategory;
+    }
 
+    public boolean isRestricted() {
+        return !(this.getRestrictedToCategory() == null) && !(this.getRestrictedToCategory().isEmpty());
+    }
 
+    public String getBudgetItem() {
+        return budgetItem;
+    }
+
+    public void setBudgetItem(String budgetItem) {
+        this.budgetItem = budgetItem;
+    }
+
+    public boolean isForBudgetItem() {
+        return !(this.budgetItem == null) && !(this.budgetItem.isEmpty());
+    }
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
+    }
+
+    public boolean isStandalone() {
+        return standalone;
+    }
+
+    public void setStandalone(boolean standalone) {
+        this.standalone = standalone;
+    }
 }

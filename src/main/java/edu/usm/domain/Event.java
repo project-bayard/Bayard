@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "event")
@@ -48,6 +49,10 @@ public class Event extends Aggregation implements Serializable {
     @JsonView({Views.EventList.class,
             Views.CommitteeDetails.class})
     private String dateHeld;
+
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "event_id")
+    private Set<Donation> donations;
 
     public Event(String id) {
         setId(id);
@@ -125,4 +130,18 @@ public class Event extends Aggregation implements Serializable {
         this.dateHeld = dateHeld;
     }
 
+    public Set<Donation> getDonations() {
+        return donations;
+    }
+
+    public void setDonations(Set<Donation> donations) {
+        this.donations = donations;
+    }
+
+    public void addDonation(Donation donation) {
+        if (null == this.donations) {
+            this.donations = new HashSet<>();
+        }
+        this.donations.add(donation);
+    }
 }
