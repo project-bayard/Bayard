@@ -1,5 +1,6 @@
 package edu.usm.it;
 
+import edu.usm.domain.SustainerPeriod;
 import edu.usm.it.controller.*;
 import edu.usm.it.dao.*;
 import edu.usm.it.service.*;
@@ -35,7 +36,9 @@ import org.springframework.test.context.ActiveProfiles;
         GroupControllerTest.class,
         DemographicCategoryServiceTest.class,
         DemographicCategoryControllerTest.class,
-        UserServiceTest.class
+        UserServiceTest.class,
+        DonationsDaoTest.class,
+        SustainerPeriodPersistenceTest.class
 })
 @ActiveProfiles("test")
 public class TestSuite {

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -55,6 +56,10 @@ public class Organization extends Aggregation implements Serializable {
     @Column
     @JsonView(Views.OrganizationList.class)
     private String description;
+
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
+    private Set<Donation> donations;
 
     public Organization(String id) {
         setId(id);
@@ -164,5 +169,18 @@ public class Organization extends Aggregation implements Serializable {
         this.members = members;
     }
 
+    public Set<Donation> getDonations() {
+        return donations;
+    }
 
+    public void setDonations(Set<Donation> donations) {
+        this.donations = donations;
+    }
+
+    public void addDonation(Donation donation) {
+        if (null == this.donations) {
+            this.donations = new HashSet<>();
+        }
+        this.donations.add(donation);
+    }
 }

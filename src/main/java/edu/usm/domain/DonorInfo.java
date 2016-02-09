@@ -1,28 +1,29 @@
 package edu.usm.domain;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity(name = "donor_info")
 public class DonorInfo extends BasicEntity implements Serializable {
 
-
-
     @Column
-    private boolean sustainer;
+    private boolean currentSustainer;
 
-    @Column
-    private LocalDate date;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name="donor_info_id")
+    private Set<Donation> donations;
 
-    @Column
-    private boolean irsLetterSent;
-    @Column
-    private boolean thankYouLetterSent;
-
-    @OneToMany(mappedBy="donor")
-    private List<Donation> donations;
+    @OneToMany(mappedBy = "donorInfo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @SortNatural
+    private SortedSet<SustainerPeriod> sustainerPeriods;
 
     public DonorInfo (String id) {
         setId(id);
@@ -32,43 +33,41 @@ public class DonorInfo extends BasicEntity implements Serializable {
         super();
     }
 
-    public boolean isSustainer() {
-        return sustainer;
+    public boolean isCurrentSustainer() {
+        return currentSustainer;
     }
 
-    public void setSustainer(boolean isSustainer) {
-        this.sustainer = isSustainer;
+    public void setCurrentSustainer(boolean isSustainer) {
+        this.currentSustainer = isSustainer;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public List<Donation> getDonations() {
+    public Set<Donation> getDonations() {
         return donations;
     }
 
-    public void setDonations(List<Donation> donations) {
+    public void addDonation(Donation donation) {
+        if (null == this.donations) {
+            this.donations = new HashSet<>();
+        }
+        this.donations.add(donation);
+    }
+
+    public void setDonations(Set<Donation> donations) {
         this.donations = donations;
     }
 
-    public boolean isIrsLetterSent() {
-        return irsLetterSent;
+    public Set<SustainerPeriod> getSustainerPeriods() {
+        return sustainerPeriods;
     }
 
-    public void setIrsLetterSent(boolean irsLetterSent) {
-        this.irsLetterSent = irsLetterSent;
+    public void setSustainerPeriods(SortedSet<SustainerPeriod> sustainerPeriods) {
+        this.sustainerPeriods = sustainerPeriods;
     }
 
-    public boolean isThankYouLetterSent() {
-        return thankYouLetterSent;
-    }
-
-    public void setThankYouLetterSent(boolean thankYouLetterSent) {
-        this.thankYouLetterSent = thankYouLetterSent;
+    public void addSustainerPeriod(SustainerPeriod sustainerPeriod) {
+        if (null == this.sustainerPeriods) {
+            this.sustainerPeriods = new TreeSet<>();
+        }
+        this.sustainerPeriods.add(sustainerPeriod);
     }
 }
