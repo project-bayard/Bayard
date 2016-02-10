@@ -3,10 +3,11 @@ package edu.usm.domain;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * Created by scottkimball on 7/17/15.
+ * A user of Bayard.
  */
 @Entity(name = "users")
 public class User implements Serializable {
@@ -18,23 +19,50 @@ public class User implements Serializable {
 
     @Column(nullable = false, unique = true)
     @JsonView(Views.UserDetails.class)
+    @NotNull
     private String email;
 
     @Column(nullable = false)
+    @NotNull
     private String passwordHash;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @JsonView(Views.UserDetails.class)
+    @NotNull
     private Role role;
 
     @Column
     @JsonView(Views.UserDetails.class)
+    @NotNull
     private String firstName;
 
     @Column
     @JsonView(Views.UserDetails.class)
+    @NotNull
     private String lastName;
+
+    public User() {
+        super();
+    }
+
+    /**
+     * @param id the id of th user
+     * @param email the user's email
+     * @param passwordHash the hash of the user's password
+     * @param role the user's Role
+     * @param firstName the user's first name
+     * @param lastName the user's last name
+     */
+    public User(Long id, String email, String passwordHash, Role role, String firstName, String lastName) {
+        super();
+        this.id = id;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Long getId() {
         return id;

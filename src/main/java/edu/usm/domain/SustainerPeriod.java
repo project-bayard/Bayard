@@ -8,7 +8,7 @@ import java.time.Period;
 import java.util.*;
 
 /**
- * Created by andrew on 1/23/16.
+ * A contiguous period of time over which a Contact has made monthly monetary contributions.
  */
 @Entity(name = "sustainer_period")
 public class SustainerPeriod extends BasicEntity implements MonetaryContribution, Comparable<SustainerPeriod>, Serializable {
@@ -30,6 +30,22 @@ public class SustainerPeriod extends BasicEntity implements MonetaryContribution
     @Column
     private boolean sentIRSLetter;
 
+    public SustainerPeriod() {
+        super();
+    }
+
+    /**
+     * @param donorInfo the DonorInfo of the sustaining Contact
+     * @param periodStartDate the start of the sustaining period
+     * @param monthlyAmount the monthly amount given over the sustaining period
+     */
+    public SustainerPeriod(DonorInfo donorInfo, LocalDate periodStartDate, int monthlyAmount) {
+        super();
+        this.donorInfo = donorInfo;
+        this.periodStartDate = periodStartDate;
+        this.monthlyAmount = monthlyAmount;
+    }
+
     @Override
     public int compareTo(SustainerPeriod o) {
         if (o.getPeriodStartDate().isEqual(this.getPeriodStartDate())) {
@@ -39,7 +55,7 @@ public class SustainerPeriod extends BasicEntity implements MonetaryContribution
     }
 
     /*Calculates the total contributions represented by this SustainerPeriod. The difference between periodStartDate
-    * and cancelDate is used to determine the months of active contribution. If the period was not canceled, the
+    * and cancelDate is used to determine the months of active contribution. If the period has not been canceled, the
     * calculation is performed relative to the current month.*/
     public int getTotalYearToDate() {
 
@@ -85,6 +101,9 @@ public class SustainerPeriod extends BasicEntity implements MonetaryContribution
         this.periodStartDate = periodStartDate;
     }
 
+    /**
+     * @return the cancellation date of the sustaining period
+     */
     public LocalDate getCancelDate() {
         return cancelDate;
     }

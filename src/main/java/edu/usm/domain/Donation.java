@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * Represents a monetary contribution given to the organization running Bayard.
+ */
 @Entity(name = "donation")
 public class Donation extends BasicEntity implements MonetaryContribution, Serializable {
 
@@ -12,7 +15,7 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     private int amount;
 
     @Column
-    private String type;
+    private String method;
 
     @Column
     private LocalDate dateOfReceipt;
@@ -32,6 +35,27 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     @Column
     private boolean standalone;
 
+    public Donation() {
+        super();
+    }
+
+    /**
+     * @param amount the amount of money donated
+     * @param method the method by which this donation was made
+     * @param dateOfReceipt the date the donation was received
+     * @param dateOfDeposit the date the donation was deposited
+     */
+    public Donation(int amount, String method, LocalDate dateOfReceipt, LocalDate dateOfDeposit) {
+        super();
+        this.amount = amount;
+        this.method = method;
+        this.dateOfReceipt = dateOfReceipt;
+        this.dateOfDeposit = dateOfDeposit;
+    }
+
+    /**
+     * @return the amount of money donated
+     */
     @Override
     public int getAmount() {
         return amount;
@@ -41,12 +65,15 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
         this.amount = amount;
     }
 
-    public String getType() {
-        return type;
+    /**
+     * @return the method by which this Donation was made
+     */
+    public String getMethod() {
+        return method;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     @Override
@@ -66,6 +93,9 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
         this.dateOfDeposit = dateOfDeposit;
     }
 
+    /**
+     * @return the category to which this Donation is restricted
+     */
     public String getRestrictedToCategory() {
         return restrictedToCategory;
     }
@@ -74,10 +104,16 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
         this.restrictedToCategory = restrictedToCategory;
     }
 
+    /**
+     * @return whether or not this Donation is restricted to a certain category
+     */
     public boolean isRestricted() {
         return !(this.getRestrictedToCategory() == null) && !(this.getRestrictedToCategory().isEmpty());
     }
 
+    /**
+     * @return the budget item this Donation is associated with
+     */
     public String getBudgetItem() {
         return budgetItem;
     }
@@ -86,10 +122,16 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
         this.budgetItem = budgetItem;
     }
 
+    /**
+     * @return whether or not this Donation is associated with a particular budget item
+     */
     public boolean isForBudgetItem() {
         return !(this.budgetItem == null) && !(this.budgetItem.isEmpty());
     }
 
+    /**
+     * @return whether or not the Donation is intended to be from an anonymous source
+     */
     public boolean isAnonymous() {
         return anonymous;
     }
@@ -98,6 +140,9 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
         this.anonymous = anonymous;
     }
 
+    /**
+     * @return true if this Donation is unrelated to a particular BasicEntity
+     */
     public boolean isStandalone() {
         return standalone;
     }

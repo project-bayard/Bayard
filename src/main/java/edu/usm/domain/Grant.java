@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by andrew on 1/24/16.
+ * A Grant provided by a Foundation. Encapsulates logistical information surrounding a grant and any files uploaded
+ * by a user related to the grant and/or its application process.
  */
 @Entity(name = "foundation_grant")
 public class Grant extends BasicEntity implements MonetaryContribution, Serializable {
@@ -52,6 +53,23 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
     @JoinColumn(name = "grant_id")
     private Set<UserFileUpload> fileUploads;
 
+    public Grant() {
+        super();
+    }
+
+    /**
+     * @param grantName the name of the Grant
+     * @param foundation the Foundation the Grant comes from
+     */
+    public Grant(String grantName, Foundation foundation) {
+        super();
+        this.name = grantName;
+        this.foundation = foundation;
+    }
+
+    /**
+     * @return the Foundation the Grant comes from
+     */
     public Foundation getFoundation() {
         return foundation;
     }
@@ -60,6 +78,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.foundation = foundation;
     }
 
+    /**
+     * @return the UserFileUploads related to the Grant
+     */
     public Set<UserFileUpload> getFileUploads() {
         if (null == fileUploads) {
             fileUploads = new HashSet<>();
@@ -75,6 +96,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.getFileUploads().add(fileUpload);
     }
 
+    /**
+     * @return the name of the Grant
+     */
     public String getName() {
         return name;
     }
@@ -83,6 +107,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.name = name;
     }
 
+    /**
+     * @return the start of the period covered by the Grant
+     */
     public LocalDate getStartPeriod() {
         return startPeriod;
     }
@@ -96,6 +123,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         return getStartPeriod();
     }
 
+    /**
+     * @return the end of the period covered by the Grant
+     */
     public LocalDate getEndPeriod() {
         return endPeriod;
     }
@@ -104,6 +134,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.endPeriod = endPeriod;
     }
 
+    /**
+     * @return what, if anything, this grant is restricted to
+     */
     public String getRestriction() {
         return restriction;
     }
@@ -112,6 +145,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.restriction = restriction;
     }
 
+    /**
+     * @return the description of the Grant
+     */
     public String getDescription() {
         return description;
     }
@@ -120,6 +156,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.description = description;
     }
 
+    /**
+     * @return the deadline for the Grant's letter of intent
+     */
     public LocalDate getIntentDeadline() {
         return intentDeadline;
     }
@@ -128,6 +167,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.intentDeadline = intentDeadline;
     }
 
+    /**
+     * @return the deadline for the Grant application
+     */
     public LocalDate getApplicationDeadline() {
         return applicationDeadline;
     }
@@ -136,6 +178,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.applicationDeadline = applicationDeadline;
     }
 
+    /**
+     * @return the report deadline for the Grant
+     */
     public LocalDate getReportDeadline() {
         return reportDeadline;
     }
@@ -144,6 +189,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.reportDeadline = reportDeadline;
     }
 
+    /**
+     * @return the amount of money applied for in the Grant
+     */
     public int getAmountAppliedFor() {
         return amountAppliedFor;
     }
@@ -152,6 +200,9 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
         this.amountAppliedFor = amountAppliedFor;
     }
 
+    /**
+     * @return the amount received by the organization running Bayard under the Grant
+     */
     public int getAmountReceived() {
         return amountReceived;
     }

@@ -13,6 +13,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * A person known to the system. Contacts may be members of the organization running Bayard, members of other
+ * Organizations, or people encountered outside of any larger context.
+ */
 @Entity(name = "contact")
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Contact extends BasicEntity implements Serializable {
@@ -30,6 +34,7 @@ public class Contact extends BasicEntity implements Serializable {
             Views.GroupList.class,
             Views.GroupDetails.class,
             Views.CommitteeDetails.class})
+
     private String firstName;
 
     @Column
@@ -276,6 +281,27 @@ public class Contact extends BasicEntity implements Serializable {
     @SortNatural
     private SortedSet<Encounter> encountersInitiated;
 
+    public Contact() {
+        super();
+    }
+
+    /**
+     * @param firstName The contact's first name
+     * @param lastName The contact's last name
+     * @param email The contact's email
+     * @param phoneNumber1 The contact's primary phone number
+     */
+    public Contact(String firstName, String lastName, String email, String phoneNumber1) {
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber1 = phoneNumber1;
+    }
+
+    /**
+     * @return The Groups this Contact is a member of directly.
+     */
     public Set<Group> getGroups() {
         return groups;
     }
@@ -288,6 +314,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.initiator = initiator;
     }
 
+    /**
+     * @return whether this Contact is allowed to initiate Encounters
+     */
     public boolean isInitiator() {
         return initiator;
     }
@@ -348,6 +377,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.language = language;
     }
 
+    /**
+     * @return the Committees this Contact is a member of
+     */
     public Set<Committee> getCommittees() {
         return committees;
     }
@@ -364,6 +396,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.occupation = occupation;
     }
 
+    /**
+     * @return the Organizations this Contact is a member of
+     */
     public Set<Organization> getOrganizations() {
         return organizations;
     }
@@ -372,6 +407,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.organizations = organizations;
     }
 
+    /**
+     * @return the DonorInfo for this Contact
+     */
     public DonorInfo getDonorInfo() {
         return donorInfo;
     }
@@ -381,6 +419,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.donorInfo = donorInfo;
     }
 
+    /**
+     * @return the MemberInfo for this Contact
+     */
     public MemberInfo getMemberInfo() {
         return memberInfo;
     }
@@ -398,6 +439,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.interests = interests;
     }
 
+    /**
+     * @return the Events this Contact has attended
+     */
     public Set<Event> getAttendedEvents() {
         return attendedEvents;
     }
@@ -406,6 +450,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.attendedEvents = attendedEvents;
     }
 
+    /**
+     * @return the Encounters this Contact has been the subject of
+     */
     public SortedSet<Encounter> getEncounters() {
         return encounters;
     }
@@ -460,12 +507,14 @@ public class Contact extends BasicEntity implements Serializable {
         return donor;
     }
 
-
     public boolean isMember() {
         return member;
     }
 
 
+    /**
+     * @return the current assessment rating of this Contact
+     */
     public int getAssessment() {
         return assessment;
     }
@@ -474,6 +523,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.assessment = assessment;
     }
 
+    /**
+     * @return the Encounters this Contact has initiated
+     */
     public SortedSet<Encounter> getEncountersInitiated() {
         return encountersInitiated;
     }
@@ -514,6 +566,9 @@ public class Contact extends BasicEntity implements Serializable {
         this.gender = gender;
     }
 
+    /**
+     * @return whether or not this Contact identifies as having a disability
+     */
     public boolean isDisabled() {
         return disabled;
     }

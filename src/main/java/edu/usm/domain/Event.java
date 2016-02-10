@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents an event held by the organization running Bayard.
+ */
 @Entity(name = "event")
 public class Event extends Aggregation implements Serializable {
 
@@ -34,11 +37,6 @@ public class Event extends Aggregation implements Serializable {
     @JsonView({Views.EventList.class})
     private Committee committee;
 
-    /*
-    Adding an Event to a Contact's attendedEvents will refresh this set.
-    Adding a Contact to an Event's attendees will NOT refresh the Contact's attendedEvents
-
-     */
     @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JsonView({Views.EventList.class,
             Views.GroupDetails.class})
@@ -54,12 +52,14 @@ public class Event extends Aggregation implements Serializable {
     @JoinColumn(name = "event_id")
     private Set<Donation> donations;
 
-    public Event(String id) {
-        setId(id);
-    }
-
     public Event() {
         super();
+    }
+
+    public Event(String eventName, String dateHeld) {
+        super();
+        this.name = eventName;
+        this.dateHeld = dateHeld;
     }
 
     @Override
@@ -67,6 +67,9 @@ public class Event extends Aggregation implements Serializable {
         return Aggregation.TYPE_EVENT;
     }
 
+    /**
+     * @return the attendees of the Event
+     */
     @Override
     public Set<Contact> getAggregationMembers() {
         return attendees;
@@ -82,6 +85,9 @@ public class Event extends Aggregation implements Serializable {
         attendees = aggregationMembers;
     }
 
+    /**
+     * @return the Committee associated with this event, if any
+     */
     public Committee getCommittee() {
         return committee;
     }
@@ -90,6 +96,9 @@ public class Event extends Aggregation implements Serializable {
         this.committee = committee;
     }
 
+    /**
+     * @return the notes pertaining to this Event
+     */
     public String getNotes() {
         return notes;
     }
@@ -98,6 +107,9 @@ public class Event extends Aggregation implements Serializable {
         this.notes = notes;
     }
 
+    /**
+     * @return the location where this Event took place
+     */
     public String getLocation() {
         return location;
     }
@@ -106,6 +118,9 @@ public class Event extends Aggregation implements Serializable {
         this.location = location;
     }
 
+    /**
+     * @return the Contacts who attended this Event
+     */
     public Set<Contact> getAttendees() {
         return attendees;
     }
@@ -114,6 +129,9 @@ public class Event extends Aggregation implements Serializable {
         this.attendees = attendees;
     }
 
+    /**
+     * @return the Event's name
+     */
     public String getName() {
         return name;
     }
@@ -122,6 +140,9 @@ public class Event extends Aggregation implements Serializable {
         this.name = name;
     }
 
+    /**
+     * @return the date this Event was held
+     */
     public String getDateHeld() {
         return dateHeld;
     }
@@ -130,6 +151,9 @@ public class Event extends Aggregation implements Serializable {
         this.dateHeld = dateHeld;
     }
 
+    /**
+     * @return the set of Donations, if any, associated with this Event
+     */
     public Set<Donation> getDonations() {
         return donations;
     }

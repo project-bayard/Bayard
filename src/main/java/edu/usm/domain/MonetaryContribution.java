@@ -7,7 +7,14 @@ import java.time.LocalDate;
  */
 public interface MonetaryContribution {
 
+    /**
+     * @return the amount of the contribution
+     */
     int getAmount();
+
+    /**
+     * @return the date the contribution was received
+     */
     LocalDate getDateOfReceipt();
 
 }

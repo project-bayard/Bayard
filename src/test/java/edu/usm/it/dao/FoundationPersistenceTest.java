@@ -71,6 +71,8 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
         interactionRecord = new InteractionRecord();
         interactionRecord.setDateOfInteraction(LocalDate.now());
         interactionRecord.setFoundation(foundation);
+        interactionRecord.setPersonContacted("John Smith");
+        interactionRecord.setInteractionType("Interaction Type");
         foundation.addInteractionRecord(interactionRecord);
 
     }

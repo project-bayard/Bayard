@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by andrew on 10/7/15.
+ * Represents a collection of distinct Aggregations and additional, top-level Contacts that form a meaningful
+ * unit to the organization running Bayard.
  */
-
 @Entity
 @Table(name="alinskygroup")
 public class Group extends BasicEntity implements Serializable {
@@ -40,6 +40,17 @@ public class Group extends BasicEntity implements Serializable {
         super();
     }
 
+    /**
+     * @param groupName the name of the Group
+     */
+    public Group(String groupName) {
+        super();
+        this.groupName = groupName;
+    }
+
+    /**
+     * @return the name of the group
+     */
     public String getGroupName() {
         return groupName;
     }
@@ -48,6 +59,9 @@ public class Group extends BasicEntity implements Serializable {
         this.groupName = groupName;
     }
 
+    /**
+     * @return the set of Aggregations that comprise the Group
+     */
     public Set<Aggregation> getAggregations() {
         return aggregations;
     }
