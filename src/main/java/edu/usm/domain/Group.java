@@ -49,7 +49,7 @@ public class Group extends BasicEntity implements Serializable {
     }
 
     /**
-     * @return the name of the group
+     * @return the name of the Group
      */
     public String getGroupName() {
         return groupName;

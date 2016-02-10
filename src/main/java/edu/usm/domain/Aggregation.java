@@ -40,7 +40,7 @@ public abstract class Aggregation extends BasicEntity{
     public abstract String getAggregationType();
 
     /**
-     * @return the Contacts the comprise this Aggregation
+     * @return the Contacts that comprise this Aggregation
      */
     public abstract Set<Contact> getAggregationMembers();
 

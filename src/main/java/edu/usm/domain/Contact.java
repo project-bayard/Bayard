@@ -14,8 +14,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * A person known to the system. Contacts may be members of the organization running Bayard, members of other
- * Organizations, or people encountered outside of any larger context.
+ * A person known to the organization running Bayard. Includes members of this organization, members of other
+ * known Organizations, or people encountered outside of any larger context.
  */
 @Entity(name = "contact")
 @JsonInclude(value = JsonInclude.Include.NON_NULL)

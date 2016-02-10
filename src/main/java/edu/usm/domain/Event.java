@@ -56,6 +56,10 @@ public class Event extends Aggregation implements Serializable {
         super();
     }
 
+    /**
+     * @param eventName the name of the Event
+     * @param dateHeld the date the Event was held
+     */
     public Event(String eventName, String dateHeld) {
         super();
         this.name = eventName;

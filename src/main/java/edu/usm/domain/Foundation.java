@@ -199,7 +199,7 @@ public class Foundation extends BasicEntity implements Serializable{
     }
 
     /**
-     * @return the set of Grants associated with this Foundation
+     * @return the Grants associated with this Foundation
      */
     public Set<Grant> getGrants() {
         if (null == grants) {

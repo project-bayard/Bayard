@@ -12,7 +12,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Encapsulates information about donations and sustainerships for a particular Contact.
+ * Encapsulates information about donations and sustainer periods for a particular Contact.
  */
 @Entity(name = "donor_info")
 public class DonorInfo extends BasicEntity implements Serializable {

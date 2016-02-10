@@ -63,7 +63,7 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     }
 
     /**
-     * @return true if this interaction requires a follow up by the organization running Bayard
+     * @return true if this interaction requires a follow-up by the organization running Bayard
      */
     public boolean isRequiresFollowUp() {
         return requiresFollowUp;
@@ -109,7 +109,7 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     }
 
     /**
-     * @return UserFileUploads pertaining to this interaction
+     * @return UserFileUploads pertaining to the interaction
      */
     public Set<UserFileUpload> getFileUploads() {
         return fileUploads;

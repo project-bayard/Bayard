@@ -47,18 +47,15 @@ public class User implements Serializable {
     }
 
     /**
-     * @param id the id of th user
      * @param email the user's email
-     * @param passwordHash the hash of the user's password
      * @param role the user's Role
      * @param firstName the user's first name
      * @param lastName the user's last name
-     */
-    public User(Long id, String email, String passwordHash, Role role, String firstName, String lastName) {
+     **/
+
+    public User(String email, Role role, String firstName, String lastName) {
         super();
-        this.id = id;
         this.email = email;
-        this.passwordHash = passwordHash;
         this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;

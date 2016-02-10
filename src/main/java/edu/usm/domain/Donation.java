@@ -53,9 +53,6 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
         this.dateOfDeposit = dateOfDeposit;
     }
 
-    /**
-     * @return the amount of money donated
-     */
     @Override
     public int getAmount() {
         return amount;

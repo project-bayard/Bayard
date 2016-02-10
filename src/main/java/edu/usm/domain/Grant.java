@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A Grant provided by a Foundation. Encapsulates logistical information surrounding a grant and any files uploaded
- * by a user related to the grant and/or its application process.
+ * A Grant provided by a Foundation. Encapsulates logistical information about a grant and any UserFileUploads
+ * related to the grant and/or its application process.
  */
 @Entity(name = "foundation_grant")
 public class Grant extends BasicEntity implements MonetaryContribution, Serializable {
@@ -201,7 +201,7 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
     }
 
     /**
-     * @return the amount received by the organization running Bayard under the Grant
+     * @return the amount of money received by the organization running Bayard under the Grant
      */
     public int getAmountReceived() {
         return amountReceived;
