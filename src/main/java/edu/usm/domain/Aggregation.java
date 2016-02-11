@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by andrew on 10/6/15.
+ * A collection of Contacts known to the organization running Bayard. The fundamental Aggregations are Committees,
+ * Organizations and Events.
+ *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -32,13 +34,17 @@ public abstract class Aggregation extends BasicEntity{
         this.groups = groups;
     }
 
+    /**
+     * @return the type of this Aggregation
+     */
     public abstract String getAggregationType();
+
+    /**
+     * @return the Contacts that comprise this Aggregation
+     */
     public abstract Set<Contact> getAggregationMembers();
+
     public abstract void setAggregationType(String aggregationType);
     public abstract void setAggregationMembers(Set<Contact> aggregationMembers);
-
-    Aggregation() {
-        super();
-    }
 
 }

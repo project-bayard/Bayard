@@ -1,7 +1,7 @@
 package edu.usm.domain;
 
 /**
- * Created by scottkimball on 3/23/15.
+ * Defines the interfaces used with JSONView
  */
 public class Views {
     public interface ContactList {}
@@ -23,6 +23,5 @@ public class Views {
     public interface GroupList {}
     public interface GroupDetails {}
     public interface GroupPanel {}
-
 
 }

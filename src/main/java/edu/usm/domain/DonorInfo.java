@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * Encapsulates information about donations and sustainer periods for a particular Contact.
+ */
 @Entity(name = "donor_info")
 public class DonorInfo extends BasicEntity implements Serializable {
 
@@ -25,14 +28,13 @@ public class DonorInfo extends BasicEntity implements Serializable {
     @SortNatural
     private SortedSet<SustainerPeriod> sustainerPeriods;
 
-    public DonorInfo (String id) {
-        setId(id);
-    }
-
     public DonorInfo() {
         super();
     }
 
+    /**
+     * @return true if the contact is currently participating in a monthly/yearly contribution schedule
+     */
     public boolean isCurrentSustainer() {
         return currentSustainer;
     }
@@ -41,6 +43,9 @@ public class DonorInfo extends BasicEntity implements Serializable {
         this.currentSustainer = isSustainer;
     }
 
+    /**
+     * @return the set of Donations for this particular Contact
+     */
     public Set<Donation> getDonations() {
         return donations;
     }
@@ -56,6 +61,9 @@ public class DonorInfo extends BasicEntity implements Serializable {
         this.donations = donations;
     }
 
+    /**
+     * @return the set of SustainerPeriods this Contact has committed to
+     */
     public Set<SustainerPeriod> getSustainerPeriods() {
         return sustainerPeriods;
     }

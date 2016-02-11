@@ -1,23 +1,27 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
 /**
- * Created by andrew on 1/24/16.
+ * A record of an interaction between the organization running Bayard and a particular Foundation.
  */
 @Entity(name="interaction_record")
 public class InteractionRecord extends BasicEntity implements Serializable {
 
     @Column
+    @NotNull
     private String personContacted;
 
     @Column
+    @NotNull
     private LocalDate dateOfInteraction;
 
     @Column
+    @NotNull
     private String interactionType;
 
     @Lob
@@ -34,6 +38,22 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     @JoinColumn(name = "interaction_record_id")
     private Set<UserFileUpload> fileUploads;
 
+    public InteractionRecord() {
+        super();
+    }
+
+    /**
+     * @param personContacted the person contacted at the Foundation
+     * @param dateOfInteraction when the interaction took place
+     * @param interactionType the type of the interaction
+     */
+    public InteractionRecord(String personContacted, LocalDate dateOfInteraction, String interactionType) {
+        super();
+        this.personContacted = personContacted;
+        this.dateOfInteraction = dateOfInteraction;
+        this.interactionType = interactionType;
+    }
+
     public Foundation getFoundation() {
         return foundation;
     }
@@ -42,6 +62,9 @@ public class InteractionRecord extends BasicEntity implements Serializable {
         this.foundation = foundation;
     }
 
+    /**
+     * @return true if this interaction requires a follow-up by the organization running Bayard
+     */
     public boolean isRequiresFollowUp() {
         return requiresFollowUp;
     }
@@ -74,6 +97,9 @@ public class InteractionRecord extends BasicEntity implements Serializable {
         this.interactionType = interactionType;
     }
 
+    /**
+     * @return notes pertaining to the interaction
+     */
     public String getNotes() {
         return notes;
     }
@@ -82,6 +108,9 @@ public class InteractionRecord extends BasicEntity implements Serializable {
         this.notes = notes;
     }
 
+    /**
+     * @return UserFileUploads pertaining to the interaction
+     */
     public Set<UserFileUpload> getFileUploads() {
         return fileUploads;
     }

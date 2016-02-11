@@ -1,4 +1,4 @@
-package edu.usm.domain;
+ package edu.usm.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by andrew on 1/24/16.
+ * Represents any provider of Grants known to the organization running Bayard.
  */
 @Entity(name = "foundation")
 public class Foundation extends BasicEntity implements Serializable{
@@ -58,6 +58,21 @@ public class Foundation extends BasicEntity implements Serializable{
     @OneToMany(mappedBy = "foundation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Grant> grants;
 
+    public Foundation() {
+        super();
+    }
+
+    /**
+     * @param foundationName the name of the Foundation
+     */
+    public Foundation(String foundationName) {
+        super();
+        this.name = foundationName;
+    }
+
+    /**
+     * @return the name of the Foundation
+     */
     public String getName() {
         return name;
     }
@@ -154,6 +169,9 @@ public class Foundation extends BasicEntity implements Serializable{
         this.secondaryContactEmail = secondaryContactEmail;
     }
 
+    /**
+     * @return true if this Foundation is currently providing a Grant
+     */
     public boolean isCurrentGrantor() {
         return currentGrantor;
     }
@@ -162,6 +180,9 @@ public class Foundation extends BasicEntity implements Serializable{
         this.currentGrantor = currentGrantor;
     }
 
+    /**
+     * @return the InteractionRecords associated with this Foundation
+     */
     public Set<InteractionRecord> getInteractionRecords() {
         if (null == interactionRecords) {
             interactionRecords = new HashSet<>();
@@ -177,6 +198,9 @@ public class Foundation extends BasicEntity implements Serializable{
         this.getInteractionRecords().add(record);
     }
 
+    /**
+     * @return the Grants associated with this Foundation
+     */
     public Set<Grant> getGrants() {
         if (null == grants) {
             grants = new HashSet<>();

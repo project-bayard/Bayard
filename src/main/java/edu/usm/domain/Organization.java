@@ -9,7 +9,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * An external entity known to the organization running Bayard.
+ */
 @Entity(name = "organization")
 public class Organization extends Aggregation implements Serializable {
 
@@ -61,8 +63,12 @@ public class Organization extends Aggregation implements Serializable {
     @JoinColumn(name = "organization_id")
     private Set<Donation> donations;
 
-    public Organization(String id) {
-        setId(id);
+    /**
+     * @param organizationName The name of the Organization
+     */
+    public Organization(String organizationName) {
+        super();
+        this.name = organizationName;
     }
 
     @Override
@@ -70,6 +76,9 @@ public class Organization extends Aggregation implements Serializable {
         return Aggregation.TYPE_ORGANIZATION;
     }
 
+    /**
+     * @return the members of this Organization
+     */
     @Override
     public Set<Contact> getAggregationMembers() {
         return members;
@@ -161,6 +170,9 @@ public class Organization extends Aggregation implements Serializable {
         this.name = name;
     }
 
+    /**
+     * @return the members of this Organization
+     */
     public Set<Contact> getMembers() {
         return members;
     }
@@ -169,6 +181,9 @@ public class Organization extends Aggregation implements Serializable {
         this.members = members;
     }
 
+    /**
+     * @return the Donations associated with this Organization
+     */
     public Set<Donation> getDonations() {
         return donations;
     }

@@ -6,7 +6,7 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by andrew on 1/24/16.
+ * Wrapper for a file uploaded by a Bayard user.
  */
 @Entity(name = "user_file_upload")
 public class UserFileUpload extends BasicEntity {
@@ -25,6 +25,20 @@ public class UserFileUpload extends BasicEntity {
     @Column
     private byte[] fileContent;
 
+    public UserFileUpload() {
+        super();
+    }
+
+    /**
+     * @param fileName the name of the file
+     * @param fileContent the file
+     */
+    public UserFileUpload(String fileName, byte[] fileContent) {
+        super();
+        this.fileName = fileName;
+        this.fileContent = fileContent;
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -33,6 +47,9 @@ public class UserFileUpload extends BasicEntity {
         this.fileName = fileName;
     }
 
+    /**
+     * @return the file type
+     */
     public String getFileType() {
         return fileType;
     }
@@ -41,6 +58,9 @@ public class UserFileUpload extends BasicEntity {
         this.fileType = fileType;
     }
 
+    /**
+     * @return a description of the file
+     */
     public String getDescription() {
         return description;
     }
@@ -49,6 +69,9 @@ public class UserFileUpload extends BasicEntity {
         this.description = description;
     }
 
+    /**
+     * @return the file
+     */
     public byte[] getFileContent() {
         return fileContent;
     }
