@@ -6,6 +6,9 @@ Check us out on github.io: [project-bayard.github.io/Bayard]
 
 Want to contribute? [Check out our workflow]
 
+Recent pull requests are deployed immediately to our demo, which is hosted here: https://mysterious-everglades-5022.herokuapp.com/#/login .
+Default credentials can be found in [config.properties](https://github.com/project-bayard/Bayard/blob/master/src/main/resources/config.properties). Please use responsibly.
+
 # Change Log
 
 ## [January Milestone] - 2016-01-18
