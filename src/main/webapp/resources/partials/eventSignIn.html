@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <h2>{{event.name}}</h2>
+    <form id="eventSignIn">
+        <div class="row">
+            <div class="form-group col-md-3 required">
+                <label class="control-label">First Name</label>
+                <input ng-change="validate()" name="firstName" type="text" class="form-control" ng-model="contactForm.firstName" ng-required="true">
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="form-group col-md-3 required">
+                <label class="control-label">Last Name</label>
+                <input ng-change="validate()" name="lastName" type="text" class="form-control" ng-model="contactForm.lastName" ng-required="true">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Email</label>
+                <input ng-change="validate()" name="email" type="email" class="form-control" ng-model="contactForm.email"
+                       ng-required="{{contactForm.phoneNumber == null}}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="control-label">Phone Number</label>
+                <input ng-change="validate()" name="phoneNumber" type="text" ui-mask="(999)-999-9999" class="form-control"
+                       ng-model="contactForm.phoneNumber" ng-required="{{contactForm.email == null}}">
+            </div>
+        </div>
+    </form>
+
+    <button ng-disabled="validated == false" ng-click="getMatch()" class="btn btn-primary">Check</button>
+
+
+</div>
