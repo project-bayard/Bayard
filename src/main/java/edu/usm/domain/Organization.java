@@ -6,9 +6,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * An external entity known to the organization running Bayard.
+ */
 @Entity(name = "organization")
 public class Organization extends Aggregation implements Serializable {
 
@@ -56,8 +59,16 @@ public class Organization extends Aggregation implements Serializable {
     @JsonView(Views.OrganizationList.class)
     private String description;
 
-    public Organization(String id) {
-        setId(id);
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
+    private Set<Donation> donations;
+
+    /**
+     * @param organizationName The name of the Organization
+     */
+    public Organization(String organizationName) {
+        super();
+        this.name = organizationName;
     }
 
     @Override
@@ -65,6 +76,9 @@ public class Organization extends Aggregation implements Serializable {
         return Aggregation.TYPE_ORGANIZATION;
     }
 
+    /**
+     * @return the members of this Organization
+     */
     @Override
     public Set<Contact> getAggregationMembers() {
         return members;
@@ -156,6 +170,9 @@ public class Organization extends Aggregation implements Serializable {
         this.name = name;
     }
 
+    /**
+     * @return the members of this Organization
+     */
     public Set<Contact> getMembers() {
         return members;
     }
@@ -164,5 +181,21 @@ public class Organization extends Aggregation implements Serializable {
         this.members = members;
     }
 
+    /**
+     * @return the Donations associated with this Organization
+     */
+    public Set<Donation> getDonations() {
+        return donations;
+    }
 
+    public void setDonations(Set<Donation> donations) {
+        this.donations = donations;
+    }
+
+    public void addDonation(Donation donation) {
+        if (null == this.donations) {
+            this.donations = new HashSet<>();
+        }
+        this.donations.add(donation);
+    }
 }

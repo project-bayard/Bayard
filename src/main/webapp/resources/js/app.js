@@ -1,7 +1,11 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters']);
+    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors']);
+
+    app.config(["$httpProvider", function ($httpProvider) {
+        $httpProvider.interceptors.push("baseInterceptor");
+    }]);
 
     app.config(function ($routeProvider, $httpProvider) {
 

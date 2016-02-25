@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by andrew on 10/16/15.
+ * A demographic qualifier of a Contact for which there may be several valid DemographicOptions
  */
 @Entity
 public class DemographicCategory extends BasicEntity implements Serializable{
@@ -29,6 +29,21 @@ public class DemographicCategory extends BasicEntity implements Serializable{
     @JsonView({Views.DemographicDetails.class})
     private Set<DemographicOption> options = new HashSet<>();
 
+    public DemographicCategory() {
+        super();
+    }
+
+    /**
+     * @param categoryName the name of the category
+     */
+    public DemographicCategory(String categoryName) {
+        super();
+        this.name = categoryName;
+    }
+
+    /**
+     * @return the category's name
+     */
     public String getName() {
         return name;
     }
@@ -37,6 +52,9 @@ public class DemographicCategory extends BasicEntity implements Serializable{
         this.name = name;
     }
 
+    /**
+     * @return the valid options for this category
+     */
     public Set<DemographicOption> getOptions() {
         return options;
     }
