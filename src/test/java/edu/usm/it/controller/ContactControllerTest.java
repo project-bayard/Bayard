@@ -8,6 +8,8 @@ import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.IdDto;
+import edu.usm.dto.Response;
+import edu.usm.dto.SignInDto;
 import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
@@ -83,6 +85,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setEthnicity("White American");
         contact.setRace("Hispanic");
         contact.setSexualOrientation("Heterosexual");
+        contact.setPhoneNumber1("123-456-7890");
+        contact.setPhoneNumber2("234-567-8901");
+
 
         MemberInfo memberInfo = new MemberInfo();
         memberInfo.setPaidDues(true);
@@ -664,9 +669,40 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         contact = contactService.findById(contact.getId());
         assertTrue(contact.getAttendedEvents().contains(event));
-
-
     }
 
+    @Test
+    public void testFindContactBySignInDto() throws Exception {
+        contactService.create(contact);
 
+        SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(),contact.getEmail(),contact.getPhoneNumber1());
+        String json = new ObjectMapper().writeValueAsString(dto);
+        mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(contact.getId())));
+
+        dto = new SignInDto(contact.getFirstName(),contact.getLastName(),contact.getEmail(),null);
+        json = new ObjectMapper().writeValueAsString(dto);
+        mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(contact.getId())));
+
+        dto = new SignInDto(contact.getFirstName(),contact.getLastName(),null, contact.getPhoneNumber1());
+        json = new ObjectMapper().writeValueAsString(dto);
+        mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(contact.getId())));
+
+        dto = new SignInDto(contact.getFirstName(),contact.getLastName(),null,contact.getPhoneNumber2());
+        json = new ObjectMapper().writeValueAsString(dto);
+        mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(contact.getId())));
+
+        dto = new SignInDto(contact.getFirstName(),null, contact.getEmail(),contact.getPhoneNumber2());
+        json = new ObjectMapper().writeValueAsString(dto);
+        mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.type", is(Response.NOT_FOUND)));
+    }
 }

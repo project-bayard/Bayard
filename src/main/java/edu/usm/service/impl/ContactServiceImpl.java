@@ -5,6 +5,7 @@ import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
+import edu.usm.dto.SignInDto;
 import edu.usm.repository.ContactDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
@@ -539,5 +540,28 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.setAssessment(assessment);
 
         update(contact);
+    }
+
+    @Override
+    public Contact findByFirstLastEmailPhone(SignInDto signInDto) {
+
+        if (signInDto.getFirstName() == null || signInDto.getLastName() == null ||
+                (signInDto.getEmail() == null && signInDto.getPhoneNumber() == null)) {
+            return null;
+
+        }else if (signInDto.getEmail() != null) {
+            return contactDao.findOneByFirstNameAndLastNameAndEmail(signInDto.getFirstName(), signInDto.getLastName(),
+                    signInDto.getEmail());
+        }
+
+        Contact contact = contactDao.findOneByFirstNameAndLastNameAndPhoneNumber1(signInDto.getFirstName(),
+                signInDto.getLastName(), signInDto.getPhoneNumber());
+
+        if (contact != null) {
+            return  contact;
+        } else {
+            return contactDao.findOneByFirstNameAndLastNameAndPhoneNumber2(signInDto.getFirstName(),
+                    signInDto.getLastName(), signInDto.getPhoneNumber());
+        }
     }
 }

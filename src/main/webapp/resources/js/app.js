@@ -50,6 +50,10 @@
                 templateUrl: 'resources/partials/eventDetails.html',
                 controller: 'EventDetailsCtrl'
             })
+            .when('/events/event/:id/sign_in', {
+                templateUrl: 'resources/partials/eventSignIn.html',
+                controller: 'EventSignInCtrl'
+            })
             .when('/login', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'

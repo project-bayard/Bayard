@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -206,5 +207,40 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
 
     }
 
+    @Test
+    public void testCustomQueries() throws Exception {
+        Contact contact = new Contact();
+        contact.setFirstName("first");
+        contact.setLastName("last");
+        contact.setEmail("email@email.com");
+        contact.setPhoneNumber1("1234567");
+        contact.setPhoneNumber2("2345678");
+        contactDao.save(contact);
 
+        Contact contact1 = new Contact();
+        contact1.setFirstName(contact.getFirstName());
+        contact1.setLastName(contact.getLastName());
+        contact1.setEmail("blah@email.com");
+        contact1.setPhoneNumber1("55555555");
+        contactDao.save(contact1);
+
+        Contact fromDb = contactDao.findOneByFirstNameAndLastNameAndEmail(contact.getFirstName(),
+                contact.getLastName(), contact.getEmail());
+
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+        fromDb = contactDao.findOneByFirstNameAndLastNameAndPhoneNumber1(contact.getFirstName(),
+                contact.getLastName(),contact.getPhoneNumber1());
+
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+        fromDb = contactDao.findOneByFirstNameAndLastNameAndPhoneNumber2(contact.getFirstName(),
+                contact.getLastName(),contact.getPhoneNumber2());
+
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+    }
 }

@@ -8,6 +8,7 @@ import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
+import edu.usm.dto.SignInDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.OrganizationService;
@@ -57,6 +58,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact.setEmail("email@gmail.com");
         contact.setNeedsFollowUp(false);
         contact.setPhoneNumber1("123-456-7891");
+        contact.setPhoneNumber2("234-567-8901");
 
         contact2 = new Contact();
         contact2.setFirstName("FirstName");
@@ -390,5 +392,44 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         details.setPhoneNumber1(contact.getPhoneNumber1());
 
         contactService.updateBasicDetails(contact2, details);
+    }
+
+    @Test
+    public void testFindByFirstLastEmailPhone() throws ConstraintViolation {
+        contactService.create(contact);
+
+        SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getEmail(),
+                contact.getPhoneNumber1());
+
+        Contact fromDb = contactService.findByFirstLastEmailPhone(dto);
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+        dto.setEmail(null);
+        fromDb = contactService.findByFirstLastEmailPhone(dto);
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+        dto.setEmail(contact.getEmail());
+        dto.setPhoneNumber(null);
+        fromDb = contactService.findByFirstLastEmailPhone(dto);
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+        dto.setEmail(null);
+        dto.setPhoneNumber(contact.getPhoneNumber2());
+        fromDb = contactService.findByFirstLastEmailPhone(dto);
+        assertNotNull(fromDb);
+        assertEquals(fromDb.getId(), contact.getId());
+
+        dto.setPhoneNumber(null);
+        fromDb = contactService.findByFirstLastEmailPhone(dto);
+        assertNull(fromDb);
+
+        dto.setPhoneNumber(contact.getPhoneNumber1());
+        dto.setFirstName(null);
+        fromDb = contactService.findByFirstLastEmailPhone(dto);
+        assertNull(fromDb);
+
     }
 }

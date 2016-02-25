@@ -133,6 +133,10 @@
             removeFromOrganization : {
                 method: "DELETE",
                 url : "/contacts/:id/organizations/:entityId"
+            },
+            findBySignInDetails : {
+                method : "POST",
+                url : "/contacts/find"
             }
         });
     }]);

@@ -996,6 +996,40 @@
 
     }]);
 
+    controllers.controller('EventSignInCtrl', ['$scope', 'EventService', '$routeParams', 'ContactService', function($scope, EventService, $routeParams, ContactService) {
+
+        $scope.validated = false;
+        $scope.contactForm = null;
+        $scope.contact = null;
+        $scope.notFound = false;
+        EventService.find({id : $routeParams.id}, function(data) {
+            $scope.event = data;
+            console.log(data)
+        }, function(err) {
+            console.log(err);
+        });
+
+        $scope.getMatch = function() {
+            ContactService.findBySignInDetails({}, $scope.contactForm, function(data) {
+                $scope.contact = data;
+            }, function(err, status) {
+                if (status == '404') {
+                    $scope.notFound = true;
+                    console.log('not found');
+
+                /*Some other error has occurred*/
+                } else {
+                    console.log(err);
+                }
+            });
+        };
+
+        $scope.validate = function() {
+            $scope.validated = $scope.contactForm.firstName != null && $scope.contactForm.lastName != null &&
+                ($scope.contactForm.email != null || $scope.contactForm.phoneNumber != null);
+        };
+
+    }]);
 
     controllers.controller('OrganizationFormCtrl', ['$scope', function($scope) {
 
@@ -1269,7 +1303,7 @@
                 callback && callback();
             });
 
-        }
+        };
 
         authenticate();
         $scope.credentials = {};

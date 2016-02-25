@@ -12,6 +12,7 @@ public class Response {
     public static final String INVALID_API_REQUEST = "Invalid Request";
     public static final String SECURITY_CONSTRAINT = "Security Constraint";
     private static final String TYPE_NOT_PROVIDED = "N/A";
+    public static final String NOT_FOUND = "Entity Not Found";
 
     private String id;
     private String message;
