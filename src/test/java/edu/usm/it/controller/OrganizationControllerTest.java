@@ -203,5 +203,21 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         assertFalse(organization.getDonations().isEmpty());
     }
 
+    @Test
+    public void testRemoveDonation() throws Exception {
+        organizationService.create(organization);
+        organizationService.addDonation(organization, donation);
+        organization = organizationService.findById(organization.getId());
+        donation = organization.getDonations().iterator().next();
+
+        String url = ORGANIZATIONS_BASE_URL + organization.getId() + "/donations/"+donation.getId();
+        BayardTestUtilities.performEntityDelete(url, mockMvc);
+        organization = organizationService.findById(organization.getId());
+        assertTrue(organization.getDonations().isEmpty());
+        donation = donationService.findById(donation.getId());
+        assertNotNull(donation);
+
+    }
+
 
 }
