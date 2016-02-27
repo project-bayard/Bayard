@@ -3,8 +3,10 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.service.ContactService;
+import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,9 +35,15 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     @Autowired
     private ContactService contactService;
 
+    @Autowired
+    DonationService donationService;
+
+    final static String ORGANIZATIONS_BASE_URL = "/organizations/";
+
     private Organization organization;
     private Contact contact;
     private Contact initiator;
+    private Donation donation;
 
     @Before
     public void setup() {
@@ -56,13 +65,18 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         organization.setPrimaryContactName("Theo McCeo");
         organization.setDescription("A very good organization");
 
-
+        donation = new Donation();
+        donation.setAmount(300);
+        donation.setDateOfDeposit(LocalDate.now());
+        donation.setDateOfReceipt(LocalDate.of(2015, 1, 1));
+        donation.setMethod("Credit Card");
     }
 
     @After
     public void teardown() {
         contactService.deleteAll();
         organizationService.deleteAll();
+        donationService.deleteAll();
     }
 
 
@@ -177,7 +191,16 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         assertTrue(fromDb.getMembers().contains(contact));
         assertEquals("Updated Name", fromDb.getName());
 
+    }
 
+    @Test
+    public void testAddDonation() throws Exception {
+        organizationService.create(organization);
+        String url = ORGANIZATIONS_BASE_URL + organization.getId() + "/donations";
+        BayardTestUtilities.performEntityPost(url, donation, mockMvc);
+
+        organization = organizationService.findById(organization.getId());
+        assertFalse(organization.getDonations().isEmpty());
     }
 
 

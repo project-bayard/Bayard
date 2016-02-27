@@ -2,6 +2,7 @@ package edu.usm.service;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
@@ -41,4 +42,10 @@ public interface EventService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void addDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void removeDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent;
 }

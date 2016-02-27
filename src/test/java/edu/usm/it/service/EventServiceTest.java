@@ -2,12 +2,15 @@ package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
 import edu.usm.service.CommitteeService;
+import edu.usm.service.DonationService;
 import edu.usm.service.EventService;
+import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +21,7 @@ import java.time.LocalDate;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -32,7 +36,11 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Autowired
     CommitteeService committeeService;
 
+    @Autowired
+    DonationService donationService;
+
     private Event event;
+    private Donation donation;
     private Committee committee;
 
     @Before
@@ -48,6 +56,11 @@ public class EventServiceTest extends WebAppConfigurationAware {
         event.setNotes("Some notes for the new test event");
         event.setLocation("Test Event Location");
         event.setCommittee(committee);
+
+        donation = new Donation();
+        donation.setAmount(200);
+        donation.setDateOfDeposit(LocalDate.now());
+        donation.setDateOfDeposit(LocalDate.of(2015, 1, 1));
 
     }
 
@@ -148,6 +161,32 @@ public class EventServiceTest extends WebAppConfigurationAware {
         committee = committeeService.findById(committee.getId());
         assertTrue(committee.getEvents().isEmpty());
 
+    }
+
+    @Test
+    public void testAddDonation() throws Exception {
+        eventService.create(event);
+        eventService.addDonation(event, donation);
+
+        event = eventService.findById(event.getId());
+        assertFalse(event.getDonations().isEmpty());
+
+    }
+
+    @Test
+    public void testRemoveDonation() throws Exception {
+        eventService.create(event);
+        eventService.addDonation(event, donation);
+        event = eventService.findById(event.getId());
+        donation = event.getDonations().iterator().next();
+        assertNotNull(donation);
+
+        eventService.removeDonation(event, donation);
+        event = eventService.findById(event.getId());
+        assertTrue(event.getDonations().isEmpty());
+
+        donation = donationService.findById(donation.getId());
+        assertNotNull(donation);
     }
 
     private Event generateDuplicate(Event event) {

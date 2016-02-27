@@ -2,10 +2,12 @@ package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.service.ContactService;
+import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
 import org.junit.After;
 import org.junit.Before;
@@ -13,12 +15,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.Null;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by scottkimball on 4/11/15.
@@ -30,9 +31,13 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     @Autowired
     OrganizationService organizationService;
 
-    private Contact contact;
-    private Contact contact2;
-    private Organization organization;
+    @Autowired
+    DonationService donationService;
+
+    Contact contact;
+    Contact contact2;
+    Organization organization;
+    Donation donation;
 
     @Before
     public void setup() {
@@ -63,6 +68,11 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         contact2.setCity("Lewiston");
         contact2.setZipCode("04108");
         contact2.setEmail("email@gmail.com");
+
+        donation = new Donation();
+        donation.setAmount(200);
+        donation.setDateOfDeposit(LocalDate.now());
+        donation.setDateOfDeposit(LocalDate.of(2015, 1, 1));
     }
 
     @After
@@ -127,5 +137,35 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organizationService.create(organization);
         organization.setName(null);
         organizationService.update(organization);
+    }
+
+    @Test
+    public void testAddDonation() throws Exception{
+        organizationService.create(organization);
+        organizationService.addDonation(organization, donation);
+
+        organization = organizationService.findById(organization.getId());
+        String donationId = organization.getDonations().iterator().next().getId();
+        assertFalse(organization.getDonations().isEmpty());
+
+        donation = donationService.findById(donationId);
+        assertNotNull(donation);
+    }
+
+    @Test
+    public void testRemoveDonation() throws Exception {
+        organization.addDonation(donation);
+        organizationService.create(organization);
+
+        organization = organizationService.findById(organization.getId());
+        donation = organization.getDonations().iterator().next();
+        assertNotNull(donation);
+        organizationService.removeDonation(organization, donation);
+
+        donation = donationService.findById(donation.getId());
+        assertNotNull(donation);
+
+        organization = organizationService.findById(organization.getId());
+        assertTrue(organization.getDonations().isEmpty());
     }
 }
