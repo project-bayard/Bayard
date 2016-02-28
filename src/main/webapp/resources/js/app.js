@@ -54,7 +54,7 @@
                 templateUrl: 'resources/partials/eventDetails.html',
                 controller: 'EventDetailsCtrl'
             })
-            .when('/events/event/:id/sign_in', {
+            .when('/events/event/:id/sign-in', {
                 templateUrl: 'resources/partials/eventSignIn.html',
                 controller: 'EventSignInCtrl'
             })
@@ -90,13 +90,24 @@
 
     app.run(function($rootScope, $location) {
         $rootScope.user = sessionStorage.getItem('bayard-user');
+        $rootScope.eventSignInMode = false;
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $rootScope.authenticated = sessionStorage.getItem('bayard-user-authenticated');
+            var eventSignInMode = sessionStorage.getItem('event-sign-in-mode');
+            $rootScope.eventSignInMode = eventSignInMode == null || eventSignInMode == 'false' ? false : true;
+
             if ($rootScope.authenticated == null || $rootScope.authenticated == 'false') {
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
                     $location.path('/login');
+                });
+            } else if ($rootScope.eventSignInMode) {
+                console.log('Event Sign In id:' + $rootScope.eventSignInId); //TODO remove
+                event.preventDefault();
+                $rootScope.$evalAsync(function() {
+                    var eventId = sessionStorage.getItem('event-sign-in-id');
+                    $location.path('/events/event/' + eventId + '/sign-in');
                 });
             }
         });
