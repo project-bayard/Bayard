@@ -1,0 +1,21 @@
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>Website</th>
+        <th>Primary Contact</th>
+        <th>Primary Contact Email</th>
+        <th>Details</th>
+    </tr>
+    <tr ng-repeat="foundation in foundations">
+        <td>{{foundation.name}}</td>
+        <td>{{foundation.phoneNumber}}</td>
+        <td>{{foundation.website}}</td>
+        <td>{{foundation.primaryContactName}}</td>
+        <td>{{foundation.primaryContactEmail}}</td>
+        <td><a class="btn btn-md btn-info" href="#/foundations/{{foundation.id}}">View Details</a></td>
+    </tr>
+</table>

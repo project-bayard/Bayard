@@ -89,6 +89,7 @@ public class FoundationServiceImpl extends BasicService implements FoundationSer
         foundation.setName(dto.getName());
         foundation.setAddress(dto.getAddress());
         foundation.setWebsite(dto.getWebsite());
+        foundation.setPhoneNumber(dto.getPhoneNumber());
         foundation.setCurrentGrantor(dto.isCurrentGrantor());
         foundation.setPrimaryContactName(dto.getPrimaryContactName());
         foundation.setPrimaryContactTitle(dto.getPrimaryContactTitle());

@@ -32,7 +32,7 @@ public class Foundation extends BasicEntity implements Serializable{
     private String address;
 
     @Column
-    @JsonView({Views.FoundationDetails.class})
+    @JsonView({Views.FoundationDetails.class, Views.FoundationList.class})
     private String website;
 
     @Column
@@ -52,7 +52,7 @@ public class Foundation extends BasicEntity implements Serializable{
     private String primaryContactPhone;
 
     @Column
-    @JsonView({Views.FoundationDetails.class})
+    @JsonView({Views.FoundationDetails.class, Views.FoundationList.class})
     private String primaryContactEmail;
 
     @Column

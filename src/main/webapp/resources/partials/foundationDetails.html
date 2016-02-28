@@ -1,0 +1,52 @@
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>{{foundation.name}}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Foundation Updated</div>
+            <div class="alert alert-dismissable alert-danger" ng-if="foundation.constraintViolation">
+                {{foundation.constraintViolation}}
+            </div>
+            <div ng-include=" 'resources/partials/panels/foundationBasicDetailsPanel.html'"></div>
+            <div ng-include=" 'resources/partials/panels/foundationContactInfoPanel.html'"></div>
+
+            <div name="foundation-interactions-panel" class="panel panel-default">
+                <div class="panel-heading" ng-click="showinginteractions = !showinginteractions">
+                    <h3 class="panel-title">Interactions</h3>
+                </div>
+                <div class="panel-body" ng-show="!hideBasicDetails">
+
+                </div>
+            </div>
+            <div name="foundation-grants-panel" class="panel panel-default">
+                <div class="panel-heading" ng-click="showingGrants = !showingGrants">
+                    <h3 class="panel-title">Grants</h3>
+                </div>
+                <div class="panel-body" ng-show="!hideBasicDetails">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1">
+
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Recent Interactions</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item"
+                            ng-repeat="record in foundation.interactionRecords | orderBy: '-dateOfInteraction' | limitTo: 5"
+                            ng-click="viewInteractionDetails(record.id)">
+                            <a href="">{{record.date |  date: 'MMMM d, y'}} : {{record.interactionType}}</a>
+                        </li>
+                        <li>
+                            <a href="">Dummy Interaction Record</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

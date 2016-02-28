@@ -171,13 +171,13 @@ public final class BayardTestUtilities {
             foundationListFields.add(Foundation.class.getDeclaredField("phoneNumber"));
             foundationListFields.add(Foundation.class.getDeclaredField("primaryContactName"));
             foundationListFields.add(Foundation.class.getDeclaredField("currentGrantor"));
+            foundationListFields.add(Foundation.class.getDeclaredField("website"));
+            foundationListFields.add(Foundation.class.getDeclaredField("primaryContactEmail"));
             jsonViewEntityFields.put(Views.FoundationList.class.getSimpleName(), foundationListFields);
 
             foundationDetailsFields = new ArrayList<>(foundationListFields);
-            foundationDetailsFields.add(Foundation.class.getDeclaredField("website"));
             foundationDetailsFields.add(Foundation.class.getDeclaredField("primaryContactTitle"));
             foundationDetailsFields.add(Foundation.class.getDeclaredField("primaryContactPhone"));
-            foundationDetailsFields.add(Foundation.class.getDeclaredField("primaryContactEmail"));
             foundationDetailsFields.add(Foundation.class.getDeclaredField("secondaryContactName"));
             foundationDetailsFields.add(Foundation.class.getDeclaredField("secondaryContactTitle"));
             foundationDetailsFields.add(Foundation.class.getDeclaredField("secondaryContactPhone"));
