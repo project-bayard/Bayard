@@ -1,5 +1,8 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,41 +19,59 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
 
     @Column
     @NotNull
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
     private String name;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate startPeriod;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate endPeriod;
 
     @Column
+    @JsonView({Views.GrantDetails.class})
     private String restriction;
 
     @Column
+    @JsonView({Views.GrantDetails.class})
     private String description;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate intentDeadline;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate applicationDeadline;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate reportDeadline;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
     private int amountAppliedFor;
 
     @Column
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
     private int amountReceived;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name = "foundation_id")
+    @NotNull
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
     private Foundation foundation;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "grant_id")
+    @JsonView({Views.GrantDetails.class})
     private Set<UserFileUpload> fileUploads;
 
     public Grant() {
@@ -214,5 +235,18 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
 
     public void setAmountReceived(int amountReceived) {
         this.amountReceived = amountReceived;
+    }
+
+    @Override
+    public int hashCode() {
+        if (getId() != null) {
+            return (getId() + getCreated()).hashCode();
+        } else {
+            if (getName() != null) {
+                return (getName() + getCreated()).hashCode();
+            }
+            //TODO: only necessary as a workaround to the problematic hashCode of BasicEntity
+            return getCreated().hashCode();
+        }
     }
 }

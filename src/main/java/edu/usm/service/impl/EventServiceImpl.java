@@ -2,6 +2,7 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
@@ -157,5 +158,21 @@ public class EventServiceImpl extends BasicService implements EventService {
         event.setDateHeld(eventDto.getDateHeld());
         event.setName(eventDto.getName());
         update(event);
+    }
+
+    @Override
+    public void addDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent {
+        event.addDonation(donation);
+        updateLastModified(donation);
+        update(event);
+    }
+
+    @Override
+    public void removeDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent {
+        if (null != event.getDonations()) {
+            event.getDonations().remove(donation);
+            updateLastModified(donation);
+            update(event);
+        }
     }
 }

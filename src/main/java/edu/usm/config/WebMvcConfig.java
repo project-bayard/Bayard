@@ -2,6 +2,8 @@ package edu.usm.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -67,6 +69,8 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
         converter.setObjectMapper(new HibernateAwareObjectMapper());
         converter.getObjectMapper().disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
         converter.getObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        converter.getObjectMapper().registerModule(new JSR310Module());
+        converter.getObjectMapper().disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return converter;
 
     }

@@ -1,5 +1,8 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.io.Serializable;
@@ -12,27 +15,37 @@ import java.time.LocalDate;
 public class Donation extends BasicEntity implements MonetaryContribution, Serializable {
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private int amount;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private String method;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate dateOfReceipt;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate dateOfDeposit;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private String restrictedToCategory;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private String budgetItem;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private boolean anonymous;
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private boolean standalone;
 
     public Donation() {
@@ -42,6 +55,7 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     /**
      * @param amount the amount of money donated
      * @param method the method by which this donation was made
+     *
      * @param dateOfReceipt the date the donation was received
      * @param dateOfDeposit the date the donation was deposited
      */
