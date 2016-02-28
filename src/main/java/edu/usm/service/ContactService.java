@@ -4,6 +4,7 @@ import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
+import edu.usm.dto.SignInDto;
 import edu.usm.dto.SustainerPeriodDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -87,6 +88,9 @@ public interface ContactService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addToGroup(Contact contact, Group group);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Contact findByFirstLastEmailPhone(SignInDto signInDto);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addDonation(Contact contact, Donation donation) throws  NullDomainReference.NullContact;

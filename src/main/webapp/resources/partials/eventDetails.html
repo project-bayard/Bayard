@@ -26,6 +26,7 @@
     <div ng-if="!updatingEventDetails">
         <button class="btn btn-warning" ng-click="showUpdateForm()">Update Event</button>
         <button class="btn btn-danger" ng-click="deleteEvent()">Delete Event</button>
+        <a href="#events/event/{{event.id}}/sign-in" class="btn btn-primary">Sign In</a>
     </div>
 
     <div ng-if="updatingEventDetails">

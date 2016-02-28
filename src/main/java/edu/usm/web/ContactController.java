@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.InvalidApiRequestException;
+import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.EncounterDto;
+import edu.usm.dto.IdDto;
+import edu.usm.dto.Response;
+import edu.usm.dto.SignInDto;
 import edu.usm.dto.*;
 import edu.usm.service.*;
 import org.slf4j.Logger;
@@ -379,6 +384,18 @@ public class ContactController {
         contactService.removeFromGroup(contact, group);
         return Response.successGeneric();
 
+    }
+
+    @RequestMapping(value = "/find", method = RequestMethod.POST, consumes="application/json", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.ContactDetails.class)
+    public Contact findByFirstLastEmailPhone(@RequestBody SignInDto dto) throws NotFoundException {
+        Contact contact = contactService.findByFirstLastEmailPhone(dto);
+        if (contact == null) {
+            throw new NotFoundException("Contact with those attributes does not exist");
+        } else {
+            return contact;
+        }
     }
 
     @ResponseStatus(HttpStatus.CREATED)
