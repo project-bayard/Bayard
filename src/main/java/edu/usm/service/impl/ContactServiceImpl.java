@@ -4,8 +4,11 @@ import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EncounterDto;
+import edu.usm.dto.SustainerPeriodDto;
 import edu.usm.repository.ContactDao;
+import edu.usm.repository.SustainerPeriodDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Autowired
     private ContactDao contactDao;
+    @Autowired
+    private SustainerPeriodDao sustainerPeriodDao;
     @Autowired
     private OrganizationService organizationService;
     @Autowired
@@ -252,6 +257,75 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         }
         contact.getGroups().add(group);
         update(contact);
+    }
+
+    @Override
+    public void addDonation(Contact contact, Donation donation) throws NullDomainReference.NullContact {
+        if (null == contact.getDonorInfo()) {
+            contact.setDonorInfo(new DonorInfo());
+        }
+        contact.getDonorInfo().addDonation(donation);
+        updateLastModified(donation);
+        update(contact);
+    }
+
+    @Override
+    public void removeDonation(Contact contact, Donation donation) throws NullDomainReference.NullContact {
+        if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getDonations()) {
+            contact.getDonorInfo().getDonations().remove(donation);
+            updateLastModified(contact.getDonorInfo());
+            updateLastModified(donation);
+            update(contact);
+        }
+    }
+
+    @Override
+    public SustainerPeriod findSustainerPeriodById(String id) {
+        return sustainerPeriodDao.findOne(id);
+    }
+
+    @Override
+    public void createSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) throws ConstraintViolation {
+        if (null == contact.getDonorInfo()) {
+            contact.setDonorInfo(new DonorInfo());
+        }
+        contact.getDonorInfo().addSustainerPeriod(sustainerPeriod);
+        sustainerPeriod.setDonorInfo(contact.getDonorInfo());
+        updateLastModified(contact.getDonorInfo());
+        updateLastModified(sustainerPeriod);
+        update(contact);
+    }
+
+    @Override
+    public void createSustainerPeriod(Contact contact, SustainerPeriodDto dto) throws ConstraintViolation {
+        SustainerPeriod sustainerPeriod = new SustainerPeriod();
+        sustainerPeriod = DtoTransformer.fromDto(dto, sustainerPeriod);
+        createSustainerPeriod(contact, sustainerPeriod);
+    }
+
+    @Override
+    public void updateSustainerPeriod(Contact contact, SustainerPeriod existing, SustainerPeriodDto newDetails) throws ConstraintViolation {
+        if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getSustainerPeriods()) {
+            contact.getDonorInfo().getSustainerPeriods().remove(existing);
+            existing = DtoTransformer.fromDto(newDetails, existing);
+            if (null == existing.getPeriodStartDate()) {
+                throw new ConstraintViolation(ConstraintMessage.SUSTAINER_PERIOD_NO_START_DATE);
+            }
+            contact.getDonorInfo().addSustainerPeriod(existing);
+            updateLastModified(contact.getDonorInfo());
+            updateLastModified(existing);
+            update(contact);
+        }
+    }
+
+    @Override
+    public void deleteSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) {
+        if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getSustainerPeriods()) {
+            contact.getDonorInfo().getSustainerPeriods().remove(sustainerPeriod);
+            updateLastModified(sustainerPeriod);
+            updateLastModified(contact.getDonorInfo());
+            update(contact);
+        }
     }
 
     @Override

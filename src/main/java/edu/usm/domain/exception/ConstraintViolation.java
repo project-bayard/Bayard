@@ -9,6 +9,11 @@ public class ConstraintViolation extends Exception {
 
     private String clashingDomainId;
 
+    public ConstraintViolation() {
+        super(ConstraintMessage.GENERIC_PERSISTENCE_ERROR.toString());
+
+    }
+
     public ConstraintViolation(String message, String clashingDomainId) {
         super(message);
         this.clashingDomainId = clashingDomainId;

@@ -1,6 +1,7 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
@@ -65,6 +66,22 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             }
         }
         organizationDao.delete(organization);
+    }
+
+    @Override
+    public void addDonation(Organization organization, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        organization.addDonation(donation);
+        updateLastModified(donation);
+        update(organization);
+    }
+
+    @Override
+    public void removeDonation(Organization organization, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        if (null != organization.getDonations()) {
+            organization.getDonations().remove(donation);
+            updateLastModified(donation);
+            update(organization);
+        }
     }
 
     @Override

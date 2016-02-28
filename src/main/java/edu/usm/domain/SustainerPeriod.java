@@ -1,11 +1,12 @@
 package edu.usm.domain;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.Period;
-import java.util.*;
 
 /**
  * A contiguous period of time over which a Contact has made monthly monetary contributions.
@@ -15,19 +16,27 @@ public class SustainerPeriod extends BasicEntity implements MonetaryContribution
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @NotNull
+    @JsonView(Views.SustainerPeriodDetails.class)
     private DonorInfo donorInfo;
 
     @Column
     @NotNull
+    @JsonView(Views.SustainerPeriodDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private LocalDate periodStartDate;
 
     @Column
+    @JsonView(Views.SustainerPeriodDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate cancelDate;
 
     @Column
+    @JsonView(Views.SustainerPeriodDetails.class)
     private int monthlyAmount;
 
     @Column
+    @JsonView(Views.SustainerPeriodDetails.class)
     private boolean sentIRSLetter;
 
     public SustainerPeriod() {

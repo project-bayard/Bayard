@@ -1,11 +1,13 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.Response;
+import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,9 @@ public class OrganizationController {
 
     @Autowired
     OrganizationService organizationService;
+
+    @Autowired
+    DonationService donationService;
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
@@ -80,6 +85,35 @@ public class OrganizationController {
     public Organization getOrganizationById(@PathVariable("id") String id) {
         return organizationService.findById(id);
     }
+
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/donations", produces={"application/json"})
+    public Response addDonation(@PathVariable("id")String id, @RequestBody Donation donation) throws NullDomainReference, ConstraintViolation{
+        Organization organization = organizationService.findById(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        }
+        organizationService.addDonation(organization, donation);
+        return Response.successGeneric();
+    }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/donations/{donationId}", produces={"application/json"})
+    public Response removeDonation(@PathVariable("id")String id, @PathVariable("donationId")String donationId) throws NullDomainReference, ConstraintViolation {
+        Organization organization = organizationService.findById(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        }
+        Donation donation = donationService.findById(donationId);
+        organizationService.removeDonation(organization, donation);
+        return Response.successGeneric();
+    }
+
+
 
 
 }

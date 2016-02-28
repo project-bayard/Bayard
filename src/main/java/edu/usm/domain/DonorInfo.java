@@ -1,5 +1,6 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -24,9 +25,9 @@ public class DonorInfo extends BasicEntity implements Serializable {
     @JoinColumn(name="donor_info_id")
     private Set<Donation> donations;
 
-    @OneToMany(mappedBy = "donorInfo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "donorInfo", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @SortNatural
-    private SortedSet<SustainerPeriod> sustainerPeriods;
+    private SortedSet<SustainerPeriod> sustainerPeriods = new TreeSet<>();
 
     public DonorInfo() {
         super();
@@ -69,13 +70,11 @@ public class DonorInfo extends BasicEntity implements Serializable {
     }
 
     public void setSustainerPeriods(SortedSet<SustainerPeriod> sustainerPeriods) {
-        this.sustainerPeriods = sustainerPeriods;
+        this.sustainerPeriods.clear();
+        this.sustainerPeriods.addAll(sustainerPeriods);
     }
 
     public void addSustainerPeriod(SustainerPeriod sustainerPeriod) {
-        if (null == this.sustainerPeriods) {
-            this.sustainerPeriods = new TreeSet<>();
-        }
         this.sustainerPeriods.add(sustainerPeriod);
     }
 }

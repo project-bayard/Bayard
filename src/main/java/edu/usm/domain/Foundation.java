@@ -1,6 +1,11 @@
  package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -12,50 +17,70 @@ import java.util.Set;
 @Entity(name = "foundation")
 public class Foundation extends BasicEntity implements Serializable{
 
-    @Column
+    @Column(unique = true)
     @NotNull
+    @JsonView({Views.FoundationDetails.class,
+            Views.FoundationList.class,
+            Views.GrantDetails.class,
+            Views.GrantList.class,
+            Views.InteractionRecordList.class,
+            Views.InteractionRecordDetails.class})
     private String name;
 
     @Column
+    @JsonView({Views.FoundationDetails.class, Views.FoundationList.class})
     private String address;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String website;
 
     @Column
+    @JsonView({Views.FoundationDetails.class, Views.FoundationList.class})
     private String phoneNumber;
 
     @Column
+    @JsonView({Views.FoundationDetails.class, Views.FoundationList.class})
     private String primaryContactName;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String primaryContactTitle;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String primaryContactPhone;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String primaryContactEmail;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String secondaryContactName;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String secondaryContactTitle;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String secondaryContactPhone;
 
     @Column
+    @JsonView({Views.FoundationDetails.class})
     private String secondaryContactEmail;
 
     @Column
+    @JsonView({Views.FoundationDetails.class, Views.FoundationList.class})
     private boolean currentGrantor;
 
-    @OneToMany(mappedBy = "foundation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "foundation", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonView({Views.FoundationDetails.class})
     private Set<InteractionRecord> interactionRecords;
 
-    @OneToMany(mappedBy = "foundation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "foundation", cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonView({Views.FoundationDetails.class})
     private Set<Grant> grants;
 
     public Foundation() {

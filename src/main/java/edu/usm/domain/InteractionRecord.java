@@ -1,9 +1,12 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,29 +17,37 @@ public class InteractionRecord extends BasicEntity implements Serializable {
 
     @Column
     @NotNull
+    @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class, Views.FoundationDetails.class})
     private String personContacted;
 
     @Column
     @NotNull
+    @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class, Views.FoundationDetails.class})
     private LocalDate dateOfInteraction;
 
     @Column
     @NotNull
+    @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class})
     private String interactionType;
 
     @Lob
     @Column
+    @JsonView({Views.InteractionRecordDetails.class})
     private String notes;
 
     @Column
+    @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class})
     private boolean requiresFollowUp;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @NotNull
+    @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class})
     private Foundation foundation;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "interaction_record_id")
-    private Set<UserFileUpload> fileUploads;
+    @JsonView({Views.InteractionRecordDetails.class})
+    private Set<UserFileUpload> fileUploads = new HashSet<>();
 
     public InteractionRecord() {
         super();
@@ -46,9 +57,11 @@ public class InteractionRecord extends BasicEntity implements Serializable {
      * @param personContacted the person contacted at the Foundation
      * @param dateOfInteraction when the interaction took place
      * @param interactionType the type of the interaction
+     * @param foundation the Foundation
      */
-    public InteractionRecord(String personContacted, LocalDate dateOfInteraction, String interactionType) {
+    public InteractionRecord(String personContacted, LocalDate dateOfInteraction, String interactionType, Foundation foundation) {
         super();
+        this.foundation = foundation;
         this.personContacted = personContacted;
         this.dateOfInteraction = dateOfInteraction;
         this.interactionType = interactionType;
@@ -118,4 +131,18 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     public void setFileUploads(Set<UserFileUpload> fileUploads) {
         this.fileUploads = fileUploads;
     }
+
+    @Override
+    public int hashCode() {
+        //TODO: only necessary as a workaround to the problematic hashCode of BasicEntity
+        if (getId() != null) {
+            return (getId() + getCreated()).hashCode();
+        } else {
+            if (getPersonContacted() != null && getDateOfInteraction() != null) {
+                return (getPersonContacted() + getDateOfInteraction().toString() + getCreated()).hashCode();
+            }
+            return getCreated().hashCode();
+        }
+    }
+
 }

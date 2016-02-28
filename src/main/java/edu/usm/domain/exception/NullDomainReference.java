@@ -124,6 +124,37 @@ public abstract class NullDomainReference extends Exception {
         }
     }
 
+    public static class NullFoundation extends NullDomainReference {
+
+        public NullFoundation(String id) {
+            super(messageConstructor(Foundation.class.getSimpleName(),id));
+        }
+
+        public NullFoundation() {
+            super(messageConstructor(Foundation.class.getSimpleName()));
+        }
+
+        public NullFoundation(String id, Throwable throwable) {
+            super(messageConstructor(Foundation.class.getSimpleName(),id),throwable);
+        }
+    }
+
+    public static class NullGrant extends NullDomainReference {
+
+        public NullGrant(String id) {
+            super(messageConstructor(Grant.class.getSimpleName(),id));
+        }
+
+    }
+
+    public static class NullInteractionRecord extends NullDomainReference {
+
+        public NullInteractionRecord(String id) {
+            super(messageConstructor(NullInteractionRecord.class.getSimpleName(),id));
+        }
+
+    }
+
     protected static String messageConstructor(String domainClass, String id) {
         return domainClass+" with id : "+id+" does not exist";
     }

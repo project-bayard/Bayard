@@ -1,10 +1,9 @@
 package edu.usm.it;
 
-import edu.usm.domain.SustainerPeriod;
 import edu.usm.it.controller.*;
 import edu.usm.it.dao.*;
 import edu.usm.it.service.*;
-import edu.usm.service.EventService;
+import edu.usm.web.InteractionRecordController;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,7 +37,17 @@ import org.springframework.test.context.ActiveProfiles;
         DemographicCategoryControllerTest.class,
         UserServiceTest.class,
         DonationsDaoTest.class,
-        SustainerPeriodPersistenceTest.class
+        FoundationPersistenceTest.class,
+        SustainerPeriodPersistenceTest.class,
+        SustainerPeriodPersistenceTest.class,
+        GrantServiceTest.class,
+        FoundationServiceTest.class,
+        InteractionRecordServiceTest.class,
+        ConfigControllerTest.class,
+        DonationControllerTest.class,
+        FoundationControllerTest.class,
+        GrantControllerTest.class,
+        InteractionRecordControllerTest.class
 })
 @ActiveProfiles("test")
 public class TestSuite {
