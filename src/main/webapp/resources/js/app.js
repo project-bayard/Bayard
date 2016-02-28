@@ -86,6 +86,18 @@
                 templateUrl: 'resources/partials/foundationDetails.html',
                 controller: 'FoundationDetailsCtrl'
             })
+            .when('/grants', {
+                templateUrl: 'resources/partials/grantList.html',
+                controller: 'GrantListCtrl'
+            })
+            .when('/grants/create/:foundationId', {
+                templateUrl: 'resources/partials/grantList.html',
+                controller: 'GrantListCtrl'
+            })
+            .when('/grants/:id', {
+                templateUrl: 'resources/partials/grantDetails.html',
+                controller: 'GrantDetailsCtrl'
+            })
             .when('/logout', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LogoutCtrl'

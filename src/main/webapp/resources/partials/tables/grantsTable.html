@@ -1,0 +1,24 @@
+<br>
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Grant Name</th>
+        <th>Start Period</th>
+        <th>End Period</th>
+        <th>Applied For</th>
+        <th>Received</th>
+        <th>Application Deadline</th>
+        <th>Details</th>
+    </tr>
+    <tr ng-repeat="grant in grants">
+        <td>{{grant.name}}</td>
+        <td>{{grant.startPeriod | date: 'MMMM d, y'}}</td>
+        <td>{{grant.endPeriod | date: 'MMMM d, y'}}</td>
+        <td>${{grant.amountAppliedFor}}</td>
+        <td>${{grant.amountReceived}}</td>
+        <td>{{grant.applicationDeadline | date: 'MMMM d, y'}}</td>
+        <td><a class="btn btn-md btn-info" href="#/grants/{{grant.id}}">View Details</a></td>
+    </tr>
+</table>
