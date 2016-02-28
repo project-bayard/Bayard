@@ -69,6 +69,14 @@
 
     }]);
 
+    controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', '$rootScope', function($scope, $location, ConfigService, $rootScope) {
+
+        $rootScope.booleanToString = function (value) {
+            if (value) {
+                return "Yes";
+            }
+            return "No";
+        };
 
     controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', '$rootScope', function($scope, $location, ConfigService, $rootScope) {
 
@@ -1633,6 +1641,219 @@
         }]);
 
     controllers.controller('FoundationListCtrl', ['$scope', 'FoundationService', function($scope, FoundationService) {
+        var setup = function () {
+            $scope.creatingFoundation = false;
+            $scope.newFoundation = {};
+
+            FoundationService.findAll({}, function(foundations) {
+                $scope.foundations = foundations;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        setup();
+
+        $scope.createFoundation = function() {
+            FoundationService.create($scope.newFoundation, function(succ) {
+                $scope.newFoundation = {};
+                setup();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelCreateFoundation = function() {
+            $scope.creatingFoundation = false;
+            $scope.newFoudation = {};
+        };
+
+    }]);
+
+
+    controllers.controller('FoundationDetailsCtrl', ['$scope', 'FoundationService', '$routeParams', '$timeout', '$location',
+        function($scope, FoundationService, $routeParams, $timeout, $location) {
+
+        $scope.showingBasicDetails = true;
+        $scope.foundation = {};
+
+        var establishDetails = function(id) {
+            FoundationService.find({id : id}, function(data) {
+                $scope.foundation = data;
+                $scope.grants = $scope.foundation.grants;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.toggleEditingBasicDetails = function() {
+            $scope.editingBasicDetails = !$scope.editingBasicDetails
+        };
+
+        $scope.toggleEditingContactInfo = function() {
+            $scope.editingContactInfo = !$scope.editingContactInfo
+        };
+
+        $scope.updateBasicDetails = function() {
+            FoundationService.update({id: $scope.foundation.id}, $scope.foundation, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                $scope.editingBasicDetails = false;
+                establishDetails($scope.foundation.id);
+            }, function(err) {
+                var error = new ResponseErrorInterpreter(err);
+                if (error.isConstraintViolation()) {
+                    $scope.foundation.constraintViolation = error.message;
+                }
+            });
+        };
+
+        $scope.cancelUpdateBasicDetails = function() {
+            $scope.editingBasicDetails = false;
+            establishDetails($scope.foundation.id);
+        };
+
+        $scope.updateContactInfo = function() {
+            FoundationService.update({id: $scope.foundation.id}, $scope.foundation, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                $scope.editingContactInfo = false;
+                establishDetails($scope.foundation.id);
+            }, function(err) {
+                var error = new ResponseErrorInterpreter(err);
+                if (error.isConstraintViolation()) {
+                    $scope.foundation.constraintViolation = error.message;
+                }
+            });
+        };
+
+            $scope.createNewGrant = function() {
+                $location.path("/grants/create/"+$scope.foundation.id)
+            };
+
+        $scope.cancelUpdateContactInfo = function() {
+            console.log("Canceling editingContactInfo")
+            $scope.editingContactInfo = false;
+            establishDetails($scope.foundation.id);
+        }
+
+
+    }]);
+
+    controllers.controller('GrantListCtrl', ['$scope', '$routeParams', 'GrantService', 'FoundationService', 'DateFormatter',
+        function($scope, $routeParams, GrantService, FoundationService, DateFormatter) {
+
+        $scope.newGrant = {};
+            $scope.unformatted = {};
+
+        if ($routeParams.foundationId != null) {
+            $scope.creatingGrant = true;
+            $scope.preselectedFoundation = true;
+            FoundationService.find({id: $routeParams.foundationId}, function(foundation) {
+                $scope.newGrant.foundationId = foundation.id;
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+        FoundationService.findAll({}, function(foundations) {
+            $scope.foundations = foundations;
+        }, function(err) {
+            console.log(err);
+        });
+
+        var getGrants = function() {
+            GrantService.findAll({}, function(grants) {
+                $scope.grants = grants;
+            }, function(err) {
+              console.log(err);
+            })
+        };
+
+        getGrants();
+
+        $scope.createGrant = function() {
+
+            $scope.newGrant.startPeriod = DateFormatter.formatDate($scope.unformatted.startPeriod);
+            $scope.newGrant.endPeriod = DateFormatter.formatDate($scope.unformatted.endPeriod);
+            $scope.newGrant.intentDeadline = DateFormatter.formatDate($scope.unformatted.intentDeadline);
+            $scope.newGrant.applicationDeadline = DateFormatter.formatDate($scope.unformatted.applicationDeadline);
+            $scope.newGrant.reportDeadline = DateFormatter.formatDate($scope.unformatted.reportDeadline);
+
+            GrantService.create({foundationId: $scope.newGrant.foundationId}, $scope.newGrant, function(succ) {
+                $scope.creatingGrant = false;
+                $scope.newGrant = {};
+                getGrants();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelCreateGrant = function() {
+            $scope.newGrant = {};
+            $scope.creatingGrant = false;
+        };
+
+    }]);
+
+    controllers.controller('GrantDetailsCtrl', ['$scope', 'FoundationService', 'GrantService', '$routeParams', '$timeout', 'DateFormatter', function($scope, FoundationService, GrantService, $routeParams, $timeout, DateFormatter) {
+
+        var createGrantDates = function(grant) {
+            grant.dates = {
+                startPeriod: DateFormatter.asDate(grant.startPeriod),
+                endPeriod: DateFormatter.asDate(grant.endPeriod),
+                applicationDeadline: DateFormatter.asDate(grant.applicationDeadline),
+                intentDeadline: DateFormatter.asDate(grant.intentDeadline),
+                reportDeadline: DateFormatter.asDate(grant.reportDeadline)
+            };
+            return grant;
+        };
+
+        var convertGrantDatesToStrings = function(grant) {
+            grant.startPeriod = DateFormatter.formatDate(grant.dates.startPeriod),
+                grant.endPeriod = DateFormatter.formatDate(grant.dates.endPeriod),
+                grant.applicationDeadline = DateFormatter.formatDate(grant.dates.applicationDeadline),
+                grant.intentDeadline = DateFormatter.formatDate(grant.dates.intentDeadline),
+                grant.reportDeadline = DateFormatter.formatDate(grant.dates.reportDeadline)
+            return grant;
+        };
+
+        var establishDetails = function(id) {
+            GrantService.find({id: id}, function(grant) {
+                $scope.grant = createGrantDates(grant);
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.updateGrantDetails = function() {
+            $scope.grant = convertGrantDatesToStrings($scope.grant);
+            GrantService.update({id: $scope.grant.id}, $scope.grant, function(succ) {
+                $scope.editingGrantDetails = false;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                establishDetails($scope.grant.id);
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelUpdateGrantDetails = function() {
+            $scope.editingGrantDetails = false;
+            establishDetails($scope.grant.id);
+        }
+
+    }]);
 
         var setup = function () {
             $scope.creatingFoundation = false;

@@ -1,0 +1,9 @@
+<div name="foundation-basic-details-panel" class="panel panel-default">
+    <div class="panel-heading" ng-click="showingGrants = !showingGrants">
+        <h3 class="panel-title">Grants</h3>
+    </div>
+    <div class="panel-body" ng-show="showingGrants">
+        <button class="btn btn-success" ng-click="createNewGrant()">Create a New Grant</button>
+        <div ng-include=" 'resources/partials/tables/grantsTable.html'" ng-show="foundation.grants.length > 0"></div>
+    </div>
+</div>

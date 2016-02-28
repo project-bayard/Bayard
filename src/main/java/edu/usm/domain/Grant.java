@@ -19,16 +19,16 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
 
     @Column
     @NotNull
-    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class, Views.FoundationDetails.class})
     private String name;
 
     @Column
-    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class, Views.FoundationDetails.class})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate startPeriod;
 
     @Column
-    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class, Views.FoundationDetails.class})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate endPeriod;
 
@@ -46,7 +46,7 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
     private LocalDate intentDeadline;
 
     @Column
-    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class, Views.FoundationDetails.class})
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate applicationDeadline;
 
@@ -56,11 +56,11 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
     private LocalDate reportDeadline;
 
     @Column
-    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class, Views.FoundationDetails.class})
     private int amountAppliedFor;
 
     @Column
-    @JsonView({Views.GrantDetails.class, Views.GrantList.class})
+    @JsonView({Views.GrantDetails.class, Views.GrantList.class, Views.FoundationDetails.class})
     private int amountReceived;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)

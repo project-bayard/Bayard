@@ -171,6 +171,70 @@
         });
     }]);
 
+    services.factory('FoundationService',[ '$resource', function ($resource) {
+        return $resource('../foundations/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('GrantService',[ '$resource', function ($resource) {
+        return $resource('../grants/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url: "../foundations/:foundationId/grants",
+                params: {
+                    foundationId : "@foundationId"
+                }
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
     services.factory('OrganizationService',[ '$resource', function ($resource) {
         return $resource('../organizations/:id', {id : '@id'}, {
             update : {
