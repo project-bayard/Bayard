@@ -1,0 +1,54 @@
+<div name="foundation-basic-details-panel" class="panel panel-default">
+    <div class="panel-heading" ng-click="showingBasicDetails = !showingBasicDetails">
+        <h3 class="panel-title">Basic Details</h3>
+    </div>
+    <div class="panel-body" ng-show="showingBasicDetails">
+        <form name="foundationBasicDetailsForm" id="foundationBasicDetailsForm" novalidate>
+            <fieldset ng-disabled="!editingBasicDetails">
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Current Grantor</label>
+                        <select class="form-control input-small" name="currentGrantor" ng-model="foundation.currentGrantor" ng-options="booleanToString(value) for value in [true, false]">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 required"  ng-class="{ 'has-error' : foundationBasicDetailsForm.name.$invalid && !foundationBasicDetailsForm.name.$pristine }">
+                        <label class="control-label">Name of Foundation</label>
+                        <input name="name" type="text" class="form-control" ng-model="foundation.name" ng-maxlength="80" ng-minlength="2" required>
+                        <p ng-show="foundationBasicDetailsForm.name.$error.required && !foundationBasicDetailsForm.name.$pristine" class="help-block">The foundation name is required</p>
+                        <p ng-show="foundationBasicDetailsForm.name.$error.maxlength" class="help-block">Foundation name too long</p>
+                        <p ng-show="foundationBasicDetailsForm.name.$error.minlength" class="help-block">Foundation name too short</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="alert alert-dismissable alert-danger" ng-if="foundation.constraintViolation">
+                            {{newFoundation.constraintViolation}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Address</label>
+                        <input name="address" type="text" class="form-control" ng-model="foundation.address">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Website</label>
+                        <input name="city" type="text" class="form-control" ng-model="foundation.website">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Phone Number</label>
+                        <input name="state" type="text" ui-mask="(999)-999-9999" class="form-control" ng-model="foundation.phoneNumber">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <button class="btn btn-primary" ng-click="toggleEditingBasicDetails()" ng-show="!editingBasicDetails">Edit Basic Details</button>
+        <button class="btn btn-success" ng-click="updateBasicDetails()" ng-show="editingBasicDetails" ng-disabled="foundationBasicDetailsForm.form.$invalid">Submit</button>
+        <button class="btn btn-danger" ng-click="cancelUpdateBasicDetails()" ng-show="editingBasicDetails">Cancel</button>
+
+    </div>
+</div>

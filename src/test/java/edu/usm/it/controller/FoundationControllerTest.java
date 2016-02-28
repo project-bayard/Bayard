@@ -38,6 +38,7 @@ public class FoundationControllerTest extends WebAppConfigurationAware {
         foundation.setCurrentGrantor(true);
         foundation.setPhoneNumber("123-123-1233");
         foundation.setAddress("123 Lane Ave");
+        foundation.setWebsite("foundation.com");
         foundation.setPrimaryContactEmail("email@email.com");
         foundation.setPrimaryContactName("Point Person");
         foundation.setPrimaryContactEmail("point@person.com");
@@ -84,6 +85,7 @@ public class FoundationControllerTest extends WebAppConfigurationAware {
         secondFoundation.setAddress("987 Ave Americas");
         secondFoundation.setPrimaryContactName("Another Primary Contact");
         secondFoundation.setPhoneNumber("123-321-2121");
+        secondFoundation.setWebsite("second.com");
         return secondFoundation;
     }
 

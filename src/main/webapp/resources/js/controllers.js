@@ -69,7 +69,15 @@
 
     }]);
 
-    controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', function ($scope, $location, ConfigService) {
+
+    controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', '$rootScope', function($scope, $location, ConfigService, $rootScope) {
+
+        $rootScope.booleanToString = function (value) {
+            if (value) {
+                return "Yes";
+            }
+            return "No";
+        };
 
         ConfigService.getImplementationConfig({}, function (config) {
             $scope.config = config;
@@ -699,13 +707,6 @@
 
             $scope.toggleEditingDemographics = function () {
                 $scope.demographicPanel.editingDemographics = !$scope.demographicPanel.editingDemographics;
-            };
-
-            $scope.booleanToString = function (value) {
-                if (value) {
-                    return "Yes";
-                }
-                return "No";
             };
 
             var retrieveContactDemographics = function () {
@@ -1631,6 +1632,106 @@
 
         }]);
 
+    controllers.controller('FoundationListCtrl', ['$scope', 'FoundationService', function($scope, FoundationService) {
+
+        var setup = function () {
+            $scope.creatingFoundation = false;
+            $scope.newFoundation = {};
+
+            FoundationService.findAll({}, function(foundations) {
+                $scope.foundations = foundations;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        setup();
+
+        $scope.createFoundation = function() {
+            FoundationService.create($scope.newFoundation, function(succ) {
+                $scope.newFoundation = {};
+                setup();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelCreateFoundation = function() {
+            $scope.creatingFoundation = false;
+            $scope.newFoudation = {};
+        };
+
+    }]);
+
+
+    controllers.controller('FoundationDetailsCtrl', ['$scope', 'FoundationService', '$routeParams', '$timeout', function($scope, FoundationService, $routeParams, $timeout) {
+
+        $scope.showingBasicDetails = true;
+        $scope.foundation = {};
+
+        var establishDetails = function(id) {
+            FoundationService.find({id : id}, function(data) {
+                $scope.foundation = data;
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.toggleEditingBasicDetails = function() {
+            $scope.editingBasicDetails = !$scope.editingBasicDetails
+        };
+
+        $scope.toggleEditingContactInfo = function() {
+            $scope.editingContactInfo = !$scope.editingContactInfo
+        };
+
+        $scope.updateBasicDetails = function() {
+            FoundationService.update({id: $scope.foundation.id}, $scope.foundation, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                $scope.editingBasicDetails = false;
+                establishDetails($scope.foundation.id);
+            }, function(err) {
+                var error = new ResponseErrorInterpreter(err);
+                if (error.isConstraintViolation()) {
+                    $scope.foundation.constraintViolation = error.message;
+                }
+            });
+        };
+
+        $scope.cancelUpdateBasicDetails = function() {
+            $scope.editingBasicDetails = false;
+            establishDetails($scope.foundation.id);
+        };
+
+        $scope.updateContactInfo = function() {
+            FoundationService.update({id: $scope.foundation.id}, $scope.foundation, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                $scope.editingContactInfo = false;
+                establishDetails($scope.foundation.id);
+            }, function(err) {
+                var error = new ResponseErrorInterpreter(err);
+                if (error.isConstraintViolation()) {
+                    $scope.foundation.constraintViolation = error.message;
+                }
+            });
+        };
+
+        $scope.cancelUpdateContactInfo = function() {
+            console.log("Canceling editingContactInfo")
+            $scope.editingContactInfo = false;
+            establishDetails($scope.foundation.id);
+        }
+
+
+    }]);
 
     controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function ($scope, $rootScope, $location, $timeout, $window, UserService) {
 
