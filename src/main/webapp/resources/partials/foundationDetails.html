@@ -11,43 +11,71 @@
             <div ng-include=" 'resources/partials/panels/foundationBasicDetailsPanel.html'"></div>
             <div ng-include=" 'resources/partials/panels/foundationContactInfoPanel.html'"></div>
             <div ng-include=" 'resources/partials/panels/foundationGrantsPanel.html'"></div>
-
-            <div name="foundation-interactions-panel" class="panel panel-default">
-                <div class="panel-heading" ng-click="showinginteractions = !showinginteractions">
-                    <h3 class="panel-title">Interactions</h3>
-                </div>
-                <div class="panel-body" ng-show="!hideBasicDetails">
-
-                </div>
-            </div>
-            <div name="foundation-grants-panel" class="panel panel-default">
-                <div class="panel-heading" ng-click="showingGrants = !showingGrants">
-                    <h3 class="panel-title">Grants</h3>
-                </div>
-                <div class="panel-body" ng-show="!hideBasicDetails">
-
-                </div>
-            </div>
+            <div ng-include=" 'resources/partials/panels/foundationInteractionRecordsPanel.html'"></div>
         </div>
         <div class="col-md-1">
 
         </div>
         <div class="col-md-3">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Recent Interactions</h3>
+            <div ng-if="!creatingInteraction">
+                <h3>Recent Interactions</h3>
+                <div ng-if="interactionRecords.length > 0">
                     <ul class="list-group">
                         <li class="list-group-item"
-                            ng-repeat="record in foundation.interactionRecords | orderBy: '-dateOfInteraction' | limitTo: 5"
+                            ng-repeat="record in interactionRecords | orderBy: '-dateOfInteraction' | limitTo: 5"
                             ng-click="viewInteractionDetails(record.id)">
-                            <a href="">{{record.date |  date: 'MMMM d, y'}} : {{record.interactionType}}</a>
-                        </li>
-                        <li>
-                            <a href="">Dummy Interaction Record</a>
+                            <a href="">{{record.dateOfInteraction |  date: 'MMMM d, y'}} : {{record.interactionType}}</a>
                         </li>
                     </ul>
                 </div>
+                <div ng-if="interactionRecords.length == 0">
+                    None
+                </div>
             </div>
+            <div ng-if="creatingInteraction">
+                <h3>New Interaction</h3>
+                <form id="interactionForm" name="interactionForm" novalidate>
+                    <div class="row">
+                        <div class="form-group col-xs-12" >
+                            <label class="control-label">Date</label>
+                            <input name="interactionDate" type="date" class="form-control" ng-model="newInteraction.dates.dateOfInteraction">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <label class="control-label">Person Contacted</label>
+                            <input name="personContacted" type="text" class="form-control" ng-model="newInteraction.personContacted">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <label class="control-label">Type</label>
+                            <input name="interactionType" type="text" class="form-control" ng-model="newInteraction.interactionType">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <label class="control-label">Notes</label>
+                            <textarea class="form-control" rows="5" cols="50" ng-model="newInteraction.notes" ></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <label class="control-label">Requires Follow-up</label>
+                            <select class="form-control input-small" name="requiresFollowUp" ng-model="newInteraction.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <label class="control-label">Files</label>
+                            <input name="interactionType" type="file" class="form-control">
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-success" ng-click="createInteractionRecord()" ng-disabled="interactionForm.form.$invalid">Submit</button>
+                <button class="btn btn-danger" ng-click="cancelCreateInteractionRecord()">Cancel</button>
+            </div>            
         </div>
     </div>
 </div>

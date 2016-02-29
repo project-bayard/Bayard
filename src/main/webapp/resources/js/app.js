@@ -98,6 +98,10 @@
                 templateUrl: 'resources/partials/grantDetails.html',
                 controller: 'GrantDetailsCtrl'
             })
+            .when('/interactions/:id', {
+                templateUrl: 'resources/partials/interactionDetails.html',
+                controller: 'InteractionDetailsCtrl'
+            })
             .when('/logout', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LogoutCtrl'
@@ -131,6 +135,13 @@
                 });
             }
         });
+
+        $rootScope.booleanToString = function (value) {
+            if (value) {
+                return "Yes";
+            }
+            return "No";
+        };
     })
 
 

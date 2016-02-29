@@ -170,11 +170,12 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     public void testCalculateTotalFencepostDates() {
 
         /*cancel = null*/
-        sustainerPeriod.setPeriodStartDate(LocalDate.now().minusMonths(6));
         sustainerPeriod.setCancelDate(null);
+        sustainerPeriod.setPeriodStartDate(LocalDate.now().minusMonths(6));
         assertEquals(sustainerPeriod.getMonthlyAmount() * 6, sustainerPeriod.getTotalYearToDate());
 
         /*cancel = start + 6*/
+        sustainerPeriod.setPeriodStartDate(LocalDate.of(2016, 2, 15).minusMonths(6));
         sustainerPeriod.setCancelDate(sustainerPeriod.getPeriodStartDate().plusMonths(6));
         assertEquals(sustainerPeriod.getMonthlyAmount() * 6, sustainerPeriod.getTotalYearToDate());
 
