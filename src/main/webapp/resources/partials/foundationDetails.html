@@ -24,7 +24,7 @@
                         <li class="list-group-item"
                             ng-repeat="record in interactionRecords | orderBy: '-dateOfInteraction' | limitTo: 5"
                             ng-click="viewInteractionDetails(record.id)">
-                            <a href="">{{record.dateOfInteraction |  date: 'MMMM d, y'}} : {{record.interactionType}}</a>
+                            <a href="#/interactions/{{record.id}}">{{record.dateOfInteraction |  date: 'MMMM d, y'}} : {{record.interactionType}}</a>
                         </li>
                     </ul>
                 </div>
