@@ -1,0 +1,12 @@
+<div name="foundation-interaction-records-panel" class="panel panel-default">
+    <div class="panel-heading" ng-click="showingInteractions = !showingInteractions">
+        <h3 class="panel-title">Interactions</h3>
+    </div>
+    <div class="panel-body" ng-show="showingInteractions">
+        <button class="btn btn-success" ng-click="showInteractionForm()" ng-disabled="creatingInteraction">Create a new Interaction</button>
+        <div ng-show="creatingInteraction">
+
+        </div>
+        <div ng-show="interactionRecords.length > 0 && !creatingInteraction" ng-include=" 'resources/partials/tables/interactionsTable.html'"></div>
+    </div>
+</div>

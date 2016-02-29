@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-3" >
+                <div class="form-group col-md-3 required" >
                     <label class="control-label">Foundation</label>
                     <select class="form-control input-small" name="initiator" ng-model="newGrant.foundationId" ng-disabled="preselectedFoundation"required>
                         <option ng-selected="newGrant.foundationId === foundation.id" ng-repeat="foundation in foundations" value="{{foundation.id}}">{{foundation.name}}</option>

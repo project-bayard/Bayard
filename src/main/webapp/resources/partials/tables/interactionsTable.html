@@ -1,0 +1,23 @@
+<br>
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Date</th>
+        <th>Person Contacted</th>
+        <th>Type</th>
+        <th>Requires Follow-up</th>
+        <th>Details</th>
+    </tr>
+    <tr ng-repeat="record in interactionRecords">
+        <td>{{record.dateOfInteraction | date: 'MMMM d, y'}}</td>
+        <td>{{record.personContacted}}</td>
+        <td>{{record.interactionType}}</td>
+        <td>
+            <span class="glyphicon glyphicon-earphone" ng-if="record.requiresFollowUp" aria-hidden="true"></span>
+        </td>
+
+        <td><a class="btn btn-md btn-info" href="#/interactions/{{record.id}}">View Details</a></td>
+    </tr>
+</table>

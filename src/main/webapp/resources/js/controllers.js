@@ -69,14 +69,7 @@
 
     }]);
 
-    controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', '$rootScope', function($scope, $location, ConfigService, $rootScope) {
-
-        $rootScope.booleanToString = function (value) {
-            if (value) {
-                return "Yes";
-            }
-            return "No";
-        };
+    controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', function($scope, $location, ConfigService) {
 
         ConfigService.getImplementationConfig({}, function (config) {
             $scope.config = config;
@@ -1633,6 +1626,8 @@
 
     controllers.controller('FoundationListCtrl', ['$scope', 'FoundationService', function($scope, FoundationService) {
 
+        $scope.newFoundation = {};
+
         var setup = function () {
             $scope.creatingFoundation = false;
             $scope.newFoundation = {};
@@ -1651,6 +1646,10 @@
                 $scope.newFoundation = {};
                 setup();
             }, function(err) {
+                var error = ResponseErrorInterpreter(err);
+                if (error.isConstraintViolation()) {
+                    $scope.newFoundation.constraintViolation = error.message;
+                }
                 console.log(err);
             })
         };
@@ -1662,17 +1661,27 @@
 
     }]);
 
-
-    controllers.controller('FoundationDetailsCtrl', ['$scope', 'FoundationService', '$routeParams', '$timeout', '$location',
-        function($scope, FoundationService, $routeParams, $timeout, $location) {
+    controllers.controller('FoundationDetailsCtrl', ['$scope', 'FoundationService', 'InteractionService', '$routeParams', '$timeout', '$location', 'DateFormatter', function($scope, FoundationService, InteractionService, $routeParams, $timeout, $location, DateFormatter) {
 
         $scope.showingBasicDetails = true;
         $scope.foundation = {};
+        $scope.newInteraction = {};
+        $scope.interactionRecords = {};
+
+        var fetchInteractions = function(id) {
+            FoundationService.getInteractionRecords({id: id}, function(interactions) {
+                $scope.interactionRecords = interactions;
+            }, function(err) {
+                console.log(err);
+            })
+        };
 
         var establishDetails = function(id) {
             FoundationService.find({id : id}, function(data) {
                 $scope.foundation = data;
                 $scope.grants = $scope.foundation.grants;
+
+                fetchInteractions(id);
             }, function(err) {
                 console.log(err);
             });
@@ -1730,13 +1739,185 @@
             };
 
         $scope.cancelUpdateContactInfo = function() {
-            console.log("Canceling editingContactInfo")
             $scope.editingContactInfo = false;
             establishDetails($scope.foundation.id);
-        }
+        };
+
+            $scope.showInteractionForm = function() {
+                $scope.creatingInteraction = true;
+            };
+
+            $scope.createInteractionRecord = function() {
+                formatInteractionDates($scope.newInteraction);
+                FoundationService.createInteractionRecord({id: $scope.foundation.id}, $scope.newInteraction, function(succ) {
+                    fetchInteractions($scope.foundation.id);
+                    $scope.cancelCreateInteractionRecord();
+                    $scope.requestSuccess = true;
+                    $timeout(function() {
+                        $scope.requestSuccess = false;
+                    }, 3000);
+                }, function(err) {
+                    console.log(err);
+                });
+            };
+
+            $scope.cancelCreateInteractionRecord = function() {
+                $scope.creatingInteraction = false;
+                $scope.newInteraction = {};
+            };
+
+            var formatInteractionDates = function(interaction) {
+                interaction.dateOfInteraction = DateFormatter.formatDate(interaction.dates.dateOfInteraction);
+            }
 
 
     }]);
+
+    controllers.controller('GrantListCtrl', ['$scope', '$routeParams', 'GrantService', 'FoundationService', 'DateFormatter',
+        function($scope, $routeParams, GrantService, FoundationService, DateFormatter) {
+
+        $scope.newGrant = {};
+            $scope.unformatted = {};
+
+        if ($routeParams.foundationId != null) {
+            $scope.creatingGrant = true;
+            $scope.preselectedFoundation = true;
+            FoundationService.find({id: $routeParams.foundationId}, function(foundation) {
+                $scope.newGrant.foundationId = foundation.id;
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+        FoundationService.findAll({}, function(foundations) {
+            $scope.foundations = foundations;
+        }, function(err) {
+            console.log(err);
+        });
+
+        var getGrants = function() {
+            GrantService.findAll({}, function(grants) {
+                $scope.grants = grants;
+            }, function(err) {
+              console.log(err);
+            })
+        };
+
+        getGrants();
+
+        $scope.createGrant = function() {
+
+            $scope.newGrant.startPeriod = DateFormatter.formatDate($scope.unformatted.startPeriod);
+            $scope.newGrant.endPeriod = DateFormatter.formatDate($scope.unformatted.endPeriod);
+            $scope.newGrant.intentDeadline = DateFormatter.formatDate($scope.unformatted.intentDeadline);
+            $scope.newGrant.applicationDeadline = DateFormatter.formatDate($scope.unformatted.applicationDeadline);
+            $scope.newGrant.reportDeadline = DateFormatter.formatDate($scope.unformatted.reportDeadline);
+
+            GrantService.create({foundationId: $scope.newGrant.foundationId}, $scope.newGrant, function(succ) {
+                $scope.creatingGrant = false;
+                $scope.newGrant = {};
+                getGrants();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelCreateGrant = function() {
+            $scope.newGrant = {};
+            $scope.creatingGrant = false;
+        };
+
+    }]);
+
+    controllers.controller('GrantDetailsCtrl', ['$scope', 'FoundationService', 'GrantService', '$routeParams', '$timeout', 'DateFormatter', function($scope, FoundationService, GrantService, $routeParams, $timeout, DateFormatter) {
+
+        var createGrantDates = function(grant) {
+            grant.dates = {
+                startPeriod: DateFormatter.asDate(grant.startPeriod),
+                endPeriod: DateFormatter.asDate(grant.endPeriod),
+                applicationDeadline: DateFormatter.asDate(grant.applicationDeadline),
+                intentDeadline: DateFormatter.asDate(grant.intentDeadline),
+                reportDeadline: DateFormatter.asDate(grant.reportDeadline)
+            };
+            return grant;
+        };
+
+        var convertGrantDatesToStrings = function(grant) {
+            grant.startPeriod = DateFormatter.formatDate(grant.dates.startPeriod),
+                grant.endPeriod = DateFormatter.formatDate(grant.dates.endPeriod),
+                grant.applicationDeadline = DateFormatter.formatDate(grant.dates.applicationDeadline),
+                grant.intentDeadline = DateFormatter.formatDate(grant.dates.intentDeadline),
+                grant.reportDeadline = DateFormatter.formatDate(grant.dates.reportDeadline)
+            return grant;
+        };
+
+        var establishDetails = function(id) {
+            GrantService.find({id: id}, function(grant) {
+                $scope.grant = createGrantDates(grant);
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.updateGrantDetails = function() {
+            $scope.grant = convertGrantDatesToStrings($scope.grant);
+            GrantService.update({id: $scope.grant.id}, $scope.grant, function(succ) {
+                $scope.editingGrantDetails = false;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                establishDetails($scope.grant.id);
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelUpdateGrantDetails = function() {
+            $scope.editingGrantDetails = false;
+            establishDetails($scope.grant.id);
+        }
+
+    }]);
+
+    controllers.controller('InteractionDetailsCtrl', ['$scope', 'InteractionService', 'DateFormatter', '$timeout', '$routeParams', function($scope, InteractionService, DateFormatter, $timeout, $routeParams) {
+
+        var establishDetails = function(id) {
+            InteractionService.find({id: id}, function(interaction) {
+                $scope.interaction = interaction;
+                $scope.interaction.dates = {};
+                $scope.interaction.dates.dateOfInteraction = DateFormatter.asDate($scope.interaction.dateOfInteraction);
+                console.log("Interaction: "+$scope.interaction.dateOfInteraction+" as Date: "+$scope.interaction.dates.dateOfInteraction)
+            }, function(err) {
+               console.log(err);
+            });
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.updateInteractionDetails = function() {
+            $scope.interaction.dateOfInteraction = DateFormatter.formatDate($scope.interaction.dates.dateOfInteraction);
+            InteractionService.update({id: $scope.interaction.id}, $scope.interaction, function(succ) {
+                $scope.requestSuccess = true;
+                $scope.editingInteractionDetails = false;
+                establishDetails($scope.interaction.id);
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.cancelUpdateInteractionDetails = function() {
+            $scope.editingInteractionDetails = false;
+            establishDetails($scope.interaction.id);
+        }
+
+    }]);
+
 
     controllers.controller('GrantListCtrl', ['$scope', '$routeParams', 'GrantService', 'FoundationService', 'DateFormatter',
         function($scope, $routeParams, GrantService, FoundationService, DateFormatter) {

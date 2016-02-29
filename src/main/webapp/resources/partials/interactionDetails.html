@@ -1,0 +1,70 @@
+<div class="container-fluid" ng-cloak>
+    <div class="page-header">
+        <h1><a ng-href="#/foundations/{{interaction.foundation.id}}">{{interaction.foundation.name}}</a> > Interaction: {{interaction.dateOfInteraction | date: 'MMMM d, y'}}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Interaction Updated</div>
+            <div name="interaction-details-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{interaction.dateOfInteraction}}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-dismissable alert-danger" ng-if="interaction.constraintViolation">
+                        {{interaction.constraintViolation}}
+                    </div>
+                    <fieldset ng-disabled="!editingInteractionDetails">
+                        <form id="interactionDetailsForm" name="grantForm" novalidate>
+                            <div class="row">
+                                <div class="form-group col-md-3" >
+                                    <label class="control-label">Date of Interaction</label>
+                                    <input name="dateOfInteraction" type="date" class="form-control" ng-model="interaction.dates.dateOfInteraction">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Person Contacted</label>
+                                    <input name="personContacted" type="text" class="form-control" ng-model="interaction.personContacted">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Type</label>
+                                    <input name="interactionType" type="text" class="form-control" ng-model="interaction.interactionType">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Requires Follow-up</label>
+                                    <select class="form-control input-small" name="requiresFollowUp" ng-model="interaction.requiresFollowUp" ng-options="booleanToString(value) for value in [true, false]">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-9">
+                                    <label class="control-label">Notes</label>
+                                    <textarea class="form-control" rows="5" cols="50" ng-model="interaction.notes" ></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                    <button class="btn btn-primary" ng-click="editingInteractionDetails = true" ng-show="!editingInteractionDetails">Edit</button>
+                    <button class="btn btn-success" ng-click="updateInteractionDetails()" ng-show="editingInteractionDetails" ng-disabled="interactionDetailsForm.form.$invalid">Submit</button>
+                    <button class="btn btn-danger" ng-click="cancelUpdateInteractionDetails()" ng-show="editingInteractionDetails">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1">
+
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Files</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="list-group-item-text"><a href="">12-21-2016-email.docx</a></div>
+                            <div class="list-group-item-text"><a href="">12-21-2016-notes.docx</a></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
