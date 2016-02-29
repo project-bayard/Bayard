@@ -1,0 +1,39 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9 col-sm-9 col-md-9">
+            <div name="donor-info-panel" class="panel panel-default">
+                <div class="panel-heading" ng-click="toggleShowingDonorInfoPanel()">
+                    <h3 class="panel-title">Donor Information</h3>
+                </div>
+                <div class="panel-body" ng-show="donorPanel.showingDonorInfo">
+                    <div class="row">
+                        <!-- Donations -->
+                        <div class="col-xs-6">
+                            <div ng-show="donorPanel.creatingDonation">
+                                <div ng-include="'resources/partials/forms/donationForm.html'"></div>
+                                <button class="btn btn-success" ng-click="createDonation()" ng-disabled="formHolder.donationForm.$invalid">Submit</button>
+                                <button class="btn btn-danger" ng-click="cancelCreateDonation()">Cancel</button>
+                            </div>
+                            <button class="btn btn-success" ng-click="donorPanel.creatingDonation = true" ng-show="!donorPanel.creatingDonation">Create a Donation</button>
+                            <div ng-show="!donorPanel.creatingDonation && donations.length > 0">
+                                <div ng-include="'resources/partials/tables/simpleDonationTable.html'"></div>
+                            </div>
+                        </div>
+                        <!-- Sustainer periods-->
+                        <div class="col-xs-6">
+                            <div ng-show="donorPanel.creatingSustainerPeriod">
+                                <div ng-include="'resources/partials/forms/sustainerPeriodForm.html'"></div>
+                                <button class="btn btn-success" ng-click="createSustainerPeriod()" ng-disabled="formHolder.sustainerPeriodForm.$invalid">Submit</button>
+                                <button class="btn btn-danger" ng-click="cancelCreateSustainerPeriod()">Cancel</button>
+                            </div>
+                            <button class="btn btn-success" ng-click="donorPanel.creatingSustainerPeriod = true" ng-show="!donorPanel.creatingSustainerPeriod">Create a Sustainer Period</button>
+                            <div ng-show="!donorPanel.creatingSustainerPeriod && sustainerPeriods.length > 0">
+                                <div ng-include="'resources/partials/tables/sustainerPeriodTable.html'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

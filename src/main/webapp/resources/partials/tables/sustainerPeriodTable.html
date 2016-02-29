@@ -1,0 +1,18 @@
+<br>
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Started</th>
+        <th>Ended</th>
+        <th>Monthly Amount</th>
+        <th>Details</th>
+    </tr>
+    <tr ng-repeat="period in sustainerPeriods | orderBy: '-periodStartDate'">
+        <td>{{period.periodStartDate | date: 'MMMM d, y'}}</td>
+        <td>{{period.cancelDate | date: 'MMMM d, y'}}</td>
+        <td>${{period.monthlyAmount}}</td>
+        <td><a class="btn btn-md btn-info" href="#/sustainerPeriods/{{period.id}}">View Details</a></td>
+    </tr>
+</table>

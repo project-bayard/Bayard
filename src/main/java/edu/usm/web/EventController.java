@@ -124,4 +124,16 @@ public class EventController {
         return Response.successGeneric();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/donations", produces={"application/json"})
+    @JsonView(Views.DonationDetails.class)
+    public Set<Donation> getDonations(@PathVariable("id")String id) throws NullDomainReference {
+        Event event = eventService.findById(id);
+        if (null == event) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullEvent(id);
+        }
+        return event.getDonations();
+    }
+
 }

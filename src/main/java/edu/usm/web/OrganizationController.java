@@ -113,7 +113,16 @@ public class OrganizationController {
         return Response.successGeneric();
     }
 
-
-
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/donations", produces={"application/json"})
+    @JsonView(Views.DonationDetails.class)
+    public Set<Donation> getDonations(@PathVariable("id")String id) throws NullDomainReference {
+        Organization organization = organizationService.findById(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        }
+        return organization.getDonations();
+    }
 
 }
