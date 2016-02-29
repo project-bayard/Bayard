@@ -173,7 +173,14 @@
                 $scope.addCommittee = {hidden: true};
                 $scope.modelHolder = {
                     encounterModel: {},
-                    organizationModel: {}
+                    organizationModel: {},
+                    donationModel: {}
+                };
+
+                $scope.donorPanel = {
+                    showingPanel : false,
+                    creatingDonation : false,
+                    creatingSustainerPeriod: false,
                 };
 
                 $scope.basicDetailsPanel = {
@@ -862,6 +869,64 @@
                 });
             };
 
+            $scope.toggleShowingDonorInfoPanel = function() {
+                $scope.donorPanel.showingDonorInfo = !$scope.donorPanel.showingDonorInfo;
+                if ($scope.donorPanel.showingDonorInfo) {
+                    ContactService.getDonations({id: $scope.contact.id}, function(donations) {
+                        $scope.donations = donations;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                    ContactService.getSustainerPeriods({id: $scope.contact.id}, function(periods) {
+                        $scope.sustainerPeriods = periods;
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }
+            };
+
+            $scope.createDonation = function() {
+                $scope.modelHolder.donationModel.dateOfReceipt = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfReceipt);
+                $scope.modelHolder.donationModel.dateOfDeposit = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfDeposit);
+
+                ContactService.addDonation({id: $scope.contact.id}, $scope.modelHolder.donationModel, function(succ) {
+                    $scope.cancelCreateDonation();
+                    ContactService.getDonations({id: $scope.contact.id}, function(donations) {
+                        $scope.donations = donations;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+            };
+
+            $scope.cancelCreateDonation = function() {
+                $scope.donorPanel.creatingDonation = false;
+                $scope.modelHolder.donationModel = {};
+            };
+
+            $scope.createSustainerPeriod = function() {
+                $scope.modelHolder.sustainerPeriodModel.periodStartDate= DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.periodStartDate);
+                $scope.modelHolder.sustainerPeriodModel.cancelDate = DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
+
+                ContactService.addSustainerPeriod({id: $scope.contact.id}, $scope.modelHolder.sustainerPeriodModel, function(succ) {
+                    $scope.cancelCreateSustainerPeriod();
+                    ContactService.getSustainerPeriods({id: $scope.contact.id}, function(periods) {
+                        $scope.sustainerPeriods = periods;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+
+            };
+
+            $scope.cancelCreateSustainerPeriod = function (){
+                $scope.donorPanel.creatingSustainerPeriod = false;
+                $scope.modelHolder.sustainerPeriodModel = {};
+            };
 
         }]);
 
@@ -929,6 +994,12 @@
                 console.log(err);
             });
 
+            EventService.getDonations({id: $routeParams.id}, function(donations) {
+                $scope.donations = donations;
+            }, function(err) {
+                console.log(err);
+            });
+
             $scope.showUpdateForm = function () {
                 $scope.updatingEventDetails = true;
             };
@@ -983,6 +1054,33 @@
                 }
 
             };
+
+            $scope.showDonationForm= function() {
+                $scope.addingDonation = true;
+            };
+
+            $scope.addDonationToEvent = function() {
+                $scope.modelHolder.donationModel.dateOfReceipt = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfReceipt);
+                $scope.modelHolder.donationModel.dateOfDeposit = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfDeposit);
+
+                EventService.addDonation({id: $scope.event.id}, $scope.modelHolder.donationModel, function(succ) {
+                    $scope.cancelAddDonation();
+                    EventService.getDonations({id: $scope.event.id}, function(donations) {
+                        $scope.donations = donations;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+
+
+            };
+
+            $scope.cancelAddDonation = function() {
+                $scope.addingDonation = false;
+                $scope.modelHolder.donationModel = {};
+            }
 
         }]);
 
@@ -1140,8 +1238,8 @@
 
     }]);
 
-    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout',
-        function ($scope, OrganizationService, $routeParams, $location, $window, $timeout) {
+    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout', 'DateFormatter',
+        function ($scope, OrganizationService, $routeParams, $location, $window, $timeout, DateFormatter) {
 
             $scope.formHolder = {};
             $scope.modelHolder = {};
@@ -1156,6 +1254,12 @@
                     }
                     $scope.organization = $scope.modelHolder.organizationModel;
                     $scope.contactCollection = $scope.organization.members;
+
+                    OrganizationService.getDonations({id: $scope.modelHolder.organizationModel.id}, function(donations) {
+                        $scope.donations = donations;
+                    }, function(err) {
+                        console.log(err);
+                    });
                 }, function (err) {
                     console.log(err);
                 });
@@ -1207,7 +1311,32 @@
 
             $scope.viewContactDetails = function (contactId) {
                 $location.path("/contacts/contact/" + contactId);
-            }
+            };
+
+            $scope.showDonationForm = function() {
+                $scope.addingDonation = true;
+            };
+
+            $scope.addDonationToOrganization = function() {
+                $scope.modelHolder.donationModel.dateOfReceipt = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfReceipt);
+                $scope.modelHolder.donationModel.dateOfDeposit = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfDeposit);
+
+                OrganizationService.addDonation({id: $scope.modelHolder.organizationModel.id}, $scope.modelHolder.donationModel, function(succ) {
+                    $scope.cancelAddDonation();
+                    OrganizationService.getDonations({id: $scope.modelHolder.organizationModel.id}, function(donations) {
+                        $scope.donations = donations;
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+            };
+
+            $scope.cancelAddDonation = function() {
+                $scope.modelHolder.donationModel = {};
+                $scope.addingDonation = false;
+            };
 
         }]);
 

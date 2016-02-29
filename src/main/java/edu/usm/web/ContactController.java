@@ -427,6 +427,21 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/donations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(Views.DonationDetails.class)
+    public Set<Donation> getDonationsForContact(@PathVariable("id")String id) throws NullDomainReference {
+        Contact c = contactService.findById(id);
+        if (null == c) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullContact(id);
+        }
+        if (null == c.getDonorInfo()) {
+            return new HashSet<>();
+        }
+        return c.getDonorInfo().getDonations();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/sustainer/{entityId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(Views.SustainerPeriodDetails.class)
     public SustainerPeriod getSustainerPeriod(@PathVariable("id")String id, @PathVariable("entityId")String sustainerPeriodId) throws NullDomainReference {

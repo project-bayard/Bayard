@@ -1,0 +1,55 @@
+<form name="formHolder.donationForm" id="formHolder.donationForm" novalidate>
+    <div class="row">
+        <div class="form-group col-xs-12 required">
+            <label class="control-label">Amount</label>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input name="amount" type="number" class="form-control currency" placeholder="" ng-model="modelHolder.donationModel.amount" required>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Method</label>
+            <input name="method" type="text" class="form-control" ng-model=" modelHolder.donationModel.method">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Restricted to:</label>
+            <input name="restrictedToCategory" type="text" class="form-control" ng-model=" modelHolder.donationModel.restrictedToCategory">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Budget item:</label>
+            <input name="budgetItem" type="text" class="form-control" ng-model=" modelHolder.donationModel.budgetItem">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12 required">
+            <label class="control-label">Date of Receipt</label>
+            <input name="dateOfReceipt" type="date" class="form-control" ng-model=" modelHolder.donationModel.dates.dateOfReceipt" required>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12" >
+            <label class="control-label">Date of Deposit</label>
+            <input name="dateOfDeposit" type="date" class="form-control" ng-model=" modelHolder.donationModel.dates.dateOfDeposit">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Is this donation anonymous?</label>
+            <select name="anonymous" class="form-control " ng-model="modelHolder.donorModel.anonymous" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Is this donation standalone?</label>
+            <select name="standalone" class="form-control " ng-model="modelHolder.donorModel.standalone" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+            </select>
+        </div>
+    </div>
+</form>

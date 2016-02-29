@@ -2,52 +2,91 @@
     <div class="page-header">
         <h1>Organization Details</h1>
     </div>
-    <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Organization Updated</div>
-    <div ng-show="requestFail" class="alert alert-danger alert-dismissable" role="alert">Unable to update Organization...</div>
-    <div id="org-detail-attributes" ng-show="!updatingOrganizationDetails">
-        <ul class="list-group">
-            <li class="list-group-item">
-                Name: {{modelHolder.organizationModel.name}}
-            </li>
-            <li class="list-group-item">
-                Address: {{modelHolder.organizationModel.streetAddress}}
-            </li>
-            <li class="list-group-item">
-                City: {{modelHolder.organizationModel.city}}
-            </li>
-            <li class="list-group-item">
-                State: {{modelHolder.organizationModel.state}}
-            </li>
-            <li class="list-group-item">
-                Zip: {{modelHolder.organizationModel.zipCode}}
-            </li>
-            <li class="list-group-item">
-                Primary Contact: {{modelHolder.organizationModel.primaryContactName}}
-            </li>
-            <li class="list-group-item">
-                Phone: {{modelHolder.organizationModel.phoneNumber}}
-            </li>
-            <li class="list-group-item">
-                Email: {{modelHolder.organizationModel.email}}
-            </li>
-            <li class="list-group-item">
-                Description: {{modelHolder.organizationModel.description}}
-            </li>
-        </ul>
-    </div>
-    <div ng-if="!updatingOrganizationDetails">
-        <button class="btn btn-warning" ng-click="showUpdateForm()">Update Organization</button>
-        <button class="btn btn-danger" ng-click="deleteOrganization()">Delete Organization</button>
-    </div>
+    <div class="row">
+        <div class="col-xs-7">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Organization Updated</div>
+            <div ng-show="requestFail" class="alert alert-danger alert-dismissable" role="alert">Unable to update Organization...</div>
+            <div id="org-detail-attributes" ng-show="!updatingOrganizationDetails">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        Name: {{modelHolder.organizationModel.name}}
+                    </li>
+                    <li class="list-group-item">
+                        Address: {{modelHolder.organizationModel.streetAddress}}
+                    </li>
+                    <li class="list-group-item">
+                        City: {{modelHolder.organizationModel.city}}
+                    </li>
+                    <li class="list-group-item">
+                        State: {{modelHolder.organizationModel.state}}
+                    </li>
+                    <li class="list-group-item">
+                        Zip: {{modelHolder.organizationModel.zipCode}}
+                    </li>
+                    <li class="list-group-item">
+                        Primary Contact: {{modelHolder.organizationModel.primaryContactName}}
+                    </li>
+                    <li class="list-group-item">
+                        Phone: {{modelHolder.organizationModel.phoneNumber}}
+                    </li>
+                    <li class="list-group-item">
+                        Email: {{modelHolder.organizationModel.email}}
+                    </li>
+                    <li class="list-group-item">
+                        Description: {{modelHolder.organizationModel.description}}
+                    </li>
+                </ul>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <button class="btn btn-warning bayard-margined" ng-click="showUpdateForm()">Update Organization</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <button class="btn btn-success bayard-margined" ng-click="showDonationForm()" ng-disabled="addingDonation">Add a Donation</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <button class="btn btn-danger bayard-margined" ng-click="deleteOrganization()">Delete Organization</button>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="updatingOrganizationDetails">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <button class="btn btn-success" ng-click="submitUpdate()" ng-disabled="formHolder.organizationForm.$invalid">Done</button>
+                        <button class="btn btn-danger" ng-click="cancelUpdate()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2 style="text-align: center">Members:</h2>
+                    <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-2">
 
-    <div ng-if="updatingOrganizationDetails">
-        <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
-        <button class="btn btn-success" ng-click="submitUpdate()" ng-disabled="formHolder.organizationForm.$invalid">Done</button>
-        <button class="btn btn-danger" ng-click="cancelUpdate()">Cancel</button>
+        </div>
+        <div ng-if="!addingDonation">
+            <div class="col-xs-4" ng-show="donations.length > 0">
+                <h2 style="text-align: center">Donations:</h2>
+                <div ng-include src=" 'resources/partials/tables/simpleDonationTable.html' "></div>
+            </div>
+        </div>
+        <div ng-if="addingDonation">
+            <div class="col-xs-4">
+                <div ng-include src=" 'resources/partials/forms/donationForm.html' "></div>
+                <button class="btn btn-success" ng-click="addDonationToOrganization()" ng-disabled="formHolder.donationForm.$invalid">Submit</button>
+                <button class="btn btn-danger" ng-click="cancelAddDonation()">Cancel</button>
+            </div>
+        </div>
     </div>
-
-    <br><br>
-    <h2>Members:</h2>
-    <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
-
 </div>

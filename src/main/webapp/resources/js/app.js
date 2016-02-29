@@ -102,6 +102,9 @@
                 templateUrl: 'resources/partials/interactionDetails.html',
                 controller: 'InteractionDetailsCtrl'
             })
+            .when('/donations', {
+                templateUrl: 'resources/partials/donationList.html'
+            })
             .when('/logout', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LogoutCtrl'

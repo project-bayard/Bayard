@@ -137,6 +137,24 @@
             findBySignInDetails : {
                 method : "POST",
                 url : "/contacts/find"
+            },
+            addDonation : {
+                method : "POST",
+                url : "/contacts/:id/donations"
+            },
+            getDonations : {
+                method : "GET",
+                isArray: true,
+                url : "/contacts/:id/donations"
+            },
+            addSustainerPeriod : {
+                method : "POST",
+                url : "/contacts/:id/sustainer"
+            },
+            getSustainerPeriods: {
+                method: 'GET',
+                isArray: true,
+                url: "/contacts/:id/sustainer"
             }
         });
     }]);
@@ -425,6 +443,15 @@
             },
             delete : {
                 method: 'DELETE'
+            },
+            addDonation : {
+                method: 'POST',
+                url: '/organizations/:id/donations'
+            },
+            getDonations: {
+                method: 'GET',
+                isArray: true,
+                url: '/organizations/:id/donations'
             }
         });
     }]);
@@ -452,6 +479,15 @@
             },
             delete : {
                 method: 'DELETE'
+            },
+            addDonation : {
+                method: 'POST',
+                url: '/events/:id/donations'
+            },
+            getDonations : {
+                method : 'GET',
+                isArray : true,
+                url: '/events/:id/donations'
             }
         });
     }]);

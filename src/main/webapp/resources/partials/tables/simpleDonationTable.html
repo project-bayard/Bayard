@@ -1,0 +1,18 @@
+<br>
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Date of Receipt</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Details</th>
+    </tr>
+    <tr ng-repeat="donation in donations | orderBy: '-dateOfReceipt'">
+        <td>{{donation.dateOfReceipt | date: 'MMMM d, y'}}</td>
+        <td>${{donation.amount}}</td>
+        <td>{{donation.method}}</td>
+        <td><a class="btn btn-md btn-info" href="#/donations/{{donation.id}}">View Details</a></td>
+    </tr>
+</table>
