@@ -5,6 +5,7 @@ package edu.usm.domain.exception;
  */
 public enum ConstraintMessage {
 
+    GENERIC_PERSISTENCE_ERROR("Error persisting entity."),
     CONTACT_DUPLICATE_NAME_EMAIL("A contact with this first name and email already exists"),
     CONTACT_DUPLICATE_NAME_PHONE_NUMBER("A contact with this first name and primary phone number already exists"),
     CONTACT_NO_EMAIL_OR_PHONE_NUMBER("A contact must have either an email or primary phone number associated with them"),
@@ -25,7 +26,15 @@ public enum ConstraintMessage {
     DEMOGRAPHIC_CATEGORY_REQUIRED_NAME("A demographic category must have a name associated with it."),
     USER_DUPLICATE_EMAIL("A user registered with this email already exists."),
     USER_NO_PASSWORD("A user must have a password associated with it."),
-    USER_PASSWORD_TOO_SHORT("The password provided was not long enough.");
+    USER_PASSWORD_TOO_SHORT("The password provided was not long enough."),
+    FOUNDATION_REQUIRED_NAME("A foundation must have a name associated with it"),
+    FOUNDATION_DUPLICATE_NAME("A foundation with that name already exists."),
+    INTERACTION_RECORD_NO_CONTACT_PERSON("An interaction record must reference the person contacted."),
+    INTERACTION_RECORD_NO_DATE("An interaction must have an interaction date."),
+    INTERACTION_RECORD_NO_FOUNDATION("An interaction must ne associated with a foundation."),
+    GRANT_REQUIRED_NAME("A grant must have a name associated with it."),
+    GRANT_NO_FOUNDATION("A grant must be associated with a foundation."),
+    SUSTAINER_PERIOD_NO_START_DATE("A sustainer period must have a start date associated with it.");
 
     private final String enumText;
 

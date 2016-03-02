@@ -133,6 +133,289 @@
             removeFromOrganization : {
                 method: "DELETE",
                 url : "/contacts/:id/organizations/:entityId"
+            },
+            findBySignInDetails : {
+                method : "POST",
+                url : "/contacts/find"
+            },
+            addDonation : {
+                method : "POST",
+                url : "/contacts/:id/donations"
+            },
+            getDonations : {
+                method : "GET",
+                isArray: true,
+                url : "/contacts/:id/donations"
+            },
+            addSustainerPeriod : {
+                method : "POST",
+                url : "/contacts/:id/sustainer"
+            },
+            getSustainerPeriods: {
+                method: 'GET',
+                isArray: true,
+                url: "/contacts/:id/sustainer"
+            }
+        });
+    }]);
+
+    services.factory('FoundationService',[ '$resource', function ($resource) {
+        return $resource('../foundations/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('FoundationService',[ '$resource', function ($resource) {
+        return $resource('../foundations/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('GrantService',[ '$resource', function ($resource) {
+        return $resource('../grants/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url: "../foundations/:foundationId/grants",
+                params: {
+                    foundationId : "@foundationId"
+                }
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('FoundationService',[ '$resource', function ($resource) {
+        return $resource('../foundations/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('GrantService',[ '$resource', function ($resource) {
+        return $resource('../grants/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url: "../foundations/:foundationId/grants",
+                params: {
+                    foundationId : "@foundationId"
+                }
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('FoundationService',[ '$resource', function ($resource) {
+        return $resource('../foundations/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST'
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            },
+            createInteractionRecord: {
+                method: 'POST',
+                url: "/foundations/:id/interactions"
+            },
+            getInteractionRecords: {
+                method: 'GET',
+                url: "/foundations/:id/interactions",
+                isArray : true,
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('InteractionService',[ '$resource', function ($resource) {
+        return $resource('../interactions/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
+            }
+        });
+    }]);
+
+    services.factory('GrantService',[ '$resource', function ($resource) {
+        return $resource('../grants/:id', {id : '@id'}, {
+            update : {
+                method: 'PUT',
+                params: {
+                    id: "@id"
+                }
+            },
+            find : {
+                method: 'GET',
+                params: {
+                    id : "@id"
+                }
+            },
+            findAll : {
+                method: 'GET',
+                isArray : true
+            },
+            create : {
+                method: 'POST',
+                url: "../foundations/:foundationId/grants",
+                params: {
+                    foundationId : "@foundationId"
+                }
+            },
+            delete : {
+                method: 'DELETE',
+                params: {
+                    id: "@id"
+                }
             }
         });
     }]);
@@ -160,6 +443,15 @@
             },
             delete : {
                 method: 'DELETE'
+            },
+            addDonation : {
+                method: 'POST',
+                url: '/organizations/:id/donations'
+            },
+            getDonations: {
+                method: 'GET',
+                isArray: true,
+                url: '/organizations/:id/donations'
             }
         });
     }]);
@@ -187,6 +479,15 @@
             },
             delete : {
                 method: 'DELETE'
+            },
+            addDonation : {
+                method: 'POST',
+                url: '/events/:id/donations'
+            },
+            getDonations : {
+                method : 'GET',
+                isArray : true,
+                url: '/events/:id/donations'
             }
         });
     }]);

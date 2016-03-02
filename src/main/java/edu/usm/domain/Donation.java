@@ -1,42 +1,73 @@
 package edu.usm.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * Represents a monetary contribution given to the organization running Bayard.
+ */
 @Entity(name = "donation")
-public class Donation extends BasicEntity implements Serializable {
+public class Donation extends BasicEntity implements MonetaryContribution, Serializable {
 
     @Column
+    @JsonView(Views.DonationDetails.class)
     private int amount;
-    @Column
-    private String type;
-    @Column
-    private LocalDate date;
-    @Column
-    private String comment;
 
-    public Donation(String id) {
-        setId(id);
-    }
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    private String method;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDate dateOfReceipt;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDate dateOfDeposit;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    private String restrictedToCategory;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    private String budgetItem;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    private boolean anonymous;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    private boolean standalone;
 
     public Donation() {
         super();
     }
 
-    @ManyToOne
-    private DonorInfo donor;
-
-    public DonorInfo getDonorInfo() {
-        return donor;
+    /**
+     * @param amount the amount of money donated
+     * @param method the method by which this donation was made
+     *
+     * @param dateOfReceipt the date the donation was received
+     * @param dateOfDeposit the date the donation was deposited
+     */
+    public Donation(int amount, String method, LocalDate dateOfReceipt, LocalDate dateOfDeposit) {
+        super();
+        this.amount = amount;
+        this.method = method;
+        this.dateOfReceipt = dateOfReceipt;
+        this.dateOfDeposit = dateOfDeposit;
     }
 
-    public void setDonorInfo(DonorInfo donorInfo) {
-        this.donor = donorInfo;
-    }
-
+    @Override
     public int getAmount() {
         return amount;
     }
@@ -45,31 +76,89 @@ public class Donation extends BasicEntity implements Serializable {
         this.amount = amount;
     }
 
-    public String getType() {
-        return type;
+    /**
+     * @return the method by which this Donation was made
+     */
+    public String getMethod() {
+        return method;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
-    public LocalDate getDate() {
-        return date;
+    @Override
+    public LocalDate getDateOfReceipt() {
+        return dateOfReceipt;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateOfReceipt(LocalDate dateOfReceipt) {
+        this.dateOfReceipt = dateOfReceipt;
     }
 
-    public String getComment() {
-        return comment;
+    public LocalDate getDateOfDeposit() {
+        return dateOfDeposit;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDateOfDeposit(LocalDate dateOfDeposit) {
+        this.dateOfDeposit = dateOfDeposit;
     }
 
+    /**
+     * @return the category to which this Donation is restricted
+     */
+    public String getRestrictedToCategory() {
+        return restrictedToCategory;
+    }
 
+    public void setRestrictedToCategory(String restrictedToCategory) {
+        this.restrictedToCategory = restrictedToCategory;
+    }
 
+    /**
+     * @return whether or not this Donation is restricted to a certain category
+     */
+    public boolean isRestricted() {
+        return !(this.getRestrictedToCategory() == null) && !(this.getRestrictedToCategory().isEmpty());
+    }
 
+    /**
+     * @return the budget item this Donation is associated with
+     */
+    public String getBudgetItem() {
+        return budgetItem;
+    }
+
+    public void setBudgetItem(String budgetItem) {
+        this.budgetItem = budgetItem;
+    }
+
+    /**
+     * @return whether or not this Donation is associated with a particular budget item
+     */
+    public boolean isForBudgetItem() {
+        return !(this.budgetItem == null) && !(this.budgetItem.isEmpty());
+    }
+
+    /**
+     * @return whether or not the Donation is intended to be from an anonymous source
+     */
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
+    }
+
+    /**
+     * @return true if this Donation is unrelated to a particular BasicEntity
+     */
+    public boolean isStandalone() {
+        return standalone;
+    }
+
+    public void setStandalone(boolean standalone) {
+        this.standalone = standalone;
+    }
 }

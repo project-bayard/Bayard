@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="-283.0" y="-54.0">edu.usm.domain.Foundation</node>
+    <node x="-134.5" y="-335.5">edu.usm.domain.UserFileUpload</node>
+    <node x="-579.5" y="-313.5">edu.usm.domain.InteractionRecord</node>
+    <node x="208.5" y="-361.5">edu.usm.domain.Grant</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.domain.Foundation" target="edu.usm.domain.Grant">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Foundation" target="edu.usm.domain.InteractionRecord">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Grant" target="edu.usm.domain.Foundation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.Grant" target="edu.usm.domain.UserFileUpload">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.InteractionRecord" target="edu.usm.domain.Foundation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.InteractionRecord" target="edu.usm.domain.UserFileUpload">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="0.0" y="0.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

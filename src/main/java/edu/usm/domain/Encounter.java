@@ -9,7 +9,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
+/**
+ * Represents an interaction at a specific point in time between a Contact from the organization running Bayard and
+ * another Contact.
+ */
 @Entity(name = "encounter")
 public class Encounter extends BasicEntity implements Serializable, Comparable<Encounter> {
 
@@ -68,12 +71,22 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         }
     }
 
-    public Encounter (String id) {
-        setId(id);
-    }
-
     public Encounter() {
         super();
+    }
+
+    /**
+     * @param contact the subject in the Encounter
+     * @param initiator the initiator of the Encounter
+     * @param date the date of the Encounter
+     * @param type the type of the Encounter
+     */
+    public Encounter(Contact contact, Contact initiator, String date, String type) {
+        super();
+        this.contact = contact;
+        this.initiator = initiator;
+        this.encounterDate = date;
+        this.type = type;
     }
 
     public Form getForm() {
@@ -84,6 +97,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.form = form;
     }
 
+    /**
+     * @return the subject in the Encounter
+     */
     public Contact getContact() {
         return contact;
     }
@@ -92,6 +108,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.contact = contact;
     }
 
+    /**
+     * @return the date of the Encounter
+     */
     public String getEncounterDate() {
         return encounterDate;
     }
@@ -100,6 +119,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.encounterDate = encounterDate;
     }
 
+    /**
+     * @return the notes pertaining to Encounter
+     */
     public String getNotes() {
         return notes;
     }
@@ -108,6 +130,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.notes = notes;
     }
 
+    /**
+     * @return the initiator of the Encounter
+     */
     public Contact getInitiator() {
         return initiator;
     }
@@ -116,6 +141,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.initiator = initiator;
     }
 
+    /**
+     * @return the assessment rating given to the Contact at this particular Encounter
+     */
     public int getAssessment() {
         return assessment;
     }
@@ -124,6 +152,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.assessment = assessment;
     }
 
+    /**
+     * @return the type of Encounter
+     */
     public String getType() {
         return type;
     }
@@ -132,6 +163,9 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.type = type;
     }
 
+    /**
+     * @return true if the Encounter requires a follow-up interaction by someone in the organization
+     */
     public boolean requiresFollowUp() {
         return requiresFollowUp;
     }

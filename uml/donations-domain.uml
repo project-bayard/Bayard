@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="-420.0" y="161.33333333333334">edu.usm.domain.Donation</node>
+    <node x="-95.33333333333326" y="449.6666666666667">edu.usm.domain.DonorInfo</node>
+    <node x="250.0" y="151.66666666666663">edu.usm.domain.SustainerPeriod</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.usm.domain.SustainerPeriod" target="edu.usm.domain.DonorInfo">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.DonorInfo" target="edu.usm.domain.SustainerPeriod">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="edu.usm.domain.DonorInfo" target="edu.usm.domain.Donation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.6000000000000001" x="252.4999999999999" y="420.83333333333326" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

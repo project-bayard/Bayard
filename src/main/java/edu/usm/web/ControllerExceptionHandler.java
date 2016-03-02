@@ -1,9 +1,6 @@
 package edu.usm.web;
 
-import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.InvalidApiRequestException;
-import edu.usm.domain.exception.NullDomainReference;
-import edu.usm.domain.exception.SecurityConstraintException;
+import edu.usm.domain.exception.*;
 import edu.usm.dto.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -47,5 +44,12 @@ public class ControllerExceptionHandler {
     public @ResponseBody Response handleSecurityConstraint(SecurityConstraintException e) {
         return new Response(null, e.getMessage(), Response.SECURITY_CONSTRAINT);
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public @ResponseBody Response handleNotFound(NotFoundException e) {
+        return new Response(null, e.getMessage(), Response.NOT_FOUND);
+    }
+
 
 }

@@ -1,0 +1,65 @@
+<div name="foundation-contact-info-panel" class="panel panel-default">
+    <div class="panel-heading" ng-click="showingContactInfo = !showingContactInfo">
+        <h3 class="panel-title">Contact Info</h3>
+    </div>
+    <div class="panel-body" ng-show="showingContactInfo">
+        <form name="foundationContactInfoForm" id="foundationContactInfoForm" novalidate>
+            <fieldset ng-disabled="!editingContactInfo">
+                <div class="row">
+                    <div class="col-xs-3" style="text-align: center">
+                        Primary Contact
+                    </div>
+                    <div class="form-group col-xs-3" style="text-align: center">
+                        Secondary Contact
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Name</label>
+                        <input name="primaryContactName" type="text" class="form-control" ng-model="foundation.primaryContactName">
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Name</label>
+                        <input name="secondaryContactName" type="text" class="form-control" ng-model="foundation.secondaryContactName">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Title</label>
+                        <input name="primaryContactTitle" type="text" class="form-control" ng-model="foundation.primaryContactTitle">
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Title</label>
+                        <input name="secondaryContactTitle" type="text" class="form-control" ng-model="foundation.secondaryContactTitle">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Phone</label>
+                        <input name="primaryContactPhoneNumber" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="foundation.primaryContactPhone">
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Phone</label>
+                        <input name="secondaryContactPhone" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="foundation.secondaryContactPhone">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Email</label>
+                        <input name="primaryContactEmail" type="email" class="form-control" ng-model="foundation.primaryContactEmail">
+                        <p ng-show="foundationContactInfoForm.$error.primaryContactEmail" class="help-block">Enter a valid email address</p>
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <label class="control-label">Email</label>
+                        <input name="secondaryContactEmail" type="email" class="form-control" ng-model="foundation.secondaryContactEmail">
+                        <p ng-show="foundationContactInfoForm.$error.secondaryContactEmail" class="help-block">Enter a valid email address</p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <button class="btn btn-primary" ng-click="toggleEditingContactInfo()" ng-show="!editingContactInfo">Edit Contact info</button>
+        <button class="btn btn-success" ng-click="updateContactInfo()" ng-show="editingContactInfo" ng-disabled="foundationContactInfoForm.form.$invalid">Submit</button>
+        <button class="btn btn-danger" ng-click="cancelUpdateContactInfo()" ng-show="editingContactInfo">Cancel</button>
+
+    </div>
+</div>

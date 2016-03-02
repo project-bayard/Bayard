@@ -25,6 +25,8 @@
     <script src="resources/js/controllers.js"></script>
     <script src="resources/js/services.js"></script>
     <script src="resources/js/filters.js"></script>
+    <script src="resources/js/interceptors.js"></script>
+
 
     <!--CSS -->
     <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
@@ -39,7 +41,7 @@
 
 
 <!-- HEADER AND NAVBAR -->
-<header ng-show="authenticated">
+<header ng-show="authenticated && !eventSignInMode">
     <nav class="navbar navbar-inverse">
         <div>
             <div class="navbar-header">
@@ -59,6 +61,14 @@
                         <li><a href="#committees"><i class="fa fa-comment"></i>Committees</a></li>
                         <li><a href="#events"><i class="fa fa-comment"></i>Events</a></li>
                         <li><a href="#groups"><i class="fa fa-comment"></i>Groups</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Development<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#foundations"><i class="fa fa-shield"></i>Foundations</a></li>
+                        <li><a href="#grants"><i class="fa fa-shield"></i>Grants</a></li>
+                        <li><a href="#donations"><i class="fa fa-shield"></i>Donations</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

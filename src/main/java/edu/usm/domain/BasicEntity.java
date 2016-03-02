@@ -33,7 +33,15 @@ public abstract class BasicEntity {
             Views.GroupDetails.class,
             Views.GroupPanel.class,
             Views.DemographicDetails.class,
-            Views.CommitteeDetails.class})
+            Views.CommitteeDetails.class,
+            Views.FoundationDetails.class,
+            Views.FoundationList.class,
+            Views.GrantList.class,
+            Views.GrantDetails.class,
+            Views.InteractionRecordList.class,
+            Views.InteractionRecordDetails.class,
+            Views.DonationDetails.class,
+            Views.SustainerPeriodDetails.class})
     private String id;
 
     @Column
@@ -101,6 +109,8 @@ public abstract class BasicEntity {
         if (getId() != null) {
             return (getId() + getCreated()).hashCode();
         } else {
+            //TODO: this needs to be fixed. Generates hash conflict when > 1 relating entities are instantiated
+            //but have yet to be persisted.
             return getCreated().hashCode();
         }
 

@@ -1,0 +1,39 @@
+<form name="formHolder.sustainerPeriodForm" id="formHolder.sustainerPeriodForm" novalidate>
+    <div class="row">
+        <div class="form-group col-xs-12 required">
+            <label class="control-label">Monthly Amount</label>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input name="monthlyAmount" type="number" class="form-control currency" placeholder="" ng-model="modelHolder.sustainerPeriodModel.monthlyAmount" required>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12 required" >
+            <label class="control-label">Start of Period</label>
+            <input name="periodStartDate" type="date" class="form-control" ng-model=" modelHolder.sustainerPeriodModel.dates.periodStartDate" required>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12" >
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="modelHolder.sustainerPeriodModel.isCanceled"> This period was canceled
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="modelHolder.sustainerPeriodModel.isCanceled">
+        <div class="form-group col-xs-12" >
+            <label class="control-label">Cancel Date</label>
+            <input name="cancelDate" type="date" class="form-control" ng-model=" modelHolder.sustainerPeriodModel.dates.cancelDate">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-12">
+            <label class="control-label">Has an IRS letter been sent?</label>
+            <select name="sentIRSLetter" class="form-control "  ng-model="modelHolder.donorModel.sentIRSLetter" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+            </select>
+        </div>
+    </div>
+</form>

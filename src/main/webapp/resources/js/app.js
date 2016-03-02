@@ -1,7 +1,11 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters']);
+    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors']);
+
+    app.config(["$httpProvider", function ($httpProvider) {
+        $httpProvider.interceptors.push("baseInterceptor");
+    }]);
 
     app.config(function ($routeProvider, $httpProvider) {
 
@@ -50,6 +54,10 @@
                 templateUrl: 'resources/partials/eventDetails.html',
                 controller: 'EventDetailsCtrl'
             })
+            .when('/events/event/:id/sign-in', {
+                templateUrl: 'resources/partials/eventSignIn.html',
+                controller: 'EventSignInCtrl'
+            })
             .when('/login', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'
@@ -70,6 +78,36 @@
                 templateUrl: 'resources/partials/users.html',
                 controller: 'UserCtrl'
             })
+            .when('/foundations', {
+                templateUrl: 'resources/partials/foundationList.html',
+                controller: 'FoundationListCtrl'
+            })
+            .when('/foundations/:id', {
+                templateUrl: 'resources/partials/foundationDetails.html',
+                controller: 'FoundationDetailsCtrl'
+            })
+            .when('/grants', {
+                templateUrl: 'resources/partials/grantList.html',
+                controller: 'GrantListCtrl'
+            })
+            .when('/grants/create/:foundationId', {
+                templateUrl: 'resources/partials/grantList.html',
+                controller: 'GrantListCtrl'
+            })
+            .when('/grants/:id', {
+                templateUrl: 'resources/partials/grantDetails.html',
+                controller: 'GrantDetailsCtrl'
+            })
+            .when('/interactions/:id', {
+                templateUrl: 'resources/partials/interactionDetails.html',
+                controller: 'InteractionDetailsCtrl'
+            })
+            .when('/donations', {
+                templateUrl: 'resources/partials/donationList.html'
+            })
+            .when('/donations/:id', {
+                templateUrl: 'resources/partials/donationList.html'
+            })
             .when('/logout', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LogoutCtrl'
@@ -82,16 +120,34 @@
 
     app.run(function($rootScope, $location) {
         $rootScope.user = sessionStorage.getItem('bayard-user');
+        $rootScope.eventSignInMode = false;
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $rootScope.authenticated = sessionStorage.getItem('bayard-user-authenticated');
+            var eventSignInMode = sessionStorage.getItem('event-sign-in-mode');
+            $rootScope.eventSignInMode = eventSignInMode == null || eventSignInMode == 'false' ? false : true;
+
             if ($rootScope.authenticated == null || $rootScope.authenticated == 'false') {
                 event.preventDefault();
                 $rootScope.$evalAsync(function() {
                     $location.path('/login');
                 });
+            } else if ($rootScope.eventSignInMode) {
+                console.log('Event Sign In id:' + $rootScope.eventSignInId); //TODO remove
+                event.preventDefault();
+                $rootScope.$evalAsync(function() {
+                    var eventId = sessionStorage.getItem('event-sign-in-id');
+                    $location.path('/events/event/' + eventId + '/sign-in');
+                });
             }
         });
+
+        $rootScope.booleanToString = function (value) {
+            if (value) {
+                return "Yes";
+            }
+            return "No";
+        };
     })
 
 

@@ -19,9 +19,11 @@
                             <button class="btn btn-md btn-success" ng-click="addToOrganization(addOrganization.index)">Submit</button>
                         </div>
                         <button class="btn btn-md btn-success" ng-click="newOrganization.hidden = !newOrganization.hidden">Add to New Organization</button>
-                        <div ng-if="newOrganization.hidden == false">
-                            <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
-                            <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(modelHolder.organizationModel)" ng-disabled="formHolder.organizationForm.$invalid">Submit</button>
+                        <div class="row" ng-if="newOrganization.hidden == false">
+                            <div class="col-xs-5">
+                                <div ng-include src=" 'resources/partials/forms/organizationForm.html' "></div>
+                                <button class="btn btn-md btn-success" ng-click="createAndAddToOrganization(modelHolder.organizationModel)" ng-disabled="formHolder.organizationForm.$invalid">Submit</button>
+                            </div>
                         </div>
                     </div>
 

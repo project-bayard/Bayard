@@ -1,14 +1,14 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.swing.text.View;
 import java.io.Serializable;
 
-
+/**
+ * Encapsulates membership information for a particular Contact.
+ */
 @Entity(name = "member_info")
 public class MemberInfo extends BasicEntity  implements Serializable {
 
@@ -32,6 +32,10 @@ public class MemberInfo extends BasicEntity  implements Serializable {
     @JsonView(Views.MemberInfo.class)
     private boolean attendedOrientation;
 
+    public MemberInfo() {
+        super();
+    }
+
     public boolean hasAttendedOrientation() {
         return attendedOrientation;
     }
@@ -40,13 +44,6 @@ public class MemberInfo extends BasicEntity  implements Serializable {
         this.attendedOrientation = attendedOrientation;
     }
 
-    public MemberInfo(String id) {
-        setId(id);
-    }
-
-    public MemberInfo() {
-        super();
-    }
 
     public boolean hasPaidDues() {
         return paidDues;
@@ -64,6 +61,9 @@ public class MemberInfo extends BasicEntity  implements Serializable {
         this.signedAgreement = signedAgreement;
     }
 
+    /**
+     * @return the current membership status code of this Contact
+     */
     public int getStatus() {
         return status;
     }

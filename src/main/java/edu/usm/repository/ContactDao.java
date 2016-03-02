@@ -22,4 +22,12 @@ public interface ContactDao extends CrudRepository<Contact, String> {
     HashSet<Contact> findAllInitiators();
 
     Set<Contact> findByFirstName(String firstName);
+
+    Contact findOneByFirstNameAndLastNameAndEmail(String firstName, String lastName, String email);
+
+    Contact findOneByFirstNameAndLastNameAndPhoneNumber1(String firstName, String lastName, String phoneNumber1);
+
+    Contact findOneByFirstNameAndLastNameAndPhoneNumber2(String firstName, String lastName, String phoneNumber2);
+
+
 }

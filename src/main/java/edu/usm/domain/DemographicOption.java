@@ -6,7 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by andrew on 10/16/15.
+ * An option of a DemographicCategory. Represents a possible valid response from a Contact.
  */
 @Entity
 public class DemographicOption extends BasicEntity {
@@ -20,6 +20,20 @@ public class DemographicOption extends BasicEntity {
     @JoinColumn(name = "category_id")
     private DemographicCategory category;
 
+    public DemographicOption() {
+        super();
+    }
+
+    /**
+     * @param optionName the name of the option
+     */
+    public DemographicOption(String optionName) {
+        this.name = optionName;
+    }
+
+    /**
+     * @return the name of the option
+     */
     public String getName() {
         return name;
     }
@@ -28,6 +42,9 @@ public class DemographicOption extends BasicEntity {
         this.name = name;
     }
 
+    /**
+     * @return the DemographicCategory to which this option applies
+     */
     public DemographicCategory getCategory() {
         return category;
     }

@@ -7,6 +7,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
+/**
+ * A committee of the organization running Bayard.
+ */
 @Entity
 public class Committee extends Aggregation implements Serializable {
 
@@ -36,6 +39,9 @@ public class Committee extends Aggregation implements Serializable {
         return Aggregation.TYPE_COMMITTEE;
     }
 
+    /**
+     * @return the members of this Committee
+     */
     @Override
     public Set<Contact> getAggregationMembers() {
         return members;
@@ -51,14 +57,21 @@ public class Committee extends Aggregation implements Serializable {
         this.members = aggregationMembers;
     }
 
-    public Committee (String id) {
-        setId(id);
-    }
-
     public Committee() {
         super();
     }
 
+    /**
+     * @param committeeName the name of this Committee
+     */
+    public Committee(String committeeName) {
+        super();
+        this.name = committeeName;
+    }
+
+    /**
+     * @return the Events held by this Committee
+     */
     public Set<Event> getEvents() {
         return events;
     }
@@ -67,6 +80,9 @@ public class Committee extends Aggregation implements Serializable {
         this.events = events;
     }
 
+    /**
+     * @return the members of this Committee
+     */
     public Set<Contact> getMembers() {
         return members;
     }
