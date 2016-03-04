@@ -1238,6 +1238,10 @@
 
     }]);
 
+    controllers.controller('DonationFormCtrl', ['$scope', function($scope) {
+        $scope.donationMethodOptions = ['PayPal', 'Cash', 'Check', 'Credit Card', 'In-kind'];
+    }]);
+
     controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout', 'DateFormatter',
         function ($scope, OrganizationService, $routeParams, $location, $window, $timeout, DateFormatter) {
 
