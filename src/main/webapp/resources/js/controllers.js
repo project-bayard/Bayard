@@ -71,13 +71,6 @@
 
     controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', function($scope, $location, ConfigService) {
 
-        ConfigService.getImplementationConfig({}, function (config) {
-            $scope.config = config;
-            console.log("Config: " + config.implementationName + ", " + config.largeLogoFilePath + ", " + config.faviconFilePath);
-        }, function (err) {
-            console.log(err);
-        });
-
     }]);
 
     controllers.controller('LogoutCtrl', ['$scope', '$location', '$rootScope', function ($scope, $location, $rootScope) {

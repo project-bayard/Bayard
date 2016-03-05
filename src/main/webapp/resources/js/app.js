@@ -9,10 +9,28 @@
 
     app.config(function ($routeProvider, $httpProvider) {
 
+        var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService) {
+
+            if ($rootScope.bayardConfig != null) {
+                return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
+            } else {
+                ConfigService.getImplementationConfig({}, function(config) {
+                    $rootScope.bayardConfig = config;
+                    return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
+                }, function(err) {
+                    console.log(err);
+                    return ($q.reject("development is disabled"));
+                });
+            }
+        };
+
         $routeProvider
             .when('/', {
                 templateUrl: 'resources/partials/main.html',
-                controller: 'MainCtrl'
+                controller: 'MainCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/contacts', {
                 templateUrl: 'resources/partials/contactList.html',
@@ -80,33 +98,57 @@
             })
             .when('/foundations', {
                 templateUrl: 'resources/partials/foundationList.html',
-                controller: 'FoundationListCtrl'
+                controller: 'FoundationListCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/foundations/:id', {
                 templateUrl: 'resources/partials/foundationDetails.html',
-                controller: 'FoundationDetailsCtrl'
+                controller: 'FoundationDetailsCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/grants', {
                 templateUrl: 'resources/partials/grantList.html',
-                controller: 'GrantListCtrl'
+                controller: 'GrantListCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/grants/create/:foundationId', {
                 templateUrl: 'resources/partials/grantList.html',
-                controller: 'GrantListCtrl'
+                controller: 'GrantListCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/grants/:id', {
                 templateUrl: 'resources/partials/grantDetails.html',
-                controller: 'GrantDetailsCtrl'
+                controller: 'GrantDetailsCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/interactions/:id', {
                 templateUrl: 'resources/partials/interactionDetails.html',
-                controller: 'InteractionDetailsCtrl'
+                controller: 'InteractionDetailsCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/donations', {
-                templateUrl: 'resources/partials/donationList.html'
+                templateUrl: 'resources/partials/donationList.html',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/donations/:id', {
-                templateUrl: 'resources/partials/donationList.html'
+                templateUrl: 'resources/partials/donationList.html',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/logout', {
                 templateUrl: 'resources/partials/login.html',

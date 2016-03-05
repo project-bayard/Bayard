@@ -23,6 +23,9 @@ public class ConfigServiceImpl implements ConfigService {
     @Value("${bayard.implementation.faviconFilePath}")
     private String faviconFilePath;
 
+    @Value("${bayard.implementation.enableDevelopmentFeatures}")
+    private String developmentEnabled;
+
     @Override
     public ConfigDto getImplementationConfig() {
         ConfigDto dto = new ConfigDto();
@@ -30,6 +33,7 @@ public class ConfigServiceImpl implements ConfigService {
         dto.setVersion(version);
         dto.setLargeLogoFilePath(largeLogoFilePath);
         dto.setFaviconFilePath(faviconFilePath);
+        dto.setDevelopmentEnabled(Boolean.valueOf(developmentEnabled));
         return dto;
     }
 }

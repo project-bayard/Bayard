@@ -11,6 +11,7 @@ import edu.usm.dto.GrantDto;
 import edu.usm.dto.Response;
 import edu.usm.service.GrantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/grants")
+@ConditionalOnExpression("${bayard.implementation.enableDevelopmentFeatures:true}")
 public class GrantController {
 
     @Autowired
