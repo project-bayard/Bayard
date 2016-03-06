@@ -1155,9 +1155,12 @@
                     });
 
                 } else {
-                    attendEvent();
+                    ContactService.update({id: $scope.contact.id}, $scope.contact, function (data) {
+                        attendEvent();
+                    }, function (err) {
+                        displayAlertAndReload()
+                    });
                 }
-
             };
 
             var displayAlertAndReload = function (success) {
