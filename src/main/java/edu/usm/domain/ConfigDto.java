@@ -15,6 +15,16 @@ public class ConfigDto implements Serializable{
 
     private String faviconFilePath;
 
+    private boolean developmentEnabled;
+
+    public boolean isDevelopmentEnabled() {
+        return developmentEnabled;
+    }
+
+    public void setDevelopmentEnabled(boolean developmentEnabled) {
+        this.developmentEnabled = developmentEnabled;
+    }
+
     public String getFaviconFilePath() {
         return faviconFilePath;
     }

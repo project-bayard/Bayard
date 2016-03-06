@@ -9,6 +9,7 @@ import edu.usm.dto.InteractionRecordDto;
 import edu.usm.dto.Response;
 import edu.usm.service.InteractionRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/interactions")
+@ConditionalOnExpression("${bayard.implementation.enableDevelopmentFeatures:true}")
 public class InteractionRecordController {
 
     @Autowired

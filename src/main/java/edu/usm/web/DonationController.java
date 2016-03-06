@@ -6,6 +6,7 @@ import edu.usm.domain.Views;
 import edu.usm.dto.Response;
 import edu.usm.service.DonationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/donations")
+@ConditionalOnExpression("${bayard.implementation.enableDevelopmentFeatures:true}")
 public class DonationController {
 
     @Autowired
