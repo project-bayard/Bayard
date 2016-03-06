@@ -1,9 +1,9 @@
-<div class="container-fluid">
+<div class="container-fluid" ng-controller="DemographicsCtrl">
     <div class="row">
         <div class="col-xs-9 col-sm-9 col-md-9">
             <div class="panel panel-default">
                 <div class="panel-heading" ng-click="displayDemographics()">
-                    <h3 class="panel-title">Demographics</h3>
+                    <h3 class="panel-title">Demographic Information</h3>
                 </div>
                 <div class="panel-body" ng-show="demographicPanel.showingDemographics">
                     <div ng-show="demographicPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Demographics Updated</div>
@@ -195,7 +195,7 @@
                         <button class="btn btn-primary" ng-click="toggleEditingDemographics()">Edit Demographics</button>
                     </div>
                     <div ng-show="demographicPanel.editingDemographics">
-                        <button class="btn btn-success" ng-click="updateDemographics()">Submit</button>
+                        <button class="btn btn-success" ng-click="updateDemographics()">Update</button>
                         <button class="btn btn-danger" ng-click="cancelUpdateDemographics()">Cancel</button>
                     </div>
                     <div ng-if="demographicPanel.updateRequest.failure" class="alert alert-danger" role="alert">Failed to update demographics...</div>
