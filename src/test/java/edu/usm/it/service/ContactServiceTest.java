@@ -390,6 +390,74 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test(expected = ConstraintViolation.class)
+    public void testCreateContactNullFirstName() throws Exception {
+        contact.setFirstName(null);
+        contactService.create(contact);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactEmptyFirstName() throws Exception {
+        contact.setFirstName("");
+        contactService.create(contact);
+    }
+
+    @Test
+    public void testCreateContactNullPhoneNumber() throws Exception {
+        contact.setPhoneNumber1(null);
+        contactService.create(contact);
+        assertTrue(contactService.findById(contact.getId()).getPhoneNumber1() == null);
+    }
+
+    @Test
+    public void testCreateContactEmptyPhoneNumber() throws Exception {
+        contact.setPhoneNumber1("");
+        contactService.create(contact);
+        assertTrue(contactService.findById(contact.getId()).getPhoneNumber1() == null);
+    }
+
+    @Test
+    public void testCreateContactNullEmail() throws Exception {
+        contact.setEmail(null);
+        contactService.create(contact);
+        assertTrue(contactService.findById(contact.getId()).getEmail() == null);
+    }
+
+    @Test
+    public void testCreateContactEmptyEmail() throws Exception {
+        contact.setEmail("");
+        contactService.create(contact);
+        assertTrue(contactService.findById(contact.getId()).getEmail() == null);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactEmptyEmailNullPhoneNumber() throws Exception {
+        contact.setEmail("");
+        contact.setPhoneNumber1(null);
+        contactService.create(contact);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactNullEmailEmptyPhoneNumber() throws Exception {
+        contact.setEmail(null);
+        contact.setPhoneNumber1("");
+        contactService.create(contact);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactEmptyEmailEmptyPhoneNumber() throws Exception {
+        contact.setEmail("");
+        contact.setPhoneNumber1("");
+        contactService.create(contact);
+    }
+
+    @Test(expected = ConstraintViolation.class)
+    public void testCreateContactNullEmailNullPhoneNumber() throws Exception {
+        contact.setEmail(null);
+        contact.setPhoneNumber1(null);
+        contactService.create(contact);
+    }
+
+    @Test(expected = ConstraintViolation.class)
     public void testUpdateContactDuplicateNameEmail() throws ConstraintViolation, NullDomainReference {
         contactService.create(contact);
         contactService.create(contact2);
@@ -514,5 +582,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
         assertNull(sustainerPeriodDao.findOne(sustainerPeriod.getId()));
     }
+
+
 
 }
