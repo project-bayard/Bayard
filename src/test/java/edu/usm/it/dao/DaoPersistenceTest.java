@@ -228,20 +228,17 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         contact1.setPhoneNumber1("55555555");
         contactDao.save(contact1);
 
-        Contact fromDb = contactDao.findOneByFirstNameAndLastNameAndEmail(contact.getFirstName(),
-                contact.getLastName(), contact.getEmail());
+        Contact fromDb = contactDao.findOneByFirstNameAndEmail(contact.getFirstName(), contact.getEmail());
 
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());
 
-        fromDb = contactDao.findOneByFirstNameAndLastNameAndPhoneNumber1(contact.getFirstName(),
-                contact.getLastName(),contact.getPhoneNumber1());
+        fromDb = contactDao.findOneByFirstNameAndPhoneNumber1(contact.getFirstName(), contact.getPhoneNumber1());
 
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());
 
-        fromDb = contactDao.findOneByFirstNameAndLastNameAndPhoneNumber2(contact.getFirstName(),
-                contact.getLastName(),contact.getPhoneNumber2());
+        fromDb = contactDao.findOneByFirstNameAndPhoneNumber2(contact.getFirstName(),contact.getPhoneNumber2());
 
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());

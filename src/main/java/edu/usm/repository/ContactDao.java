@@ -23,11 +23,11 @@ public interface ContactDao extends CrudRepository<Contact, String> {
 
     Set<Contact> findByFirstName(String firstName);
 
-    Contact findOneByFirstNameAndLastNameAndEmail(String firstName, String lastName, String email);
+    Contact findOneByFirstNameAndEmail(String firstName, String email);
 
-    Contact findOneByFirstNameAndLastNameAndPhoneNumber1(String firstName, String lastName, String phoneNumber1);
+    Contact findOneByFirstNameAndPhoneNumber1(String firstName, String phoneNumber1);
 
-    Contact findOneByFirstNameAndLastNameAndPhoneNumber2(String firstName, String lastName, String phoneNumber2);
+    Contact findOneByFirstNameAndPhoneNumber2(String firstName, String phoneNumber2);
 
 
 }

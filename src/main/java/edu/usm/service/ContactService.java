@@ -90,7 +90,7 @@ public interface ContactService {
     void addToGroup(Contact contact, Group group);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Contact findByFirstLastEmailPhone(SignInDto signInDto);
+    Contact findByFirstEmailPhone(SignInDto signInDto);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addDonation(Contact contact, Donation donation) throws  NullDomainReference.NullContact;

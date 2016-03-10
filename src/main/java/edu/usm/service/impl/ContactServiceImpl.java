@@ -139,43 +139,34 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contactDao.save(contact);
     }
 
-    private void validateCoreFields(Contact contact) throws ConstraintViolation{
-        if (null == contact.getFirstName()) {
-            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
-        }
-
-        boolean hasPhoneNumber = contact.getPhoneNumber1() != null && !contact.getPhoneNumber1().isEmpty();
-        boolean hasEmail = contact.getEmail() != null && !contact.getEmail().isEmpty();
-
-        if (!hasPhoneNumber && !hasEmail) {
-            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
-        }
-    }
 
     private void validateOnUpdate(Contact contact) throws ConstraintViolation {
+        emptyStringToNull(contact);
 
-        validateCoreFields(contact);
+        String first = contact.getFirstName();
+        String email = contact.getEmail();
+        String phone = contact.getPhoneNumber1();
+        Contact result;
 
-        Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
+        if (first == null) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
 
-        if (null != existingFirstNames) {
-            Iterator<Contact> iterator = existingFirstNames.iterator();
-            while(iterator.hasNext()) {
-                Contact sameFirstName = iterator.next();
-                if (sameFirstName.getId().equalsIgnoreCase(contact.getId())) {
-                    continue;
-                }
-
-                if (null != contact.getEmail() && contact.getEmail().equalsIgnoreCase(sameFirstName.getEmail())) {
-                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_EMAIL, sameFirstName);
-                }
-
-                if (null != contact.getPhoneNumber1() && contact.getPhoneNumber1().equalsIgnoreCase(sameFirstName.getPhoneNumber1())) {
-                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_PHONE_NUMBER, sameFirstName);
-                }
-
+        } else if (email != null) {
+            result = contactDao.findOneByFirstNameAndEmail(first, email);
+            if (result != null && !contact.getId().equals(result.getId())) {
+                throw new ConstraintViolation(ConstraintMessage.CONTACT_DUPLICATE_NAME_EMAIL);
             }
+
+        } else if (phone != null) {
+            result = contactDao.findOneByFirstNameAndPhoneNumber1(first, phone);
+            if (result != null && !contact.getId().equals(result.getId())) {
+                throw new ConstraintViolation(ConstraintMessage.CONTACT_DUPLICATE_NAME_PHONE_NUMBER);
+            }
+
+        } else {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
         }
+
     }
 
 
@@ -187,26 +178,32 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     private void validateOnCreate(Contact contact) throws ConstraintViolation {
+        emptyStringToNull(contact);
 
-        validateCoreFields(contact);
+        String first = contact.getFirstName();
+        String email = contact.getEmail();
+        String phone = contact.getPhoneNumber1();
+        Contact result;
 
-        Set<Contact> existingFirstNames = findByFirstName(contact.getFirstName());
+        if (first == null) {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_FIRST_NAME);
 
-        if (null != existingFirstNames) {
-            Iterator<Contact> iterator = existingFirstNames.iterator();
-            while(iterator.hasNext()) {
-                Contact sameFirstName = iterator.next();
-
-                if (null != contact.getEmail() && contact.getEmail().equalsIgnoreCase(sameFirstName.getEmail())) {
-                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_EMAIL, sameFirstName);
-                }
-
-                if (null != contact.getPhoneNumber1() && contact.getPhoneNumber1().equalsIgnoreCase(sameFirstName.getPhoneNumber1())) {
-                    throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.CONTACT_DUPLICATE_NAME_PHONE_NUMBER, sameFirstName);
-                }
-
+        } else if (email != null) {
+            result = contactDao.findOneByFirstNameAndEmail(first, email);
+            if (result != null) {
+                throw new ConstraintViolation(ConstraintMessage.CONTACT_DUPLICATE_NAME_EMAIL);
             }
+
+        } else if (phone != null) {
+            result = contactDao.findOneByFirstNameAndPhoneNumber1(first, phone);
+            if (result != null) {
+                throw new ConstraintViolation(ConstraintMessage.CONTACT_DUPLICATE_NAME_PHONE_NUMBER);
+            }
+
+        } else {
+            throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
         }
+        
 
     }
 
@@ -617,25 +614,21 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public Contact findByFirstLastEmailPhone(SignInDto signInDto) {
+    public Contact findByFirstEmailPhone(SignInDto signInDto) {
 
-        if (signInDto.getFirstName() == null || signInDto.getLastName() == null ||
-                (signInDto.getEmail() == null && signInDto.getPhoneNumber() == null)) {
+        if (signInDto.getFirstName() == null || (signInDto.getEmail() == null && signInDto.getPhoneNumber() == null)) {
             return null;
 
         }else if (signInDto.getEmail() != null) {
-            return contactDao.findOneByFirstNameAndLastNameAndEmail(signInDto.getFirstName(), signInDto.getLastName(),
-                    signInDto.getEmail());
+            return contactDao.findOneByFirstNameAndEmail(signInDto.getFirstName(), signInDto.getEmail());
         }
 
-        Contact contact = contactDao.findOneByFirstNameAndLastNameAndPhoneNumber1(signInDto.getFirstName(),
-                signInDto.getLastName(), signInDto.getPhoneNumber());
+        Contact contact = contactDao.findOneByFirstNameAndPhoneNumber1(signInDto.getFirstName(), signInDto.getPhoneNumber());
 
         if (contact != null) {
             return  contact;
         } else {
-            return contactDao.findOneByFirstNameAndLastNameAndPhoneNumber2(signInDto.getFirstName(),
-                    signInDto.getLastName(), signInDto.getPhoneNumber());
+            return contactDao.findOneByFirstNameAndPhoneNumber2(signInDto.getFirstName(), signInDto.getPhoneNumber());
         }
     }
 }
