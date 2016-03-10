@@ -718,7 +718,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
-        dto = new SignInDto(contact.getFirstName(),null, contact.getEmail(),contact.getPhoneNumber2());
+        dto = new SignInDto(null, null, contact.getEmail(),contact.getPhoneNumber2());
         json = new ObjectMapper().writeValueAsString(dto);
         mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().is4xxClientError())

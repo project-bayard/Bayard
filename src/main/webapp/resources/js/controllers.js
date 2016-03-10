@@ -1012,7 +1012,7 @@
                 ContactService.findBySignInDetails({}, $scope.contactForm, function (data) {
                     $scope.found = true;
                     $scope.contact = data;
-
+                    $scope.contact.lastName = $scope.contact.lastName == null ? $scope.contactForm.lastName : $scope.contact.lastName;
                 }, function (err) {
 
                     if (err.status == 404) {

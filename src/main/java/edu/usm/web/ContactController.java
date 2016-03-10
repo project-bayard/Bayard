@@ -390,7 +390,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.ContactDetails.class)
     public Contact findByFirstLastEmailPhone(@RequestBody SignInDto dto) throws NotFoundException {
-        Contact contact = contactService.findByFirstLastEmailPhone(dto);
+        Contact contact = contactService.findByFirstEmailPhone(dto);
         if (contact == null) {
             throw new NotFoundException("Contact with those attributes does not exist");
         } else {
