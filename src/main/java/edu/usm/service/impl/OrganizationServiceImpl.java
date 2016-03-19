@@ -6,9 +6,11 @@ import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
+import edu.usm.service.DonationAssigningService;
 import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 
 @Service
-public class OrganizationServiceImpl extends BasicService implements OrganizationService {
+public class OrganizationServiceImpl extends DonationAssigningService implements OrganizationService {
 
     @Autowired
     private ContactService contactService;
@@ -73,6 +75,13 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         organization.addDonation(donation);
         updateLastModified(donation);
         update(organization);
+    }
+
+    @Override
+    public void addDonation(Organization organization, DonationDto dto) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Donation donation = convertToDonation(dto);
+        addDonation(organization, donation);
+
     }
 
     @Override

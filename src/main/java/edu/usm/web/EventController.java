@@ -7,6 +7,7 @@ import edu.usm.domain.Event;
 import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.EventDto;
 import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
@@ -97,13 +98,13 @@ public class EventController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/donations", produces={"application/json"}, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Response addDonation(@PathVariable("id")String id, @RequestBody Donation donation) throws ConstraintViolation, NullDomainReference {
+    public Response addDonation(@PathVariable("id")String id, @RequestBody DonationDto dto) throws ConstraintViolation, NullDomainReference {
         Event event = eventService.findById(id);
         if (null == event) {
             //TODO: 404 refactor
             throw new NullDomainReference.NullEvent(id);
         }
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event, dto);
         return Response.successGeneric();
     }
 

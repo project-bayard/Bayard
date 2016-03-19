@@ -4,10 +4,7 @@ import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
-import edu.usm.dto.DtoTransformer;
-import edu.usm.dto.EncounterDto;
-import edu.usm.dto.SignInDto;
-import edu.usm.dto.SustainerPeriodDto;
+import edu.usm.dto.*;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.SustainerPeriodDao;
 import edu.usm.service.*;
@@ -22,7 +19,7 @@ import java.util.*;
  * Created by scottkimball on 3/12/15.
  */
 @Service
-public class ContactServiceImpl extends BasicService implements ContactService {
+public class ContactServiceImpl extends DonationAssigningService implements ContactService {
 
     @Autowired
     private ContactDao contactDao;
@@ -38,6 +35,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private EncounterService encounterService;
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private DonationService donationService;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -258,13 +257,19 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addDonation(Contact contact, Donation donation) throws NullDomainReference.NullContact {
+    public void addDonation(Contact contact, Donation donation) {
         if (null == contact.getDonorInfo()) {
             contact.setDonorInfo(new DonorInfo());
         }
         contact.getDonorInfo().addDonation(donation);
         updateLastModified(donation);
         update(contact);
+    }
+
+    @Override
+    public void addDonation(Contact contact, DonationDto donationDto) throws NullDomainReference.NullContact {
+        Donation donation = convertToDonation(donationDto);
+        addDonation(contact, donation);
     }
 
     @Override

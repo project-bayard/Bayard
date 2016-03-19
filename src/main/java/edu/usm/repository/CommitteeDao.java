@@ -13,7 +13,6 @@ import java.util.HashSet;
 @Repository
 public interface CommitteeDao extends CrudRepository<Committee, String> {
 
-
     @Override
     HashSet<Committee> findAll();
 

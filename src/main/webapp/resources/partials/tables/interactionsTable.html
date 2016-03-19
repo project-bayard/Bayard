@@ -13,7 +13,7 @@
     <tr ng-repeat="record in interactionRecords">
         <td>{{record.dateOfInteraction | date: 'MMMM d, y'}}</td>
         <td>{{record.personContacted}}</td>
-        <td>{{record.interactionType}}</td>
+        <td>{{record.interactionType.name}}</td>
         <td>
             <span class="glyphicon glyphicon-earphone" ng-if="record.requiresFollowUp" aria-hidden="true"></span>
         </td>

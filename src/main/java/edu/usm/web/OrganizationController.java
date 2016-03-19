@@ -6,6 +6,7 @@ import edu.usm.domain.Organization;
 import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.Response;
 import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
@@ -89,13 +90,13 @@ public class OrganizationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/donations", produces={"application/json"})
-    public Response addDonation(@PathVariable("id")String id, @RequestBody Donation donation) throws NullDomainReference, ConstraintViolation{
+    public Response addDonation(@PathVariable("id")String id, @RequestBody DonationDto dto) throws NullDomainReference, ConstraintViolation{
         Organization organization = organizationService.findById(id);
         if (null == organization) {
             //TODO: 404 refactor
             throw new NullDomainReference.NullOrganization(id);
         }
-        organizationService.addDonation(organization, donation);
+        organizationService.addDonation(organization, dto);
         return Response.successGeneric();
     }
 

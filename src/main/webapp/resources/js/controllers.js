@@ -1246,7 +1246,13 @@
 
     }]);
 
-    controllers.controller('DonationFormCtrl', ['$scope', function($scope) {
+    controllers.controller('DonationFormCtrl', ['$scope', 'DonationService', function($scope, DonationService) {
+        DonationService.getBudgetItems({}, function(items) {
+            $scope.budgetItems = items;
+            $scope.budgetItems.push({name: "None"});
+        }, function(err) {
+           console.log(err);
+        });
         $scope.donationMethodOptions = ['PayPal', 'Cash', 'Check', 'Credit Card', 'In-kind'];
     }]);
 
@@ -1528,31 +1534,131 @@
         };
     }]);
 
+    controllers.controller('ConfigurationCtrl', ['$scope', 'EncounterTypeService', function ($scope, EncounterTypeService) {
+
+    }]);
+
+    controllers.controller('InteractionRecordTypeCtrl', ['$scope', 'InteractionService', function ($scope, InteractionService) {
+
+        $scope.showingInteractionTypes = true;
+
+        var setup = function() {
+            $scope.newInteractionType = "";
+            InteractionService.getInteractionTypes({}, function(types) {
+                $scope.interactionTypes = types;
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        setup();
+
+        $scope.showCreateInteractionType = function() {
+            $scope.creatingInteractionType = true;
+        };
+
+        $scope.createInteractionType = function() {
+            InteractionService.createType({}, {name: $scope.newInteractionType}, function(succ) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.cancelCreateInteractionType = function() {
+            $scope.creatingInteractionType = false;
+            $scope.newInteractionType = "";
+        };
+
+        $scope.deleteInteractionType = function(interactionType) {
+            InteractionService.deleteType({typeId: interactionType.id}, function(succ) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+    }]);
+
+    controllers.controller('BudgetItemCtrl', ['$scope', 'DonationService', function ($scope, DonationService) {
+
+        $scope.showingBudgetItems = true;
+
+        var setup = function() {
+            DonationService.getBudgetItems({}, function(items) {
+                $scope.budgetItems = items;
+                $scope.newBudgetItem = "";
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        setup();
+
+        $scope.showCreateBudgetItem = function() {
+            $scope.creatingBudgetItem = true;
+        };
+
+        $scope.createBudgetItem = function() {
+            DonationService.createBudgetItem({}, {name: $scope.newBudgetItem}, function(succ) {
+                $scope.creatingBudgetItem = false;
+                setup();
+            }, function(err) {
+               console.log(err);
+            });
+        };
+
+        $scope.cancelCreateBudgetItem = function() {
+            $scope.showCreateBudgetItem = false;
+            $scope.newBudgetItem = "";
+        };
+
+        $scope.deleteBudgetItem = function(budgetItem) {
+            DonationService.deleteBudgetItem({budgetItemId: budgetItem.id}, function(succ) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+    }]);
+
+
 
     controllers.controller('EncounterTypeCtrl', ['$scope', 'EncounterTypeService', function ($scope, EncounterTypeService) {
 
-        $scope.addEncounterType = {};
+        $scope.newEncounterType = "";
+
+        $scope.showingEncounterTypes = true;
+
         var setup = function () {
             EncounterTypeService.findAll({}, function (data) {
                 $scope.encounterTypes = data;
             }, function (err) {
                 console.log(err);
             });
-
-            $scope.addEncounterType.hidden = true;
         };
 
         setup();
 
+        $scope.showCreateEncounterType = function() {
+            $scope.creatingEncounterType = true;
+        };
 
         $scope.createEncounterType = function (name) {
             var encounterType = {name: name};
             EncounterTypeService.create(encounterType, function (data) {
+                $scope.cancelCreateEncounterType();
                 setup();
             }, function (err) {
                 console.log(err);
             });
 
+        };
+
+        $scope.cancelCreateEncounterType = function() {
+            $scope.creatingEncounterType = false;
+            $scope.newEncounterType = "";
         };
 
         $scope.deleteEncounterType = function (encounterType) {
@@ -1809,6 +1915,13 @@
         $scope.newInteraction = {};
         $scope.interactionRecords = {};
 
+        InteractionService.getInteractionTypes({}, function(types) {
+            $scope.interactionTypes = types;
+            $scope.interactionTypes.push({name: "None"});
+        }, function(err) {
+            console.log(err);
+        });
+
         var fetchInteractions = function(id) {
             FoundationService.getInteractionRecords({id: id}, function(interactions) {
                 $scope.interactionRecords = interactions;
@@ -1909,8 +2022,14 @@
 
             var formatInteractionDates = function(interaction) {
                 interaction.dateOfInteraction = DateFormatter.formatDate(interaction.dates.dateOfInteraction);
-            }
+            };
 
+        $scope.getInteractionTypeDescriptor = function(type) {
+            if (null == type) {
+                return "Unknown";
+            }
+            return type.name;
+        };
 
     }]);
 
