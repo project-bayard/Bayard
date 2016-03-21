@@ -13,7 +13,7 @@
 
         this.isSecurityConstraint = function () {
             return this.type == "Security Constraint"
-        }
+        };
 
         this.isAccessDenied = function () {
             return this.type == "Access Denied";
@@ -21,7 +21,7 @@
 
         this.isNullReference = function () {
             return this.type == "Null Reference";
-        }
+        };
     }
 
     function PermissionInterpreter(currentUser) {
@@ -65,7 +65,7 @@
 
         $scope.viewContactDetails = function (contactId) {
             $location.path("/contacts/contact/" + contactId);
-        }
+        };
 
     }]);
 
@@ -2333,6 +2333,33 @@
             saveAs(blob, "table.xls");
         };
     }]);
+
+    controllers.controller('ContactTableCtrl', ['$scope', function($scope) {
+        $scope.searchValue = "";
+        $scope.orderByField = null;
+        $scope.reverseSort = false;
+
+        $scope.fields = [
+            {label:"All", field:"ALL"},
+            {label: "Assessment" , field:"assessment"},
+            {label: "City" , field:"city"},
+            {label: "Email" , field:"email"},
+            {label: "First Name" , field:"firstName"},
+            {label: "Last Name" , field:"lastName"},
+            {label: "Middle Name" , field:"middleName"},
+            {label: "Occupation" , field:"occupation"},
+            {label: "Phone Number 1" , field:"phoneNumber1"},
+            {label: "Phone Number 2" , field:"phoneNumber2"},
+            {label: "Preferred Language" , field:"language"},
+            {label: "State" , field:"state"},
+            {label: "Street Address" , field:"streetAddress"},
+            {label: "Zip Code" , field:"zipCode"}
+        ];
+
+        $scope.selectedField = $scope.fields[0].field;
+
+    }]);
+
 }());
 
 
