@@ -400,13 +400,13 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/{id}/donations", method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
-    public Response addDonation(@PathVariable("id")String id, @RequestBody Donation donation) throws NullDomainReference, ConstraintViolation {
+    public Response addDonation(@PathVariable("id")String id, @RequestBody DonationDto dto) throws NullDomainReference, ConstraintViolation {
         Contact c = contactService.findById(id);
         if (null == c) {
             //TODO: 404 refactor
             throw new NullDomainReference.NullContact(id);
         }
-        contactService.addDonation(c, donation);
+        contactService.addDonation(c, dto);
         return Response.successGeneric();
     }
 

@@ -1,6 +1,10 @@
 package edu.usm.service.impl;
 
+import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
+import edu.usm.dto.DonationDto;
+import edu.usm.dto.DtoTransformer;
+import edu.usm.repository.BudgetItemDao;
 import edu.usm.repository.DonationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.DonationService;
@@ -18,6 +22,9 @@ public class DonationServiceImpl extends BasicService implements DonationService
     @Autowired
     private DonationDao donationDao;
 
+    @Autowired
+    private BudgetItemDao budgetItemDao;
+
     @Override
     public Donation findById(String id) {
         return donationDao.findOne(id);
@@ -33,6 +40,16 @@ public class DonationServiceImpl extends BasicService implements DonationService
         updateLastModified(donation);
         donationDao.save(donation);
         return donation.getId();
+    }
+
+    @Override
+    public String create(DonationDto dto) {
+        Donation donation = new Donation();
+        donation = DtoTransformer.fromDto(dto, donation);
+        if (null != dto.getBudgetItemId()) {
+            donation.setBudgetItem(findBudgetItem(dto.getBudgetItemId()));
+        }
+        return create(donation);
     }
 
     @Override
@@ -56,6 +73,17 @@ public class DonationServiceImpl extends BasicService implements DonationService
     }
 
     @Override
+    public void update(Donation existing, DonationDto dto) {
+        existing = DtoTransformer.fromDto(dto, existing);
+        if (null != dto.getBudgetItemId()) {
+            existing.setBudgetItem(findBudgetItem(dto.getBudgetItemId()));
+        } else {
+            existing.setBudgetItem(null);
+        }
+        update(existing);
+    }
+
+    @Override
     public void delete(Donation donation) {
         donationDao.delete(donation);
     }
@@ -63,5 +91,46 @@ public class DonationServiceImpl extends BasicService implements DonationService
     @Override
     public void deleteAll() {
         findAll().stream().forEach(this::delete);
+    }
+
+    @Override
+    public void deleteAllBudgetItems() {
+        findAllBudgetItems().stream().forEach(this::deleteBudgetItem);
+    }
+
+    @Override
+    public Set<BudgetItem> findAllBudgetItems() {
+        return budgetItemDao.findAll();
+    }
+
+    @Override
+    public BudgetItem findBudgetItem(String id) {
+        return budgetItemDao.findOne(id);
+    }
+
+    @Override
+    public void createBudgetItem(BudgetItem budgetItem) {
+        budgetItemDao.save(budgetItem);
+    }
+
+    @Override
+    public void updateBudgetItemName(BudgetItem budgetItem, String name) {
+        budgetItem.setName(name);
+        budgetItemDao.save(budgetItem);
+    }
+
+    @Override
+    public void deleteBudgetItem(BudgetItem budgetItem) {
+        Set<Donation> donationsWithBudgetItem = findByBudgetItem(budgetItem);
+        for (Donation donation: donationsWithBudgetItem) {
+            donation.setBudgetItem(null);
+            update(donation);
+        }
+        budgetItemDao.delete(budgetItem);
+    }
+
+    @Override
+    public Set<Donation> findByBudgetItem(BudgetItem budgetItem) {
+        return donationDao.findByBudgetItem(budgetItem);
     }
 }

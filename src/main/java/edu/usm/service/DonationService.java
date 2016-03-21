@@ -1,6 +1,8 @@
 package edu.usm.service;
 
+import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
+import edu.usm.dto.DonationDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -20,15 +22,42 @@ public interface DonationService {
     String create(Donation donation);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    String create(DonationDto dto);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update(Donation donation);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update(Donation oldDonation, Donation newDonation);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void update(Donation oldDonation, DonationDto dto);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void delete(Donation donation);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
+    void deleteAllBudgetItems();
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Donation> findByBudgetItem(BudgetItem budgetItem);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<BudgetItem> findAllBudgetItems();
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void createBudgetItem(BudgetItem budgetItem);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void updateBudgetItemName(BudgetItem budgetItem, String name);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    BudgetItem findBudgetItem(String id);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
+    void deleteBudgetItem(BudgetItem budgetItem);
 
 }

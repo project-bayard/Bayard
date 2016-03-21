@@ -13,7 +13,7 @@ public class InteractionRecordDto implements Serializable {
 
     private LocalDate dateOfInteraction;
 
-    private String interactionType;
+    private String interactionTypeId;
 
     private String notes;
 
@@ -37,12 +37,12 @@ public class InteractionRecordDto implements Serializable {
         this.dateOfInteraction = dateOfInteraction;
     }
 
-    public String getInteractionType() {
-        return interactionType;
+    public String getInteractionTypeId() {
+        return interactionTypeId;
     }
 
-    public void setInteractionType(String interactionType) {
-        this.interactionType = interactionType;
+    public void setInteractionTypeId(String interactionTypeId) {
+        this.interactionTypeId = interactionTypeId;
     }
 
     public String getNotes() {

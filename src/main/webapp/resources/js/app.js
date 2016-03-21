@@ -80,9 +80,9 @@
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'
             })
-            .when('/encountertypes', {
-                templateUrl: 'resources/partials/encounterTypes.html',
-                controller: 'EncounterTypeCtrl'
+            .when('/configuration', {
+                templateUrl: 'resources/partials/configurationOptions.html',
+                controller: 'ConfigurationCtrl'
             })
             .when('/groups', {
                 templateUrl: 'resources/partials/groupList.html',

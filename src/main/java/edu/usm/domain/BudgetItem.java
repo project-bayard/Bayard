@@ -4,26 +4,28 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 /**
- * Created by scottkimball on 4/15/15.
+ * Entity that models a budget item for entities in the development domain.
  */
-
-@Entity(name = "encounter_type")
-public class EncounterType extends BasicEntity implements Serializable {
+@Entity
+public class BudgetItem extends BasicEntity implements Serializable {
 
     @Column(nullable = false, unique = true)
-    @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
+    @JsonView(Views.DonationDetails.class)
     private String name;
 
-    public EncounterType(String name) {
-        this.name = name;
+    public BudgetItem() {
+        super();
     }
 
-    public EncounterType() {
-
+    /**
+     * @param name The name of the budget item
+     */
+    public BudgetItem(String name) {
+        super();
+        this.name = name;
     }
 
     public String getName() {

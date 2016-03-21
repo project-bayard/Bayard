@@ -3,6 +3,7 @@ package edu.usm.it.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Foundation;
 import edu.usm.domain.InteractionRecord;
+import edu.usm.domain.InteractionRecordType;
 import edu.usm.domain.UserFileUpload;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.repository.UserFileUploadDao;
@@ -34,6 +35,7 @@ public class InteractionRecordServiceTest extends WebAppConfigurationAware {
     UserFileUploadDao dao;
 
     InteractionRecord record;
+    InteractionRecordType type;
     Foundation f;
 
     UserFileUpload userFileUpload;
@@ -54,7 +56,10 @@ public class InteractionRecordServiceTest extends WebAppConfigurationAware {
         userFileUpload.setFileName("application.properties");
         userFileUpload.setDescription("A test file");
 
-        record = new InteractionRecord("Contact Person", LocalDate.now(), "Call", f);
+        type = new InteractionRecordType("Test Interaction Record Type");
+        recordService.createInteractionRecordType(type);
+
+        record = new InteractionRecord("Contact Person", LocalDate.now(), type, f);
         record.setNotes("Some notes of the interaction");
         record.getFileUploads().add(userFileUpload);
     }
@@ -62,6 +67,7 @@ public class InteractionRecordServiceTest extends WebAppConfigurationAware {
     @After
     public void teardown() {
         foundationService.deleteAll();
+        recordService.deleteAllInteractionRecordTypes();
     }
 
     @Test
@@ -93,12 +99,6 @@ public class InteractionRecordServiceTest extends WebAppConfigurationAware {
 
         record = recordService.findById(record.getId());
         assertEquals(newNotes, record.getNotes());
-    }
-
-    @Test(expected = ConstraintViolation.class)
-    public void testCreateInteractionNoType() throws ConstraintViolation {
-        record.setInteractionType(null);
-        recordService.create(record);
     }
 
     @Test(expected = ConstraintViolation.class)

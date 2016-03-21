@@ -1,13 +1,14 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.Foundation;
-import edu.usm.domain.Grant;
 import edu.usm.domain.InteractionRecord;
+import edu.usm.domain.InteractionRecordType;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.InteractionRecordDto;
 import edu.usm.repository.InteractionRecordDao;
+import edu.usm.repository.InteractionRecordTypeDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.FoundationService;
 import edu.usm.service.InteractionRecordService;
@@ -26,6 +27,9 @@ public class InteractionRecordServiceImpl extends BasicService implements Intera
 
     @Autowired
     private InteractionRecordDao dao;
+
+    @Autowired
+    private InteractionRecordTypeDao typeDao;
 
     @Autowired
     private FoundationService foundationService;
@@ -64,6 +68,9 @@ public class InteractionRecordServiceImpl extends BasicService implements Intera
     @Override
     public void update(InteractionRecord record, InteractionRecordDto details) throws ConstraintViolation {
         record = DtoTransformer.fromDto(details, record);
+        if (null != details.getInteractionTypeId()) {
+            record.setInteractionType(findInteractionRecordType(details.getInteractionTypeId()));
+        }
         update(record);
     }
 
@@ -100,5 +107,41 @@ public class InteractionRecordServiceImpl extends BasicService implements Intera
     @Override
     public void deleteAll() {
         findAll().stream().forEach(this::uncheckedDelete);
+    }
+
+    @Override
+    public InteractionRecordType findInteractionRecordType(String id) {
+        return typeDao.findOne(id);
+    }
+
+    @Override
+    public Set<InteractionRecordType> findAllInteractionRecordTypes() {
+        return typeDao.findAll();
+    }
+
+    @Override
+    public String createInteractionRecordType(InteractionRecordType type) {
+        typeDao.save(type);
+        return type.getId();
+    }
+
+    @Override
+    public void changeInteractionRecordTypeName(InteractionRecordType type, String name) {
+        type.setName(name);
+        typeDao.save(type);
+    }
+
+    @Override
+    public void deleteInteractionRecordType(InteractionRecordType interactionRecordType) {
+        Set<InteractionRecord> interactionRecords = dao.findByInteractionType(interactionRecordType);
+        for (InteractionRecord record: interactionRecords) {
+            record.setInteractionType(null);
+        }
+        typeDao.delete(interactionRecordType);
+    }
+
+    @Override
+    public void deleteAllInteractionRecordTypes() {
+        typeDao.findAll().stream().forEach(this::deleteInteractionRecordType);
     }
 }

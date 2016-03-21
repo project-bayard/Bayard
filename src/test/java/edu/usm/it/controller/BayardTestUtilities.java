@@ -203,7 +203,6 @@ public final class BayardTestUtilities {
             interactionRecordListFields = new ArrayList<>();
             interactionRecordListFields.add(InteractionRecord.class.getDeclaredField("personContacted"));
             interactionRecordListFields.add(InteractionRecord.class.getDeclaredField("dateOfInteraction"));
-            interactionRecordListFields.add(InteractionRecord.class.getDeclaredField("interactionType"));
             interactionRecordListFields.add(InteractionRecord.class.getDeclaredField("requiresFollowUp"));
             jsonViewEntityFields.put(Views.InteractionRecordList.class.getSimpleName(), interactionRecordListFields);
 
@@ -218,7 +217,6 @@ public final class BayardTestUtilities {
             donationDetailsFields.add(Donation.class.getDeclaredField("dateOfDeposit"));
             donationDetailsFields.add(Donation.class.getDeclaredField("anonymous"));
             donationDetailsFields.add(Donation.class.getDeclaredField("standalone"));
-            donationDetailsFields.add(Donation.class.getDeclaredField("budgetItem"));
             donationDetailsFields.add(Donation.class.getDeclaredField("restrictedToCategory"));
             jsonViewEntityFields.put(Views.DonationDetails.class.getSimpleName(), donationDetailsFields);
 

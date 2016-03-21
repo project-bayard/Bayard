@@ -6,6 +6,7 @@ import edu.usm.domain.InteractionRecord;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.FoundationDto;
 import edu.usm.dto.GrantDto;
+import edu.usm.dto.InteractionRecordDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -26,6 +27,9 @@ public interface FoundationService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void createInteractionRecord(Foundation foundation, InteractionRecord interactionRecord) throws ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void createInteractionRecord(Foundation foundation, InteractionRecordDto dto) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create(Foundation foundation) throws ConstraintViolation;

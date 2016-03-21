@@ -3,12 +3,10 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Committee;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Donation;
-import edu.usm.domain.Event;
+import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EventDto;
 import edu.usm.service.*;
 import junit.framework.Assert;
@@ -50,6 +48,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
     private DonationService donationService;
 
     Event event;
+    BudgetItem budgetItem;
     Donation donation;
     Contact contact;
 
@@ -67,8 +66,11 @@ public class EventControllerTest extends WebAppConfigurationAware {
         contact.setFirstName("Test");
         contact.setEmail("test@email.com");
 
+        budgetItem = new BudgetItem("Test Budget Item");
+        donationService.createBudgetItem(budgetItem);
 
         donation = new Donation();
+        donation.setBudgetItem(budgetItem);
         donation.setAmount(200);
         donation.setDateOfDeposit(LocalDate.now());
         donation.setDateOfDeposit(LocalDate.of(2015, 1, 1));
@@ -79,6 +81,8 @@ public class EventControllerTest extends WebAppConfigurationAware {
         eventService.deleteAll();
         committeeService.deleteAll();
         contactService.deleteAll();
+        donationService.deleteAllBudgetItems();
+        donationService.deleteAll();
     }
 
 
@@ -230,10 +234,11 @@ public class EventControllerTest extends WebAppConfigurationAware {
     @Test
     public void testAddDonation() throws Exception {
         eventService.create(event);
-        BayardTestUtilities.performEntityPost("/events/" + event.getId() + "/donations", donation, mockMvc);
+        BayardTestUtilities.performEntityPost("/events/" + event.getId() + "/donations", DtoTransformer.fromEntity(donation), mockMvc);
 
         event = eventService.findById(event.getId());
         assertFalse(event.getDonations().isEmpty());
+        assertEquals(budgetItem.getName(), event.getDonations().iterator().next().getBudgetItem().getName());
     }
 
     @Test

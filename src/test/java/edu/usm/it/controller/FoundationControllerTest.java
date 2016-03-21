@@ -1,13 +1,12 @@
 package edu.usm.it.controller;
 
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Foundation;
-import edu.usm.domain.Grant;
-import edu.usm.domain.InteractionRecord;
-import edu.usm.domain.Views;
+import edu.usm.domain.*;
 
+import edu.usm.dto.DtoTransformer;
 import edu.usm.service.FoundationService;
 import edu.usm.service.GrantService;
+import edu.usm.service.InteractionRecordService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,11 +25,15 @@ public class FoundationControllerTest extends WebAppConfigurationAware {
     FoundationService foundationService;
 
     @Autowired
+    InteractionRecordService recordService;
+
+    @Autowired
     GrantService grantService;
 
     final String FOUNDATIONS_BASE_URL = "/foundations/";
 
     Foundation foundation;
+    InteractionRecordType type;
 
     @Before
     public void setup() {
@@ -49,11 +52,16 @@ public class FoundationControllerTest extends WebAppConfigurationAware {
         foundation.setSecondaryContactEmail("second@email.com");
         foundation.setSecondaryContactPhone("123-123-0000");
 
+        type = new InteractionRecordType("Test Interaction Type");
+        recordService.createInteractionRecordType(type);
+
     }
 
     @After
     public void teardown() {
         foundationService.deleteAll();
+        recordService.deleteAllInteractionRecordTypes();
+        recordService.deleteAll();
     }
 
     @Test
@@ -157,11 +165,11 @@ public class FoundationControllerTest extends WebAppConfigurationAware {
     @Test
     public void testCreateInteractionRecord() throws Exception {
         foundationService.create(foundation);
-        InteractionRecord record = new InteractionRecord("Point person", LocalDate.now(), "Call", foundation);
+        InteractionRecord record = new InteractionRecord("Point person", LocalDate.now(), type, foundation);
         record.setNotes("Some notes");
         record.setRequiresFollowUp(false);
         String url = FOUNDATIONS_BASE_URL+foundation.getId()+"/interactions";
-        BayardTestUtilities.performEntityPost(url, record, mockMvc);
+        BayardTestUtilities.performEntityPost(url, DtoTransformer.fromEntity(record), mockMvc);
 
         foundation = foundationService.findById(foundation.getId());
         InteractionRecord fromDb = foundation.getInteractionRecords().iterator().next();
@@ -170,15 +178,16 @@ public class FoundationControllerTest extends WebAppConfigurationAware {
         assertEquals(record.getDateOfInteraction(), fromDb.getDateOfInteraction());
         assertEquals(record.getNotes(), fromDb.getNotes());
         assertEquals(record.isRequiresFollowUp(), fromDb.isRequiresFollowUp());
+        assertEquals(record.getInteractionType().getName(), fromDb.getInteractionType().getName());
 
     }
 
     @Test
     public void testGetInteractionRecords() throws Exception {
-        InteractionRecord record = new InteractionRecord("Point person", LocalDate.now(), "Call", foundation);
+        InteractionRecord record = new InteractionRecord("Point person", LocalDate.now(), type, foundation);
         record.setNotes("Some notes");
         record.setRequiresFollowUp(true);
-        InteractionRecord anotherRecord = new InteractionRecord("Head of Foundation", LocalDate.of(2016, 1, 1), "Email", foundation);
+        InteractionRecord anotherRecord = new InteractionRecord("Head of Foundation", LocalDate.of(2016, 1, 1), type, foundation);
         record.setNotes("A follow up to the first interaction");
         record.setRequiresFollowUp(false);
         foundation.addInteractionRecord(record);

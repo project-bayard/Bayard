@@ -8,6 +8,7 @@ import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.FoundationDto;
 import edu.usm.dto.GrantDto;
+import edu.usm.dto.InteractionRecordDto;
 import edu.usm.repository.FoundationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.FoundationService;
@@ -122,6 +123,16 @@ public class FoundationServiceImpl extends BasicService implements FoundationSer
         interactionRecord.setFoundation(foundation);
         foundation.addInteractionRecord(interactionRecord);
         interactionService.create(interactionRecord);
+    }
+
+    @Override
+    public void createInteractionRecord(Foundation foundation, InteractionRecordDto dto) throws ConstraintViolation {
+        InteractionRecord record = new InteractionRecord();
+        record = DtoTransformer.fromDto(dto, record);
+        if (null != dto.getInteractionTypeId()) {
+            record.setInteractionType(interactionService.findInteractionRecordType(dto.getInteractionTypeId()));
+        }
+        createInteractionRecord(foundation, record);
     }
 
     @Override

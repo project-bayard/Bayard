@@ -3,6 +3,7 @@ package edu.usm.service;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.SignInDto;
 import edu.usm.dto.SustainerPeriodDto;
@@ -94,6 +95,9 @@ public interface ContactService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addDonation(Contact contact, Donation donation) throws  NullDomainReference.NullContact;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void addDonation(Contact contact, DonationDto donationDto) throws  NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeDonation(Contact contact, Donation donation) throws  NullDomainReference.NullContact;
