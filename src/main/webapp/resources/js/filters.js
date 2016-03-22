@@ -8,7 +8,7 @@
     filters.filter('byMembers', function () {
         return function (collection) {
 
-            var newCollection = angular.copy(collection)
+            var newCollection = angular.copy(collection);
             for (var i = 0; i < newCollection.length; i++) {
 
                 if (newCollection[i].member == false) {
@@ -68,6 +68,37 @@
            }
 
            return collection;
+       }
+    });
+
+    filters.filter('byContactField', function() {
+       return function (contacts, field, value) {
+
+           var filtered = [];
+           if (field == 'ALL') {
+               angular.forEach(contacts, function(contact) {
+
+                   for (var prop in contact) {
+                       var val = contact[prop] + "";
+                       if (val.indexOf(value) >= 0){
+                           filtered.push(contact);
+                           break;
+                       }
+                   }
+               });
+
+           } else {
+               angular.forEach(contacts, function(contact) {
+                   var contactField = contact[field] + "";
+
+                   if(contactField.indexOf(value) >= 0) {
+                       filtered.push(contact);
+                   }
+               });
+           }
+
+           return filtered;
+
        }
     });
 
