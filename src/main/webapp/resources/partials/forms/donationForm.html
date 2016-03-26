@@ -38,20 +38,20 @@
     <div class="row">
         <div class="form-group col-xs-12" >
             <label class="control-label">Date of Deposit</label>
-            <input name="dateOfDeposit" type="date" class="form-control" ng-model=" modelHolder.donationModel.dates.dateOfDeposit">
+            <input name="dateOfDeposit" type="date" ng-value="" class="form-control" ng-model=" modelHolder.donationModel.dates.dateOfDeposit">
         </div>
     </div>
     <div class="row">
         <div class="form-group col-xs-12">
             <label class="control-label">Is this donation anonymous?</label>
-            <select name="anonymous" class="form-control " ng-model="modelHolder.donorModel.anonymous" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+            <select name="anonymous" class="form-control " ng-model="modelHolder.donationModel.anonymous" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
             </select>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-xs-12">
             <label class="control-label">Is this donation standalone?</label>
-            <select name="standalone" class="form-control " ng-model="modelHolder.donorModel.standalone" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
+            <select name="standalone" class="form-control " ng-model="modelHolder.donationModel.standalone" ng-options="booleanToString(value) for value in [true, false]" ng-selected="value == false">
             </select>
         </div>
     </div>

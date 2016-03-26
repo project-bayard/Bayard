@@ -1,5 +1,8 @@
 package edu.usm.it.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
@@ -11,8 +14,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -134,7 +144,7 @@ public class DonationControllerTest extends WebAppConfigurationAware {
         budgetItem = new BudgetItem("Misc");
         donationService.createBudgetItem(budgetItem);
 
-        BayardTestUtilities.performEntityDelete(DONATIONS_BASE_URL+"budgetitems/"+budgetItem.getId(), mockMvc);
+        BayardTestUtilities.performEntityDelete(DONATIONS_BASE_URL + "budgetitems/" + budgetItem.getId(), mockMvc);
 
         budgetItem = donationService.findBudgetItem(budgetItem.getId());
         assertNull(budgetItem);
@@ -150,6 +160,58 @@ public class DonationControllerTest extends WebAppConfigurationAware {
 
         BudgetItem fromDb = donationService.findBudgetItem(budgetItem.getId());
         assertEquals(budgetItem.getName(), fromDb.getName());
+    }
+
+    @Test
+    public void testGetDonationsByDepositRange() throws Exception {
+        donationService.create(donation);
+        Donation secondDonation = new Donation(100, "Credit Card", donation.getDateOfReceipt(), donation.getDateOfDeposit());
+        donationService.create(secondDonation);
+        LocalDate from = donation.getDateOfDeposit().minus(7, ChronoUnit.DAYS);
+        LocalDate to = donation.getDateOfDeposit().plus(7, ChronoUnit.DAYS);
+
+        mockMvc.perform(get(DONATIONS_BASE_URL + "/bydepositdate")
+                .param("from", from.toString())
+                .param("to", to.toString())
+                .param("page.page", "0")
+                .param("page.size", "20")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void testGetDonationsByReceiptRange() throws Exception {
+        donationService.create(donation);
+        Donation secondDonation = new Donation(100, "Credit Card", donation.getDateOfReceipt(), donation.getDateOfDeposit());
+        donationService.create(secondDonation);
+        LocalDate from = donation.getDateOfDeposit().minus(7, ChronoUnit.DAYS);
+        LocalDate to = donation.getDateOfDeposit().plus(7, ChronoUnit.DAYS);
+
+        mockMvc.perform(get(DONATIONS_BASE_URL + "/bydreceiptdate")
+                .param("from", from.toString())
+                .param("to", to.toString())
+                .param("page.page", "0")
+                .param("page.size", "20")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void testGetDonationsByBudgetItem() throws Exception {
+        budgetItem = new BudgetItem("Test budget item");
+        donationService.createBudgetItem(budgetItem);
+        donation.setBudgetItem(budgetItem);
+        donationService.create(donation);
+
+        mockMvc.perform(get(DONATIONS_BASE_URL + "/bybudgetitem")
+                .param("item", budgetItem.getId())
+                .param("page.page", "0")
+                .param("page.size", "20")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
     }
 
 }

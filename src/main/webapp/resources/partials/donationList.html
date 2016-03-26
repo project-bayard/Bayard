@@ -1,6 +1,96 @@
 <div class="container-fluid">
     <h1 style="text-align: center">Donations</h1>
-    <h5 style="text-align: center">Coming soon.</h5>
     <br><br>
-    <div ng-include src=" 'resources/partials/tables/simpleDonationTable.html' "></div>
+    <div class="row">
+        <div class="col-xs-4">
+            <button class="btn btn-primary" ng-click="showDepositOptions()" ng-class="{ 'btn-success': showingDepositDateQuery}">Search by Deposit Date</button>
+        </div>
+    </div>
+    <div ng-if="showingDepositDateQuery">
+        <div class="row">
+            <div class="form-group col-xs-2">
+                <label class="control-label">From:</label>
+                <input name="dates.fromDepositDate" ng-model="selectedOptions.fromDepositDate" type="date" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-2">
+                <label class="control-label">To:</label>
+                <input name="dates.toDepositDate" ng-model="selectedOptions.toDepositDate" type="date" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <button class="btn btn-success" ng-click="submitNewDepositDateQuery()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <button class="btn btn-primary" ng-click="showReceiptOptions()" ng-class="{ 'btn-success': showingReceiptDateQuery}">Search by Receipt Date</button>
+        </div>
+    </div>
+    <div ng-if="showingReceiptDateQuery">
+        <div class="row">
+            <div class="form-group col-xs-2">
+                <label class="control-label">From:</label>
+                <input name="dates.fromReceiptDate" ng-model="selectedOptions.fromReceiptDate" type="date" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-2">
+                <label class="control-label">To:</label>
+                <input name="dates.toReceiptDate" ng-model="selectedOptions.toReceiptDate" type="date" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <button class="btn btn-success" ng-click="submitNewReceiptDateQuery()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div ng-if="showingBudgetItemQuery">
+        <div class="row">
+            <div class="form-group col-xs-2">
+                <label class="control-label">Budget item:</label>
+                <select name="budgetItemId" class="form-control input-small" ng-model="selectedOptions.budgetItemId">
+                    <option ng-repeat="item in budgetItems" value="{{item.id}}">{{item.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <button class="btn btn-success" ng-click="submitNewBudgetItemQuery()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <button class="btn btn-primary" ng-click="showBudgetItemOptions()" ng-class="{ 'btn-success': showingBudgetItemQuery}">Search by Budget Item</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <p>Showing {{numberElementsShown}} of {{totalQueryElements}} results</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div ng-include src=" 'resources/partials/tables/fullDonationTable.html' "></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-primary" ng-click="loadMoreDonations()" ng-disabled="numberElementsShown == totalQueryElements">View More</button>
+        </div>
+    </div>
+
 </div>

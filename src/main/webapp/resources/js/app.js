@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors']);
+    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors', 'angularUtils.directives.dirPagination']);
 
     app.config(["$httpProvider", function ($httpProvider) {
         $httpProvider.interceptors.push("baseInterceptor");
@@ -140,12 +140,14 @@
             })
             .when('/donations', {
                 templateUrl: 'resources/partials/donationList.html',
+                controller: 'DonationListCtrl',
                 resolve: {
                     enabled: resolveDevelopmentEnabled
                 }
             })
             .when('/donations/:id', {
-                templateUrl: 'resources/partials/donationList.html',
+                templateUrl: 'resources/partials/donationDetails.html',
+                controller: 'DonationDetailsCtrl',
                 resolve: {
                     enabled: resolveDevelopmentEnabled
                 }

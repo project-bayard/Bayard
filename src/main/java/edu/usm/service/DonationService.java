@@ -3,8 +3,11 @@ package edu.usm.service;
 import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
 import edu.usm.dto.DonationDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -60,4 +63,12 @@ public interface DonationService {
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteBudgetItem(BudgetItem budgetItem);
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Page<Donation> findDonationsDepositedBetween(LocalDate from, LocalDate to, Pageable pageable);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Page<Donation> findDonationsReceivedBetween(LocalDate from, LocalDate to, Pageable pageable);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Page<Donation> findDonationsByBudgetItem(String budgetItemId, Pageable pageable);
 }

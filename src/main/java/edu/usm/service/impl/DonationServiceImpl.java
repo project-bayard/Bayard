@@ -9,8 +9,11 @@ import edu.usm.repository.DonationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.DonationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -132,5 +135,21 @@ public class DonationServiceImpl extends BasicService implements DonationService
     @Override
     public Set<Donation> findByBudgetItem(BudgetItem budgetItem) {
         return donationDao.findByBudgetItem(budgetItem);
+    }
+
+    @Override
+    public Page<Donation> findDonationsDepositedBetween(LocalDate from, LocalDate to, Pageable pageable) {
+        return donationDao.findByDateOfDepositBetween(from, to, pageable);
+    }
+
+    @Override
+    public Page<Donation> findDonationsReceivedBetween(LocalDate from, LocalDate to, Pageable pageable) {
+        return donationDao.findByDateOfReceiptBetween(from, to, pageable);
+    }
+
+    @Override
+    public Page<Donation> findDonationsByBudgetItem(String budgetItemId, Pageable pageable) {
+        BudgetItem item = budgetItemDao.findOne(budgetItemId);
+        return donationDao.findByBudgetItem(item, pageable);
     }
 }
