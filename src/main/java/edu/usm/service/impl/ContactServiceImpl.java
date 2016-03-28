@@ -11,6 +11,8 @@ import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -294,6 +296,9 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         }
         contact.getDonorInfo().addSustainerPeriod(sustainerPeriod);
         sustainerPeriod.setDonorInfo(contact.getDonorInfo());
+        if (null == sustainerPeriod.getCancelDate()) {
+            contact.getDonorInfo().setCurrentSustainer(true);
+        }
         updateLastModified(contact.getDonorInfo());
         updateLastModified(sustainerPeriod);
         update(contact);
@@ -314,7 +319,10 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
             if (null == existing.getPeriodStartDate()) {
                 throw new ConstraintViolation(ConstraintMessage.SUSTAINER_PERIOD_NO_START_DATE);
             }
+
             contact.getDonorInfo().addSustainerPeriod(existing);
+            refreshContactSustainerStatus(contact);
+
             updateLastModified(contact.getDonorInfo());
             updateLastModified(existing);
             update(contact);
@@ -325,10 +333,27 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     public void deleteSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) {
         if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getSustainerPeriods()) {
             contact.getDonorInfo().getSustainerPeriods().remove(sustainerPeriod);
+            refreshContactSustainerStatus(contact);
             updateLastModified(sustainerPeriod);
             updateLastModified(contact.getDonorInfo());
             update(contact);
         }
+    }
+
+    @Override
+    public Set<Contact> findAllCurrentSustainers() {
+        return contactDao.findByDonorInfoCurrentSustainer(true);
+    }
+
+    private void refreshContactSustainerStatus(Contact contact) {
+        boolean isCurrentSustainer = false;
+        for (SustainerPeriod period: contact.getDonorInfo().getSustainerPeriods()) {
+            if (period.getCancelDate() == null) {
+                isCurrentSustainer = true;
+                break;
+            }
+        }
+        contact.getDonorInfo().setCurrentSustainer(isCurrentSustainer);
     }
 
     @Override

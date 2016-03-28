@@ -827,4 +827,15 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
     }
 
+    @Test
+    public void testGetCurrentSustainers() throws Exception {
+        contactService.create(contact);
+        contactService.createSustainerPeriod(contact, sustainerPeriod);
+
+        mockMvc.perform(get("/contacts/currentSustainers")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
+
 }

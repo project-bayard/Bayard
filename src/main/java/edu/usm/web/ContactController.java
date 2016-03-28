@@ -15,6 +15,10 @@ import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -230,7 +234,7 @@ public class ContactController {
         Contact contact = contactService.findById(id);
 
         try {
-            contactService.addContactToOrganization(contact,organization);
+            contactService.addContactToOrganization(contact, organization);
             return Response.successGeneric();
         } catch (NullDomainReference.NullContact e) {
             throw new NullDomainReference.NullContact(id, e);
@@ -519,6 +523,11 @@ public class ContactController {
 
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/currentSustainers", produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(Views.ContactList.class)
+    public Set<Contact> getAllCurrentSustainers() {
+        return contactService.findAllCurrentSustainers();
+    }
 
 }
 

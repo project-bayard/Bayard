@@ -7,6 +7,8 @@ import edu.usm.dto.DonationDto;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.SignInDto;
 import edu.usm.dto.SustainerPeriodDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -116,5 +118,8 @@ public interface ContactService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void deleteSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) throws  ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Contact> findAllCurrentSustainers();
 
 }
