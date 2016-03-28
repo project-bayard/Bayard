@@ -150,9 +150,9 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope', '$routeParams', 'ContactService', '$timeout', '$location', 'OrganizationService',
-        'EventService', 'CommitteeService', 'DateFormatter', '$window', 'EncounterTypeService', 'GroupService', 'DemographicService',
+        'EventService', 'CommitteeService', 'DateFormatter', '$window', 'EncounterTypeService', 'GroupService', 'DemographicService', 'RouteChangeService',
         function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter,
-                  $window, EncounterTypeService, GroupService, DemographicService) {
+                  $window, EncounterTypeService, GroupService, DemographicService, RouteChangeService) {
 
             var setup = function () {
                 $scope.errorMessage = "";
@@ -825,6 +825,11 @@
                 $scope.donorPanel.creatingSustainerPeriod = false;
                 $scope.modelHolder.sustainerPeriodModel = {};
             };
+
+            $scope.viewSustainerPeriod = function(id) {
+                RouteChangeService.set($scope.contact);
+                $location.path("/sustainerPeriod/"+id);
+            }
 
         }]);
 
@@ -2530,6 +2535,79 @@
 
     }]);
 
+
+    controllers.controller('DonorListCtrl', ['$scope', 'ContactService', 'DateFormatter', '$location', function($scope, ContactService, DateFormatter, $location) {
+
+        var defaultPageSize = 10;
+
+        $scope.contactTable = {
+            quantity : defaultPageSize
+        };
+
+        $scope.queries = {
+            byCurrentSustainer: "By current sustainer"
+        };
+
+        $scope.activeQuery = "";
+
+        $scope.totalElements = 0;
+        $scope.numberElementsShown = 0;
+
+        $scope.viewContactDetails = function (contactId) {
+            $location.path("/contacts/contact/" + contactId);
+        };
+
+        $scope.viewMoreDonors = function() {
+            $scope.contactTable.quantity += defaultPageSize;
+            $scope.numberElementsShown = ($scope.contactTable.quantity >= $scope.totalElements) ? $scope.totalElements : $scope.contactTable.quantity;
+        };
+
+        var getAllCurrentSustainers = function() {
+            ContactService.getAllCurrentSustainers({}, function(contacts) {
+                $scope.contactTable.contacts = contacts;
+                $scope.totalElements = $scope.contactTable.contacts.length;
+                $scope.numberElementsShown = ($scope.contactTable.quantity >= $scope.totalElements) ? $scope.totalElements : $scope.contactTable.quantity;
+            }, logError);
+        };
+
+        $scope.showCurrentSustainers = function() {
+            $scope.showingCurrentSustainerQuery = !$scope.showingCurrentSustainerQuery;
+            if ($scope.showingCurrentSustainerQuery) {
+                $scope.activeQuery = $scope.queries.byCurrentSustainer;
+                $scope.contactTable.orderByField = 'lastName';
+                $scope.contactTable.reverseSort = true;
+
+                getAllCurrentSustainers();
+            }
+        };
+
+        var rangeQueryParameter = function(from, to, page, size) {
+            if (null == page) {
+                page = 0
+            }
+            if (null == size) {
+                size = defaultPageSize
+            }
+            return {
+                from: DateFormatter.formatDate(from),
+                to: DateFormatter.formatDate(to),
+                page: page,
+                size: size
+            }
+        };
+
+        var logError = function(err) {
+            console.log(err);
+        };
+
+        var initialSetup = function() {
+            $scope.showCurrentSustainers();
+        };
+
+        initialSetup();
+
+    }]);
+
     controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function ($scope, $rootScope, $location, $timeout, $window, UserService) {
 
         $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
@@ -2693,6 +2771,60 @@
             });
             saveAs(blob, "table.xls");
         };
+    }]);
+
+    controllers.controller('SustainerPeriodDetailsCtrl', ['$scope', 'ContactService', '$routeParams', '$timeout', 'DateFormatter', 'RouteChangeService', function($scope, ContactService, $routeParams, $timeout, DateFormatter, RouteChangeService) {
+
+        $scope.contact = RouteChangeService.get();
+
+        $scope.modelHolder = {};
+        $scope.formHolder = {};
+
+        $scope.updateSustainerPeriod = function() {
+            $scope.modelHolder.sustainerPeriodModel.periodStartDate= DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.periodStartDate);
+            $scope.modelHolder.sustainerPeriodModel.cancelDate = DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
+
+            ContactService.updateSustainerPeriod({id: $scope.contact.id, entityId: $scope.modelHolder.sustainerPeriodModel.id}, $scope.modelHolder.sustainerPeriodModel, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                $scope.cancelUpdateSustainerPeriod();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        var establishDetails = function(id) {
+            ContactService.getSustainerPeriod({id: $scope.contact.id, entityId: id}, function(period) {
+                $scope.modelHolder.sustainerPeriodModel = period;
+                console.log($scope.modelHolder.sustainerPeriodModel);
+                $scope.modelHolder.sustainerPeriodModel.dates = {
+                    periodStartDate : DateFormatter.asDate(period.periodStartDate),
+                    cancelDate : DateFormatter.asDate(period.cancelDate)
+                };
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.cancelUpdateSustainerPeriod = function() {
+            $scope.editingSustainerPeriod = false;
+            establishDetails($scope.modelHolder.sustainerPeriodModel.id);
+        };
+
+        $scope.closePeriod = function() {
+            $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = new Date();
+            $scope.updateSustainerPeriod();
+        };
+
+        $scope.openPeriod = function() {
+            $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = null;
+            $scope.updateSustainerPeriod();
+        };
+
     }]);
 
     controllers.controller('ContactTableCtrl', ['$scope', function($scope) {

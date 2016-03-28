@@ -1,0 +1,36 @@
+<div id="exportable">
+    <table class="bootstrap-table table table-striped table-hover">
+        <tr data-toggle="tooltip" title="Click Field to Sort">
+            <th ng-click="contactTable.orderByField = 'assessment' ; contactTable.reverseSort =! contactTable.reverseSort">Assessment</th>
+            <th ng-click="contactTable.orderByField = 'firstName' ; contactTable.reverseSort =! contactTable.reverseSort">First Name</th>
+            <th ng-click="contactTable.orderByField = 'lastName' ; contactTable.reverseSort =! contactTable.reverseSort">Last Name</th>
+            <th ng-click="contactTable.orderByField = 'streetAddress' ; contactTable.reverseSort =! contactTable.reverseSort">Address</th>
+            <th ng-click="contactTable.orderByField = 'aptNumber' ; contactTable.reverseSort =! contactTable.reverseSort">Apt #</th>
+            <th ng-click="contactTable.orderByField = 'city' ; contactTable.reverseSort =! contactTable.reverseSort">City</th>
+            <th ng-click="contactTable.orderByField = 'state' ; contactTable.reverseSort =! contactTable.reverseSort">State</th>
+            <th ng-click="contactTable.orderByField = 'phoneNumber1' ; contactTable.reverseSort =! contactTable.reverseSort">Primary phone</th>
+            <th ng-click="contactTable.orderByField = 'email' ; contactTable.reverseSort =! contactTable.reverseSort">Email</th>
+            <th>Status Fields</th>
+        </tr>
+
+        <tr ng-click="viewContactDetails(contact.id)" data-toggle="tooltip" title="Click to View Details"
+            ng-repeat="contact in contactTable.contacts | orderBy:contactTable.orderByField:contactTable.reverseSort | limitTo:contactTable.quantity">
+            <td>{{contact.assessment}}</td>
+            <td>{{contact.firstName}}</td>
+            <td>{{contact.lastName}}</td>
+            <td>{{contact.streetAddress}}</td>
+            <td>{{contact.aptNumber}}</td>
+            <td>{{contact.city}}</td>
+            <td>{{contact.state}}</td>
+            <td>{{contact.phoneNumber1}}</td>
+            <td>{{contact.email}}</td>
+            <td>
+                <span data-toggle="tooltip" title="Needs Follow Up" class="glyphicon glyphicon-earphone" ng-if="contact.needsFollowUp" aria-hidden="true"></span>
+                <span data-toggle="tooltip" title="Member" class="glyphicon glyphicon-star" ng-if="contact.member"></span>
+                <span data-toggle="tooltip" title="Donor" class="glyphicon glyphicon-piggy-bank" ng-if="contact.donor"></span>
+
+            </td>
+        </tr>
+
+    </table>
+</div>

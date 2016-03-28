@@ -122,6 +122,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
         donorInfo.addDonation(donation);
         donorInfoDao.save(donorInfo);
 
+        donorInfo = donorInfoDao.findOne(donorInfo.getId());
         donation = donorInfo.getDonations().iterator().next();
         int newAmount = donation.getAmount() + 1;
         donation.setAmount(newAmount);

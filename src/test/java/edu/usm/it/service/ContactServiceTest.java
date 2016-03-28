@@ -16,6 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -581,6 +583,21 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact = contactService.findById(contact.getId());
         assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
         assertNull(sustainerPeriodDao.findOne(sustainerPeriod.getId()));
+    }
+
+    @Test
+    public void testGetAllCurrentSustainers() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        SustainerPeriod openSustainerPeriod = new SustainerPeriod(contact.getDonorInfo(), LocalDate.now(), 10);
+        contactService.createSustainerPeriod(contact2, openSustainerPeriod);
+
+        contact = contactService.findById(contact.getId());
+        contact2 = contactService.findById(contact2.getId());
+        Set<Contact> sustainers = contactService.findAllCurrentSustainers();
+        assertTrue(sustainers.contains(contact2));
+        assertFalse(sustainers.contains(contact));
     }
 
 

@@ -152,6 +152,20 @@
                     enabled: resolveDevelopmentEnabled
                 }
             })
+            .when('/donors', {
+                templateUrl: 'resources/partials/donorList.html',
+                controller: 'DonorListCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
+            })
+            .when('/sustainerPeriod/:id', {
+                templateUrl: 'resources/partials/sustainerPeriodDetails.html',
+                controller: 'SustainerPeriodDetailsCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
+            })
             .when('/logout', {
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LogoutCtrl'

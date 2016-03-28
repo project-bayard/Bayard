@@ -1,8 +1,5 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.annotations.*;
-
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,7 +7,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Encapsulates information about donations and sustainer periods for a particular Contact.
@@ -26,8 +22,7 @@ public class DonorInfo extends BasicEntity implements Serializable {
     private Set<Donation> donations;
 
     @OneToMany(mappedBy = "donorInfo", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @SortNatural
-    private SortedSet<SustainerPeriod> sustainerPeriods = new TreeSet<>();
+    private Set<SustainerPeriod> sustainerPeriods;
 
     public DonorInfo() {
         super();
@@ -66,6 +61,9 @@ public class DonorInfo extends BasicEntity implements Serializable {
      * @return the set of SustainerPeriods this Contact has committed to
      */
     public Set<SustainerPeriod> getSustainerPeriods() {
+        if (null == sustainerPeriods) {
+            sustainerPeriods = new HashSet<>();
+        }
         return sustainerPeriods;
     }
 
@@ -75,6 +73,6 @@ public class DonorInfo extends BasicEntity implements Serializable {
     }
 
     public void addSustainerPeriod(SustainerPeriod sustainerPeriod) {
-        this.sustainerPeriods.add(sustainerPeriod);
+        this.getSustainerPeriods().add(sustainerPeriod);
     }
 }

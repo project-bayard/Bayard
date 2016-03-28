@@ -23,6 +23,21 @@
         }
     }]);
 
+    services.factory('RouteChangeService', function() {
+        var routeChangeData = {};
+        function set(data) {
+            routeChangeData = data;
+        }
+        function get() {
+            return routeChangeData;
+        }
+
+        return {
+            set: set,
+            get: get
+        }
+    });
+
     services.factory('ContactService',[ '$resource', function ($resource) {
         return $resource('../contacts/:id', {id : '@id', entityId : '@entityId'}, {
             update : {
@@ -151,10 +166,23 @@
                 method : "POST",
                 url : "/contacts/:id/sustainer"
             },
+            updateSustainerPeriod: {
+                method: 'PUT',
+                url: "/contacts/:id/sustainer/:entityId"
+            },
             getSustainerPeriods: {
                 method: 'GET',
                 isArray: true,
                 url: "/contacts/:id/sustainer"
+            },
+            getSustainerPeriod: {
+                method: 'GET',
+                url: "/contacts/:id/sustainer/:entityId"
+            },
+            getAllCurrentSustainers: {
+                method: 'GET',
+                url: "/contacts/currentSustainers",
+                isArray: true
             }
         });
     }]);
