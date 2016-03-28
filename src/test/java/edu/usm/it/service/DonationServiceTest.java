@@ -12,6 +12,9 @@ import edu.usm.service.OrganizationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -203,5 +206,17 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         donation = donationService.findById(donation.getId());
         assertEquals(budgetItem.getName(), newBudgetItemName);
 
+    }
+
+    @Test
+    public void testGetDonationsByBudgetItemPageable() throws Exception {
+        donationService.createBudgetItem(budgetItem);
+        donation.setBudgetItem(budgetItem);
+        donationService.create(donation);
+
+        Pageable pageable = new PageRequest(0, 5);
+        Page<Donation> donations = donationService.findDonationsByBudgetItem(budgetItem.getId(), pageable);
+        assertTrue(donations.getTotalElements() == 1);
+        assertTrue(donations.getContent().contains(donation));
     }
 }

@@ -260,6 +260,18 @@
             deleteBudgetItem : {
                 method: 'DELETE',
                 url: '../donations/budgetitems/:budgetItemId'
+            },
+            getDonationsByDepositRange : {
+                method: 'GET',
+                url: '../donations/bydepositdate'
+            },
+            getDonationsByReceiptRange : {
+                method: 'GET',
+                url: '../donations/byreceiptdate'
+            },
+            getDonationsByBudgetItem : {
+                method: 'GET',
+                url: '../donations/bybudgetitem'
             }
         });
     }]);

@@ -1,0 +1,28 @@
+<div ng-controller="DonationTableCtrl">
+    <br>
+    <table class="bootstrap-table table table-striped table-hover table-responsive"
+           data-toggle="table"
+           data-pagination="true"
+           data-search="true">
+        <tr>
+            <th ng-click="donationTable.orderingProperty = 'dateOfReceipt' ; donationTable.reverseSort =! donationTable.reverseSort">Date of Receipt<span ng-show="donationTable.orderingProperty == 'dateOfReceipt'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'dateOfDeposit' ; donationTable.reverseSort =! donationTable.reverseSort">Date of Deposit<span ng-show="donationTable.orderingProperty == 'dateOfDeposit'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'amount' ; donationTable.reverseSort =! donationTable.reverseSort">Amount<span ng-show="donationTable.orderingProperty == 'amount'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'method' ; donationTable.reverseSort =! donationTable.reverseSort">Method<span ng-show="donationTable.orderingProperty == 'method'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'restrictedToCategory' ; donationTable.reverseSort =! donationTable.reverseSort">Restricted<span ng-show="donationTable.orderingProperty == 'restrictedToCategory'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'budgetItem.name' ; donationTable.reverseSort =! donationTable.reverseSort">Budget Item<span ng-show="donationTable.orderingProperty == 'budgetItem.name'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'anonymous' ; donationTable.reverseSort =! donationTable.reverseSort">Anonymous<span ng-show="donationTable.orderingProperty == 'anonymous'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+            <th ng-click="donationTable.orderingProperty = 'standalone' ; donationTable.reverseSort =! donationTable.reverseSort">Standalone<span ng-show="donationTable.orderingProperty == 'standalone'"><span ng-show="!donationTable.reverseSort"> ^</span><span ng-show="donationTable.reverseSort"> v</span></span></th>
+        </tr>
+        <tr ng-repeat="donation in donations | orderBy:donationTable.orderingProperty:donationTable.reverseSort" ng-click="viewDonationDetails(donation)">
+            <td>{{donation.dateOfReceipt | date: 'MMMM d, y'}}</td>
+            <td>{{donation.dateOfDeposit | date: 'MMMM d, y'}}</td>
+            <td>${{donation.amount}}</td>
+            <td>{{donation.method}}</td>
+            <td>{{donation.restrictedToCategory}}</td>
+            <td>{{donation.budgetItem.name}}</td>
+            <td><span data-toggle="tooltip" title="Anonymous" class="glyphicon glyphicon-warning-sign" ng-if="donation.anonymous" aria-hidden="true"></span></td>
+            <td><span data-toggle="tooltip" title="Standalone" class="glyphicon glyphicon-asterisk" ng-if="donation.standalone" aria-hidden="true"></span></td>
+        </tr>
+    </table>
+</div>

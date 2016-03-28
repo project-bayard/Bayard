@@ -1,0 +1,28 @@
+<div class="container-fluid" ng-cloak>
+    <div class="page-header">
+        <h1>Donation</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div ng-show="requestSuccess" class="alert alert-success alert-dismissable" role="alert">Donation Updated</div>
+            <div name="donation-details-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"> </h3>
+                </div>
+                <div class="panel-body">
+                    <fieldset ng-disabled="!editingDonationDetails">
+                        <div ng-include="'resources/partials/forms/donationForm.html'"></div>
+
+                    </fieldset>
+                    <button class="btn btn-primary" ng-click="editingDonationDetails = true" ng-show="!editingDonationDetails">Edit</button>
+                    <button class="btn btn-success" ng-click="updateDonationDetails()" ng-show="editingDonationDetails" ng-disabled="formHolder.donationForm.$invalid">Submit</button>
+                    <button class="btn btn-danger" ng-click="cancelUpdateDonationDetails()" ng-show="editingDonationDetails">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1">
+
+        </div>
+
+    </div>
+</div>

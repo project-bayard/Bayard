@@ -27,6 +27,8 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         return new Class<?>[] {ApplicationConfig.class, HerokuDevelopmentJpaConfig.class, DefaultJpaConfig.class, SecurityConfig.class};
     }
 
+
+
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class<?>[] {WebMvcConfig.class};

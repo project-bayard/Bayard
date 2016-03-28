@@ -219,7 +219,15 @@
                     console.log(err);
                 });
 
-                $scope.modelHolder = {};
+                $scope.modelHolder = {
+                    donationModel : {
+                        dates: {
+                            dateOfDeposit: new Date(),
+                            dateOfReceipt: new Date()
+                        }
+                    }
+                };
+
                 $scope.formHolder = {};
 
             };
@@ -861,7 +869,15 @@
     controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', 'CommitteeService', '$timeout', '$window', '$location', 'DateFormatter',
         function ($scope, EventService, $routeParams, CommitteeService, $timeout, $window, $location, DateFormatter) {
 
-            $scope.modelHolder = {};
+            $scope.modelHolder = {
+                donationModel : {
+                    dates: {
+                        dateOfDeposit: new Date(),
+                        dateOfReceipt: new Date()
+                    }
+                }
+            };
+
             $scope.formHolder = {};
 
             $scope.viewContactDetails = function (contactId) {
@@ -1254,13 +1270,21 @@
            console.log(err);
         });
         $scope.donationMethodOptions = ['PayPal', 'Cash', 'Check', 'Credit Card', 'In-kind'];
+
     }]);
 
     controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout', 'DateFormatter',
         function ($scope, OrganizationService, $routeParams, $location, $window, $timeout, DateFormatter) {
 
             $scope.formHolder = {};
-            $scope.modelHolder = {};
+            $scope.modelHolder = {
+                donationModel : {
+                    dates: {
+                        dateOfDeposit: new Date(),
+                        dateOfReceipt: new Date()
+                    }
+                }
+            };
 
             $scope.contactCollection = {};
 
@@ -1284,11 +1308,6 @@
             };
 
             establishDetails($routeParams.id);
-
-            $scope.showUpdateForm = function () {
-                $scope.updatingOrganizationDetails = true;
-            };
-
             $scope.cancelUpdate = function () {
                 $scope.updatingOrganizationDetails = false;
                 establishDetails($scope.modelHolder.organizationModel.id);
@@ -2284,6 +2303,229 @@
         $scope.cancelUpdateGrantDetails = function() {
             $scope.editingGrantDetails = false;
             establishDetails($scope.grant.id);
+        }
+
+    }]);
+
+    controllers.controller('DonationListCtrl', ['$scope', 'DonationService', 'DateFormatter', '$location', function($scope, DonationService, DateFormatter, $location) {
+
+        $scope.donationTable = {};
+
+        $scope.queries = {
+            byDepositDate: "By deposit date",
+            byReceiptDate: "By receipt date",
+            byBudgetItem: "By budget item"
+        };
+
+        $scope.activeQuery = "";
+
+        $scope.donations = [];
+        $scope.donationTable = {};
+        $scope.currentPage = 0;
+
+        $scope.selectedOptions = {
+            fromDepositDate: new Date(),
+            toDepositDate: new Date(),
+            fromReceiptDate: new Date(),
+            toReceiptDate: new Date(),
+            budgetItemId : ""
+        };
+
+        $scope.parameters = {
+            fromDepositDateParameter : "",
+            toDepositDateParameter : "",
+            fromReceiptDateParameter : "",
+            toReceiptDateParameter : "",
+            budgetitemIdParameter : ""
+        };
+
+        $scope.totalQueryElements = 0;
+        $scope.numberElementsShown = 0;
+
+        var defaultPageSize = 10;
+
+        $scope.loadMoreDonations = function() {
+            $scope.currentPage += 1;
+            switch ($scope.activeQuery) {
+                case $scope.queries.byDepositDate:
+                    getDepositDatePage();
+                    break;
+                case $scope.queries.byReceiptDate:
+                    getReceiptDatePage();
+                    break;
+                case $scope.queries.byBudgetItem:
+                    getBudgetItemPage();
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        var getReceiptDatePage = function() {
+            var params = rangeQueryParameter($scope.parameters.fromReceiptDateParameter, $scope.parameters.toReceiptDateParameter, $scope.currentPage);
+            DonationService.getDonationsByReceiptRange(params, mergePageResponse, logError);
+        };
+
+        var getDepositDatePage = function() {
+            var params = rangeQueryParameter($scope.parameters.fromDepositDateParameter, $scope.parameters.toDepositDateParameter, $scope.currentPage);
+            DonationService.getDonationsByDepositRange(params, mergePageResponse,logError);
+        };
+
+        var getBudgetItemPage = function() {
+            var params = {item: $scope.parameters.budgetitemIdParameter, page:$scope.currentPage, size:defaultPageSize};
+            DonationService.getDonationsByBudgetItem(params, mergePageResponse,logError);
+        };
+
+        //TODO find a smarter way to handle these various showing conditions
+        $scope.showReceiptOptions = function() {
+            $scope.showingReceiptDateQuery = !$scope.showingReceiptDateQuery;
+            $scope.showingDepositDateQuery = false;
+            $scope.showingBudgetItemQuery = false;
+        };
+
+        $scope.showDepositOptions = function() {
+            $scope.showingDepositDateQuery = !$scope.showingDepositDateQuery;
+            $scope.showingReceiptDateQuery = false;
+            $scope.showingBudgetItemQuery = false;
+        };
+
+        $scope.showBudgetItemOptions = function() {
+            $scope.showingBudgetItemQuery = !$scope.showingBudgetItemQuery;
+            $scope.showingReceiptDateQuery = false;
+            $scope.showingDepositDateQuery = false;
+
+        };
+
+        $scope.submitNewReceiptDateQuery = function() {
+            $scope.activeQuery = $scope.queries.byReceiptDate;
+            $scope.donationTable.orderingProperty = 'dateOfReceipt';
+            $scope.donationTable.reverseSort = true;
+            $scope.parameters.fromReceiptDateParameter = DateFormatter.formatDate($scope.selectedOptions.fromReceiptDate);
+            $scope.parameters.toReceiptDateParameter = DateFormatter.formatDate($scope.selectedOptions.toReceiptDate);
+
+            $scope.currentPage = 0;
+            $scope.donations = [];
+
+            getReceiptDatePage();
+        };
+
+        $scope.submitNewDepositDateQuery = function() {
+            $scope.activeQuery = $scope.queries.byDepositDate;
+            $scope.donationTable.orderingProperty = 'dateOfDeposit';
+            $scope.donationTable.reverseSort = true;
+            $scope.parameters.fromDepositDateParameter = DateFormatter.formatDate($scope.selectedOptions.fromDepositDate);
+            $scope.parameters.toDepositDateParameter = DateFormatter.formatDate($scope.selectedOptions.toDepositDate);
+
+            $scope.currentPage = 0;
+            $scope.donations = [];
+
+            getDepositDatePage();
+        };
+
+        $scope.submitNewBudgetItemQuery = function() {
+            $scope.activeQuery = $scope.queries.byBudgetItem;
+            $scope.donationTable.orderingProperty = 'budgetItem.name';
+            $scope.donationTable.reverseSort = true;
+            $scope.parameters.budgetitemIdParameter = $scope.selectedOptions.budgetItemId;
+
+            $scope.currentPage = 0;
+            $scope.donations = [];
+
+            getBudgetItemPage();
+        };
+
+        var rangeQueryParameter = function(from, to, page, size) {
+            if (null == page) {
+                page = 0
+            }
+            if (null == size) {
+                size = defaultPageSize
+            }
+            return {
+                from: DateFormatter.formatDate(from),
+                to: DateFormatter.formatDate(to),
+                page: page,
+                size: size
+            }
+        };
+
+        var mergePageResponse = function(page) {
+            $scope.donations = $scope.donations.concat(page.content);
+            $scope.totalQueryElements = page.totalElements;
+            $scope.numberElementsShown = $scope.donations.length;
+        };
+
+        var logError = function(err) {
+            console.log(err);
+        };
+
+        var initialSetup = function() {
+            $scope.activeQuery = $scope.queries.byDepositDate;
+            $scope.selectedOptions.fromDepositDate = new Date(new Date().setDate(new Date().getDate()-30));
+            $scope.selectedOptions.toDepositDate = new Date();
+            $scope.submitNewDepositDateQuery();
+        };
+
+        DonationService.getBudgetItems({}, function(items) {
+            $scope.budgetItems = items;
+        }, logError);
+
+        initialSetup();
+
+    }]);
+
+    controllers.controller('DonationDetailsCtrl', ['$scope', 'DonationService', '$routeParams', '$timeout', 'DateFormatter', function($scope, DonationService, $routeParams, $timeout, DateFormatter) {
+
+        $scope.modelHolder = {};
+        $scope.formHolder = {};
+
+        var establishDetails = function(id) {
+            DonationService.find({id: id}, function(donation) {
+                $scope.modelHolder.donationModel = donation;
+                $scope.modelHolder.donationModel.dates = {
+                    dateOfDeposit : DateFormatter.asDate(donation.dateOfDeposit),
+                    dateOfReceipt : DateFormatter.asDate(donation.dateOfReceipt)
+                };
+
+                console.log($scope.modelHolder.donationModel);
+                console.log(donation);
+                if (null != donation.budgetItem) {
+                    $scope.modelHolder.donationModel.budgetItemId = donation.budgetItem.id;
+                }
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.updateDonationDetails = function() {
+            $scope.modelHolder.donationModel.dateOfReceipt = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfReceipt);
+            $scope.modelHolder.donationModel.dateOfDeposit = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfDeposit);
+
+            DonationService.update({id: $scope.modelHolder.donationModel.id}, $scope.modelHolder.donationModel, function(succ) {
+                $scope.editingDonationDetails = false;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                establishDetails($scope.modelHolder.donationModel.id);
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelUpdateDonationDetails = function() {
+            $scope.editingDonationDetails = false;
+            establishDetails($scope.modelHolder.donationModel.id);
+        };
+
+    }]);
+
+    controllers.controller('DonationTableCtrl', ['$scope', '$location', function($scope, $location) {
+
+        $scope.viewDonationDetails = function(donation) {
+            $location.path("/donations/"+donation.id);
         }
 
     }]);
