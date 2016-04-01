@@ -13,8 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,21 +76,21 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     }
 
     @After
+    @Transactional
     public void tearDown() {
         organizationService.deleteAll();
         contactService.deleteAll();
     }
 
     @Test
-    @Transactional
     public void testSave () throws Exception {
 
         contactService.create(contact);
         contactService.create(contact2);
         organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact,organization);
-        contactService.addContactToOrganization(contact2, organization);
+        contactService.addContactToOrganization(contact.getId(),organization.getId());
+        contactService.addContactToOrganization(contact2.getId(), organization.getId());
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(orgFromDb);
@@ -104,17 +104,17 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testDelete () throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
-
         organization.setMembers(contacts);
-        organizationService.create(organization);
+        String orgId = organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact, organization);
-        contactService.addContactToOrganization(contact2, organization);
+        contactService.addContactToOrganization(contact.getId(), orgId);
+        contactService.addContactToOrganization(contact2.getId(), orgId);
 
         Contact contactFromDb = contactService.findById(contact.getId());
         assertEquals(contactFromDb.getOrganizations().size(),1); // before

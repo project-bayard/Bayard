@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -35,11 +36,18 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
 
     @Override
+    @Transactional
     public Organization findById(String id) {
         if (null == id) {
             return null;
         }
-        return organizationDao.findOne(id);
+        Organization organization = organizationDao.findOne(id);
+
+        if (organization != null && organization.getMembers() != null) {
+            organization.getMembers().size();
+        }
+
+        return organization;
     }
 
     @Override
@@ -49,20 +57,21 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public void delete(Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
+    @Transactional
+    public void delete(String id) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
 
-        if (null == organization) {
+        if (null == id) {
             throw new NullDomainReference.NullOrganization();
         }
-
+        Organization organization = organizationDao.findOne(id);
         updateLastModified(organization);
 
         /*Remove references to */
-
-        if (organization.getMembers() != null) {
-            CopyOnWriteArrayList<Contact> contacts = new CopyOnWriteArrayList<>(organization.getMembers());
+        Set<Contact> members = organization.getMembers();
+        if (members != null) {
+            CopyOnWriteArrayList<Contact> contacts = new CopyOnWriteArrayList<>(members);
             for(Contact contact : contacts) {
-                contactService.removeContactFromOrganization(contact,organization);
+                contactService.removeContactFromOrganization(contact.getId(),organization.getId());
             }
         }
         organizationDao.delete(organization);
@@ -123,13 +132,14 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     private void uncheckedDelete(Organization organization) {
         try {
-            delete(organization);
+            delete(organization.getId());
         } catch (NullDomainReference e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
 
         logger.debug("Deleting all Organizations");

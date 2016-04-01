@@ -59,8 +59,9 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         organization = new Organization();
         organization.setName("Organization Name");
         organizationService.create(organization);
-        contactService.addContactToOrganization(first, organization);
-        contactService.addContactToOrganization(second, organization);
+        organization = organizationService.findById(organization.getId());
+        contactService.addContactToOrganization(first.getId(), organization.getId());
+        contactService.addContactToOrganization(second.getId(), organization.getId());
 
         event = new Event();
         event.setName("Event Name");
@@ -121,8 +122,11 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         Group fromDb = groupService.findById(id);
         assertEquals(group.getGroupName(), fromDb.getGroupName());
         Aggregation aggregation = fromDb.getAggregations().iterator().next();
+        Aggregation aggOrg = organizationService.findById(aggregation.getId());
+        int aggSize = aggOrg.getAggregationMembers().size();
+        int orgSize = organization.getMembers().size();
         assertNotNull(aggregation);
-        assertEquals(organization.getAggregationMembers().size(), aggregation.getAggregationMembers().size());
+        assertEquals(aggSize, orgSize);
     }
 
     @Test
@@ -139,6 +143,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional
     public void testCreateGroupFromMultipleAggregations() throws Exception{
         String id = groupService.create(group);
         groupService.addAggregation(committee, group);
@@ -353,7 +358,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         newContact.setEmail("Fresh email");
         contactService.create(newContact);
 
-        contactService.addContactToOrganization(newContact, organization);
+        contactService.addContactToOrganization(newContact.getId(), organization.getId());
 
         newContact = contactService.findById(newContact.getId());
         assertTrue(newContact.getOrganizations().contains(organization));

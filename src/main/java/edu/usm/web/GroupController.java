@@ -1,7 +1,6 @@
 package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.usm.domain.Aggregation;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.Views;
@@ -67,12 +66,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.GroupDetails.class)
     public Set<Contact> getAllContactsInGroup(@PathVariable("id") String id) {
-        Group g = groupService.findById(id);
-        Set<Contact> allContacts = g.getTopLevelMembers();
-        for (Aggregation aggregation: g.getAggregations()) {
-            allContacts.addAll(aggregation.getAggregationMembers());
-        }
-        return allContacts;
+        return  groupService.getAllMembers(id);
     }
 
     @ResponseStatus(HttpStatus.OK)

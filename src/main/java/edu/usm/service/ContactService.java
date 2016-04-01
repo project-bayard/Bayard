@@ -44,10 +44,10 @@ public interface ContactService {
     Set<Contact> findAllInitiators();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addContactToOrganization(Contact contact, Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
+    void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeContactFromOrganization(Contact contact, Organization organization) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization;
+    void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addContactToCommittee(Contact contact, Committee committee) throws  NullDomainReference.NullContact, NullDomainReference.NullCommittee;

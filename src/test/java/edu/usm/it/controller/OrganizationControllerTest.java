@@ -102,9 +102,6 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.[0].phoneNumber", is(organization.getPhoneNumber())))
                 .andExpect(jsonPath("$.[0].primaryContactName", is(organization.getPrimaryContactName())))
                 .andExpect(jsonPath("$.[0].description", is(organization.getDescription())))
-                .andExpect(jsonPath("$.[0].members.[0].id", is(contact.getId())))
-                .andExpect(jsonPath("$.[0].members.[0].firstName", is(contact.getFirstName())))
-                .andExpect(jsonPath("$.[0].members.[0].assessment", is(contact.getAssessment())))
                 .andReturn();
 
     }

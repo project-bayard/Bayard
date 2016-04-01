@@ -33,10 +33,8 @@ public class OrganizationController {
     @ResponseStatus(HttpStatus.OK)
     public Response deleteOrganization(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference{
 
-        Organization organization = organizationService.findById(id);
-
         try {
-            organizationService.delete(organization);
+            organizationService.delete(id);
             return Response.successGeneric();
         } catch (NullDomainReference e) {
             throw new NullDomainReference.NullOrganization(id, e);

@@ -1,9 +1,9 @@
 package edu.usm.service;
 
 import edu.usm.domain.Aggregation;
+import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.NullDomainReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -45,5 +45,8 @@ public interface GroupService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeAggregation(Aggregation aggregation, Group group) throws ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Contact> getAllMembers(String aggId);
 
 }

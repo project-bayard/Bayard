@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -86,6 +87,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
+    @Transactional
     public void delete(Contact contact) throws ConstraintViolation, NullDomainReference {
 
         updateLastModified(contact);
@@ -227,6 +229,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
 
         logger.debug("Deleting all contacts.");
@@ -327,12 +330,15 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addContactToOrganization(Contact contact, Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact{
+    @Transactional
+    public void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact{
 
+        Contact contact = contactDao.findOne(contactId);
         if (null == contact) {
             throw new NullDomainReference.NullContact();
         }
 
+        Organization organization = organizationService.findById(organizationId);
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
         }
@@ -358,12 +364,13 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
 
     @Override
-    public void removeContactFromOrganization(Contact contact, Organization organization) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
-
+    public void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
+        Contact contact = contactDao.findOne(contactId);
         if (null == contact) {
             throw new NullDomainReference.NullContact();
         }
 
+        Organization organization = organizationService.findById(organizationId);
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
         }

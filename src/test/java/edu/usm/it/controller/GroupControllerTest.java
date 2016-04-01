@@ -7,7 +7,6 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.Organization;
 import edu.usm.dto.GroupDto;
-import edu.usm.dto.IdDto;
 import edu.usm.service.ContactService;
 import edu.usm.service.GroupService;
 import edu.usm.service.OrganizationService;
@@ -23,9 +22,7 @@ import java.util.Set;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by andrew on 10/10/15.
@@ -153,7 +150,8 @@ public class GroupControllerTest extends WebAppConfigurationAware {
         groupService.create(group);
         organizationService.create(organization);
         contactService.create(contact);
-        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
+        organization = organizationService.findById(organization.getId());
 
         String path = "/groups/"+group.getId()+"/aggregations/"+organization.getId();
 
@@ -164,7 +162,10 @@ public class GroupControllerTest extends WebAppConfigurationAware {
         Group fromDb = groupService.findById(group.getId());
         assertEquals(1, fromDb.getAggregations().size());
         Aggregation aggregation = fromDb.getAggregations().iterator().next();
-        assertEquals(organization.getMembers().size(), aggregation.getAggregationMembers().size());
+        Aggregation orgFromGroup = organizationService.findById(aggregation.getId());
+        int orgSize = organization.getMembers().size();
+        int aggSize = orgFromGroup.getAggregationMembers().size();
+        assertEquals(orgSize, aggSize);
         assertEquals(1, aggregation.getGroups().size());
 
     }
@@ -174,7 +175,7 @@ public class GroupControllerTest extends WebAppConfigurationAware {
         groupService.create(group);
         organizationService.create(organization);
         contactService.create(contact);
-        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
         groupService.addAggregation(organization, group);
 
         group = groupService.findById(group.getId());
@@ -202,7 +203,7 @@ public class GroupControllerTest extends WebAppConfigurationAware {
         topLevel.setEmail("email@asd.com" );
         contactService.create(topLevel);
 
-        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
         groupService.addAggregation(organization, group);
         contactService.addToGroup(topLevel, group);
 

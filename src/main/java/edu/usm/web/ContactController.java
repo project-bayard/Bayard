@@ -225,12 +225,8 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
     public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) throws ConstraintViolation,  NullDomainReference {
-
-        Organization organization = organizationService.findById(idDto.getId());
-        Contact contact = contactService.findById(id);
-
         try {
-            contactService.addContactToOrganization(contact,organization);
+            contactService.addContactToOrganization(id,idDto.getId());
             return Response.successGeneric();
         } catch (NullDomainReference.NullContact e) {
             throw new NullDomainReference.NullContact(id, e);
@@ -240,21 +236,17 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{entityId}")
-    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation,  NullDomainReference{
-
-        Organization organization = organizationService.findById(entityId);
-        Contact contact = contactService.findById(id);
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{organizationId}")
+    public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("organizationId") String organizationId) throws ConstraintViolation,  NullDomainReference{
 
         try {
-            contactService.removeContactFromOrganization(contact, organization);
+            contactService.removeContactFromOrganization(id, organizationId);
             return Response.successGeneric();
         } catch (NullDomainReference.NullContact e) {
             throw new NullDomainReference.NullContact(id, e);
         } catch (NullDomainReference.NullOrganization e) {
-            throw new NullDomainReference.NullOrganization(entityId, e);
+            throw new NullDomainReference.NullOrganization(organizationId, e);
         }
-
     }
 
     @ResponseStatus(HttpStatus.OK)

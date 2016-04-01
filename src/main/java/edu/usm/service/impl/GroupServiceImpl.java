@@ -5,17 +5,16 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.AggregationDao;
 import edu.usm.repository.GroupDao;
 import edu.usm.service.ContactService;
 import edu.usm.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Created by andrew on 10/8/15.
@@ -41,6 +40,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group findByName(String groupName) {
+
         return groupDao.findByGroupName(groupName);
     }
 
@@ -123,5 +123,16 @@ public class GroupServiceImpl implements GroupService {
         groups.remove(group);
         aggregations.remove(aggregation);
         update(group);
+    }
+
+    @Override
+    @Transactional
+    public Set<Contact> getAllMembers(String aggId) {
+        Group group = groupDao.findOne(aggId);
+        Set<Contact> allContacts = group.getTopLevelMembers();
+        for (Aggregation aggregation: group.getAggregations()) {
+            allContacts.addAll(aggregation.getAggregationMembers());
+        }
+        return allContacts;
     }
 }

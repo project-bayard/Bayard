@@ -172,8 +172,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact, organization);
-        contactService.addContactToOrganization(contact2, organization);
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
+        contactService.addContactToOrganization(contact2.getId(), organization.getId());
 
         contactService.delete(contact);
 
@@ -192,14 +192,14 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
         organizationService.create(organization);
-        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
         assertNotNull(fromDb.getOrganizations());
         assertTrue(fromDb.getOrganizations().contains(organization));
 
-        contactService.removeContactFromOrganization(contact, organization);
+        contactService.removeContactFromOrganization(contact.getId(), organization.getId());
 
         fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);

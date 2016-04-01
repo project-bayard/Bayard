@@ -3,7 +3,6 @@ package edu.usm.it;
 import edu.usm.it.controller.*;
 import edu.usm.it.dao.*;
 import edu.usm.it.service.*;
-import edu.usm.web.InteractionRecordController;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,8 +37,7 @@ import org.springframework.test.context.ActiveProfiles;
         UserServiceTest.class,
         DonationsDaoTest.class,
         FoundationPersistenceTest.class,
-        SustainerPeriodPersistenceTest.class,
-        SustainerPeriodPersistenceTest.class,
+     //TODO uncomment   SustainerPeriodPersistenceTest.class,
         GrantServiceTest.class,
         FoundationServiceTest.class,
         InteractionRecordServiceTest.class,

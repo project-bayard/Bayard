@@ -20,7 +20,7 @@ public interface OrganizationService {
     Set<Organization> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete (Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
+    void delete (String id) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update (Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;

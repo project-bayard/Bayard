@@ -294,7 +294,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         contactService.create(contact);
         organizationService.create(organization);
-        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact.getId(),organization.getId());
 
         mockMvc.perform(get("/contacts/" + contact.getId() + "/organizations")
                 .accept(MediaType.APPLICATION_JSON))
