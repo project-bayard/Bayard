@@ -205,14 +205,10 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         } else {
             throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
         }
-        
-
     }
 
     public Set<Contact> findByFirstName(String firstName) {
-
         return contactDao.findByFirstName(firstName);
-
     }
 
     /*
@@ -388,6 +384,22 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         update(contact);
     }
 
+    @Override
+    @Transactional
+    public Set<Organization> getAllContactOrganizations(String id) throws NullDomainReference.NullContact {
+        Contact contact = contactDao.findOne(id);
+        if (contact == null) {
+            throw new NullDomainReference.NullContact(id);
+        }
+
+        Set<Organization> organizations = contact.getOrganizations();
+        if (organizations == null) {
+            return new HashSet<>();
+        } else {
+            organizations.size();
+            return organizations;
+        }
+    }
 
     @Override
     public void addContactToCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{

@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 /**
- * Created by scottkimball on 3/12/15.
+ * REST Controller for {@link Contact}
  */
 
 @RestController
@@ -55,6 +55,10 @@ public class ContactController {
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
+    /**
+     * Returns a set of all existing contacts.
+     * @return
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces="application/json")
     @JsonView(Views.ContactList.class)
@@ -62,6 +66,12 @@ public class ContactController {
         return contactService.findAll();
     }
 
+    /**
+     * Creates a new Contact
+     * @param contact
+     * @return The UUID of the new contact.
+     * @throws ConstraintViolation
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
     public Response createContact(@RequestBody Contact contact) throws ConstraintViolation {
@@ -69,7 +79,11 @@ public class ContactController {
         return new Response(id, Response.SUCCESS);
     }
 
-
+    /**
+     * Find a Contact by it's UUID
+     * @param id
+     * @return {@link Contact}
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView(Views.ContactDetails.class)
@@ -77,6 +91,15 @@ public class ContactController {
         return contactService.findById(id);
     }
 
+    /**
+     * Updates the basic details of a contact. Basic details are the fields that are not collections or references to
+     * other domain objects.
+     * @param id
+     * @param details
+     * @return
+     * @throws ConstraintViolation
+     * @throws NullDomainReference
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", consumes={"application/json"})
     public Response updateContactById(@PathVariable("id") String id, @RequestBody Contact details) throws  ConstraintViolation,  NullDomainReference {
@@ -210,13 +233,7 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/organizations")
     @JsonView(Views.ContactOrganizationDetails.class)
     public Set<Organization> getAllOrganizationsForContact(@PathVariable("id") String id) throws NullDomainReference{
-
-        Contact c = contactService.findById(id);
-        if (null == c) {
-            throw new NullDomainReference.NullContact(id);
-        }
-
-        return c.getOrganizations();
+        return contactService.getAllContactOrganizations(id);
     }
 
     @ResponseStatus(HttpStatus.OK)

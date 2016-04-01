@@ -6,11 +6,7 @@ import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.dto.DtoTransformer;
-import edu.usm.dto.EncounterDto;
-import edu.usm.dto.IdDto;
-import edu.usm.dto.Response;
-import edu.usm.dto.SignInDto;
+import edu.usm.dto.*;
 import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
@@ -266,9 +262,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
         Organization orgFromDb = organizationService.findById(organization.getId());
-
         assertNotNull(fromDb);
-        assertEquals(fromDb.getOrganizations().iterator().next().getId(), organization.getId());
+
+        Set<Organization> organizations = contactService.getAllContactOrganizations(fromDb.getId());
+        assertEquals(organizations.iterator().next().getId(), organization.getId());
         assertNotNull(orgFromDb);
         assertEquals(orgFromDb.getMembers().iterator().next().getId(), contact.getId());
 

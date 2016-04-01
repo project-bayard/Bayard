@@ -241,7 +241,7 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Committee> committees;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

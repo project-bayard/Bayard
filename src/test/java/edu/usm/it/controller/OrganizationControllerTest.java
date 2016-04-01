@@ -129,12 +129,13 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         String organizationId = organization.getId();
         assertNotNull(organizationService.findById(organizationId));
 
-        MvcResult result = mockMvc.perform(delete("/organizations/"+organizationId).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/organizations/"+organizationId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         Contact persistedContact = contactService.findById(contact.getId());
-        assertEquals(0, persistedContact.getOrganizations().size());
+        Set<Organization> orgsFromPersistedContact = contactService.getAllContactOrganizations(persistedContact.getId());
+        assertEquals(0, orgsFromPersistedContact.size());
 
         organizationService.findById(organizationId); // Should throw exception here
     }

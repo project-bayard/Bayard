@@ -84,7 +84,6 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
 
     @Test
     public void testSave () throws Exception {
-
         contactService.create(contact);
         contactService.create(contact2);
         organizationService.create(organization);
@@ -100,7 +99,6 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         assertEquals(organization.getPhoneNumber(), orgFromDb.getPhoneNumber());
         assertEquals(organization.getPrimaryContactName(), orgFromDb.getPrimaryContactName());
         assertEquals(orgFromDb.getMembers().size(),2);
-
     }
 
     @Test
@@ -117,13 +115,14 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         contactService.addContactToOrganization(contact2.getId(), orgId);
 
         Contact contactFromDb = contactService.findById(contact.getId());
-        assertEquals(contactFromDb.getOrganizations().size(),1); // before
+        Set<Organization> organizations = contactService.getAllContactOrganizations(contactFromDb.getId());
+        assertEquals(organizations.size(),1); // before
         organizationService.deleteAll();
 
         contactFromDb = contactService.findById(contact.getId()); // after
+        organizations = contactService.getAllContactOrganizations(contactFromDb.getId());
         assertNotNull(contactFromDb);
-        assertEquals(contactFromDb.getOrganizations().size(),0);
-
+        assertEquals(organizations.size(),0);
     }
 
     @Test(expected = ConstraintViolation.class)

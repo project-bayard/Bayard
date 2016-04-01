@@ -93,7 +93,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         organization.setName("organization");
         committee = new Committee();
         committee.setName("committee");
-
     }
 
     @After
@@ -103,7 +102,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         committeeService.deleteAll();
         donationService.deleteAll();
     }
-
 
     @Test
     @Transactional
@@ -169,14 +167,10 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     public void testDelete () throws NullDomainReference, ConstraintViolation{
         contactService.create(contact);
         contactService.create(contact2);
-
         organizationService.create(organization);
-
         contactService.addContactToOrganization(contact.getId(), organization.getId());
         contactService.addContactToOrganization(contact2.getId(), organization.getId());
-
         contactService.delete(contact);
-
         Organization fromDb = organizationService.findById(organization.getId());
 
         assertNull(contactService.findById(contact.getId()));
@@ -186,8 +180,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
     }
 
-
-
     @Test
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
@@ -195,22 +187,22 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.addContactToOrganization(contact.getId(), organization.getId());
 
         Contact fromDb = contactService.findById(contact.getId());
+        Set<Organization> organizations = contactService.getAllContactOrganizations(fromDb.getId());
         assertNotNull(fromDb);
-        assertNotNull(fromDb.getOrganizations());
-        assertTrue(fromDb.getOrganizations().contains(organization));
+        assertNotNull(organizations);
+        assertTrue(organizations.contains(organization));
 
         contactService.removeContactFromOrganization(contact.getId(), organization.getId());
-
         fromDb = contactService.findById(contact.getId());
+        Set<Organization> orgsFromDb = contactService.getAllContactOrganizations(fromDb.getId());
+        Organization orgFromDb = organizationService.findById(organization.getId());
+
         assertNotNull(fromDb);
         assertNotNull(fromDb.getOrganizations());
-        assertFalse(fromDb.getOrganizations().contains(organization));
-
-        Organization orgFromDb = organizationService.findById(organization.getId());
         assertNotNull(orgFromDb);
         assertNotNull(orgFromDb.getMembers());
         assertFalse(orgFromDb.getMembers().contains(contact));
-
+        assertFalse(orgsFromDb.contains(organization));
     }
 
     @Test
@@ -582,7 +574,4 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
         assertNull(sustainerPeriodDao.findOne(sustainerPeriod.getId()));
     }
-
-
-
 }
