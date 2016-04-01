@@ -364,6 +364,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
 
     @Override
+    @Transactional
     public void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
         Contact contact = contactDao.findOne(contactId);
         if (null == contact) {
@@ -384,7 +385,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.remove(contact);
         organizations.remove(organization);
-
         update(contact);
     }
 

@@ -45,17 +45,11 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         if (null == id) {
             return null;
         }
-        Organization organization = organizationDao.findOne(id);
-
-        if (null == organization) {
-            //TODO: 404 refactor
-            throw new NullDomainReference.NullOrganization(id);
-        }
+        Organization organization = findOrganization(id);
 
         if (organization.getMembers() != null) {
             organization.getMembers().size();
         }
-
         return organization;
     }
 
@@ -98,7 +92,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             donations.size();
             return donations;
         } else {
-            return new HashSet<>();
+            return new HashSet<Donation>();
         }
     }
 
@@ -125,7 +119,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     @Override
     public String create(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
-        validateOrganization(organization);
+        validateOnCreate(organization);
         organizationDao.save(organization);
         return organization.getId();
     }
@@ -148,29 +142,19 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             throw new NullDomainReference.NullOrganization(id);
         }
 
-        //assumption that a RequestBody without members should be interpreted as an omission of the complete object graph
         if (null == organization.getMembers()) {
             organization.setMembers(fromDb.getMembers());
         }
         update(organization);
-
     }
 
     private void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
-        validateOrganization(organization);
+        validateOnUpdate(organization);
         updateLastModified(organization);
         organizationDao.save(organization);
     }
 
-    private void validateUniqueness(Organization organization) throws ConstraintViolation {
-        Set<Organization> existingOrganizations = organizationDao.findByName(organization.getName());
-        for (Organization sameName : existingOrganizations) {
-            if (null == organization.getId() || !organization.getId().equalsIgnoreCase(sameName.getId())) {
-                throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, sameName);
-            }
-        }
-    }
-
+    /*Assures that the organization is not null and that it has a name*/
     private void validateOrganization(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
@@ -179,7 +163,24 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         if (null == organization.getName()) {
             throw new ConstraintViolation(ConstraintMessage.ORGANIZATION_REQUIRED_NAME);
         }
-        validateUniqueness(organization);
+    }
+
+    /*Assures that if the organization name is changed that it doesn't conflict with another organization's name*/
+    private void validateOnUpdate(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
+        validateOrganization(organization);
+        Organization fromDb = organizationDao.findOneByName(organization.getName());
+        if (fromDb != null && (organization.getId() == null || !organization.getId().equalsIgnoreCase(fromDb.getId()))) {
+            throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, fromDb);
+        }
+    }
+
+    /*Assures that a new organization doesn't have a name that conflicts with an existing organization*/
+    private void validateOnCreate (Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization {
+        validateOrganization(organization);
+        Organization fromDb = organizationDao.findOneByName(organization.getName());
+        if (fromDb != null) {
+            throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, fromDb);
+        }
     }
 
     private void uncheckedDelete(Organization organization) {
@@ -191,7 +192,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     private Organization findOrganization(String id) throws NullDomainReference.NullOrganization {
-        Organization organization = findById(id);
+        Organization organization = organizationDao.findOne(id);
         if (null == organization) {
             //TODO: 404 refactor
             throw new NullDomainReference.NullOrganization(id);
@@ -199,8 +200,4 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             return organization;
         }
     }
-
-
-
-
 }

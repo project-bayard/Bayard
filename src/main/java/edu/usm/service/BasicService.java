@@ -3,9 +3,7 @@ package edu.usm.service;
 import edu.usm.domain.BasicEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,8 +13,6 @@ import java.util.List;
  */
 public abstract class BasicService {
 
-    @Autowired
-    EntityManager entityManager;
     private Logger logger = LoggerFactory.getLogger(BasicService.class);
 
     protected void updateLastModified ( BasicEntity entity) {
@@ -45,9 +41,5 @@ public abstract class BasicService {
 
     protected void updateLastModifiedCollection ( List<? extends BasicEntity> entities) {
         entities.stream().forEach(e -> e.setLastModified(LocalDateTime.now().toString()));
-    }
-
-    public EntityManager getEntityManager() {
-        return entityManager;
     }
 }

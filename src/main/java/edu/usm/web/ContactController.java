@@ -38,9 +38,6 @@ public class ContactController {
     private EventService eventService;
 
     @Autowired
-    private OrganizationService organizationService;
-
-    @Autowired
     private CommitteeService committeeService;
 
     @Autowired
