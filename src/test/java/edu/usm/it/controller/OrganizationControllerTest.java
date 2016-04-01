@@ -5,6 +5,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
@@ -116,7 +117,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         assertEquals(organizations.size(),1);
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullOrganization.class)
     public void testDeleteOrganization() throws Exception {
 
         organization.getMembers().add(contact);
@@ -132,12 +133,10 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Organization persistedOrganization = organizationService.findById(organizationId);
-        assertNull(persistedOrganization);
-
         Contact persistedContact = contactService.findById(contact.getId());
         assertEquals(0, persistedContact.getOrganizations().size());
 
+        organizationService.findById(organizationId); // Should throw exception here
     }
 
     @Test
@@ -203,7 +202,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         organizationService.create(organization);
-        organizationService.addDonation(organization, donation);
+        organizationService.addDonation(organization.getId(), donation);
         organization = organizationService.findById(organization.getId());
         donation = organization.getDonations().iterator().next();
 

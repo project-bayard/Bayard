@@ -19,14 +19,10 @@
            data-search="true">
         <tr>
             <th>Name</th>
-            <th># Contacts</th>
-            <th># Members</th>
             <th>Details</th>
         </tr>
         <tr ng-repeat="organization in organizations">
             <td>{{organization.name}}</td>
-            <td>{{organization.members.length}}</td>
-            <td>{{(organization.members | byMembers).length}}</td>
             <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View Details</a></td>
         </tr>
     </table>

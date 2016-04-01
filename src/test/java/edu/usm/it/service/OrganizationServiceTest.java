@@ -136,13 +136,13 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     public void testUpdateNullName() throws ConstraintViolation, NullDomainReference {
         organizationService.create(organization);
         organization.setName(null);
-        organizationService.update(organization);
+        organizationService.updateOrganizationDetails(organization.getId(),organization);
     }
 
     @Test
     public void testAddDonation() throws Exception{
         organizationService.create(organization);
-        organizationService.addDonation(organization, donation);
+        organizationService.addDonation(organization.getId(), donation);
 
         organization = organizationService.findById(organization.getId());
         String donationId = organization.getDonations().iterator().next().getId();
@@ -160,7 +160,7 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organization = organizationService.findById(organization.getId());
         donation = organization.getDonations().iterator().next();
         assertNotNull(donation);
-        organizationService.removeDonation(organization, donation);
+        organizationService.removeDonation(organization.getId(), donation.getId());
 
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);

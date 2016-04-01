@@ -9,6 +9,7 @@ import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.repository.OrganizationDao;
 import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
+import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by scottkimball on 4/11/15.
+ * Implementation of {@link OrganizationService}
  */
 
 @Service
@@ -31,19 +32,26 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     private ContactService contactService;
     @Autowired
     private OrganizationDao organizationDao;
+    @Autowired
+    private DonationService donationService;
 
     private Logger logger = LoggerFactory.getLogger(OrganizationServiceImpl.class);
 
 
     @Override
     @Transactional
-    public Organization findById(String id) {
+    public Organization findById(String id) throws NullDomainReference.NullOrganization {
         if (null == id) {
             return null;
         }
         Organization organization = organizationDao.findOne(id);
 
-        if (organization != null && organization.getMembers() != null) {
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        }
+
+        if (organization.getMembers() != null) {
             organization.getMembers().size();
         }
 
@@ -59,12 +67,14 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     @Override
     @Transactional
     public void delete(String id) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
-
-        if (null == id) {
+        if (id == null) {
             throw new NullDomainReference.NullOrganization();
         }
+
         Organization organization = organizationDao.findOne(id);
-        updateLastModified(organization);
+        if (organization == null) {throw new NullDomainReference.NullOrganization(id);
+
+        }
 
         /*Remove references to */
         Set<Contact> members = organization.getMembers();
@@ -74,18 +84,33 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
                 contactService.removeContactFromOrganization(contact.getId(),organization.getId());
             }
         }
+        updateLastModified(organization);
         organizationDao.delete(organization);
     }
 
     @Override
-    public void addDonation(Organization organization, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+    @Transactional
+    public void addDonation(String id, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization organization = findById(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        }
         organization.addDonation(donation);
         updateLastModified(donation);
         update(organization);
     }
 
     @Override
-    public void removeDonation(Organization organization, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+    @Transactional
+    public void removeDonation(String id, String donationId) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization organization = findById(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        }
+
+        Donation donation = donationService.findById(donationId);
         if (null != organization.getDonations()) {
             organization.getDonations().remove(donation);
             updateLastModified(donation);
@@ -94,18 +119,42 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     }
 
     @Override
-    public void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
-        validateOrganization(organization);
-        updateLastModified(organization);
-        organizationDao.save(organization);
-    }
-
-
-    @Override
     public String create(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
         validateOrganization(organization);
         organizationDao.save(organization);
         return organization.getId();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAll() {
+        logger.debug("Deleting all Organizations");
+        logger.debug("Time: " + LocalDateTime.now());
+        Set<Organization> organizations = findAll();
+        organizations.stream().forEach(this::uncheckedDelete);
+    }
+
+    @Override
+    @Transactional
+    public void updateOrganizationDetails(String id, Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization fromDb = findById(id);
+
+        if (null == fromDb) {
+            throw new NullDomainReference.NullOrganization(id);
+        }
+
+        //assumption that a RequestBody without members should be interpreted as an omission of the complete object graph
+        if (null == organization.getMembers()) {
+            organization.setMembers(fromDb.getMembers());
+        }
+        update(organization);
+
+    }
+
+    private void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
+        validateOrganization(organization);
+        updateLastModified(organization);
+        organizationDao.save(organization);
     }
 
     private void validateUniqueness(Organization organization) throws ConstraintViolation {
@@ -125,9 +174,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         if (null == organization.getName()) {
             throw new ConstraintViolation(ConstraintMessage.ORGANIZATION_REQUIRED_NAME);
         }
-
         validateUniqueness(organization);
-
     }
 
     private void uncheckedDelete(Organization organization) {
@@ -138,13 +185,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         }
     }
 
-    @Override
-    @Transactional
-    public void deleteAll() {
 
-        logger.debug("Deleting all Organizations");
-        logger.debug("Time: " + LocalDateTime.now());
-        Set<Organization> organizations = findAll();
-        organizations.stream().forEach(this::uncheckedDelete);
-    }
+
+
 }

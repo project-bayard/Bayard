@@ -62,7 +62,7 @@ public class Organization extends Aggregation implements Serializable {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "organization_id")
     private Set<Donation> donations;
-
+    
     /**
      * @param organizationName The name of the Organization
      */

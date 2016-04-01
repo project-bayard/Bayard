@@ -96,7 +96,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getOrganizations() != null) {
             for(Organization organization : contact.getOrganizations()) {
                 organization.getMembers().remove(contact);
-                organizationService.update(organization);
+                removeContactFromOrganization(contact.getId(),organization.getId());
             }
         }
 
