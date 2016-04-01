@@ -145,8 +145,8 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organizationService.addDonation(organization.getId(), donation);
 
         organization = organizationService.findById(organization.getId());
-        String donationId = organization.getDonations().iterator().next().getId();
-        assertFalse(organization.getDonations().isEmpty());
+        String donationId = organizationService.getDonations(organization.getId()).iterator().next().getId();
+        assertFalse(organizationService.getDonations(organization.getId()).isEmpty());
 
         donation = donationService.findById(donationId);
         assertNotNull(donation);
@@ -158,7 +158,7 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organizationService.create(organization);
 
         organization = organizationService.findById(organization.getId());
-        donation = organization.getDonations().iterator().next();
+        donation = organizationService.getDonations(organization.getId()).iterator().next();
         assertNotNull(donation);
         organizationService.removeDonation(organization.getId(), donation.getId());
 
@@ -166,6 +166,6 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         assertNotNull(donation);
 
         organization = organizationService.findById(organization.getId());
-        assertTrue(organization.getDonations().isEmpty());
+        assertTrue(organizationService.getDonations(organization.getId()).isEmpty());
     }
 }

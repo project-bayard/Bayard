@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -199,6 +198,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional  // Has to be transactional since donations lazy loaded
     public void testCreateOrganizationWithDonation() {
         Organization org = new Organization();
         org.setName("Org name");
@@ -227,6 +227,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional //Has to be transactional as donations are lazy loaded
     public void testUpdateOrganizationDonation() {
         Organization org = new Organization();
         org.setName("Org name");

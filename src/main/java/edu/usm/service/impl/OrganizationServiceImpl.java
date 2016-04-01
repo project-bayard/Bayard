@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -90,12 +91,21 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     @Override
     @Transactional
-    public void addDonation(String id, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
-        Organization organization = findById(id);
-        if (null == organization) {
-            //TODO: 404 refactor
-            throw new NullDomainReference.NullOrganization(id);
+    public Set<Donation> getDonations(String id) throws NullDomainReference.NullOrganization {
+        Organization organization = findOrganization(id);
+        Set<Donation> donations = organization.getDonations();
+        if (donations != null) {
+            donations.size();
+            return donations;
+        } else {
+            return new HashSet<>();
         }
+    }
+
+    @Override
+    @Transactional
+    public void addDonation(String id, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization organization = findOrganization(id);
         organization.addDonation(donation);
         updateLastModified(donation);
         update(organization);
@@ -104,12 +114,7 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     @Override
     @Transactional
     public void removeDonation(String id, String donationId) throws NullDomainReference.NullOrganization, ConstraintViolation {
-        Organization organization = findById(id);
-        if (null == organization) {
-            //TODO: 404 refactor
-            throw new NullDomainReference.NullOrganization(id);
-        }
-
+        Organization organization = findOrganization(id);
         Donation donation = donationService.findById(donationId);
         if (null != organization.getDonations()) {
             organization.getDonations().remove(donation);
@@ -182,6 +187,16 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             delete(organization.getId());
         } catch (NullDomainReference e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private Organization findOrganization(String id) throws NullDomainReference.NullOrganization {
+        Organization organization = findById(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        } else {
+            return organization;
         }
     }
 

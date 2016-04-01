@@ -59,10 +59,10 @@ public class Organization extends Aggregation implements Serializable {
     @JsonView(Views.OrganizationList.class)
     private String description;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id")
     private Set<Donation> donations;
-    
+
     /**
      * @param organizationName The name of the Organization
      */

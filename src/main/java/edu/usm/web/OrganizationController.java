@@ -133,8 +133,7 @@ public class OrganizationController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/donations", produces={"application/json"})
     @JsonView(Views.DonationDetails.class)
     public Set<Donation> getDonations(@PathVariable("id")String id) throws NullDomainReference {
-        Organization organization = organizationService.findById(id);
-        return organization.getDonations();
+       return organizationService.getDonations(id);
     }
 
 }

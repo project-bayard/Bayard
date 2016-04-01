@@ -196,7 +196,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         BayardTestUtilities.performEntityPost(url, donation, mockMvc);
 
         organization = organizationService.findById(organization.getId());
-        assertFalse(organization.getDonations().isEmpty());
+        assertFalse(organizationService.getDonations(organization.getId()).isEmpty());
     }
 
     @Test
@@ -204,12 +204,12 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         organizationService.create(organization);
         organizationService.addDonation(organization.getId(), donation);
         organization = organizationService.findById(organization.getId());
-        donation = organization.getDonations().iterator().next();
+        donation = organizationService.getDonations(organization.getId()).iterator().next();
 
         String url = ORGANIZATIONS_BASE_URL + organization.getId() + "/donations/"+donation.getId();
         BayardTestUtilities.performEntityDelete(url, mockMvc);
         organization = organizationService.findById(organization.getId());
-        assertTrue(organization.getDonations().isEmpty());
+        assertTrue(organizationService.getDonations(organization.getId()).isEmpty());
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
 

@@ -47,11 +47,14 @@ public interface OrganizationService {
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateOrganizationDetails (String id, Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;
 
-    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addDonation (String id, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation;
 
-    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeDonation (String id, String donationId) throws NullDomainReference.NullOrganization, ConstraintViolation;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Donation> getDonations(String id) throws NullDomainReference.NullOrganization;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation;
