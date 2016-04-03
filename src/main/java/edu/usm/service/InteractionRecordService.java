@@ -28,7 +28,7 @@ public interface InteractionRecordService {
     void update(InteractionRecord record, InteractionRecordDto details) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(InteractionRecord record) throws ConstraintViolation;
+    void delete(String id) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

@@ -169,7 +169,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         organizationService.create(organization);
         contactService.addContactToOrganization(contact.getId(), organization.getId());
         contactService.addContactToOrganization(contact2.getId(), organization.getId());
-        contactService.delete(contact);
+        contactService.delete(contact.getId());
         Organization fromDb = organizationService.findById(organization.getId());
 
         assertNotNull(fromDb);

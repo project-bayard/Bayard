@@ -26,7 +26,7 @@ public interface DonationService {
     void update(Donation oldDonation, Donation newDonation);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Donation donation);
+    void delete(String id);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

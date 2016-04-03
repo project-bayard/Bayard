@@ -3,6 +3,7 @@ package edu.usm.service;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
+import edu.usm.domain.Group;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
@@ -16,7 +17,7 @@ import java.util.Set;
 public interface EventService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Event findById(String id);
+    Event findById(String id) throws NullDomainReference.NullEvent;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Event> findByName(String name);
@@ -31,7 +32,7 @@ public interface EventService {
     Set<Event> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Event event) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullContact;
+    void delete(String id) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();
@@ -47,4 +48,7 @@ public interface EventService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Group> getAllEventGroups(String eventId) throws NullDomainReference.NullEvent;
 }

@@ -96,7 +96,7 @@ public class GrantServiceTest extends WebAppConfigurationAware {
     @Test
     public void testDeleteGrant() throws ConstraintViolation{
         testCreateGrant();
-        grantService.delete(grant);
+        grantService.delete(grant.getId());
 
         grant = grantService.findById(grant.getId());
         assertNull(grant);

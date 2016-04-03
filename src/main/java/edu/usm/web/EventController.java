@@ -8,7 +8,6 @@ import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
-import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.DonationService;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Null;
 import java.util.Set;
 
 /**
@@ -40,14 +38,8 @@ public class EventController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public Response deleteEvent(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference{
-        Event event = eventService.findById(id);
-
-        try {
-            eventService.delete(event);
-            return Response.successGeneric();
-        } catch (NullDomainReference.NullEvent e) {
-            throw new NullDomainReference.NullEvent(id, e);
-        }
+        eventService.delete(id);
+        return Response.successGeneric();
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
@@ -90,7 +82,7 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView({Views.EventList.class})
-    public Event getEventById(@PathVariable("id") String id) {
+    public Event getEventById(@PathVariable("id") String id) throws NullDomainReference.NullEvent{
         return eventService.findById(id);
     }
 

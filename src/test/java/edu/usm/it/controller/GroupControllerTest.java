@@ -161,7 +161,7 @@ public class GroupControllerTest extends WebAppConfigurationAware {
 
         Group fromDb = groupService.findById(group.getId());
         assertEquals(1, fromDb.getAggregations().size());
-        Aggregation aggregation = fromDb.getAggregations().iterator().next();
+        Aggregation aggregation = organizationService.findById(fromDb.getAggregations().iterator().next().getId());
         Aggregation orgFromGroup = organizationService.findById(aggregation.getId());
         int orgSize = organization.getMembers().size();
         int aggSize = orgFromGroup.getAggregationMembers().size();
@@ -176,7 +176,7 @@ public class GroupControllerTest extends WebAppConfigurationAware {
         organizationService.create(organization);
         contactService.create(contact);
         contactService.addContactToOrganization(contact.getId(), organization.getId());
-        groupService.addAggregation(organization, group);
+        groupService.addAggregation(organization.getId(), group.getId());
 
         group = groupService.findById(group.getId());
         assertEquals(1, group.getAggregations().size());
@@ -204,7 +204,7 @@ public class GroupControllerTest extends WebAppConfigurationAware {
         contactService.create(topLevel);
 
         contactService.addContactToOrganization(contact.getId(), organization.getId());
-        groupService.addAggregation(organization, group);
+        groupService.addAggregation(organization.getId(), group.getId());
         contactService.addToGroup(topLevel, group);
 
         String path = "/groups/"+group.getId()+"/all";

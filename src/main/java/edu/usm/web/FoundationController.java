@@ -68,8 +68,7 @@ public class FoundationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Response deleteFoundation(@PathVariable("id") String id) throws NullDomainReference{
-        Foundation foundation = retrieveFoundationReference(id);
-        foundationService.delete(foundation);
+        foundationService.delete(id);
         return Response.successGeneric();
     }
 

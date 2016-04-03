@@ -1,9 +1,8 @@
 package edu.usm.service;
 
 import edu.usm.domain.Encounter;
-import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.domain.EncounterType;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -20,7 +19,7 @@ public interface EncounterService {
             throws NullDomainReference.NullEncounter, NullDomainReference.NullContact, NullDomainReference.NullEncounterType;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void deleteEncounter(Encounter encounter) throws NullDomainReference.NullEncounter;
+    void delete(String id) throws NullDomainReference.NullEncounter;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll() throws NullDomainReference.NullEncounter;

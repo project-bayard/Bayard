@@ -42,14 +42,21 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
     @Override
     @Transactional
     public Organization findById(String id) throws NullDomainReference.NullOrganization {
-        if (null == id) {
+        if (id == null) {
             return null;
         }
         Organization organization = findOrganization(id);
 
-        if (organization.getMembers() != null) {
-            organization.getMembers().size();
+        if (organization.getMembers() == null) {
+            organization.setMembers(new HashSet<>());
         }
+
+        if (organization.getGroups() == null) {
+            organization.setGroups(new HashSet<>());
+        }
+
+        organization.getMembers().size();
+        organization.getGroups().size();
         return organization;
     }
 

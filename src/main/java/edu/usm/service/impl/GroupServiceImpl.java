@@ -5,8 +5,11 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.GroupDto;
 import edu.usm.repository.AggregationDao;
 import edu.usm.repository.GroupDao;
+import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
 import edu.usm.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ import java.util.Set;
  * Created by andrew on 10/8/15.
  */
 @Service
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl extends BasicService implements GroupService {
 
     @Autowired
     private GroupDao groupDao;
@@ -38,9 +41,7 @@ public class GroupServiceImpl implements GroupService {
         return group.getId();
     }
 
-    @Override
-    public Group findByName(String groupName) {
-
+    private Group findByName(String groupName)  {
         return groupDao.findByGroupName(groupName);
     }
 
@@ -57,14 +58,23 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void update(Group group) throws ConstraintViolation {
+    public void update(Group group) throws ConstraintViolation, NullDomainReference.NullGroup {
         validateUniqueness(group);
         groupDao.save(group);
     }
 
     @Override
-    public void delete(Group group) {
+    public void updateDetails(String id, GroupDto groupDto) throws ConstraintViolation, NullDomainReference.NullGroup {
+        Group group = findGroup(id);
+        group.setGroupName(groupDto.getGroupName());
+        validateUniqueness(group);
+        groupDao.save(group);
+    }
 
+    @Override
+    @Transactional
+    public void delete(String id) throws NullDomainReference, ConstraintViolation  {
+        Group group = findGroup(id);
         if (null != group.getAggregations()) {
             Set<Aggregation> aggregations = new HashSet<>(group.getAggregations());
             for (Aggregation aggregation: aggregations) {
@@ -87,52 +97,93 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteAll() {
-        Set<Group> groups = findAll();
-        groups.stream().forEach(this::delete);
+    @Transactional
+    public void deleteAll()  {
+        findAll().stream().forEach(this::uncheckedDelete);
     }
 
     @Override
-    public Group findById(String id) {
-        return groupDao.findOne(id);
+    @Transactional
+    public Group findById(String id) throws NullDomainReference.NullGroup {
+        Group group = findGroup(id);
+        initializeCollections(group);
+        return group;
     }
 
     @Override
-    public void addAggregation(String aggregationId, Group group) throws ConstraintViolation{
+    @Transactional
+    public void addAggregation(String aggregationId, String groupId) throws ConstraintViolation, NullDomainReference.NullGroup{
+        Group group = findGroup(groupId);
         Aggregation aggregation = aggregationDao.findOne(aggregationId);
         addAggregation(aggregation, group);
     }
 
-    @Override
-    public void addAggregation(Aggregation aggregation, Group group) throws ConstraintViolation{
-        aggregation.getGroups().add(group);
-        group.getAggregations().add(aggregation);
-        update(group);
-    }
 
     @Override
-    public void removeAggregation(String aggregationId, Group group) throws ConstraintViolation{
+    @Transactional
+    public void removeAggregation(String aggregationId, String groupId) throws ConstraintViolation{
+        Group group = groupDao.findOne(groupId);
         Aggregation aggregation = aggregationDao.findOne(aggregationId);
         removeAggregation(aggregation, group);
     }
 
     @Override
-    public void removeAggregation(Aggregation aggregation, Group group) throws ConstraintViolation{
-        Set<Group> groups = aggregation.getGroups();
-        Set<Aggregation> aggregations = group.getAggregations();
-        groups.remove(group);
-        aggregations.remove(aggregation);
-        update(group);
-    }
-
-    @Override
     @Transactional
-    public Set<Contact> getAllMembers(String aggId) {
-        Group group = groupDao.findOne(aggId);
+    public Set<Contact> getAllMembers(String id) {
+        Group group = groupDao.findOne(id);
         Set<Contact> allContacts = group.getTopLevelMembers();
         for (Aggregation aggregation: group.getAggregations()) {
             allContacts.addAll(aggregation.getAggregationMembers());
         }
         return allContacts;
     }
+
+    private void initializeCollections(Group group) {
+        Set<Aggregation> aggregations = group.getAggregations();
+        Set<Contact> members = group.getTopLevelMembers();
+
+        if (aggregations == null) {
+            aggregations = new HashSet<>();
+        }
+
+        if (members == null) {
+            members = new HashSet<>();
+        }
+
+        aggregations.size();
+        members.size();
+    }
+
+    private void addAggregation(Aggregation aggregation, Group group) throws ConstraintViolation{
+        aggregation.getGroups().add(group);
+        group.getAggregations().add(aggregation);
+        groupDao.save(group);
+    }
+
+    private void removeAggregation(Aggregation aggregation, Group group) throws ConstraintViolation{
+        Set<Group> groups = aggregation.getGroups();
+        Set<Aggregation> aggregations = group.getAggregations();
+        groups.remove(group);
+        aggregations.remove(aggregation);
+        groupDao.save(group);
+    }
+
+    private Group findGroup(String groupId) throws NullDomainReference.NullGroup {
+        Group group = groupDao.findOne(groupId);
+        if (group == null) {
+            throw new NullDomainReference.NullGroup(groupId);
+        }
+        return group;
+    }
+
+    private Aggregation findAggregation(String aggId) throws NullDomainReference.NullAggregation {
+        Aggregation aggregation = aggregationDao.findOne(aggId);
+
+        if (aggregation == null) {
+            throw new NullDomainReference.NullAggregation(aggId);
+        }
+        return aggregation;
+    }
+
+
 }

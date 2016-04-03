@@ -7,10 +7,12 @@ import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
-import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EventDto;
-import edu.usm.service.*;
+import edu.usm.service.CommitteeService;
+import edu.usm.service.ContactService;
+import edu.usm.service.DonationService;
+import edu.usm.service.EventService;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -21,14 +23,10 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -115,7 +113,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullEvent.class)
     public void testDeleteEvent() throws Exception {
         String eventId = eventService.create(event);
 
@@ -133,7 +131,6 @@ public class EventControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         Event eventFromDb = eventService.findById(eventId);
-        assertNull(eventFromDb);
 
         Contact contactFromDb = contactService.findById(attendee.getId());
         assertEquals(0, contactFromDb.getAttendedEvents().size());

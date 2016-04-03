@@ -77,7 +77,7 @@ public class InteractionRecordServiceTest extends WebAppConfigurationAware {
     public void testDeleteInteraction() throws ConstraintViolation {
         recordService.create(record);
         record = recordService.findById(record.getId());
-        recordService.delete(record);
+        recordService.delete(record.getId());
         record = recordService.findById(record.getId());
         assertNull(record);
         assertNull(dao.findOne(userFileUpload.getId()));

@@ -125,7 +125,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @After
     public void teardown () {
-
         groupService.deleteAll();
         organizationService.deleteAll();
         committeeService.deleteAll();
@@ -596,7 +595,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contactService.attendEvent(contact, event);
 
         group = groupService.findById(groupId);
-        groupService.addAggregation(event, group);
+        groupService.addAggregation(event.getId(), group.getId());
 
         IdDto idDto = new IdDto(groupId);
         ObjectMapper mapper = new ObjectMapper();
@@ -623,7 +622,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         eventService.create(event);
         contactService.attendEvent(contact, event);
         group = groupService.findById(groupId);
-        groupService.addAggregation(event, group);
+        groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(groupId);
         contact = contactService.findById(contact.getId());
         contactService.addToGroup(contact, group);
@@ -646,7 +645,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         eventService.create(event);
         contactService.attendEvent(contact, event);
         group = groupService.findById(groupId);
-        groupService.addAggregation(event, group);
+        groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(groupId);
         contact = contactService.findById(contact.getId());
         contactService.addToGroup(contact, group);
@@ -666,10 +665,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         groupService.create(group);
         Group secondGroup = new Group();
         secondGroup.setGroupName("Second Group");
-        groupService.create(group);
+        groupService.create(secondGroup);
 
-        groupService.addAggregation(event, group);
-        groupService.addAggregation(event, secondGroup);
+        groupService.addAggregation(event.getId(), group.getId());
+        groupService.addAggregation(event.getId(), secondGroup.getId());
 
         IdDto eventIdDto = new IdDto(event.getId());
         String requestBody = new ObjectMapper().writeValueAsString(eventIdDto);
@@ -680,8 +679,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         event = eventService.findById(event.getId());
-        assertTrue(event.getGroups().contains(group));
-        assertTrue(event.getGroups().contains(secondGroup));
+        Set<Group> groups = eventService.getAllEventGroups(event.getId());
+        assertTrue(groups.contains(group));
+        assertTrue(groups.contains(secondGroup));
 
         contact = contactService.findById(contact.getId());
         assertTrue(contact.getAttendedEvents().contains(event));

@@ -52,8 +52,7 @@ public class InteractionRecordController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Response deleteInteractionRecord(@PathVariable("id")String id) throws ConstraintViolation, NullDomainReference {
-        InteractionRecord record = retrieveInteractionRecord(id);
-        interactionService.delete(record);
+        interactionService.delete(id);
         return Response.successGeneric();
     }
 

@@ -56,12 +56,13 @@ public class DonationServiceImpl extends BasicService implements DonationService
     }
 
     @Override
-    public void delete(Donation donation) {
+    public void delete(String id) {
+        Donation donation = donationDao.findOne(id);
         donationDao.delete(donation);
     }
 
     @Override
     public void deleteAll() {
-        findAll().stream().forEach(this::delete);
+        findAll().stream().forEach(this::uncheckedDelete);
     }
 }

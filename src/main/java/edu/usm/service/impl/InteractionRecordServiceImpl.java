@@ -1,7 +1,6 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.Foundation;
-import edu.usm.domain.Grant;
 import edu.usm.domain.InteractionRecord;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
@@ -81,7 +80,8 @@ public class InteractionRecordServiceImpl extends BasicService implements Intera
     }
 
     @Override
-    public void delete(InteractionRecord record) throws ConstraintViolation{
+    public void delete(String id) throws ConstraintViolation{
+        InteractionRecord record = dao.findOne(id);
         updateLastModified(record);
         Foundation f = record.getFoundation();
         updateLastModified(f);
@@ -89,13 +89,6 @@ public class InteractionRecordServiceImpl extends BasicService implements Intera
         foundationService.update(f);
     }
 
-    private void uncheckedDelete(InteractionRecord record) {
-        try {
-            delete(record);
-        } catch (ConstraintViolation e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public void deleteAll() {

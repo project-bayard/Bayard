@@ -54,8 +54,13 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
             committee.setEvents(new HashSet<>());
         }
 
+        if (committee.getGroups() == null) {
+            committee.setGroups(new HashSet<>());
+        }
+
         committee.getEvents().size();
         committee.getMembers().size();
+        committee.getGroups().size();
         return committee;
     }
 
@@ -136,13 +141,6 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         return committee.getId();
     }
 
-    private void uncheckedDelete(Committee committee) {
-        try {
-            delete(committee.getId());
-        } catch (NullDomainReference | ConstraintViolation e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     @Transactional

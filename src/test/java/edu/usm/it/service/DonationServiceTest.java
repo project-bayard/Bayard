@@ -83,7 +83,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         donationService.create(donation);
         donation = donationService.findById(donation.getId());
 
-        donationService.delete(donation);
+        donationService.delete(donation.getId());
         donation = donationService.findById(donation.getId());
 
         assertNull(donation);

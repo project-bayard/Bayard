@@ -29,7 +29,7 @@ public interface ContactService {
     Set<Contact> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete (Contact contact) throws ConstraintViolation, NullDomainReference;
+    void delete (String id) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create(Contact contact) throws ConstraintViolation;

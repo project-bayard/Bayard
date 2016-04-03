@@ -36,7 +36,7 @@ public class ContactController {
 
     @Autowired
     private EventService eventService;
-    
+
     @Autowired
     private EncounterService encounterService;
 
@@ -168,7 +168,7 @@ public class ContactController {
         Encounter encounter = encounterService.findById(entityId);
 
         try {
-            encounterService.deleteEncounter(encounter);
+            encounterService.delete(encounter.getId());
             return Response.successGeneric();
         } catch (NullDomainReference.NullEncounter e) {
             throw new NullDomainReference.NullEncounter(entityId, e);
@@ -341,7 +341,8 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/groups/{entityId}")
-    public Response removeContactFromGroup(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws NullDomainReference.NullContact {
+    public Response removeContactFromGroup(@PathVariable("id") String id, @PathVariable("entityId") String entityId)
+            throws NullDomainReference.NullContact, NullDomainReference.NullGroup {
 
         Group group = groupService.findById(entityId);
         Contact contact = contactService.findById(id);

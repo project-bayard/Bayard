@@ -5,6 +5,7 @@ import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.GroupDto;
 import edu.usm.dto.Response;
 import edu.usm.service.GroupService;
@@ -26,18 +27,16 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteGroup(@PathVariable("id") String id) {
-        Group group = groupService.findById(id);
-        groupService.delete(group);
+    public Response deleteGroup(@PathVariable("id") String id) throws NullDomainReference, ConstraintViolation {
+        groupService.delete(id);
         return Response.successGeneric();
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateGroupName(@PathVariable("id") String id, @RequestBody GroupDto dto) throws ConstraintViolation{
-        Group group = groupService.findById(id);
-        group.setGroupName(dto.getGroupName());
-        groupService.update(group);
+    public Response updateGroupName(@PathVariable("id") String id, @RequestBody GroupDto dto)
+            throws ConstraintViolation, NullDomainReference.NullGroup{
+        groupService.updateDetails(id,dto);
         return Response.successGeneric();
     }
 
@@ -58,7 +57,7 @@ public class GroupController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.GroupDetails.class)
-    public Group getGroupById(@PathVariable("id") String id) {
+    public Group getGroupById(@PathVariable("id") String id) throws NullDomainReference.NullGroup {
         return groupService.findById(id);
     }
 
@@ -70,18 +69,18 @@ public class GroupController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT, value = "/{id}/aggregations/{entityId}", consumes= {"application/json"}, produces = "application/json")
-    public Response addAggregation(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation{
-        Group group = groupService.findById(id);
-        groupService.addAggregation(entityId, group);
-        return new Response(id, Response.SUCCESS);
+    @RequestMapping(method = RequestMethod.PUT, value = "/{groupId}/aggregations/{aggId}", consumes= {"application/json"}, produces = "application/json")
+    public Response addAggregation(@PathVariable("groupId") String groupId, @PathVariable("aggId") String aggId)
+            throws ConstraintViolation, NullDomainReference.NullAggregation, NullDomainReference.NullGroup{
+        groupService.addAggregation(aggId, groupId);
+        return new Response(groupId, Response.SUCCESS);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/aggregations/{entityId}")
-    public Response removeAggregation(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws ConstraintViolation{
-        Group group = groupService.findById(id);
-        groupService.removeAggregation(entityId, group);
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{groupId}/aggregations/{aggId}")
+    public Response removeAggregation(@PathVariable("groupId") String groupId, @PathVariable("aggId") String aggId)
+            throws ConstraintViolation, NullDomainReference.NullGroup, NullDomainReference.NullAggregation{
+        groupService.removeAggregation(aggId, groupId);
         return Response.successGeneric();
     }
 }

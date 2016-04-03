@@ -85,7 +85,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Override
     @Transactional
-    public void delete(Contact contact) throws ConstraintViolation, NullDomainReference {
+    public void delete(String id) throws ConstraintViolation, NullDomainReference {
+        Contact contact = findContact(id);
         /*Remove from organizations */
         if (contact.getOrganizations() != null) {
             for(Organization organization : contact.getOrganizations()) {
@@ -208,7 +209,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
      */
     private void uncheckedDelete(Contact contact) {
         try {
-            delete(contact);
+            delete(contact.getId());
         } catch (NullDomainReference | ConstraintViolation e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,8 @@
 package edu.usm.service;
 
 import edu.usm.domain.BasicEntity;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,4 +44,15 @@ public abstract class BasicService {
     protected void updateLastModifiedCollection ( List<? extends BasicEntity> entities) {
         entities.stream().forEach(e -> e.setLastModified(LocalDateTime.now().toString()));
     }
+
+
+    protected void uncheckedDelete(BasicEntity entity) {
+        try {
+            delete(entity.getId());
+        } catch (NullDomainReference | ConstraintViolation e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected abstract void delete(String id) throws NullDomainReference, ConstraintViolation;
 }
