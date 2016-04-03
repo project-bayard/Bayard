@@ -53,8 +53,8 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         committee = new Committee();
         committee.setName("Committee Name");
         committeeService.create(committee);
-        contactService.addContactToCommittee(first, committee);
-        contactService.addContactToCommittee(second, committee);
+        contactService.addContactToCommittee(first.getId(), committee.getId());
+        contactService.addContactToCommittee(second.getId(), committee.getId());
 
         organization = new Organization();
         organization.setName("Organization Name");
@@ -104,6 +104,8 @@ public class GroupServiceTest extends WebAppConfigurationAware{
 
     @Test
     public void testCreateGroupFromCommittee() throws Exception{
+        committeeService.create(committee);
+        committee = committeeService.findById(committee.getId());
         String id = groupService.create(group);
         groupService.addAggregation(committee, group);
 
@@ -170,12 +172,12 @@ public class GroupServiceTest extends WebAppConfigurationAware{
 
     @Test
     public void testDeleteGroup() throws Exception{
+        committeeService.create(committee);
+        committee = committeeService.findById(committee.getId());
         groupService.create(group);
         groupService.addAggregation(committee, group);
-
         group = groupService.findById(group.getId());
         contactService.addToGroup(topLevel, group);
-
         groupService.delete(group);
 
         Group groupFromDb = groupService.findById(group.getId());
@@ -188,7 +190,6 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         Contact topLevelFromDb = contactService.findById(topLevel.getId());
         assertNotNull(topLevelFromDb);
         assertEquals(0, topLevelFromDb.getGroups().size());
-
     }
 
     @Test
@@ -275,6 +276,8 @@ public class GroupServiceTest extends WebAppConfigurationAware{
 
     @Test
     public void testRemoveContactFromAggregation() throws Exception {
+        committeeService.create(committee);
+        committee = committeeService.findById(committee.getId());
         groupService.create(group);
         groupService.addAggregation(committee, group);
         group = groupService.findById(group.getId());
@@ -287,7 +290,6 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         committee = committeeService.findById(committee.getId());
         group = groupService.findById(group.getId());
         aggCommittee = committeeService.findById(aggregation.getId());
-
         assertEquals(committee.getMembers().size(), aggCommittee.getAggregationMembers().size());
     }
 
@@ -411,7 +413,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         contact.setEmail("test@email.com");
         contactService.create(contact);
 
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
         contactService.addToGroup(contact, group);
 
         contact = contactService.findById(contact.getId());
@@ -443,7 +445,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         contact.setEmail("test@email.com");
         contactService.create(contact);
 
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
         contactService.attendEvent(contact, event);
         contactService.addToGroup(contact, group);
         contactService.addToGroup(contact, secondGroup);

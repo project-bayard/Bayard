@@ -233,7 +233,7 @@ public class Contact extends BasicEntity implements Serializable {
     private boolean needsFollowUp;
 
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_committee",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

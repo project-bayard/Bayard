@@ -162,8 +162,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contacts.size(), 2);
     }
 
-    @Test
-    @Transactional
+    @Test(expected = NullDomainReference.NullContact.class)
     public void testDelete () throws NullDomainReference, ConstraintViolation{
         contactService.create(contact);
         contactService.create(contact2);
@@ -173,11 +172,10 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.delete(contact);
         Organization fromDb = organizationService.findById(organization.getId());
 
-        assertNull(contactService.findById(contact.getId()));
         assertNotNull(fromDb);
         assertFalse(fromDb.getMembers().contains(contact));
         assertTrue(fromDb.getMembers().contains(contact2));
-
+        assertNull(contactService.findById(contact.getId())); // Should throw NullDomainReference.NullContact
     }
 
     @Test
@@ -210,19 +208,21 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.create(contact);
         committeeService.create(committee);
 
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
-        assertNotNull(fromDb.getCommittees());
-        assertTrue(fromDb.getCommittees().contains(committee));
+        Set<Committee> committees = contactService.getAllContactCommittees(fromDb.getId());
+        assertNotNull(committees);
+        assertTrue(committees.contains(committee));
 
         contactService.removeContactFromCommittee(contact.getId(), committee.getId());
 
         fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
-        assertNotNull(fromDb.getCommittees());
-        assertFalse(fromDb.getCommittees().contains(committee));
+        Set<Committee> committeesFromDb = contactService.getAllContactCommittees(fromDb.getId());
+        assertNotNull(committeesFromDb);
+        assertFalse(committeesFromDb.contains(committee));
 
         Committee committeeFromDb = committeeService.findById(committee.getId());
         assertNotNull(committeeFromDb);

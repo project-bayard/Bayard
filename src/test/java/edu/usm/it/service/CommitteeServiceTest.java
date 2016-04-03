@@ -88,16 +88,18 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         contactService.create(contact);
         contactService.create(contact2);
 
-        contactService.addContactToCommittee(contact, committee);
-        contactService.addContactToCommittee(contact2, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
+        contactService.addContactToCommittee(contact2.getId(), committee.getId());
 
         Contact contactFromDb = contactService.findById(contact.getId());
-        assertEquals(contactFromDb.getCommittees().size(), 1); // before
+        Set<Committee> committeesFromDb = contactService.getAllContactCommittees(contactFromDb.getId());
+        assertEquals(committeesFromDb.size(), 1); // before
         committeeService.delete(committee.getId());
 
         contactFromDb = contactService.findById(contact.getId()); // after
+        committeesFromDb = contactService.getAllContactCommittees(contactFromDb.getId());
         assertNotNull(contactFromDb);
-        assertEquals(contactFromDb.getCommittees().size(), 0);
+        assertEquals(committeesFromDb.size(), 0);
 
     }
 
@@ -111,8 +113,8 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         another.setName("Another Committee");
         committeeService.create(another);
 
-        contactService.addContactToCommittee(contact, another);
-        contactService.addContactToCommittee(contact2, another);
+        contactService.addContactToCommittee(contact.getId(), another.getId());
+        contactService.addContactToCommittee(contact2.getId(), another.getId());
 
         Set<Committee> allCommittees = committeeService.findAll();
         assertEquals(2, allCommittees.size());

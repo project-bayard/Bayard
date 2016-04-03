@@ -36,10 +36,7 @@ public class ContactController {
 
     @Autowired
     private EventService eventService;
-
-    @Autowired
-    private CommitteeService committeeService;
-
+    
     @Autowired
     private EncounterService encounterService;
 
@@ -87,7 +84,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView(Views.ContactDetails.class)
-    public Contact getContactById(@PathVariable("id") String id) {
+    public Contact getContactById(@PathVariable("id") String id) throws NullDomainReference.NullContact {
         return contactService.findById(id);
     }
 
@@ -239,28 +236,15 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/organizations", consumes= {"application/json"})
     public Response addContactToOrganization(@PathVariable("id") String id, @RequestBody IdDto idDto) throws ConstraintViolation,  NullDomainReference {
-        try {
-            contactService.addContactToOrganization(id,idDto.getId());
-            return Response.successGeneric();
-        } catch (NullDomainReference.NullContact e) {
-            throw new NullDomainReference.NullContact(id, e);
-        } catch (NullDomainReference.NullOrganization e) {
-            throw new NullDomainReference.NullOrganization(idDto.getId(), e);
-        }
+        contactService.addContactToOrganization(id,idDto.getId());
+        return Response.successGeneric();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/organizations/{organizationId}")
     public Response removeContactFromOrganization(@PathVariable("id") String id, @PathVariable("organizationId") String organizationId) throws ConstraintViolation,  NullDomainReference{
-
-        try {
-            contactService.removeContactFromOrganization(id, organizationId);
-            return Response.successGeneric();
-        } catch (NullDomainReference.NullContact e) {
-            throw new NullDomainReference.NullContact(id, e);
-        } catch (NullDomainReference.NullOrganization e) {
-            throw new NullDomainReference.NullOrganization(organizationId, e);
-        }
+        contactService.removeContactFromOrganization(id, organizationId);
+        return Response.successGeneric();
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -293,7 +277,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/demographics")
     @JsonView(Views.DemographicDetails.class)
-    public Contact getDemographicDetails(@PathVariable("id") String id) {
+    public Contact getDemographicDetails(@PathVariable("id") String id) throws NullDomainReference.NullContact {
         return contactService.findById(id);
     }
 
@@ -311,19 +295,9 @@ public class ContactController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}/committees", consumes= {"application/json"})
-    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto idDto) throws  ConstraintViolation, NullDomainReference{
-
-        Committee committee = committeeService.findById(idDto.getId());
-        Contact contact = contactService.findById(id);
-
-        try {
-            contactService.addContactToCommittee(contact, committee);
-            return Response.successGeneric();
-        } catch (NullDomainReference.NullContact e) {
-            throw new NullDomainReference.NullContact(id, e);
-        } catch (NullDomainReference.NullCommittee e) {
-            throw new NullDomainReference.NullCommittee(idDto.getId(), e);
-        }
+    public Response addContactToCommittee(@PathVariable("id") String id, @RequestBody IdDto committeeId) throws  ConstraintViolation, NullDomainReference{
+        contactService.addContactToCommittee(id, committeeId.getId());
+        return Response.successGeneric();
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -337,11 +311,7 @@ public class ContactController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/committees")
     @JsonView(Views.ContactCommitteeDetails.class)
     public Set<Committee> getAllCommitteesForContact(@PathVariable("id") String id) throws NullDomainReference{
-        Contact c = contactService.findById(id);
-        if (null == c) {
-            throw new NullDomainReference.NullContact(id);
-        }
-        return c.getCommittees();
+       return contactService.getAllContactCommittees(id);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/groups")
@@ -371,7 +341,7 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/groups/{entityId}")
-    public Response removeContactFromGroup(@PathVariable("id") String id, @PathVariable("entityId") String entityId) {
+    public Response removeContactFromGroup(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws NullDomainReference.NullContact {
 
         Group group = groupService.findById(entityId);
         Contact contact = contactService.findById(id);

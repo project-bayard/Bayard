@@ -23,7 +23,7 @@ public interface ContactService {
     void unattendEvent (Contact contact, Event event) throws ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEvent;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Contact findById (String id);
+    Contact findById (String id) throws NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Contact> findAll();
@@ -53,10 +53,13 @@ public interface ContactService {
     Set<Organization> getAllContactOrganizations(String contactId) throws NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addContactToCommittee(Contact contact, Committee committee) throws  NullDomainReference.NullContact, NullDomainReference.NullCommittee;
+    void addContactToCommittee(String contactId, String committeeId) throws  NullDomainReference.NullContact, NullDomainReference.NullCommittee;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Committee> getAllContactCommittees(String contactId) throws NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateBasicDetails(Contact contact, Contact details) throws  ConstraintViolation, NullDomainReference;

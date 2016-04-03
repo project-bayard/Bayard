@@ -73,11 +73,8 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public Contact findById(String id)  {
-        if (null == id) {
-            return null;
-        }
-        return contactDao.findOne(id);
+    public Contact findById(String id) throws NullDomainReference.NullContact  {
+        return findContact(id);
     }
 
     @Override
@@ -89,9 +86,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     @Transactional
     public void delete(Contact contact) throws ConstraintViolation, NullDomainReference {
-
-        updateLastModified(contact);
-
         /*Remove from organizations */
         if (contact.getOrganizations() != null) {
             for(Organization organization : contact.getOrganizations()) {
@@ -133,6 +127,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             contact.getEncountersInitiated().clear();
         }
 
+        updateLastModified(contact);
         contactDao.delete(contact);
     }
 
@@ -144,7 +139,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     private void validateOnUpdate(Contact contact) throws ConstraintViolation {
         emptyStringToNull(contact);
-
         String first = contact.getFirstName();
         String email = contact.getEmail();
         String phone = contact.getPhoneNumber1();
@@ -168,7 +162,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         } else {
             throw new ConstraintViolation(ConstraintMessage.CONTACT_NO_EMAIL_OR_PHONE_NUMBER);
         }
-
     }
 
 
@@ -181,7 +174,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     private void validateOnCreate(Contact contact) throws ConstraintViolation {
         emptyStringToNull(contact);
-
         String first = contact.getFirstName();
         String email = contact.getEmail();
         String phone = contact.getPhoneNumber1();
@@ -217,9 +209,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private void uncheckedDelete(Contact contact) {
         try {
             delete(contact);
-        } catch (NullDomainReference e) {
-            throw new RuntimeException(e);
-        } catch (ConstraintViolation e) {
+        } catch (NullDomainReference | ConstraintViolation e) {
             throw new RuntimeException(e);
         }
     }
@@ -227,7 +217,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     @Transactional
     public void deleteAll() {
-
         logger.debug("Deleting all contacts.");
         Set<Contact> contacts = findAll();
         contacts.stream().forEach(this::uncheckedDelete);
@@ -328,12 +317,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     @Transactional
     public void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact{
-
-        Contact contact = contactDao.findOne(contactId);
-        if (null == contact) {
-            throw new NullDomainReference.NullContact();
-        }
-
+        Contact contact = findContact(contactId);
         Organization organization = organizationService.findById(organizationId);
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
@@ -362,11 +346,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     @Transactional
     public void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
-        Contact contact = contactDao.findOne(contactId);
-        if (null == contact) {
-            throw new NullDomainReference.NullContact();
-        }
-
+        Contact contact = findContact(contactId);
         Organization organization = organizationService.findById(organizationId);
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
@@ -387,11 +367,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     @Transactional
     public Set<Organization> getAllContactOrganizations(String id) throws NullDomainReference.NullContact {
-        Contact contact = contactDao.findOne(id);
-        if (contact == null) {
-            throw new NullDomainReference.NullContact(id);
-        }
-
+        Contact contact = findContact(id);
         Set<Organization> organizations = contact.getOrganizations();
         if (organizations == null) {
             return new HashSet<>();
@@ -402,13 +378,24 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addContactToCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
-
-        if (null == contact) {
-            throw new NullDomainReference.NullContact();
+    @Transactional
+    public Set<Committee> getAllContactCommittees(String contactId) throws NullDomainReference.NullContact {
+        Contact contact = findContact(contactId);
+        Set<Committee> committees = contact.getCommittees();
+        if (committees == null) {
+            committees = new HashSet<>();
         }
+        committees.size();
+        return committees;
+    }
 
-        if (null == committee) {
+    @Override
+    @Transactional
+    public void addContactToCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+        Contact contact = findContact(contactId);
+        Committee committee = committeeService.findById(committeeId);
+
+        if (committee == null) {
             throw new NullDomainReference.NullCommittee();
         }
 
@@ -629,7 +616,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Override
     public void updateAssessment(Contact contact, int assessment) {
         contact.setAssessment(assessment);
-
         update(contact);
     }
 
@@ -650,5 +636,13 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         } else {
             return contactDao.findOneByFirstNameAndPhoneNumber2(signInDto.getFirstName(), signInDto.getPhoneNumber());
         }
+    }
+
+    private Contact findContact(String id) throws NullDomainReference.NullContact {
+        Contact contact = contactDao.findOne(id);
+        if (contact == null) {
+            throw new NullDomainReference.NullContact();
+        }
+        return contact;
     }
 }

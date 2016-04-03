@@ -64,7 +64,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Committee committee = new Committee();
         committee.setName("committeeName");
         committeeService.create(committee);
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         Set<Committee> allCommittees = committeeService.findAll();
         Assert.assertEquals(1, allCommittees.size());
@@ -155,7 +155,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Committee committee = new Committee();
         committee.setName("name");
         committeeService.create(committee);
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         mockMvc.perform(get("/committees/" + committee.getId())
                 .accept(MediaType.APPLICATION_JSON))
@@ -169,7 +169,6 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
 
     @Test(expected = NullDomainReference.NullCommittee.class)
     public void testDeleteCommittee () throws Exception {
-
         committeeService.deleteAll();
         contactService.deleteAll();
 
@@ -182,15 +181,14 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Committee committee = new Committee();
         committee.setName("name");
         String committeeId = committeeService.create(committee);
-        contactService.addContactToCommittee(contact,committee);
+        contactService.addContactToCommittee(contact.getId(),committee.getId());
 
         mockMvc.perform(delete("/committees/" + committeeId)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        Contact contactFromDb = contactService.findById(contact.getId());
-        assertEquals(0, contactFromDb.getCommittees().size());
-
+        Set<Committee> committees = contactService.getAllContactCommittees(contact.getId());
+        assertEquals(0, committees.size());
         Committee committeeFromDb = committeeService.findById(committeeId); // Should throw exception
     }
 }
