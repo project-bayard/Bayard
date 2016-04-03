@@ -204,16 +204,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         return contactDao.findByFirstName(firstName);
     }
 
-    /*
-    Satisfies Java 8 method stream expectations of exception type
-     */
-    private void uncheckedDelete(Contact contact) {
-        try {
-            delete(contact.getId());
-        } catch (NullDomainReference | ConstraintViolation e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     @Transactional

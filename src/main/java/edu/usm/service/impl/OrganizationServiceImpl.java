@@ -190,13 +190,6 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         }
     }
 
-    private void uncheckedDelete(Organization organization) {
-        try {
-            delete(organization.getId());
-        } catch (NullDomainReference e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private Organization findOrganization(String id) throws NullDomainReference.NullOrganization {
         Organization organization = organizationDao.findOne(id);
