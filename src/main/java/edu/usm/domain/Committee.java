@@ -19,7 +19,7 @@ public class Committee extends Aggregation implements Serializable {
             Views.CommitteeDetails.class})
     private Set<Contact> members;
 
-    @OneToMany(mappedBy="committee", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="committee", fetch = FetchType.LAZY)
     @JsonView({Views.CommitteeDetails.class})
     private Set<Event> events;
 

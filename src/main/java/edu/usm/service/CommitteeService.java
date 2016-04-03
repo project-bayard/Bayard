@@ -22,10 +22,10 @@ public interface CommitteeService {
     Set<Committee> findAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete (Committee committee) throws NullDomainReference, ConstraintViolation ;
+    void delete (String id) throws NullDomainReference, ConstraintViolation ;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update (Committee committee) throws NullDomainReference, ConstraintViolation;
+    void update (String id, Committee committee) throws NullDomainReference, ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     String create (Committee committee) throws ConstraintViolation;

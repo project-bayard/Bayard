@@ -104,7 +104,7 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         if (contact.getCommittees() != null) {
             for(Committee committee : contact.getCommittees()) {
                 committee.getMembers().remove(contact);
-                committeeService.update(committee);
+                committeeService.update(committee.getId(),committee);
             }
         }
 

@@ -93,7 +93,7 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
 
         Contact contactFromDb = contactService.findById(contact.getId());
         assertEquals(contactFromDb.getCommittees().size(), 1); // before
-        committeeService.delete(committee);
+        committeeService.delete(committee.getId());
 
         contactFromDb = contactService.findById(contact.getId()); // after
         assertNotNull(contactFromDb);

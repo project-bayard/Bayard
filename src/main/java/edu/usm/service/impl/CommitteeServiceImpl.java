@@ -50,6 +50,11 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
             committee.setMembers(new HashSet<>());
         }
 
+        if (committee.getEvents() == null) {
+            committee.setEvents(new HashSet<>());
+        }
+
+        committee.getEvents().size();
         committee.getMembers().size();
         return committee;
     }
@@ -83,7 +88,8 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     @Override
     @Transactional
-    public void delete(Committee committee) throws NullDomainReference, ConstraintViolation {
+    public void delete(String id) throws NullDomainReference, ConstraintViolation {
+        Committee committee = findCommittee(id);
         if (committee == null) {
             throw new NullDomainReference.NullCommittee();
         }
@@ -110,7 +116,10 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
-    public void update(Committee committee) throws NullDomainReference, ConstraintViolation{
+    @Transactional
+    public void update(String id, Committee committee) throws NullDomainReference, ConstraintViolation{
+        Committee fromDb = findCommittee(id);
+        fromDb.setName(committee.getName());
         validateFields(committee);
         updateLastModified(committee);
         committeeDao.save(committee);
@@ -118,7 +127,6 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     @Override
     public String create(Committee committee) throws ConstraintViolation {
-
         if (null == committee.getName()) {
             throw new ConstraintViolation(ConstraintMessage.COMMITTEE_REQUIRED_NAME);
         }
@@ -130,7 +138,7 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
 
     private void uncheckedDelete(Committee committee) {
         try {
-            delete(committee);
+            delete(committee.getId());
         } catch (NullDomainReference | ConstraintViolation e) {
             throw new RuntimeException(e);
         }
