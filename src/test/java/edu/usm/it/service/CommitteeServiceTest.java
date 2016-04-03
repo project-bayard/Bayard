@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
@@ -60,8 +59,8 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
 
     @After
     public void tearDown() {
-        contactService.deleteAll();
         committeeService.deleteAll();
+        contactService.deleteAll();
     }
 
     @Test
@@ -76,10 +75,10 @@ public class CommitteeServiceTest extends WebAppConfigurationAware {
         committee.setMembers(contacts);
         committeeService.create(committee);
 
-        Committee orgFromDb = committeeService.findById(committee.getId());
+        Committee committeeFromDb = committeeService.findById(committee.getId());
 
-        assertNotNull(orgFromDb);
-        assertEquals(orgFromDb.getMembers().size(), 2);
+        assertNotNull(committeeFromDb);
+        assertEquals(committeeFromDb.getMembers().size(), 2);
     }
 
     @Test

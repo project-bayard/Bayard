@@ -327,21 +327,10 @@ public class ContactController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{entityId}")
-    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("entityId") String entityId) throws  ConstraintViolation, NullDomainReference {
-
-        Committee committee = committeeService.findById(entityId);
-        Contact contact = contactService.findById(id);
-
-        try {
-            contactService.removeContactFromCommittee(contact, committee);
-            return Response.successGeneric();
-        } catch (NullDomainReference.NullContact e) {
-            throw new NullDomainReference.NullContact(id, e);
-        } catch (NullDomainReference.NullCommittee e) {
-            throw new NullDomainReference.NullCommittee(id, e);
-        }
-
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/committees/{committeeId}")
+    public Response removeContactFromCommittee(@PathVariable("id") String id, @PathVariable("committeeId") String committeeId) throws  ConstraintViolation, NullDomainReference {
+        contactService.removeContactFromCommittee(id, committeeId);
+        return Response.successGeneric();
     }
 
     @ResponseStatus(HttpStatus.OK)

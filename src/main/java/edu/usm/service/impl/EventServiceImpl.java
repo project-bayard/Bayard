@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -145,7 +144,7 @@ public class EventServiceImpl extends BasicService implements EventService {
     }
 
     @Override
-    public void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent{
+    public void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullCommittee {
 
         if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
             event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));

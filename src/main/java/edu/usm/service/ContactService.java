@@ -56,7 +56,7 @@ public interface ContactService {
     void addContactToCommittee(Contact contact, Committee committee) throws  NullDomainReference.NullContact, NullDomainReference.NullCommittee;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeContactFromCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee;
+    void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateBasicDetails(Contact contact, Contact details) throws  ConstraintViolation, NullDomainReference;

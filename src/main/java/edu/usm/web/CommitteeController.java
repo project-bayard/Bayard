@@ -68,7 +68,7 @@ public class CommitteeController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.CommitteeDetails.class)
-    public Committee getCommittee(@PathVariable("id") String id) {
+    public Committee getCommittee(@PathVariable("id") String id) throws NullDomainReference.NullCommittee {
         return committeeService.findById(id);
     }
 

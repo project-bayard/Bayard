@@ -433,12 +433,14 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void removeContactFromCommittee(Contact contact, Committee committee) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
-
+    @Transactional
+    public void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+        Contact contact = contactDao.findOne(contactId);
         if (null == contact) {
             throw new NullDomainReference.NullContact();
         }
 
+        Committee committee = committeeService.findById(committeeId);
         if (null == committee) {
             throw new NullDomainReference.NullCommittee();
         }
@@ -452,7 +454,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
         members.remove(contact);
         committees.remove(committee);
-
         update(contact);
     }
 

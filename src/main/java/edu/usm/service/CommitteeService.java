@@ -5,7 +5,6 @@ import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import javax.validation.constraints.Null;
 import java.util.Set;
 
 /**
@@ -14,7 +13,7 @@ import java.util.Set;
 public interface CommitteeService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Committee findById (String id);
+    Committee findById (String id) throws NullDomainReference.NullCommittee;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Committee findByName(String name);

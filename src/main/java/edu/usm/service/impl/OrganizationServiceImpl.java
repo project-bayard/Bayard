@@ -67,8 +67,8 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
         }
 
         Organization organization = organizationDao.findOne(id);
-        if (organization == null) {throw new NullDomainReference.NullOrganization(id);
-
+        if (organization == null) {
+            throw new NullDomainReference.NullOrganization(id);
         }
 
         /*Remove references to */

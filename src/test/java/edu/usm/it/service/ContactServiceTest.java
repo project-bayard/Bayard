@@ -217,7 +217,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertNotNull(fromDb.getCommittees());
         assertTrue(fromDb.getCommittees().contains(committee));
 
-        contactService.removeContactFromCommittee(contact, committee);
+        contactService.removeContactFromCommittee(contact.getId(), committee.getId());
 
         fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,11 +39,19 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     private Logger logger = LoggerFactory.getLogger(CommitteeServiceImpl.class);
 
     @Override
-    public Committee findById(String id) {
-        if (null == id) {
+    @Transactional
+    public Committee findById(String id) throws NullDomainReference.NullCommittee {
+        if (id == null) {
             return null;
         }
-        return committeeDao.findOne(id);
+        Committee committee = findCommittee(id);
+
+        if (committee.getMembers() == null) {
+            committee.setMembers(new HashSet<>());
+        }
+
+        committee.getMembers().size();
+        return committee;
     }
 
     @Override
@@ -73,18 +82,16 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
     }
 
     @Override
+    @Transactional
     public void delete(Committee committee) throws NullDomainReference, ConstraintViolation {
-
-        if (null == committee) {
+        if (committee == null) {
             throw new NullDomainReference.NullCommittee();
         }
 
-        logger.debug("Deleting committe with ID: " + committee.getId());
-        updateLastModified(committee);
         if (committee.getMembers() != null) {
             Set<Contact> members = new HashSet<>(committee.getMembers());
             for(Contact contact : members) {
-                contactService.removeContactFromCommittee(contact,committee);
+                contactService.removeContactFromCommittee(contact.getId(), committee.getId());
             }
         }
 
@@ -95,17 +102,16 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
                 eventService.update(event);
                 committee.getEvents().remove(event);
             }
-
         }
-        committeeDao.delete(committee);
 
+        logger.debug("Deleting committe with ID: " + committee.getId());
+        updateLastModified(committee);
+        committeeDao.delete(committee);
     }
 
     @Override
     public void update(Committee committee) throws NullDomainReference, ConstraintViolation{
-
         validateFields(committee);
-
         updateLastModified(committee);
         committeeDao.save(committee);
     }
@@ -118,24 +124,33 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         }
 
         validateUniqueness(committee);
-
         committeeDao.save(committee);
         return committee.getId();
     }
 
-    private void uncheckedDelete(Committee c) {
+    private void uncheckedDelete(Committee committee) {
         try {
-            delete(c);
-        } catch (NullDomainReference e) {
-            throw new RuntimeException(e);
-        } catch (ConstraintViolation e) {
+            delete(committee);
+        } catch (NullDomainReference | ConstraintViolation e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
         Set<Committee> committees = findAll();
         committees.stream().forEach(this::uncheckedDelete);
     }
+
+    private Committee findCommittee(String id) throws NullDomainReference.NullCommittee {
+        Committee committee = committeeDao.findOne(id);
+        if (committee == null) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullCommittee(id);
+        } else {
+            return committee;
+        }
+    }
+
 }
