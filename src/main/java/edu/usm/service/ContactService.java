@@ -10,6 +10,7 @@ import edu.usm.dto.SustainerPeriodDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -127,6 +128,6 @@ public interface ContactService {
     void deleteSustainerPeriod(String contactId, String sustainerPeriodId) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Set<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference;
+    SortedSet<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference;
 
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -378,15 +379,15 @@ public class ContactServiceImpl extends BasicService implements ContactService {
 
     @Override
     @Transactional
-    public Set<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference {
+    public SortedSet<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         DonorInfo donorInfo = contact.getDonorInfo();
         if (donorInfo == null) {
-            return new HashSet<>(); // returns an empty set since the contact wouldn't have any sustainer periods
+            return new TreeSet<>(); // returns an empty set since the contact wouldn't have any sustainer periods
         }
-        Set<SustainerPeriod> sustainerPeriods = donorInfo.getSustainerPeriods();
+        SortedSet<SustainerPeriod> sustainerPeriods = donorInfo.getSustainerPeriods();
         if (sustainerPeriods == null) {
-            sustainerPeriods = new HashSet<>();
+            sustainerPeriods = new TreeSet<>();
         }
         sustainerPeriods.size();
         return sustainerPeriods;

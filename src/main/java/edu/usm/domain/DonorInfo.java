@@ -1,11 +1,8 @@
 package edu.usm.domain;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.SortNatural;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -65,7 +62,7 @@ public class DonorInfo extends BasicEntity implements Serializable {
     /**
      * @return the set of SustainerPeriods this Contact has committed to
      */
-    public Set<SustainerPeriod> getSustainerPeriods() {
+    public SortedSet<SustainerPeriod> getSustainerPeriods() {
         return sustainerPeriods;
     }
 

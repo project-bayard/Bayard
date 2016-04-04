@@ -325,7 +325,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/sustainer", produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(Views.SustainerPeriodDetails.class)
-    public Set<SustainerPeriod> getSustainerPeriodsForContact(@PathVariable("id")String id) throws NullDomainReference {
+    public SortedSet<SustainerPeriod> getSustainerPeriodsForContact(@PathVariable("id")String id) throws NullDomainReference {
         return contactService.getAllContactSustainerPeriods(id);
     }
 
