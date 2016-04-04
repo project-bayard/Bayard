@@ -7,12 +7,16 @@ import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 
 /**
- * Created by scottkimball on 2/22/15.
+ * Repository for {@link Donation}
  */
 
 @Repository
 public interface DonationDao extends CrudRepository<Donation, String> {
 
+    /**
+     * Returns all Donations
+     * @return {@link java.util.Set} of {@link Donation}
+     */
     @Override
     HashSet<Donation> findAll();
 

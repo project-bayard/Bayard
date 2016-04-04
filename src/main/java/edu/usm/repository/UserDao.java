@@ -7,10 +7,21 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Created by scottkimball on 7/17/15.
+ * Repository for users
  */
 @Repository
 public interface UserDao extends CrudRepository<User, Long> {
+
+    /**
+     * Finds a user by its email, if it exists.
+     * @param email
+     * @return {@link User}
+     */
     User findOneByEmail(String email);
+
+    /**
+     * Returns all existing users.
+     * @return {@link List} of {@link User}
+     */
     List<User> findAll();
 }

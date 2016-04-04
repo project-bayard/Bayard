@@ -117,7 +117,9 @@ public class ContactServiceImpl extends BasicService implements ContactService {
             }
         }
 
-        contact.getEncounters().clear();
+        if (contact.getEncounters() != null) {
+            contact.getEncounters().clear();
+        }
 
         if (contact.getEncountersInitiated() != null) {
             for (Encounter encounter : contact.getEncountersInitiated()) {
@@ -541,7 +543,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
         contact.getEncounters().add(encounter);
         contact.setNeedsFollowUp(contact.getEncounters().first().requiresFollowUp());
         contact.setAssessment(getUpdatedAssessment(contact.getId()));
-
         update(contact);
 
         if (null == initiator.getEncountersInitiated()) {

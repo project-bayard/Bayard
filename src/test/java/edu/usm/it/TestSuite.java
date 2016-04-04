@@ -37,7 +37,7 @@ import org.springframework.test.context.ActiveProfiles;
         UserServiceTest.class,
         DonationsDaoTest.class,
         FoundationPersistenceTest.class,
-     //TODO uncomment   SustainerPeriodPersistenceTest.class,
+        SustainerPeriodPersistenceTest.class,
         GrantServiceTest.class,
         FoundationServiceTest.class,
         InteractionRecordServiceTest.class,
