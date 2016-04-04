@@ -65,8 +65,8 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         event.setName("Event Name");
         event.setDateHeld("2015-01-01");
         eventService.create(event);
-        contactService.attendEvent(first, event);
-        contactService.attendEvent(second, event);
+        contactService.attendEvent(first.getId(), event.getId());
+        contactService.attendEvent(second.getId(), event.getId());
 
         group = new Group();
         group.setGroupName("New AlinskyGroup");
@@ -118,6 +118,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
     @Test
     public void testCreateGroupFromOrganization() throws Exception{
         String id = groupService.create(group);
+        eventService.create(event);
         groupService.addAggregation(organization.getId(), group.getId());
 
         Group fromDb = groupService.findById(id);
@@ -125,14 +126,16 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         Aggregation aggregation = fromDb.getAggregations().iterator().next();
         Aggregation aggOrg = organizationService.findById(aggregation.getId());
         int aggSize = aggOrg.getAggregationMembers().size();
-        int orgSize = organization.getMembers().size();
+        int orgSize = organizationService.findById(organization.getId()).getMembers().size();
         assertNotNull(aggregation);
+
         assertEquals(aggSize, orgSize);
     }
 
     @Test
     public void testCreateGroupFromEvent() throws Exception{
         String id = groupService.create(group);
+        eventService.create(event);
         groupService.addAggregation(event.getId(), group.getId());
 
         Group fromDb = groupService.findById(id);
@@ -140,6 +143,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         Aggregation aggregation = eventService.findById(fromDb.getAggregations().iterator().next().getId());
         assertNotNull(aggregation);
         assertEquals(1, aggregation.getGroups().size());
+        event = eventService.findById(event.getId());
         assertEquals(event.getAggregationMembers().size(), aggregation.getAggregationMembers().size());
     }
 
@@ -153,7 +157,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         group = groupService.findById(group.getId());
         groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(group.getId());
-        contactService.addToGroup(topLevel, group);
+        contactService.addToGroup(topLevel.getId(), group.getId());
 
         Group fromDb = groupService.findById(id);
         assertEquals(group.getGroupName(), fromDb.getGroupName());
@@ -175,7 +179,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         groupService.create(group);
         groupService.addAggregation(committee.getId(), group.getId());
         group = groupService.findById(group.getId());
-        contactService.addToGroup(topLevel, group);
+        contactService.addToGroup(topLevel.getId(), group.getId());
         groupService.delete(group.getId());
 
         Group groupFromDb = groupService.findById(group.getId());
@@ -196,47 +200,53 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         groupService.addAggregation(committee.getId(), group.getId());
 
         group = groupService.findById(group.getId());
-        contactService.addToGroup(topLevel, group);
+        contactService.addToGroup(topLevel.getId(), group.getId());
 
         Contact anotherContact = new Contact();
         anotherContact.setFirstName("Another");
         anotherContact.setEmail("another@email.com");
         contactService.create(anotherContact);
 
-        contactService.addToGroup(anotherContact, group);
+        contactService.addToGroup(anotherContact.getId(), group.getId());
         group = groupService.findById(group.getId());
         assertEquals(2, group.getTopLevelMembers().size());
 
         anotherContact = contactService.findById(anotherContact.getId());
         topLevel = contactService.findById(topLevel.getId());
 
-        assertEquals(1, anotherContact.getGroups().size());
-        assertEquals(1, topLevel.getGroups().size());
+        Set<Group> anotherContactGroups = contactService.getAllContactGroups(anotherContact.getId());
+        Set<Group> topLevelGroups = contactService.getAllContactGroups(topLevel.getId());
+        assertEquals(1, anotherContactGroups.size());
+        assertEquals(1, topLevelGroups.size());
 
         groupService.delete(group.getId());
 
         anotherContact = contactService.findById(anotherContact.getId());
         topLevel = contactService.findById(topLevel.getId());
+        anotherContactGroups = contactService.getAllContactGroups(anotherContact.getId());
+        topLevelGroups = contactService.getAllContactGroups(topLevel.getId());
 
-        assertEquals(0, anotherContact.getGroups().size());
-        assertEquals(0, topLevel.getGroups().size());
+        assertEquals(0, anotherContactGroups.size());
+        assertEquals(0, topLevelGroups.size());
     }
 
     @Test
     public void testRemoveContactFromGroup() throws Exception {
         groupService.create(group);
         groupService.addAggregation(committee.getId(), group.getId());
-        contactService.addToGroup(topLevel, group);
+        contactService.addToGroup(topLevel.getId(), group.getId());
+        group = groupService.findById(group.getId());
 
         assertEquals(1, group.getTopLevelMembers().size());
 
-        contactService.removeFromGroup(topLevel, group);
-
+        contactService.removeFromGroup(topLevel.getId(), group.getId());
         Group fromDb = groupService.findById(group.getId());
+
         assertEquals(0, fromDb.getTopLevelMembers().size());
 
         Contact contactFromDb = contactService.findById(topLevel.getId());
-        assertEquals(0, contactFromDb.getGroups().size());
+        Set<Group> groups = contactService.getAllContactGroups(contactFromDb.getId());
+        assertEquals(0, groups.size());
     }
 
     @Test
@@ -333,7 +343,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         newContact.setEmail("Fresh email");
         contactService.create(newContact);
 
-        contactService.attendEvent(newContact, event);
+        contactService.attendEvent(newContact.getId(), event.getId());
 
         event = eventService.findById(event.getId());
         assertTrue(event.getAttendees().contains(newContact));
@@ -390,10 +400,10 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         contactService.create(newContact);
 
         event = eventService.findById(event.getId());
-        contactService.attendEvent(newContact, event);
+        contactService.attendEvent(newContact.getId(), event.getId());
 
         newContact = contactService.findById(newContact.getId());
-        contactService.unattendEvent(newContact, event);
+        contactService.unattendEvent(newContact.getId(), event.getId());
 
         event = eventService.findById(event.getId());
         assertFalse(event.getAttendees().contains(newContact));
@@ -414,7 +424,7 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         contactService.create(contact);
 
         contactService.addContactToCommittee(contact.getId(), committee.getId());
-        contactService.addToGroup(contact, group);
+        contactService.addToGroup(contact.getId(), group.getId());
 
         contact = contactService.findById(contact.getId());
         assertTrue(contact.getGroups().contains(group));
@@ -446,9 +456,9 @@ public class GroupServiceTest extends WebAppConfigurationAware{
         contactService.create(contact);
 
         contactService.addContactToCommittee(contact.getId(), committee.getId());
-        contactService.attendEvent(contact, event);
-        contactService.addToGroup(contact, group);
-        contactService.addToGroup(contact, secondGroup);
+        contactService.attendEvent(contact.getId(), event.getId());
+        contactService.addToGroup(contact.getId(), group.getId());
+        contactService.addToGroup(contact.getId(), secondGroup.getId());
 
         contact = contactService.findById(contact.getId());
         group = groupService.findById(group.getId());

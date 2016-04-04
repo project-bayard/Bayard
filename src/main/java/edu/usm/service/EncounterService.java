@@ -19,7 +19,7 @@ public interface EncounterService {
             throws NullDomainReference.NullEncounter, NullDomainReference.NullContact, NullDomainReference.NullEncounterType;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(String id) throws NullDomainReference.NullEncounter;
+    void delete(String id) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll() throws NullDomainReference.NullEncounter;

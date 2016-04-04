@@ -121,7 +121,7 @@ public class EventServiceImpl extends BasicService implements EventService {
         Set<Contact> attendees = new HashSet<>(event.getAttendees());
 
         for (Contact contact : attendees) {
-            contactService.unattendEvent(contact,event);
+            contactService.unattendEvent(contact.getId(),event.getId());
         }
         eventDao.delete(event);
     }

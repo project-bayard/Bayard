@@ -85,7 +85,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
         eventService.create(event);
         contactService.create(contact);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
 
         event = eventService.findAll().iterator().next();
 
@@ -124,7 +124,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(attendee, event);
+        contactService.attendEvent(attendee.getId(), event.getId());
 
         mockMvc.perform(delete("/events/"+eventId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -148,7 +148,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(attendee, event);
+        contactService.attendEvent(attendee.getId(), event.getId());
 
         EventDto dto = new EventDto();
         dto.setName("Updated Name");
@@ -191,7 +191,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(attendee, event);
+        contactService.attendEvent(attendee.getId(), event.getId());
 
         //New Committee
         Committee newCommittee = new Committee();

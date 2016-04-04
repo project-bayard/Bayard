@@ -559,7 +559,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contactService.create(contact);
         eventService.create(event);
         contact.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
 
         mockMvc.perform(delete("/contacts/"+contact.getId()+"/events/"+event.getId())
         .accept(MediaType.APPLICATION_JSON)
@@ -592,7 +592,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         String id = contactService.create(contact);
         String groupId = groupService.create(group);
         eventService.create(event);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
 
         group = groupService.findById(groupId);
         groupService.addAggregation(event.getId(), group.getId());
@@ -611,7 +611,8 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(1, group.getTopLevelMembers().size());
 
         contact = contactService.findById(id);
-        assertEquals(1, contact.getGroups().size());
+        Set<Group> groups = contactService.getAllContactGroups(contact.getId());
+        assertEquals(1, groups.size());
 
     }
 
@@ -620,12 +621,12 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         String id = contactService.create(contact);
         String groupId = groupService.create(group);
         eventService.create(event);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
         group = groupService.findById(groupId);
         groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(groupId);
         contact = contactService.findById(contact.getId());
-        contactService.addToGroup(contact, group);
+        contactService.addToGroup(contact.getId(), group.getId());
 
         mockMvc.perform(delete("/contacts/" + id + "/groups/" + groupId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -636,19 +637,20 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(0, group.getTopLevelMembers().size());
 
         contact = contactService.findById(id);
-        assertEquals(0, contact.getGroups().size());
+        Set<Group> groups = contactService.getAllContactGroups(contact.getId());
+        assertEquals(0, groups.size());
     }
     @Test
     public void testGetAllContactGroups () throws Exception {
         String id = contactService.create(contact);
         String groupId = groupService.create(group);
         eventService.create(event);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
         group = groupService.findById(groupId);
         groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(groupId);
         contact = contactService.findById(contact.getId());
-        contactService.addToGroup(contact, group);
+        contactService.addToGroup(contact.getId(), group.getId());
 
         mockMvc.perform(get("/contacts/" + contact.getId() + "/groups")
                 .accept(MediaType.APPLICATION_JSON))

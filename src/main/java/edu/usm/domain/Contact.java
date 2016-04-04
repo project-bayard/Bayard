@@ -249,7 +249,7 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Organization> organizations;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_alinskygroup",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

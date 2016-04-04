@@ -39,7 +39,7 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     }
 
     @Override
-    public void delete(String id) throws NullDomainReference.NullEncounter{
+    public void delete(String id) throws NullDomainReference{
         Encounter encounter = encounterDao.findOne(id);
 
         if (null == encounter) {
@@ -47,9 +47,8 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         }
 
         if (null != encounter.getContact()) {
-            contactService.removeEncounter(encounter.getContact(), encounter);
+            contactService.removeEncounter(encounter.getContact().getId(), encounter.getId());
         }
-
     }
 
 
@@ -73,7 +72,7 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
 
         boolean sameInitiator = null != existingEncounter.getInitiator() && existingEncounter.getInitiator().getId().equalsIgnoreCase(dto.getInitiatorId());
         if (!sameInitiator) {
-            contactService.removeInitiator(existingEncounter.getInitiator(), existingEncounter);
+            contactService.removeInitiator(existingEncounter.getInitiator().getId(), existingEncounter.getId());
         }
 
         Contact initiator = contactService.findById(dto.getInitiatorId());
@@ -97,11 +96,9 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         }
 
         if (existingEncounter == contact.getEncounters().first()) {
-            contactService.updateNeedsFollowUp(contact, existingEncounter.requiresFollowUp());
+            contactService.updateNeedsFollowUp(contact.getId(), existingEncounter.requiresFollowUp());
         }
-
-        contactService.updateAssessment(contact, contactService.getUpdatedAssessment(contact));
-
+        contactService.updateAssessment(contact.getId(), contactService.getUpdatedAssessment(contact.getId()));
     }
 
     @Override

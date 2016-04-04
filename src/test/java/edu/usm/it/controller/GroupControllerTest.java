@@ -205,7 +205,7 @@ public class GroupControllerTest extends WebAppConfigurationAware {
 
         contactService.addContactToOrganization(contact.getId(), organization.getId());
         groupService.addAggregation(organization.getId(), group.getId());
-        contactService.addToGroup(topLevel, group);
+        contactService.addToGroup(topLevel.getId(), group.getId());
 
         String path = "/groups/"+group.getId()+"/all";
 

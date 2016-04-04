@@ -85,7 +85,7 @@ public class GroupServiceImpl extends BasicService implements GroupService {
         if (null != group.getTopLevelMembers()) {
             Set<Contact> contacts = new HashSet<>(group.getTopLevelMembers());
             for (Contact contact: contacts) {
-                contactService.removeFromGroup(contact, group);
+                contactService.removeFromGroup(contact.getId(), group.getId());
             }
         }
         groupDao.delete(group);
