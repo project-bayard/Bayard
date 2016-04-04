@@ -137,6 +137,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional // Must be transactional due to lazy loading.
     public void testCreateContactWithDonations() {
         Contact c = new Contact();
         c.setFirstName("Test");
@@ -175,6 +176,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional // Must be transactional due to lazy loading
     public void testUpdateContactDonation() {
         Contact c = new Contact();
         c.setFirstName("Test");

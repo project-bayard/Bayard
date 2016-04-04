@@ -94,7 +94,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         contactService.create(contact);
         organizationService.create(organization);
 
-        contactService.addDonation(contact, donation);
+        contactService.addDonation(contact.getId(), donation);
         contact = contactService.findById(contact.getId());
         donation = contact.getDonorInfo().getDonations().iterator().next();
         organizationService.addDonation(organization.getId(), donation);
@@ -105,7 +105,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         assertTrue(contact.getDonorInfo().getDonations().contains(donation));
         assertTrue(organization.getDonations().contains(donation));
 
-        contactService.removeDonation(contact, donation);
+        contactService.removeDonation(contact.getId(), donation.getId());
         contact = contactService.findById(contact.getId());
         organization = organizationService.findById(organization.getId());
         assertFalse(contact.getDonorInfo().getDonations().contains(donation));

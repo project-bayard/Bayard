@@ -10,7 +10,6 @@ import edu.usm.dto.EncounterDto;
 import edu.usm.dto.SignInDto;
 import edu.usm.dto.SustainerPeriodDto;
 import edu.usm.repository.ContactDao;
-import edu.usm.repository.SustainerPeriodDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -29,8 +30,6 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     @Autowired
     private ContactDao contactDao;
     @Autowired
-    private SustainerPeriodDao sustainerPeriodDao;
-    @Autowired
     private OrganizationService organizationService;
     @Autowired
     private CommitteeService committeeService;
@@ -40,6 +39,11 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     private EncounterService encounterService;
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private DonationService donationService;
+    @Autowired
+    private SustainerPeriodService sustainerPeriodService;
+
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -260,7 +264,9 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void addDonation(Contact contact, Donation donation) throws NullDomainReference.NullContact {
+    @Transactional
+    public void addDonation(String contactId, Donation donation) throws NullDomainReference.NullContact {
+        Contact contact = findContact(contactId);
         if (null == contact.getDonorInfo()) {
             contact.setDonorInfo(new DonorInfo());
         }
@@ -270,7 +276,14 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void removeDonation(Contact contact, Donation donation) throws NullDomainReference.NullContact {
+    @Transactional
+    public void removeDonation(String contactId, String donationId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        Donation donation = donationService.findById(donationId);
+        if (donation == null) {
+            throw new NullDomainReference.NullDonation(donationId);
+        }
+
         if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getDonations()) {
             contact.getDonorInfo().getDonations().remove(donation);
             updateLastModified(contact.getDonorInfo());
@@ -280,12 +293,48 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public SustainerPeriod findSustainerPeriodById(String id) {
-        return sustainerPeriodDao.findOne(id);
+    @Transactional
+    public Set<Donation> getAllContactDonations(String contactId) throws NullDomainReference.NullContact {
+        Contact contact = findContact(contactId);
+        Set<Donation> donations = contact.getDonorInfo().getDonations();
+        if (donations == null) {
+            donations = new HashSet<>();
+        }
+        donations.size();
+        return donations;
     }
 
     @Override
-    public void createSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) throws ConstraintViolation {
+    @Transactional
+    public DonorInfo getDonorInfo(String contactId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        if (contact.isDonor()) {
+            DonorInfo donorInfo = contact.getDonorInfo();
+            donorInfo.getLastModified();
+            return donorInfo;
+        } else {
+            return null; //TODO What should happen if there is no donor info here?
+
+        }
+
+    }
+
+    @Override
+    public SustainerPeriod findSustainerPeriodById(String id) {
+        return sustainerPeriodService.findById(id);
+    }
+
+    private void createSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) throws ConstraintViolation, NullDomainReference {
+
+    }
+
+    @Override
+    @Transactional
+    public void createSustainerPeriod(String contactId, SustainerPeriodDto dto) throws ConstraintViolation, NullDomainReference {
+        Contact contact = findContact(contactId);
+        SustainerPeriod sustainerPeriod = new SustainerPeriod();
+        sustainerPeriod = DtoTransformer.fromDto(dto, sustainerPeriod);
+
         if (null == contact.getDonorInfo()) {
             contact.setDonorInfo(new DonorInfo());
         }
@@ -297,14 +346,10 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void createSustainerPeriod(Contact contact, SustainerPeriodDto dto) throws ConstraintViolation {
-        SustainerPeriod sustainerPeriod = new SustainerPeriod();
-        sustainerPeriod = DtoTransformer.fromDto(dto, sustainerPeriod);
-        createSustainerPeriod(contact, sustainerPeriod);
-    }
-
-    @Override
-    public void updateSustainerPeriod(Contact contact, SustainerPeriod existing, SustainerPeriodDto newDetails) throws ConstraintViolation {
+    @Transactional
+    public void updateSustainerPeriod(String contactId, String sustainerPeriodId, SustainerPeriodDto newDetails) throws ConstraintViolation, NullDomainReference {
+        Contact contact = findContact(contactId);
+        SustainerPeriod existing = sustainerPeriodService.findById(sustainerPeriodId);
         if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getSustainerPeriods()) {
             contact.getDonorInfo().getSustainerPeriods().remove(existing);
             existing = DtoTransformer.fromDto(newDetails, existing);
@@ -319,13 +364,33 @@ public class ContactServiceImpl extends BasicService implements ContactService {
     }
 
     @Override
-    public void deleteSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) {
+    @Transactional
+    public void deleteSustainerPeriod(String contactId, String sustainerPeriodId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        SustainerPeriod sustainerPeriod = sustainerPeriodService.findById(sustainerPeriodId);
         if (null != contact.getDonorInfo() && null != contact.getDonorInfo().getSustainerPeriods()) {
             contact.getDonorInfo().getSustainerPeriods().remove(sustainerPeriod);
             updateLastModified(sustainerPeriod);
             updateLastModified(contact.getDonorInfo());
             update(contact);
         }
+    }
+
+    @Override
+    @Transactional
+    public Set<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        DonorInfo donorInfo = contact.getDonorInfo();
+        if (donorInfo == null) {
+            return new HashSet<>(); // returns an empty set since the contact wouldn't have any sustainer periods
+        }
+        Set<SustainerPeriod> sustainerPeriods = donorInfo.getSustainerPeriods();
+        if (sustainerPeriods == null) {
+            sustainerPeriods = new HashSet<>();
+        }
+        sustainerPeriods.size();
+        return sustainerPeriods;
+
     }
 
     @Override

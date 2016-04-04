@@ -4,16 +4,17 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.DonorInfo;
 import edu.usm.domain.SustainerPeriod;
-import edu.usm.repository.*;
-import org.assertj.core.internal.cglib.core.Local;
+import edu.usm.repository.ContactDao;
+import edu.usm.repository.DonorInfoDao;
+import edu.usm.repository.SustainerPeriodDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.TemporalUnit;
 import java.util.Iterator;
 
 import static org.junit.Assert.*;
@@ -64,6 +65,7 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional
     public void testCreateSustainerPeriod() {
         contactDao.save(contact);
         contact = contactDao.findOne(contact.getId());
@@ -74,6 +76,7 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional
     public void testUpdateSustainerPeriod() {
         contactDao.save(contact);
         contact = contactDao.findOne(contact.getId());
@@ -106,6 +109,7 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional
     public void testCreateMultipleSustainerPeriods() {
         contactDao.save(contact);
         contact = contactDao.findOne(contact.getId());
@@ -125,6 +129,7 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional // Must be transactional due to lazy loading
     public void testSustainerPeriodsOrdering() {
 
         SustainerPeriod olderSustainerPeriod = new SustainerPeriod();
@@ -155,6 +160,7 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional
     public void testCalculateYearToDate() {
         sustainerPeriod.setPeriodStartDate(LocalDate.of(2015, 1, 1));
         sustainerPeriod.setCancelDate(LocalDate.of(2015, 3, 15));

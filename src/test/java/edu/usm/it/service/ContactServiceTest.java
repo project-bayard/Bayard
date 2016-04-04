@@ -512,7 +512,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
     public void testAddDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact, donation);
+        contactService.addDonation(contact.getId(), donation);
         contact = contactService.findById(contact.getId());
         assertNotNull(contact.getDonorInfo());
         assertFalse(contact.getDonorInfo().getDonations().isEmpty());
@@ -521,14 +521,14 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact, donation);
+        contactService.addDonation(contact.getId(), donation);
         contact = contactService.findById(contact.getId());
-        donation = contact.getDonorInfo().getDonations().iterator().next();
+        donation = contactService.getDonorInfo(contact.getId()).getDonations().iterator().next();
         assertNotNull(donation);
 
-        contactService.removeDonation(contact, donation);
+        contactService.removeDonation(contact.getId(), donation.getId());
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getDonorInfo().getDonations().isEmpty());
+        assertTrue(contactService.getDonorInfo(contact.getId()).getDonations().isEmpty());
 
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
@@ -537,39 +537,39 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     public void testCreateSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         contact = contactService.findById(contact.getId());
         assertNotNull(contact.getDonorInfo());
-        assertFalse(contact.getDonorInfo().getSustainerPeriods().isEmpty());
+        assertFalse(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
     }
 
     @Test
     public void testUpdateSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
 
         int newMonthlyAmount = sustainerPeriod.getMonthlyAmount() + 50;
         sustainerPeriod.setMonthlyAmount(newMonthlyAmount);
-        contactService.updateSustainerPeriod(contact, sustainerPeriod, DtoTransformer.fromEntity(sustainerPeriod));
+        contactService.updateSustainerPeriod(contact.getId(), sustainerPeriod.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
         assertEquals(newMonthlyAmount, sustainerPeriod.getMonthlyAmount());
     }
 
     @Test
     public void testDeleteSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
 
-        contactService.deleteSustainerPeriod(contact, sustainerPeriod);
+        contactService.deleteSustainerPeriod(contact.getId(), sustainerPeriod.getId());
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
+        assertTrue(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
         assertNull(sustainerPeriodDao.findOne(sustainerPeriod.getId()));
     }
 }

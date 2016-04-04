@@ -46,6 +46,10 @@ public abstract class NullDomainReference extends Exception {
 
     }
 
+    public static class NullDonation extends NullDomainReference {
+        public NullDonation(String id) {super(messageConstructor(Donation.class.getSimpleName(), id));}
+    }
+
     public static class NullAggregation extends NullDomainReference {
         public NullAggregation (String id) { super((messageConstructor(Aggregation.class.getSimpleName(), id)));}
     }

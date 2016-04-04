@@ -103,24 +103,30 @@ public interface ContactService {
     Contact findByFirstEmailPhone(SignInDto signInDto) throws NotFoundException;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addDonation(Contact contact, Donation donation) throws  NullDomainReference.NullContact;
+    void addDonation(String contactId, Donation donation) throws  NullDomainReference.NullContact;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeDonation(Contact contact, Donation donation) throws  NullDomainReference.NullContact;
+    void removeDonation(String contactId, String donationId) throws  NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Donation> getAllContactDonations(String contactId) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    DonorInfo getDonorInfo(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     SustainerPeriod findSustainerPeriodById(String id);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void createSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) throws  ConstraintViolation;
+    void createSustainerPeriod(String contactId, SustainerPeriodDto dto) throws  ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void createSustainerPeriod(Contact contact, SustainerPeriodDto dto) throws  ConstraintViolation;
+    void updateSustainerPeriod(String contactId, String sustainerPeriodId, SustainerPeriodDto newDetails) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void updateSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod, SustainerPeriodDto newDetails) throws  ConstraintViolation;
+    void deleteSustainerPeriod(String contactId, String sustainerPeriodId) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void deleteSustainerPeriod(Contact contact, SustainerPeriod sustainerPeriod) throws  ConstraintViolation;
+    Set<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference;
 
 }
