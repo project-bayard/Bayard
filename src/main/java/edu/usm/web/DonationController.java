@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
 import edu.usm.dto.Response;
@@ -61,7 +62,7 @@ public class DonationController {
 
     @RequestMapping(value= "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteDonation(@PathVariable("id")String id) {
+    public Response deleteDonation(@PathVariable("id")String id) throws ConstraintViolation{
         Donation d = donationService.findById(id);
         if (null == d) {
             //TODO: refactor 404s

@@ -2479,7 +2479,7 @@
 
     }]);
 
-    controllers.controller('DonationDetailsCtrl', ['$scope', 'DonationService', '$routeParams', '$timeout', 'DateFormatter', function($scope, DonationService, $routeParams, $timeout, DateFormatter) {
+    controllers.controller('DonationDetailsCtrl', ['$scope', 'DonationService', '$routeParams', '$timeout', 'DateFormatter', '$window', function($scope, DonationService, $routeParams, $timeout, DateFormatter, $window) {
 
         $scope.modelHolder = {};
         $scope.formHolder = {};
@@ -2524,6 +2524,17 @@
             $scope.editingDonationDetails = false;
             establishDetails($scope.modelHolder.donationModel.id);
         };
+
+        $scope.deleteDonation = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this donation?');
+            if (deleteConfirmed) {
+                DonationService.delete({id: $scope.modelHolder.donationModel.id}, function (succ) {
+                    $window.history.back();
+                }, function (err) {
+                    console.log(err);
+                })
+            }
+        }
 
     }]);
 
@@ -2773,7 +2784,8 @@
         };
     }]);
 
-    controllers.controller('SustainerPeriodDetailsCtrl', ['$scope', 'ContactService', '$routeParams', '$timeout', 'DateFormatter', 'RouteChangeService', function($scope, ContactService, $routeParams, $timeout, DateFormatter, RouteChangeService) {
+    controllers.controller('SustainerPeriodDetailsCtrl', ['$scope', 'ContactService', '$routeParams', '$timeout', 'DateFormatter', 'RouteChangeService', '$window',
+        function($scope, ContactService, $routeParams, $timeout, DateFormatter, RouteChangeService, $window) {
 
         $scope.contact = RouteChangeService.get();
 
@@ -2782,7 +2794,13 @@
 
         $scope.updateSustainerPeriod = function() {
             $scope.modelHolder.sustainerPeriodModel.periodStartDate= DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.periodStartDate);
-            $scope.modelHolder.sustainerPeriodModel.cancelDate = DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
+            if ($scope.modelHolder.sustainerPeriodModel.dates.cancelDate == null) {
+                $scope.modelHolder.sustainerPeriodModel.cancelDate = null;
+            } else {
+                $scope.modelHolder.sustainerPeriodModel.cancelDate = DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
+            }
+
+            console.log($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
 
             ContactService.updateSustainerPeriod({id: $scope.contact.id, entityId: $scope.modelHolder.sustainerPeriodModel.id}, $scope.modelHolder.sustainerPeriodModel, function(succ) {
                 $scope.requestSuccess = true;
@@ -2803,6 +2821,9 @@
                     periodStartDate : DateFormatter.asDate(period.periodStartDate),
                     cancelDate : DateFormatter.asDate(period.cancelDate)
                 };
+                if (null == period.cancelDate) {
+                    $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = null;
+                }
             }, function(err) {
                 console.log(err);
             })
@@ -2824,6 +2845,17 @@
             $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = null;
             $scope.updateSustainerPeriod();
         };
+
+        $scope.deleteSustainerPeriod = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this sustainer period?');
+            if (deleteConfirmed) {
+                ContactService.deleteSustainerPeriod({id: $scope.contact.id, entityId: $scope.modelHolder.sustainerPeriodModel.id}, function (succ) {
+                    $window.history.back();
+                }, function (err) {
+                    console.log(err);
+                })
+            }
+        }
 
     }]);
 

@@ -168,4 +168,16 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organization = organizationService.findById(organization.getId());
         assertTrue(organization.getDonations().isEmpty());
     }
+
+    @Test
+    public void findOrganizationWithDonation() throws Exception {
+        organizationService.create(organization);
+        organizationService.addDonation(organization, donation);
+
+        organization = organizationService.findById(organization.getId());
+        donation = organization.getDonations().iterator().next();
+
+        Organization withDonation = organizationService.findOrganizationWithDonation(donation);
+        assertEquals(organization, withDonation);
+    }
 }

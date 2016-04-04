@@ -122,4 +122,7 @@ public interface ContactService {
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Contact> findAllCurrentSustainers();
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Contact findContactWithDonation(Donation donation);
+
 }

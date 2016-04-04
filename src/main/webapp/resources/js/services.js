@@ -179,6 +179,10 @@
                 method: 'GET',
                 url: "/contacts/:id/sustainer/:entityId"
             },
+            deleteSustainerPeriod: {
+                method: 'DELETE',
+                url: "/contacts/:id/sustainer/:entityId"
+            },
             getAllCurrentSustainers: {
                 method: 'GET',
                 url: "/contacts/currentSustainers",

@@ -1,6 +1,7 @@
 package edu.usm.repository;
 
 import edu.usm.domain.Contact;
+import edu.usm.domain.DonorInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -33,5 +34,7 @@ public interface ContactDao extends CrudRepository<Contact, String> {
     Contact findOneByFirstNameAndPhoneNumber2(String firstName, String phoneNumber2);
 
     Set<Contact> findByDonorInfoCurrentSustainer(boolean status);
+
+    Contact findOneByDonorInfo(DonorInfo donorInfo);
 
 }

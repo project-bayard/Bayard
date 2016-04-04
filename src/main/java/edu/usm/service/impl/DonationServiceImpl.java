@@ -1,13 +1,14 @@
 package edu.usm.service.impl;
 
-import edu.usm.domain.BudgetItem;
-import edu.usm.domain.Donation;
+import edu.usm.domain.*;
+import edu.usm.domain.exception.ConstraintMessage;
+import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.repository.BudgetItemDao;
 import edu.usm.repository.DonationDao;
-import edu.usm.service.BasicService;
-import edu.usm.service.DonationService;
+import edu.usm.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,15 @@ public class DonationServiceImpl extends BasicService implements DonationService
 
     @Autowired
     private BudgetItemDao budgetItemDao;
+
+    @Autowired
+    private OrganizationService organizationService;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private ContactService contactService;
 
     @Override
     public Donation findById(String id) {
@@ -87,13 +97,41 @@ public class DonationServiceImpl extends BasicService implements DonationService
     }
 
     @Override
-    public void delete(Donation donation) {
+    public void delete(Donation donation) throws ConstraintViolation {
+        removeFromEntities(donation);
         donationDao.delete(donation);
+    }
+
+    private void uncheckedDelete(Donation donation) {
+        try {
+            delete(donation);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void removeFromEntities(Donation donation) throws ConstraintViolation{
+        try {
+            Organization organization = organizationService.findOrganizationWithDonation(donation);
+            if (null != organization) {
+                organizationService.removeDonation(organization, donation);
+            }
+            Event event = eventService.findEventWithDonation(donation);
+            if (null != event) {
+                eventService.removeDonation(event, donation);
+            }
+            Contact contact = contactService.findContactWithDonation(donation);
+            if (null != contact) {
+                contactService.removeDonation(contact, donation);
+            }
+        } catch (NullDomainReference.NullOrganization | NullDomainReference.NullEvent | NullDomainReference.NullContact | ConstraintViolation e) {
+            throw new ConstraintViolation(ConstraintMessage.GENERIC_PERSISTENCE_ERROR);
+        }
     }
 
     @Override
     public void deleteAll() {
-        findAll().stream().forEach(this::delete);
+        findAll().stream().forEach(this::uncheckedDelete);
     }
 
     @Override
