@@ -28,13 +28,19 @@
                                 <div ng-include="'resources/partials/forms/sustainerPeriodForm.html'"></div>
 
                             </fieldset>
-                            <div class="btn-group-vertical">
-                                <button class="btn btn-primary" ng-click="editingSustainerPeriod = true" ng-show="!editingSustainerPeriod">Edit</button>
-                                <button class="btn btn-warning" ng-click="closePeriod()" ng-show="modelHolder.sustainerPeriodModel.cancelDate == null && !editingSustainerPeriod">Close</button>
-                                <button class="btn btn-warning" ng-click="openPeriod()" ng-show="modelHolder.sustainerPeriodModel.cancelDate != null && !editingSustainerPeriod">Re-open</button>
+
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <div class="btn-group btn-group-justified" role="group">
+                                        <a href="" type="button" class="btn btn-primary" ng-click="editingSustainerPeriod = true" ng-show="!editingSustainerPeriod">Edit</a>
+                                        <a href="" type="button" class="btn btn-warning" ng-click="closePeriod()" ng-show="modelHolder.sustainerPeriodModel.cancelDate == null && !editingSustainerPeriod">Close</a>
+                                        <a href="" type="button" class="btn btn-warning" ng-click="openPeriod()" ng-show="modelHolder.sustainerPeriodModel.cancelDate != null && !editingSustainerPeriod">Re-open</a>
+                                        <a href="" type="button" class="btn btn-danger" ng-click="deleteSustainerPeriod()" ng-show="!editingSustainerPeriod">Delete</a>
+                                        <a href="" type="button" class="btn btn-success" ng-click="updateSustainerPeriod()" ng-show="editingSustainerPeriod" ng-disabled="formHolder.sustainerPeriodForm.$invalid">Submit</a>
+                                        <a href="" type="button" class="btn btn-danger" ng-click="cancelUpdateSustainerPeriod()" ng-show="editingSustainerPeriod">Cancel</a>
+                                    </div>
+                                </div>
                             </div>
-                            <button class="btn btn-success" ng-click="updateSustainerPeriod()" ng-show="editingSustainerPeriod" ng-disabled="formHolder.sustainerPeriodForm.$invalid">Submit</button>
-                            <button class="btn btn-danger" ng-click="cancelUpdateSustainerPeriod()" ng-show="editingSustainerPeriod">Cancel</button>
                         </div>
                     </div>
                 </div>

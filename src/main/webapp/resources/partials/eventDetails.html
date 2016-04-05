@@ -77,8 +77,10 @@
         <div ng-if="addingDonation">
             <div class="col-xs-4">
                 <div ng-include src=" 'resources/partials/forms/donationForm.html' "></div>
-                <button class="btn btn-md btn-success" ng-click="addDonationToEvent()" ng-disabled="formHolder.eventForm.$invalid">Done</button>
-                <button class="btn btn-danger" ng-click="cancelAddDonation()">Cancel</button>
+                <div class="btn-group btn-group-justified" role="group">
+                    <a href="" type="button" class="btn btn-success" ng-click="addDonationToEvent()" ng-disabled="formHolder.eventForm.$invalid">Submit</a>
+                    <a href="" type="button" class="btn btn-danger" ng-click="cancelAddDonation()">Cancel</a>
+                </div>
             </div>
         </div>
     </div>

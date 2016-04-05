@@ -96,7 +96,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testDeleteDonation() {
+    public void testDeleteDonation() throws Exception{
         donationService.create(donation);
         donation = donationService.findById(donation.getId());
 
@@ -122,17 +122,13 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         assertTrue(contact.getDonorInfo().getDonations().contains(donation));
         assertTrue(organization.getDonations().contains(donation));
 
-        contactService.removeDonation(contact, donation);
+        donationService.delete(donation);
+        donation = donationService.findById(donation.getId());
+        assertNull(donation);
         contact = contactService.findById(contact.getId());
         organization = organizationService.findById(organization.getId());
-        assertFalse(contact.getDonorInfo().getDonations().contains(donation));
-        assertTrue(organization.getDonations().contains(donation));
-
-        organizationService.removeDonation(organization, donation);
-        organization = organizationService.findById(organization.getId());
-        donation = donationService.findById(donation.getId());
-        assertNotNull(donation);
-        assertFalse(organization.getDonations().contains(donation));
+        assertTrue(organization.getDonations().isEmpty());
+        assertTrue(contact.getDonorInfo().getDonations().isEmpty());
     }
 
     @Test

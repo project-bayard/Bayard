@@ -15,6 +15,7 @@
 
                     </fieldset>
                     <button class="btn btn-primary" ng-click="editingDonationDetails = true" ng-show="!editingDonationDetails">Edit</button>
+                    <button class="btn btn-danger" ng-click="deleteDonation()" ng-show="!editingDonationDetails">Delete</button>
                     <button class="btn btn-success" ng-click="updateDonationDetails()" ng-show="editingDonationDetails" ng-disabled="formHolder.donationForm.$invalid">Submit</button>
                     <button class="btn btn-danger" ng-click="cancelUpdateDonationDetails()" ng-show="editingDonationDetails">Cancel</button>
                 </div>

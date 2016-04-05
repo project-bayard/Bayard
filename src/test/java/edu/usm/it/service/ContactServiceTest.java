@@ -547,6 +547,18 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
+    public void testFindContactWithDonation() throws Exception {
+        contactService.create(contact);
+        contactService.addDonation(contact, donation);
+
+        contact = contactService.findById(contact.getId());
+        donation = contact.getDonorInfo().getDonations().iterator().next();
+        Contact withDonation = contactService.findContactWithDonation(donation);
+        assertEquals(contact, withDonation);
+
+    }
+
+    @Test
     public void testCreateSustainerPeriod() throws Exception {
         contactService.create(contact);
         contactService.createSustainerPeriod(contact, sustainerPeriod);
@@ -599,6 +611,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertTrue(sustainers.contains(contact2));
         assertFalse(sustainers.contains(contact));
     }
+
+
 
 
 

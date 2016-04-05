@@ -179,4 +179,9 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
             update(event);
         }
     }
+
+    @Override
+    public Event findEventWithDonation(Donation donation) {
+        return eventDao.findByDonations_id(donation.getId());
+    }
 }

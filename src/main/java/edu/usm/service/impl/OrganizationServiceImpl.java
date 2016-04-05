@@ -94,6 +94,11 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
     }
 
     @Override
+    public Organization findOrganizationWithDonation(Donation donation) {
+        return organizationDao.findByDonations_id(donation.getId());
+    }
+
+    @Override
     public void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
         validateOrganization(organization);
         updateLastModified(organization);

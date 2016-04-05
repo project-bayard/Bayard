@@ -6,6 +6,7 @@ import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.*;
 import edu.usm.repository.ContactDao;
+import edu.usm.repository.DonorInfoDao;
 import edu.usm.repository.SustainerPeriodDao;
 import edu.usm.service.*;
 import org.slf4j.Logger;
@@ -25,6 +26,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Autowired
     private ContactDao contactDao;
+    @Autowired
+    private DonorInfoDao donorInfoDao;
     @Autowired
     private SustainerPeriodDao sustainerPeriodDao;
     @Autowired
@@ -282,6 +285,12 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
             updateLastModified(donation);
             update(contact);
         }
+    }
+
+    @Override
+    public Contact findContactWithDonation(Donation donation) {
+        DonorInfo donorInfo = donorInfoDao.findByDonations_id(donation.getId());
+        return (null == donorInfo) ? null : contactDao.findOneByDonorInfo(donorInfo);
     }
 
     @Override

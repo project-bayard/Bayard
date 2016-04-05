@@ -17,4 +17,6 @@ public interface OrganizationDao extends CrudRepository<Organization, String> {
     HashSet<Organization> findAll();
 
     HashSet<Organization> findByName(String name);
+
+    Organization findByDonations_id(String id);
 }
