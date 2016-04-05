@@ -11,7 +11,7 @@
 
         var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService) {
 
-            if ($rootScope.bayardConfig != null) {
+            if ($rootScope.bayardConfig != null && $rootScope.bayardConfig.implementationName != "Login") {
                 return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
             } else {
                 ConfigService.getImplementationConfig({}, function(config) {
@@ -78,7 +78,10 @@
             })
             .when('/login', {
                 templateUrl: 'resources/partials/login.html',
-                controller: 'LoginCtrl'
+                controller: 'LoginCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/configuration', {
                 templateUrl: 'resources/partials/configurationOptions.html',
