@@ -1,12 +1,11 @@
 package edu.usm.domain;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Encapsulates information about donations and sustainer periods for a particular Contact.
@@ -67,7 +66,7 @@ public class DonorInfo extends BasicEntity implements Serializable {
         return sustainerPeriods;
     }
 
-    public void setSustainerPeriods(SortedSet<SustainerPeriod> sustainerPeriods) {
+    public void setSustainerPeriods(Set<SustainerPeriod> sustainerPeriods) {
         this.sustainerPeriods.clear();
         this.sustainerPeriods.addAll(sustainerPeriods);
     }

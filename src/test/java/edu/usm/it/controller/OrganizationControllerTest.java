@@ -6,6 +6,7 @@ import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
@@ -110,9 +111,6 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.[0].phoneNumber", is(organization.getPhoneNumber())))
                 .andExpect(jsonPath("$.[0].primaryContactName", is(organization.getPrimaryContactName())))
                 .andExpect(jsonPath("$.[0].description", is(organization.getDescription())))
-                .andExpect(jsonPath("$.[0].members.[0].id", is(contact.getId())))
-                .andExpect(jsonPath("$.[0].members.[0].firstName", is(contact.getFirstName())))
-                .andExpect(jsonPath("$.[0].members.[0].assessment", is(contact.getAssessment())))
                 .andReturn();
 
     }
@@ -127,7 +125,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         assertEquals(organizations.size(),1);
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullOrganization.class)
     public void testDeleteOrganization() throws Exception {
 
         organization.getMembers().add(contact);
@@ -139,16 +137,15 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         String organizationId = organization.getId();
         assertNotNull(organizationService.findById(organizationId));
 
-        MvcResult result = mockMvc.perform(delete("/organizations/"+organizationId).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/organizations/"+organizationId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Organization persistedOrganization = organizationService.findById(organizationId);
-        assertNull(persistedOrganization);
-
         Contact persistedContact = contactService.findById(contact.getId());
-        assertEquals(0, persistedContact.getOrganizations().size());
+        Set<Organization> orgsFromPersistedContact = contactService.getAllContactOrganizations(persistedContact.getId());
+        assertEquals(0, orgsFromPersistedContact.size());
 
+        organizationService.findById(organizationId); // Should throw exception here
     }
 
     @Test
@@ -208,21 +205,21 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         BayardTestUtilities.performEntityPost(url, DtoTransformer.fromEntity(donation), mockMvc);
 
         organization = organizationService.findById(organization.getId());
-        assertFalse(organization.getDonations().isEmpty());
-        assertEquals(budgetItem.getName(), organization.getDonations().iterator().next().getBudgetItem().getName());
+        assertFalse(organizationService.getDonations(organization.getId()).isEmpty());
+        assertEquals(budgetItem.getName(), organizationService.getDonations(organization.getId()).iterator().next().getBudgetItem().getName());
     }
 
     @Test
     public void testRemoveDonation() throws Exception {
         organizationService.create(organization);
-        organizationService.addDonation(organization, donation);
+        organizationService.addDonation(organization.getId(), DtoTransformer.fromEntity(donation));
         organization = organizationService.findById(organization.getId());
-        donation = organization.getDonations().iterator().next();
+        donation = organizationService.getDonations(organization.getId()).iterator().next();
 
         String url = ORGANIZATIONS_BASE_URL + organization.getId() + "/donations/"+donation.getId();
         BayardTestUtilities.performEntityDelete(url, mockMvc);
         organization = organizationService.findById(organization.getId());
-        assertTrue(organization.getDonations().isEmpty());
+        assertTrue(organizationService.getDonations(organization.getId()).isEmpty());
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
 

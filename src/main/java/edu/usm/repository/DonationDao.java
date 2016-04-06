@@ -13,12 +13,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by scottkimball on 2/22/15.
+ * Repository for {@link Donation}
  */
 
 @Repository
 public interface DonationDao extends PagingAndSortingRepository<Donation, String> {
 
+    /**
+     * Returns all Donations
+     * @return {@link java.util.Set} of {@link Donation}
+     */
     @Override
     HashSet<Donation> findAll();
 

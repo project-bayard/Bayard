@@ -6,10 +6,14 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.HashSet;
 
 /**
- * Created by andrew on 1/23/16.
+ * Repository for sustainer periods.
  */
 public interface SustainerPeriodDao extends CrudRepository<SustainerPeriod, String> {
 
+    /**
+     * Returns all existing sustainer periods
+     * @return {@link java.util.Set} of {@link SustainerPeriod}
+     */
     @Override
     HashSet<SustainerPeriod> findAll();
 

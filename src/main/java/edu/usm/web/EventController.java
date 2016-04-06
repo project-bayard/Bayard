@@ -9,7 +9,6 @@ import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
 import edu.usm.dto.EventDto;
-import edu.usm.dto.IdDto;
 import edu.usm.dto.Response;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.DonationService;
@@ -19,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Null;
 import java.util.Set;
 
 /**
@@ -41,14 +39,8 @@ public class EventController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public Response deleteEvent(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference{
-        Event event = eventService.findById(id);
-
-        try {
-            eventService.delete(event);
-            return Response.successGeneric();
-        } catch (NullDomainReference.NullEvent e) {
-            throw new NullDomainReference.NullEvent(id, e);
-        }
+        eventService.delete(id);
+        return Response.successGeneric();
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = "application/json")
@@ -91,7 +83,7 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView({Views.EventList.class})
-    public Event getEventById(@PathVariable("id") String id) {
+    public Event getEventById(@PathVariable("id") String id) throws NullDomainReference.NullEvent{
         return eventService.findById(id);
     }
 
@@ -99,12 +91,7 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/donations", produces={"application/json"}, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Response addDonation(@PathVariable("id")String id, @RequestBody DonationDto dto) throws ConstraintViolation, NullDomainReference {
-        Event event = eventService.findById(id);
-        if (null == event) {
-            //TODO: 404 refactor
-            throw new NullDomainReference.NullEvent(id);
-        }
-        eventService.addDonation(event, dto);
+        eventService.addDonation(id, dto);
         return Response.successGeneric();
     }
 

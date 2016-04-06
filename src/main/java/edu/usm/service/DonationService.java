@@ -3,6 +3,7 @@ package edu.usm.service;
 import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,7 @@ public interface DonationService {
     void update(Donation oldDonation, DonationDto dto);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Donation donation) throws ConstraintViolation;
+    void delete(String id) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

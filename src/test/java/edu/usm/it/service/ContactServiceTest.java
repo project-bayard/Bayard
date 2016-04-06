@@ -3,6 +3,7 @@ package edu.usm.it.service;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EncounterDto;
@@ -16,8 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -95,7 +94,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         organization.setName("organization");
         committee = new Committee();
         committee.setName("committee");
-
     }
 
     @After
@@ -105,7 +103,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         committeeService.deleteAll();
         donationService.deleteAll();
     }
-
 
     @Test
     @Transactional
@@ -166,53 +163,45 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(contacts.size(), 2);
     }
 
-    @Test
-    @Transactional
+    @Test(expected = NullDomainReference.NullContact.class)
     public void testDelete () throws NullDomainReference, ConstraintViolation{
         contactService.create(contact);
         contactService.create(contact2);
-
         organizationService.create(organization);
-
-        contactService.addContactToOrganization(contact, organization);
-        contactService.addContactToOrganization(contact2, organization);
-
-        contactService.delete(contact);
-
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
+        contactService.addContactToOrganization(contact2.getId(), organization.getId());
+        contactService.delete(contact.getId());
         Organization fromDb = organizationService.findById(organization.getId());
 
-        assertNull(contactService.findById(contact.getId()));
         assertNotNull(fromDb);
         assertFalse(fromDb.getMembers().contains(contact));
         assertTrue(fromDb.getMembers().contains(contact2));
-
+        assertNull(contactService.findById(contact.getId())); // Should throw NullDomainReference.NullContact
     }
-
-
 
     @Test
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
         organizationService.create(organization);
-        contactService.addContactToOrganization(contact, organization);
+        contactService.addContactToOrganization(contact.getId(), organization.getId());
 
         Contact fromDb = contactService.findById(contact.getId());
+        Set<Organization> organizations = contactService.getAllContactOrganizations(fromDb.getId());
         assertNotNull(fromDb);
-        assertNotNull(fromDb.getOrganizations());
-        assertTrue(fromDb.getOrganizations().contains(organization));
+        assertNotNull(organizations);
+        assertTrue(organizations.contains(organization));
 
-        contactService.removeContactFromOrganization(contact, organization);
-
+        contactService.removeContactFromOrganization(contact.getId(), organization.getId());
         fromDb = contactService.findById(contact.getId());
+        Set<Organization> orgsFromDb = contactService.getAllContactOrganizations(fromDb.getId());
+        Organization orgFromDb = organizationService.findById(organization.getId());
+
         assertNotNull(fromDb);
         assertNotNull(fromDb.getOrganizations());
-        assertFalse(fromDb.getOrganizations().contains(organization));
-
-        Organization orgFromDb = organizationService.findById(organization.getId());
         assertNotNull(orgFromDb);
         assertNotNull(orgFromDb.getMembers());
         assertFalse(orgFromDb.getMembers().contains(contact));
-
+        assertFalse(orgsFromDb.contains(organization));
     }
 
     @Test
@@ -220,19 +209,21 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contactService.create(contact);
         committeeService.create(committee);
 
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         Contact fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
-        assertNotNull(fromDb.getCommittees());
-        assertTrue(fromDb.getCommittees().contains(committee));
+        Set<Committee> committees = contactService.getAllContactCommittees(fromDb.getId());
+        assertNotNull(committees);
+        assertTrue(committees.contains(committee));
 
-        contactService.removeContactFromCommittee(contact, committee);
+        contactService.removeContactFromCommittee(contact.getId(), committee.getId());
 
         fromDb = contactService.findById(contact.getId());
         assertNotNull(fromDb);
-        assertNotNull(fromDb.getCommittees());
-        assertFalse(fromDb.getCommittees().contains(committee));
+        Set<Committee> committeesFromDb = contactService.getAllContactCommittees(fromDb.getId());
+        assertNotNull(committeesFromDb);
+        assertFalse(committeesFromDb.contains(committee));
 
         Committee committeeFromDb = committeeService.findById(committee.getId());
         assertNotNull(committeeFromDb);
@@ -254,7 +245,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         details.setZipCode("04101");
         details.setEmail("email@gmail.com");
 
-        contactService.updateBasicDetails(contact, details);
+        contactService.updateBasicDetails(contact.getId(), details);
 
         Contact fromDb = contactService.findById(contact.getId());
         assertEquals(fromDb.getFirstName(), details.getFirstName());
@@ -273,7 +264,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         dto.setEncounterDate("2012-01-01");
         dto.setNotes("Notes!");
         EncounterType encounterType = new EncounterType("CALL");
-        contactService.addEncounter(contact, contact2, encounterType, dto);
+        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, dto);
 
         Contact fromDb = contactService.findById(contact.getId());
 
@@ -296,7 +287,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         EncounterDto dto = new EncounterDto();
         dto.setNotes("Notes!");
         EncounterType encounterType = new EncounterType("CALL");
-        contactService.addEncounter(contact, contact2, encounterType, dto);
+        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, dto);
 
     }
 
@@ -307,7 +298,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         EncounterDto dto = new EncounterDto();
         dto.setNotes("Notes!");
-        contactService.addEncounter(contact, contact2, null, dto);
+        contactService.addEncounter(contact.getId(), contact2.getId(), null, dto);
 
     }
 
@@ -320,7 +311,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         EncounterDto dto = new EncounterDto();
         dto.setNotes("Notes!");
         EncounterType encounterType = new EncounterType("CALL");
-        contactService.addEncounter(contact, contact2, encounterType, dto);
+        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, dto);
 
     }
 
@@ -339,7 +330,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         EncounterType encounterType = new EncounterType("CALL");
 
 
-        contactService.addEncounter(contact, contact2, encounterType, firstEncounter);
+        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, firstEncounter);
 
         EncounterDto secondEncounter = new EncounterDto();
         int mostRecentAssessment = 5;
@@ -349,14 +340,14 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         secondEncounter.setNotes("More notes!");
         secondEncounter.setRequiresFollowUp(mostRecentFollowUpIndicator);
 
-        contactService.addEncounter(contact, contact2, encounterType, secondEncounter);
+        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, secondEncounter);
 
         EncounterDto thirdEncounter = new EncounterDto();
         thirdEncounter.setEncounterDate("2013-01-01");
         thirdEncounter.setRequiresFollowUp(false);
         thirdEncounter.setAssessment(7);
 
-        contactService.addEncounter(contact, contact2,encounterType, thirdEncounter);
+        contactService.addEncounter(contact.getId(), contact2.getId(),encounterType, thirdEncounter);
 
         Contact fromDb = contactService.findById(id);
         assertEquals(mostRecentAssessment, fromDb.getAssessment());
@@ -369,7 +360,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         String id = contactService.create(contact);
         Contact fromDb = contactService.findById(id);
         assertFalse(fromDb.needsFollowUp());
-        contactService.updateNeedsFollowUp(contact, true);
+        contactService.updateNeedsFollowUp(contact.getId(), true);
         fromDb = contactService.findById(id);
         assertTrue(fromDb.needsFollowUp());
 
@@ -468,7 +459,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         details.setFirstName(contact.getFirstName());
         details.setEmail(contact.getEmail());
 
-        contactService.updateBasicDetails(contact2, details);
+        contactService.updateBasicDetails(contact2.getId(), details);
     }
 
     @Test(expected = ConstraintViolation.class)
@@ -480,11 +471,11 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         details.setFirstName(contact.getFirstName());
         details.setPhoneNumber1(contact.getPhoneNumber1());
 
-        contactService.updateBasicDetails(contact2, details);
+        contactService.updateBasicDetails(contact2.getId(), details);
     }
 
-    @Test
-    public void testFindByFirstLastEmailPhone() throws ConstraintViolation {
+    @Test(expected = NotFoundException.class)
+    public void testFindByFirstLastEmailPhone() throws Exception {
         contactService.create(contact);
 
         SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getEmail(),
@@ -513,18 +504,15 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         dto.setPhoneNumber(null);
         fromDb = contactService.findByFirstEmailPhone(dto);
-        assertNull(fromDb);
 
         dto.setPhoneNumber(contact.getPhoneNumber1());
         dto.setFirstName(null);
         fromDb = contactService.findByFirstEmailPhone(dto);
-        assertNull(fromDb);
 
     }
     public void testAddDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact, donation);
-
+        contactService.addDonation(contact.getId(), DtoTransformer.fromEntity(donation));
         contact = contactService.findById(contact.getId());
         assertNotNull(contact.getDonorInfo());
         assertFalse(contact.getDonorInfo().getDonations().isEmpty());
@@ -533,14 +521,14 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact, donation);
+        contactService.addDonation(contact.getId(), DtoTransformer.fromEntity(donation));
         contact = contactService.findById(contact.getId());
-        donation = contact.getDonorInfo().getDonations().iterator().next();
+        donation = contactService.getDonorInfo(contact.getId()).getDonations().iterator().next();
         assertNotNull(donation);
 
-        contactService.removeDonation(contact, donation);
+        contactService.removeDonation(contact.getId(), donation.getId());
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getDonorInfo().getDonations().isEmpty());
+        assertTrue(contactService.getDonorInfo(contact.getId()).getDonations().isEmpty());
 
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
@@ -549,10 +537,10 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     public void testFindContactWithDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact, donation);
+        contactService.addDonation(contact.getId(), DtoTransformer.fromEntity(donation));
 
         contact = contactService.findById(contact.getId());
-        donation = contact.getDonorInfo().getDonations().iterator().next();
+        donation = contactService.getDonorInfo(contact.getId()).getDonations().iterator().next();
         Contact withDonation = contactService.findContactWithDonation(donation);
         assertEquals(contact, withDonation);
 
@@ -561,39 +549,39 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     @Test
     public void testCreateSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         contact = contactService.findById(contact.getId());
         assertNotNull(contact.getDonorInfo());
-        assertFalse(contact.getDonorInfo().getSustainerPeriods().isEmpty());
+        assertFalse(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
     }
 
     @Test
     public void testUpdateSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
 
         int newMonthlyAmount = sustainerPeriod.getMonthlyAmount() + 50;
         sustainerPeriod.setMonthlyAmount(newMonthlyAmount);
-        contactService.updateSustainerPeriod(contact, sustainerPeriod, DtoTransformer.fromEntity(sustainerPeriod));
+        contactService.updateSustainerPeriod(contact.getId(), sustainerPeriod.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
         assertEquals(newMonthlyAmount, sustainerPeriod.getMonthlyAmount());
     }
 
     @Test
     public void testDeleteSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
 
-        contactService.deleteSustainerPeriod(contact, sustainerPeriod);
+        contactService.deleteSustainerPeriod(contact.getId(), sustainerPeriod.getId());
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
+        assertTrue(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
         assertNull(sustainerPeriodDao.findOne(sustainerPeriod.getId()));
     }
 
@@ -601,9 +589,9 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     public void testGetAllCurrentSustainers() throws Exception {
         contactService.create(contact);
         contactService.create(contact2);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         SustainerPeriod openSustainerPeriod = new SustainerPeriod(contact.getDonorInfo(), LocalDate.now(), 10);
-        contactService.createSustainerPeriod(contact2, openSustainerPeriod);
+        contactService.createSustainerPeriod(contact2.getId(), DtoTransformer.fromEntity(openSustainerPeriod));
 
         contact = contactService.findById(contact.getId());
         contact2 = contactService.findById(contact2.getId());
@@ -611,9 +599,5 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertTrue(sustainers.contains(contact2));
         assertFalse(sustainers.contains(contact));
     }
-
-
-
-
 
 }

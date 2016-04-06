@@ -3,7 +3,6 @@ package edu.usm.it;
 import edu.usm.it.controller.*;
 import edu.usm.it.dao.*;
 import edu.usm.it.service.*;
-import edu.usm.web.InteractionRecordController;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.springframework.test.context.ActiveProfiles;
@@ -39,7 +38,6 @@ import org.springframework.test.context.ActiveProfiles;
         DonationsDaoTest.class,
         FoundationPersistenceTest.class,
         SustainerPeriodPersistenceTest.class,
-        SustainerPeriodPersistenceTest.class,
         GrantServiceTest.class,
         FoundationServiceTest.class,
         InteractionRecordServiceTest.class,
@@ -47,7 +45,8 @@ import org.springframework.test.context.ActiveProfiles;
         DonationControllerTest.class,
         FoundationControllerTest.class,
         GrantControllerTest.class,
-        InteractionRecordControllerTest.class
+        InteractionRecordControllerTest.class,
+        DonationServiceTest.class
 })
 @ActiveProfiles("test")
 public class TestSuite {

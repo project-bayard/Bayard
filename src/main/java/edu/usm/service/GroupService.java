@@ -1,9 +1,10 @@
 package edu.usm.service;
 
-import edu.usm.domain.Aggregation;
+import edu.usm.domain.Contact;
 import edu.usm.domain.Group;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.GroupDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -17,16 +18,16 @@ public interface GroupService {
     String create(Group group) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void update(Group group) throws ConstraintViolation;
+    void update(Group group) throws ConstraintViolation, NullDomainReference.NullGroup;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void updateDetails(String id, GroupDto groupDto) throws ConstraintViolation, NullDomainReference.NullGroup;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Group group);
+    void delete(String id) throws NullDomainReference, ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Group findById(String id);
-
-    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Group findByName(String groupName);
+    Group findById(String id) throws NullDomainReference.NullGroup;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Group> findAll();
@@ -35,15 +36,14 @@ public interface GroupService {
     void deleteAll();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addAggregation(String aggregationId, Group group) throws ConstraintViolation;
+    void addAggregation(String aggregationId, String groupId)
+            throws ConstraintViolation, NullDomainReference.NullGroup,NullDomainReference.NullAggregation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addAggregation(Aggregation aggregation, Group group) throws ConstraintViolation;
+    void removeAggregation(String aggregationId, String groupId)
+            throws ConstraintViolation, NullDomainReference.NullGroup,NullDomainReference.NullAggregation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeAggregation(String aggregationId, Group group) throws ConstraintViolation;
-
-    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeAggregation(Aggregation aggregation, Group group) throws ConstraintViolation;
+    Set<Contact> getAllMembers(String id);
 
 }

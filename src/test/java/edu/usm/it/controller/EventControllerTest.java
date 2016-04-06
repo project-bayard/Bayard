@@ -3,12 +3,18 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.Committee;
+import edu.usm.domain.Contact;
+import edu.usm.domain.Donation;
+import edu.usm.domain.Event;
 import edu.usm.domain.*;
-import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EventDto;
-import edu.usm.service.*;
+import edu.usm.service.CommitteeService;
+import edu.usm.service.ContactService;
+import edu.usm.service.DonationService;
+import edu.usm.service.EventService;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -19,14 +25,10 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -91,7 +93,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
         eventService.create(event);
         contactService.create(contact);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
 
         event = eventService.findAll().iterator().next();
 
@@ -119,7 +121,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullEvent.class)
     public void testDeleteEvent() throws Exception {
         String eventId = eventService.create(event);
 
@@ -130,14 +132,13 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(attendee, event);
+        contactService.attendEvent(attendee.getId(), event.getId());
 
         mockMvc.perform(delete("/events/"+eventId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         Event eventFromDb = eventService.findById(eventId);
-        assertNull(eventFromDb);
 
         Contact contactFromDb = contactService.findById(attendee.getId());
         assertEquals(0, contactFromDb.getAttendedEvents().size());
@@ -155,7 +156,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(attendee, event);
+        contactService.attendEvent(attendee.getId(), event.getId());
 
         EventDto dto = new EventDto();
         dto.setName("Updated Name");
@@ -198,7 +199,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         attendee.setEmail("email@email.com");
         contactService.create(attendee);
         attendee.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(attendee, event);
+        contactService.attendEvent(attendee.getId(), event.getId());
 
         //New Committee
         Committee newCommittee = new Committee();
@@ -244,7 +245,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         eventService.create(event);
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
         event = eventService.findById(event.getId());
         donation = event.getDonations().iterator().next();
         assertNotNull(donation);

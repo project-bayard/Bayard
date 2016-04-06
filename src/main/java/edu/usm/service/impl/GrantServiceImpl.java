@@ -34,16 +34,10 @@ public class GrantServiceImpl extends BasicService implements GrantService {
         findAll().stream().forEach(this::uncheckedDelete);
     }
 
-    private void uncheckedDelete(Grant grant) {
-        try {
-            delete(grant);
-        } catch (ConstraintViolation e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
-    public void delete(Grant grant) throws ConstraintViolation {
+    public void delete(String id) throws ConstraintViolation {
+        Grant grant = grantDao.findOne(id);
         updateLastModified(grant);
         Foundation foundation = grant.getFoundation();
         foundation.getGrants().remove(grant);

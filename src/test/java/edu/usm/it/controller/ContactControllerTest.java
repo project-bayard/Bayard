@@ -6,11 +6,7 @@ import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.dto.DtoTransformer;
-import edu.usm.dto.EncounterDto;
-import edu.usm.dto.IdDto;
-import edu.usm.dto.Response;
-import edu.usm.dto.SignInDto;
+import edu.usm.dto.*;
 import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
@@ -134,7 +130,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @After
     public void teardown () {
-
         groupService.deleteAll();
         organizationService.deleteAll();
         committeeService.deleteAll();
@@ -272,9 +267,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
         Organization orgFromDb = organizationService.findById(organization.getId());
-
         assertNotNull(fromDb);
-        assertEquals(fromDb.getOrganizations().iterator().next().getId(), organization.getId());
+
+        Set<Organization> organizations = contactService.getAllContactOrganizations(fromDb.getId());
+        assertEquals(organizations.iterator().next().getId(), organization.getId());
         assertNotNull(orgFromDb);
         assertEquals(orgFromDb.getMembers().iterator().next().getId(), contact.getId());
 
@@ -300,7 +296,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         contactService.create(contact);
         organizationService.create(organization);
-        contactService.addContactToOrganization(contact,organization);
+        contactService.addContactToOrganization(contact.getId(),organization.getId());
 
         mockMvc.perform(get("/contacts/" + contact.getId() + "/organizations")
                 .accept(MediaType.APPLICATION_JSON))
@@ -525,7 +521,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         contactService.create(contact);
         committeeService.create(committee);
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         mockMvc.perform(get("/contacts/" + contact.getId() + "/committees")
                 .accept(MediaType.APPLICATION_JSON))
@@ -569,7 +565,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contactService.create(contact);
         eventService.create(event);
         contact.setAttendedEvents(new HashSet<>());
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
 
         mockMvc.perform(delete("/contacts/"+contact.getId()+"/events/"+event.getId())
         .accept(MediaType.APPLICATION_JSON)
@@ -602,10 +598,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         String id = contactService.create(contact);
         String groupId = groupService.create(group);
         eventService.create(event);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
 
         group = groupService.findById(groupId);
-        groupService.addAggregation(event, group);
+        groupService.addAggregation(event.getId(), group.getId());
 
         IdDto idDto = new IdDto(groupId);
         ObjectMapper mapper = new ObjectMapper();
@@ -621,7 +617,8 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(1, group.getTopLevelMembers().size());
 
         contact = contactService.findById(id);
-        assertEquals(1, contact.getGroups().size());
+        Set<Group> groups = contactService.getAllContactGroups(contact.getId());
+        assertEquals(1, groups.size());
 
     }
 
@@ -630,12 +627,12 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         String id = contactService.create(contact);
         String groupId = groupService.create(group);
         eventService.create(event);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
         group = groupService.findById(groupId);
-        groupService.addAggregation(event, group);
+        groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(groupId);
         contact = contactService.findById(contact.getId());
-        contactService.addToGroup(contact, group);
+        contactService.addToGroup(contact.getId(), group.getId());
 
         mockMvc.perform(delete("/contacts/" + id + "/groups/" + groupId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -646,19 +643,20 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertEquals(0, group.getTopLevelMembers().size());
 
         contact = contactService.findById(id);
-        assertEquals(0, contact.getGroups().size());
+        Set<Group> groups = contactService.getAllContactGroups(contact.getId());
+        assertEquals(0, groups.size());
     }
     @Test
     public void testGetAllContactGroups () throws Exception {
         String id = contactService.create(contact);
         String groupId = groupService.create(group);
         eventService.create(event);
-        contactService.attendEvent(contact, event);
+        contactService.attendEvent(contact.getId(), event.getId());
         group = groupService.findById(groupId);
-        groupService.addAggregation(event, group);
+        groupService.addAggregation(event.getId(), group.getId());
         group = groupService.findById(groupId);
         contact = contactService.findById(contact.getId());
-        contactService.addToGroup(contact, group);
+        contactService.addToGroup(contact.getId(), group.getId());
 
         mockMvc.perform(get("/contacts/" + contact.getId() + "/groups")
                 .accept(MediaType.APPLICATION_JSON))
@@ -675,10 +673,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         groupService.create(group);
         Group secondGroup = new Group();
         secondGroup.setGroupName("Second Group");
-        groupService.create(group);
+        groupService.create(secondGroup);
 
-        groupService.addAggregation(event, group);
-        groupService.addAggregation(event, secondGroup);
+        groupService.addAggregation(event.getId(), group.getId());
+        groupService.addAggregation(event.getId(), secondGroup.getId());
 
         IdDto eventIdDto = new IdDto(event.getId());
         String requestBody = new ObjectMapper().writeValueAsString(eventIdDto);
@@ -689,8 +687,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         event = eventService.findById(event.getId());
-        assertTrue(event.getGroups().contains(group));
-        assertTrue(event.getGroups().contains(secondGroup));
+        Set<Group> groups = eventService.getAllEventGroups(event.getId());
+        assertTrue(groups.contains(group));
+        assertTrue(groups.contains(secondGroup));
 
         contact = contactService.findById(contact.getId());
         assertTrue(contact.getAttendedEvents().contains(event));
@@ -737,7 +736,9 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         BayardTestUtilities.performEntityPost("/contacts/" + contact.getId() + "/donations", DtoTransformer.fromEntity(donation), mockMvc);
 
         contact = contactService.findById(contact.getId());
-        Donation fromDb = contact.getDonorInfo().getDonations().iterator().next();
+        DonorInfo donorInfo = contactService.getDonorInfo(contact.getId());
+        assertFalse(donorInfo.getDonations().isEmpty());
+        Donation fromDb = contactService.getDonorInfo(contact.getId()).getDonations().iterator().next();
         assertEquals(donation.getAmount(), fromDb.getAmount());
         assertEquals(budgetItem.getName(), fromDb.getBudgetItem().getName());
     }
@@ -745,16 +746,18 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact, donation);
+        contactService.addDonation(contact.getId(), DtoTransformer.fromEntity(donation));
         contact = contactService.findById(contact.getId());
-        donation = contact.getDonorInfo().getDonations().iterator().next();
+        Set<Donation> donations = contactService.getAllContactDonations(contact.getId());
+        donation = donations.iterator().next();
         assertNotNull(donation);
 
         String url = "/contacts/" + contact.getId() + "/donations/"+donation.getId();
         BayardTestUtilities.performEntityDelete(url, mockMvc);
 
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getDonorInfo().getDonations().isEmpty());
+        donations = contactService.getAllContactDonations(contact.getId());
+        assertTrue(donations.isEmpty());
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
     }
@@ -762,10 +765,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     public void testGetSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
 
         String url = "/contacts/"+contact.getId()+"/sustainer/"+sustainerPeriod.getId();
         BayardTestUtilities.performEntityGetSingle(Views.SustainerPeriodDetails.class, url, mockMvc, sustainerPeriod);
@@ -774,16 +777,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     public void testGetAllSustainerPeriods() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         SustainerPeriod secondPeriod = new SustainerPeriod();
         secondPeriod.setMonthlyAmount(1000);
         secondPeriod.setCancelDate(LocalDate.now());
         secondPeriod.setPeriodStartDate(LocalDate.of(2014, 2, 2));
         secondPeriod.setSentIRSLetter(true);
-        contactService.createSustainerPeriod(contact, secondPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(secondPeriod));
 
         contact = contactService.findById(contact.getId());
-        Iterator<SustainerPeriod> it = contact.getDonorInfo().getSustainerPeriods().iterator();
+        Iterator<SustainerPeriod> it = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator();
         String url = "/contacts/"+contact.getId()+"/sustainer";
         BayardTestUtilities.performEntityGetMultiple(Views.SustainerPeriodDetails.class, url, mockMvc, it.next(), it.next());
     }
@@ -795,42 +798,42 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         BayardTestUtilities.performEntityPost(url, DtoTransformer.fromEntity(sustainerPeriod), mockMvc);
 
         contact = contactService.findById(contact.getId());
-        assertFalse(contact.getDonorInfo().getSustainerPeriods().isEmpty());
+        assertFalse(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
 
     }
     @Test
     public void testUpdateSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
         int newMonthlyAmount = sustainerPeriod.getMonthlyAmount() + 200;
         sustainerPeriod.setMonthlyAmount(newMonthlyAmount);
         String url = "/contacts/"+contact.getId()+"/sustainer/"+sustainerPeriod.getId();
         BayardTestUtilities.performEntityPut(url, DtoTransformer.fromEntity(sustainerPeriod), mockMvc);
 
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
         assertEquals(newMonthlyAmount, sustainerPeriod.getMonthlyAmount());
     }
     @Test
     public void testDeleteSustainerPeriod() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
         contact = contactService.findById(contact.getId());
-        sustainerPeriod = contact.getDonorInfo().getSustainerPeriods().iterator().next();
+        sustainerPeriod = contactService.getDonorInfo(contact.getId()).getSustainerPeriods().iterator().next();
 
         String url = "/contacts/"+contact.getId()+"/sustainer/"+sustainerPeriod.getId();
         BayardTestUtilities.performEntityDelete(url, mockMvc);
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getDonorInfo().getSustainerPeriods().isEmpty());
+        assertTrue(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
     }
 
     @Test
     public void testGetCurrentSustainers() throws Exception {
         contactService.create(contact);
-        contactService.createSustainerPeriod(contact, sustainerPeriod);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
 
         mockMvc.perform(get("/contacts/currentSustainers")
                 .accept(MediaType.APPLICATION_JSON))

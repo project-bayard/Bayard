@@ -6,6 +6,7 @@ import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
@@ -13,8 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,21 +77,20 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     }
 
     @After
+    @Transactional
     public void tearDown() {
         organizationService.deleteAll();
         contactService.deleteAll();
     }
 
     @Test
-    @Transactional
     public void testSave () throws Exception {
-
         contactService.create(contact);
         contactService.create(contact2);
         organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact,organization);
-        contactService.addContactToOrganization(contact2, organization);
+        contactService.addContactToOrganization(contact.getId(),organization.getId());
+        contactService.addContactToOrganization(contact2.getId(), organization.getId());
         Organization orgFromDb = organizationService.findById(organization.getId());
 
         assertNotNull(orgFromDb);
@@ -100,30 +100,30 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         assertEquals(organization.getPhoneNumber(), orgFromDb.getPhoneNumber());
         assertEquals(organization.getPrimaryContactName(), orgFromDb.getPrimaryContactName());
         assertEquals(orgFromDb.getMembers().size(),2);
-
     }
 
     @Test
-    @Transactional
     public void testDelete () throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
         Set<Contact> contacts = new HashSet<>();
         contacts.add(contact);
         contacts.add(contact2);
-
         organization.setMembers(contacts);
-        organizationService.create(organization);
+        String orgId = organizationService.create(organization);
 
-        contactService.addContactToOrganization(contact, organization);
-        contactService.addContactToOrganization(contact2, organization);
+        contactService.addContactToOrganization(contact.getId(), orgId);
+        contactService.addContactToOrganization(contact2.getId(), orgId);
 
         Contact contactFromDb = contactService.findById(contact.getId());
-        assertEquals(contactFromDb.getOrganizations().size(),1); // before
+        Set<Organization> organizations = contactService.getAllContactOrganizations(contactFromDb.getId());
+        assertEquals(organizations.size(),1); // before
         organizationService.deleteAll();
 
         contactFromDb = contactService.findById(contact.getId()); // after
+        organizations = contactService.getAllContactOrganizations(contactFromDb.getId());
         assertNotNull(contactFromDb);
-        assertEquals(contactFromDb.getOrganizations().size(),0);
-
+        assertEquals(organizations.size(),0);
     }
 
     @Test(expected = ConstraintViolation.class)
@@ -136,17 +136,17 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     public void testUpdateNullName() throws ConstraintViolation, NullDomainReference {
         organizationService.create(organization);
         organization.setName(null);
-        organizationService.update(organization);
+        organizationService.updateOrganizationDetails(organization.getId(),organization);
     }
 
     @Test
     public void testAddDonation() throws Exception{
         organizationService.create(organization);
-        organizationService.addDonation(organization, donation);
+        organizationService.addDonation(organization.getId(), DtoTransformer.fromEntity(donation));
 
         organization = organizationService.findById(organization.getId());
-        String donationId = organization.getDonations().iterator().next().getId();
-        assertFalse(organization.getDonations().isEmpty());
+        String donationId = organizationService.getDonations(organization.getId()).iterator().next().getId();
+        assertFalse(organizationService.getDonations(organization.getId()).isEmpty());
 
         donation = donationService.findById(donationId);
         assertNotNull(donation);
@@ -158,24 +158,24 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
         organizationService.create(organization);
 
         organization = organizationService.findById(organization.getId());
-        donation = organization.getDonations().iterator().next();
+        donation = organizationService.getDonations(organization.getId()).iterator().next();
         assertNotNull(donation);
-        organizationService.removeDonation(organization, donation);
+        organizationService.removeDonation(organization.getId(), donation.getId());
 
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
 
         organization = organizationService.findById(organization.getId());
-        assertTrue(organization.getDonations().isEmpty());
+        assertTrue(organizationService.getDonations(organization.getId()).isEmpty());
     }
 
     @Test
     public void findOrganizationWithDonation() throws Exception {
         organizationService.create(organization);
-        organizationService.addDonation(organization, donation);
+        organizationService.addDonation(organization.getId(), DtoTransformer.fromEntity(donation));
 
         organization = organizationService.findById(organization.getId());
-        donation = organization.getDonations().iterator().next();
+        donation = organizationService.getDonations(organization.getId()).iterator().next();
 
         Organization withDonation = organizationService.findOrganizationWithDonation(donation);
         assertEquals(organization, withDonation);

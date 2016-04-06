@@ -62,12 +62,8 @@ public class DonationController {
 
     @RequestMapping(value= "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteDonation(@PathVariable("id")String id) throws ConstraintViolation{
-        Donation d = donationService.findById(id);
-        if (null == d) {
-            //TODO: refactor 404s
-        }
-        donationService.delete(d);
+    public Response deleteDonation(@PathVariable("id")String id) throws ConstraintViolation, NullDomainReference {
+        donationService.delete(id);
         return Response.successGeneric();
     }
 

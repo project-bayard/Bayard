@@ -13,13 +13,13 @@ import java.util.Set;
 @Entity
 public class Committee extends Aggregation implements Serializable {
 
-    @ManyToMany(mappedBy = "committees" , cascade = {CascadeType.REFRESH,CascadeType.MERGE} , fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "committees", fetch = FetchType.LAZY)
     @JsonView({Views.GroupDetails.class,
             Views.CommitteeList.class,
             Views.CommitteeDetails.class})
     private Set<Contact> members;
 
-    @OneToMany(mappedBy="committee", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="committee", fetch = FetchType.LAZY)
     @JsonView({Views.CommitteeDetails.class})
     private Set<Event> events;
 

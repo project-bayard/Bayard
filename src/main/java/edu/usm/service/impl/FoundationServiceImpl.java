@@ -105,7 +105,8 @@ public class FoundationServiceImpl extends BasicService implements FoundationSer
     }
 
     @Override
-    public void delete(Foundation foundation) {
+    public void delete(String id) {
+        Foundation foundation = foundationDao.findOne(id);
         updateLastModified(foundation);
         foundationDao.delete(foundation);
     }
@@ -113,7 +114,7 @@ public class FoundationServiceImpl extends BasicService implements FoundationSer
     @Override
     public void deleteAll() {
         Set<Foundation> foundations = findAll();
-        foundations.stream().forEach(this::delete);
+        foundations.stream().forEach(this::uncheckedDelete);
     }
 
     @Override

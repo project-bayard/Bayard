@@ -8,21 +8,24 @@ import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
 import edu.usm.repository.OrganizationDao;
-import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
+import edu.usm.service.DonationService;
 import edu.usm.service.DonationAssigningService;
+
 import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by scottkimball on 4/11/15.
+ * Implementation of {@link OrganizationService}
  */
 
 @Service
@@ -32,16 +35,31 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
     private ContactService contactService;
     @Autowired
     private OrganizationDao organizationDao;
+    @Autowired
+    private DonationService donationService;
 
     private Logger logger = LoggerFactory.getLogger(OrganizationServiceImpl.class);
 
 
     @Override
-    public Organization findById(String id) {
-        if (null == id) {
+    @Transactional
+    public Organization findById(String id) throws NullDomainReference.NullOrganization {
+        if (id == null) {
             return null;
         }
-        return organizationDao.findOne(id);
+        Organization organization = findOrganization(id);
+
+        if (organization.getMembers() == null) {
+            organization.setMembers(new HashSet<>());
+        }
+
+        if (organization.getGroups() == null) {
+            organization.setGroups(new HashSet<>());
+        }
+
+        organization.getMembers().size();
+        organization.getGroups().size();
+        return organization;
     }
 
     @Override
@@ -51,41 +69,57 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
     }
 
     @Override
-    public void delete(Organization organization) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
-
-        if (null == organization) {
+    @Transactional
+    public void delete(String id) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
+        if (id == null) {
             throw new NullDomainReference.NullOrganization();
         }
 
-        updateLastModified(organization);
+        Organization organization = organizationDao.findOne(id);
+        if (organization == null) {
+            throw new NullDomainReference.NullOrganization(id);
+        }
 
         /*Remove references to */
-
-        if (organization.getMembers() != null) {
-            CopyOnWriteArrayList<Contact> contacts = new CopyOnWriteArrayList<>(organization.getMembers());
+        Set<Contact> members = organization.getMembers();
+        if (members != null) {
+            CopyOnWriteArrayList<Contact> contacts = new CopyOnWriteArrayList<>(members);
             for(Contact contact : contacts) {
-                contactService.removeContactFromOrganization(contact,organization);
+                contactService.removeContactFromOrganization(contact.getId(),organization.getId());
             }
         }
+        updateLastModified(organization);
         organizationDao.delete(organization);
     }
 
     @Override
-    public void addDonation(Organization organization, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+    @Transactional
+    public Set<Donation> getDonations(String id) throws NullDomainReference.NullOrganization {
+        Organization organization = findOrganization(id);
+        Set<Donation> donations = organization.getDonations();
+        if (donations != null) {
+            donations.size();
+            return donations;
+        } else {
+            return new HashSet<Donation>();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void addDonation(String id, DonationDto donationDto) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization organization = findOrganization(id);
+        Donation donation = convertToDonation(donationDto);
         organization.addDonation(donation);
         updateLastModified(donation);
         update(organization);
     }
 
     @Override
-    public void addDonation(Organization organization, DonationDto dto) throws NullDomainReference.NullOrganization, ConstraintViolation {
-        Donation donation = convertToDonation(dto);
-        addDonation(organization, donation);
-
-    }
-
-    @Override
-    public void removeDonation(Organization organization, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+    @Transactional
+    public void removeDonation(String id, String donationId) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization organization = findOrganization(id);
+        Donation donation = donationService.findById(donationId);
         if (null != organization.getDonations()) {
             organization.getDonations().remove(donation);
             updateLastModified(donation);
@@ -93,35 +127,50 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
         }
     }
 
-    @Override
-    public Organization findOrganizationWithDonation(Donation donation) {
-        return organizationDao.findByDonations_id(donation.getId());
-    }
-
-    @Override
-    public void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
-        validateOrganization(organization);
-        updateLastModified(organization);
-        organizationDao.save(organization);
-    }
 
 
     @Override
     public String create(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
-        validateOrganization(organization);
+        validateOnCreate(organization);
         organizationDao.save(organization);
         return organization.getId();
     }
 
-    private void validateUniqueness(Organization organization) throws ConstraintViolation {
-        Set<Organization> existingOrganizations = organizationDao.findByName(organization.getName());
-        for (Organization sameName : existingOrganizations) {
-            if (null == organization.getId() || !organization.getId().equalsIgnoreCase(sameName.getId())) {
-                throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, sameName);
-            }
-        }
+    @Override
+    @Transactional
+    public void deleteAll() {
+        logger.debug("Deleting all Organizations");
+        logger.debug("Time: " + LocalDateTime.now());
+        Set<Organization> organizations = findAll();
+        organizations.stream().forEach(this::uncheckedDelete);
     }
 
+    @Override
+    @Transactional
+    public void updateOrganizationDetails(String id, Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation {
+        Organization fromDb = findById(id);
+
+        if (null == fromDb) {
+            throw new NullDomainReference.NullOrganization(id);
+        }
+
+        if (null == organization.getMembers()) {
+            organization.setMembers(fromDb.getMembers());
+        }
+        update(organization);
+    }
+
+    public Organization findOrganizationWithDonation(Donation donation) {
+        return organizationDao.findByDonations_id(donation.getId());
+    }
+
+    private void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
+        validateOnUpdate(organization);
+        updateLastModified(organization);
+        organizationDao.save(organization);
+    }
+
+    /*Assures that the organization is not null and that it has a name*/
     private void validateOrganization(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
         if (null == organization) {
             throw new NullDomainReference.NullOrganization();
@@ -130,25 +179,36 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
         if (null == organization.getName()) {
             throw new ConstraintViolation(ConstraintMessage.ORGANIZATION_REQUIRED_NAME);
         }
-
-        validateUniqueness(organization);
-
     }
 
-    private void uncheckedDelete(Organization organization) {
-        try {
-            delete(organization);
-        } catch (NullDomainReference e) {
-            throw new RuntimeException(e);
+    /*Assures that if the organization name is changed that it doesn't conflict with another organization's name*/
+    private void validateOnUpdate(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
+        validateOrganization(organization);
+        Organization fromDb = organizationDao.findOneByName(organization.getName());
+        if (fromDb != null && (organization.getId() == null || !organization.getId().equalsIgnoreCase(fromDb.getId()))) {
+            throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, fromDb);
         }
     }
 
-    @Override
-    public void deleteAll() {
-
-        logger.debug("Deleting all Organizations");
-        logger.debug("Time: " + LocalDateTime.now());
-        Set<Organization> organizations = findAll();
-        organizations.stream().forEach(this::uncheckedDelete);
+    /*Assures that a new organization doesn't have a name that conflicts with an existing organization*/
+    private void validateOnCreate (Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization {
+        validateOrganization(organization);
+        Organization fromDb = organizationDao.findOneByName(organization.getName());
+        if (fromDb != null) {
+            throw new ConstraintViolation.NonUniqueDomainEntity(ConstraintMessage.ORGANIZATION_NON_UNIQUE, fromDb);
+        }
     }
+
+
+    private Organization findOrganization(String id) throws NullDomainReference.NullOrganization {
+        Organization organization = organizationDao.findOne(id);
+        if (null == organization) {
+            //TODO: 404 refactor
+            throw new NullDomainReference.NullOrganization(id);
+        } else {
+            return organization;
+        }
+    }
+
+
 }

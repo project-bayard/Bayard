@@ -6,6 +6,7 @@ import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EventDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.DonationService;
@@ -165,7 +166,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Test
     public void testAddDonation() throws Exception {
         eventService.create(event);
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
 
         event = eventService.findById(event.getId());
         assertFalse(event.getDonations().isEmpty());
@@ -175,7 +176,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         eventService.create(event);
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
         event = eventService.findById(event.getId());
         donation = event.getDonations().iterator().next();
         assertNotNull(donation);
@@ -191,7 +192,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Test
     public void testFindEventWithDonation() throws Exception {
         eventService.create(event);
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
 
         event = eventService.findById(event.getId());
         donation = event.getDonations().iterator().next();

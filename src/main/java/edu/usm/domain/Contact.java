@@ -233,7 +233,7 @@ public class Contact extends BasicEntity implements Serializable {
     private boolean needsFollowUp;
 
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_committee",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -241,7 +241,7 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Committee> committees;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_organization",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -249,7 +249,7 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Organization> organizations;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_alinskygroup",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -257,11 +257,11 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Group> groups;
 
-    @OneToOne(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
-    @OneToOne(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
+    @OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 

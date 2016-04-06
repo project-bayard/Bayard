@@ -24,7 +24,7 @@ public class Organization extends Aggregation implements Serializable {
     private String name;
 
     @JsonView({Views.ContactList.class, Views.OrganizationList.class, Views.GroupDetails.class})
-    @ManyToMany(mappedBy = "organizations", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
     private Set<Contact> members;
 
     @Column
@@ -59,7 +59,7 @@ public class Organization extends Aggregation implements Serializable {
     @JsonView(Views.OrganizationList.class)
     private String description;
 
-    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id")
     private Set<Donation> donations;
 

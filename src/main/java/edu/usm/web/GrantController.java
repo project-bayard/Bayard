@@ -57,7 +57,7 @@ public class GrantController {
             //TODO: replace with our new approach to handling 404s
             throw new NullDomainReference.NullGrant(id);
         }
-        grantService.delete(grant);
+        grantService.delete(grant.getId());
         return Response.successGeneric();
     }
 

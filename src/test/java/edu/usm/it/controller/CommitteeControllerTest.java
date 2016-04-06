@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Committee;
 import edu.usm.domain.Contact;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.IdDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
@@ -14,14 +15,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -65,7 +64,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Committee committee = new Committee();
         committee.setName("committeeName");
         committeeService.create(committee);
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         Set<Committee> allCommittees = committeeService.findAll();
         Assert.assertEquals(1, allCommittees.size());
@@ -74,10 +73,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[0].id", is(committee.getId())))
-                .andExpect(jsonPath("$.[0].name",is(committee.getName())))
-                .andExpect(jsonPath("$.[0].members[0].id",is(contact.getId())))
-                .andExpect(jsonPath("$.[0].members[0].firstName", is(contact.getFirstName())))
-                .andExpect(jsonPath("$.[0].members[0].lastName", is(contact.getLastName())));
+                .andExpect(jsonPath("$.[0].name",is(committee.getName())));
 
     }
 
@@ -159,7 +155,7 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Committee committee = new Committee();
         committee.setName("name");
         committeeService.create(committee);
-        contactService.addContactToCommittee(contact, committee);
+        contactService.addContactToCommittee(contact.getId(), committee.getId());
 
         mockMvc.perform(get("/committees/" + committee.getId())
                 .accept(MediaType.APPLICATION_JSON))
@@ -171,9 +167,8 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.members[0].lastName", is(contact.getLastName())));
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullCommittee.class)
     public void testDeleteCommittee () throws Exception {
-
         committeeService.deleteAll();
         contactService.deleteAll();
 
@@ -186,17 +181,14 @@ public class CommitteeControllerTest extends WebAppConfigurationAware {
         Committee committee = new Committee();
         committee.setName("name");
         String committeeId = committeeService.create(committee);
-        contactService.addContactToCommittee(contact,committee);
+        contactService.addContactToCommittee(contact.getId(),committee.getId());
 
         mockMvc.perform(delete("/committees/" + committeeId)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        Committee committeeFromDb = committeeService.findById(committeeId);
-        assertNull(committeeFromDb);
-
-        Contact contactFromDb = contactService.findById(contact.getId());
-        assertEquals(0, contactFromDb.getCommittees().size());
-
+        Set<Committee> committees = contactService.getAllContactCommittees(contact.getId());
+        assertEquals(0, committees.size());
+        Committee committeeFromDb = committeeService.findById(committeeId); // Should throw exception
     }
 }

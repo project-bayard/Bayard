@@ -2,9 +2,8 @@ package edu.usm.service.impl;
 
 import edu.usm.domain.Contact;
 import edu.usm.domain.Encounter;
-import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.domain.EncounterType;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.EncounterDto;
 import edu.usm.repository.EncounterDao;
 import edu.usm.service.BasicService;
@@ -40,30 +39,18 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     }
 
     @Override
-    public void deleteEncounter(Encounter encounter) throws NullDomainReference.NullEncounter{
+    public void delete(String id) throws NullDomainReference{
+        Encounter encounter = encounterDao.findOne(id);
 
         if (null == encounter) {
             throw new NullDomainReference.NullEncounter();
         }
 
         if (null != encounter.getContact()) {
-            contactService.removeEncounter(encounter.getContact(), encounter);
-        }
-
-    }
-
-    /*
-    * Java 8 streams require called methods to throw only subclasses of RuntimeException.
-     * This is a utility wrapper method deleteEncounter that converts the NullDomainReference
-     * To a RuntimeException
-    */
-    private void uncheckedDeleteEncounter(Encounter encounter) {
-        try {
-            deleteEncounter(encounter);
-        } catch (NullDomainReference.NullEncounter e) {
-            throw new RuntimeException(e);
+            contactService.removeEncounter(encounter.getContact().getId(), encounter.getId());
         }
     }
+
 
     /*
     * Updates the core fields of the Encounter. If this is the Contact's most recent encounter,
@@ -85,7 +72,7 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
 
         boolean sameInitiator = null != existingEncounter.getInitiator() && existingEncounter.getInitiator().getId().equalsIgnoreCase(dto.getInitiatorId());
         if (!sameInitiator) {
-            contactService.removeInitiator(existingEncounter.getInitiator(), existingEncounter);
+            contactService.removeInitiator(existingEncounter.getInitiator().getId(), existingEncounter.getId());
         }
 
         Contact initiator = contactService.findById(dto.getInitiatorId());
@@ -109,16 +96,14 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
         }
 
         if (existingEncounter == contact.getEncounters().first()) {
-            contactService.updateNeedsFollowUp(contact, existingEncounter.requiresFollowUp());
+            contactService.updateNeedsFollowUp(contact.getId(), existingEncounter.requiresFollowUp());
         }
-
-        contactService.updateAssessment(contact, contactService.getUpdatedAssessment(contact));
-
+        contactService.updateAssessment(contact.getId(), contactService.getUpdatedAssessment(contact.getId()));
     }
 
     @Override
     public void deleteAll() {
         Set<Encounter> encounters = findAll();
-        encounters.stream().forEach(this::uncheckedDeleteEncounter);
+        encounters.stream().forEach(this::uncheckedDelete);
     }
 }

@@ -98,7 +98,8 @@ public class DtoTransformer {
         return dto;
     }
 
-    public static Donation fromDto(DonationDto dto, Donation donation) {
+    public static Donation fromDto(DonationDto dto) {
+        Donation donation = new Donation();
         donation.setAmount(dto.getAmount());
         donation.setMethod(dto.getMethod());
         donation.setDateOfReceipt(dto.getDateOfReceipt());
@@ -108,5 +109,17 @@ public class DtoTransformer {
         donation.setStandalone(dto.isStandalone());
         return donation;
     }
+
+    public static void fromDto(Donation donation, DonationDto dto) {
+        donation.setAmount(dto.getAmount());
+        donation.setMethod(dto.getMethod());
+        donation.setDateOfReceipt(dto.getDateOfReceipt());
+        donation.setDateOfDeposit(dto.getDateOfDeposit());
+        donation.setRestrictedToCategory(dto.getRestrictedToCategory());
+        donation.setAnonymous(dto.isAnonymous());
+        donation.setStandalone(dto.isStandalone());
+    }
+
+
 
 }

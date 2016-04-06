@@ -7,10 +7,14 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.HashSet;
 
 /**
- * Created by andrew on 1/24/16.
+ * Repository for Interaction Records
  */
 public interface InteractionRecordDao extends CrudRepository<InteractionRecord, String>{
 
+    /**
+     * Returns all existing interation records.
+     * @return {@link java.util.Set} of {@link InteractionRecord}
+     */
     @Override
     HashSet<InteractionRecord> findAll();
 

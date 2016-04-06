@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.ConcurrentModificationException;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -83,7 +82,7 @@ public class FoundationServiceTest extends WebAppConfigurationAware{
         foundation = foundationService.findById(foundation.getId());
         assertNotNull(foundation);
 
-        foundationService.delete(foundation);
+        foundationService.delete(foundation.getId());
         foundation = foundationService.findById(foundation.getId());
         assertNull(foundation);
 

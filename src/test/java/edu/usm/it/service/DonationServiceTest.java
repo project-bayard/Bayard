@@ -1,10 +1,8 @@
 package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.BudgetItem;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Donation;
-import edu.usm.domain.Organization;
+import edu.usm.domain.*;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.repository.BudgetItemDao;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
@@ -100,36 +98,12 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         donationService.create(donation);
         donation = donationService.findById(donation.getId());
 
-        donationService.delete(donation);
+        donationService.delete(donation.getId());
         donation = donationService.findById(donation.getId());
 
         assertNull(donation);
     }
 
-    @Test
-    public void testCreateAndDeleteDonationMultipleSources() throws Exception {
-        contactService.create(contact);
-        organizationService.create(organization);
-
-        contactService.addDonation(contact, donation);
-        contact = contactService.findById(contact.getId());
-        donation = contact.getDonorInfo().getDonations().iterator().next();
-        organizationService.addDonation(organization, donation);
-
-        contact = contactService.findById(contact.getId());
-        donation = donationService.findById(donation.getId());
-        organization = organizationService.findById(organization.getId());
-        assertTrue(contact.getDonorInfo().getDonations().contains(donation));
-        assertTrue(organization.getDonations().contains(donation));
-
-        donationService.delete(donation);
-        donation = donationService.findById(donation.getId());
-        assertNull(donation);
-        contact = contactService.findById(contact.getId());
-        organization = organizationService.findById(organization.getId());
-        assertTrue(organization.getDonations().isEmpty());
-        assertTrue(contact.getDonorInfo().getDonations().isEmpty());
-    }
 
     @Test
     public void testCreateBudgetItem() {
@@ -140,7 +114,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testDeleteBudgetItem() {
+    public void testDeleteBudgetItem() throws Exception {
         BudgetItem budgetItem = new BudgetItem("Test Budget Item");
         donationService.createBudgetItem(budgetItem);
         budgetItem = donationService.findBudgetItem(budgetItem.getId());
@@ -153,7 +127,9 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         donationService.deleteBudgetItem(budgetItem);
         budgetItem = budgetItemDao.findOne(budgetItem.getId());
         assertNull(budgetItem);
-
+        organizationService.create(organization);
+        organizationService.removeDonation(organization.getId(), donation.getId());
+        organization = organizationService.findById(organization.getId());
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
     }

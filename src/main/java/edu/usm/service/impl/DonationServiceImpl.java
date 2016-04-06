@@ -58,7 +58,7 @@ public class DonationServiceImpl extends BasicService implements DonationService
     @Override
     public String create(DonationDto dto) {
         Donation donation = new Donation();
-        donation = DtoTransformer.fromDto(dto, donation);
+        donation = DtoTransformer.fromDto(dto);
         if (null != dto.getBudgetItemId()) {
             donation.setBudgetItem(findBudgetItem(dto.getBudgetItemId()));
         }
@@ -86,8 +86,15 @@ public class DonationServiceImpl extends BasicService implements DonationService
     }
 
     @Override
+    public void delete(String id) throws ConstraintViolation, NullDomainReference{
+        Donation donation = donationDao.findOne(id);
+        removeFromEntities(donation);
+        donationDao.delete(donation);
+    }
+
+    @Override
     public void update(Donation existing, DonationDto dto) {
-        existing = DtoTransformer.fromDto(dto, existing);
+        DtoTransformer.fromDto(existing,dto);
         if (null != dto.getBudgetItemId()) {
             existing.setBudgetItem(findBudgetItem(dto.getBudgetItemId()));
         } else {
@@ -96,25 +103,12 @@ public class DonationServiceImpl extends BasicService implements DonationService
         update(existing);
     }
 
-    @Override
-    public void delete(Donation donation) throws ConstraintViolation {
-        removeFromEntities(donation);
-        donationDao.delete(donation);
-    }
 
-    private void uncheckedDelete(Donation donation) {
-        try {
-            delete(donation);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void removeFromEntities(Donation donation) throws ConstraintViolation{
+    private void removeFromEntities(Donation donation) throws ConstraintViolation, NullDomainReference{
         try {
             Organization organization = organizationService.findOrganizationWithDonation(donation);
             if (null != organization) {
-                organizationService.removeDonation(organization, donation);
+                organizationService.removeDonation(organization.getId(), donation.getId());
             }
             Event event = eventService.findEventWithDonation(donation);
             if (null != event) {
@@ -122,7 +116,7 @@ public class DonationServiceImpl extends BasicService implements DonationService
             }
             Contact contact = contactService.findContactWithDonation(donation);
             if (null != contact) {
-                contactService.removeDonation(contact, donation);
+                contactService.removeDonation(contact.getId(), donation.getId());
             }
         } catch (NullDomainReference.NullOrganization | NullDomainReference.NullEvent | NullDomainReference.NullContact | ConstraintViolation e) {
             throw new ConstraintViolation(ConstraintMessage.GENERIC_PERSISTENCE_ERROR);

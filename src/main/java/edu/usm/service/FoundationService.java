@@ -41,7 +41,7 @@ public interface FoundationService {
     void update(Foundation foundation, FoundationDto dto) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete(Foundation foundation);
+    void delete(String id);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

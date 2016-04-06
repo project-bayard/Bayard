@@ -24,7 +24,7 @@ public abstract class Aggregation extends BasicEntity{
             Views.GroupDetails.class})
     protected String aggregationType;
 
-    @ManyToMany(mappedBy = "aggregations" , cascade = {CascadeType.REFRESH} , fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "aggregations" , fetch = FetchType.LAZY)
     protected Set<Group> groups = new HashSet<>();
 
     public Set<Group> getGroups() {

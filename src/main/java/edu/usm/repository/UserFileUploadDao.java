@@ -4,7 +4,7 @@ import edu.usm.domain.UserFileUpload;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by andrew on 1/24/16.
+ * Repository for user file uploads.
  */
 public interface UserFileUploadDao extends CrudRepository<UserFileUpload, String> {
 }

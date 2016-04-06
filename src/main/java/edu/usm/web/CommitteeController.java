@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 /**
- * Created by scottkimball on 6/5/15.
+ * REST Controller for {@link Committee}
  */
 
 @RestController
@@ -24,6 +24,10 @@ public class CommitteeController {
     @Autowired
     CommitteeService committeeService;
 
+    /**
+     * Returns a list of Committee's
+     * @return A list of{@link Committee}
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces="application/json")
     @JsonView(Views.CommitteeList.class)
@@ -31,6 +35,12 @@ public class CommitteeController {
         return committeeService.findAll();
     }
 
+    /**
+     * Creates a new Committee
+     * @param committee
+     * @return The UUID of the Committee
+     * @throws ConstraintViolation
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes={"application/json"})
     public Response createCommittee(@RequestBody Committee committee) throws ConstraintViolation{
@@ -38,37 +48,45 @@ public class CommitteeController {
         return new Response(id, Response.SUCCESS);
     }
 
+    /**
+     * Updates the details of a Committee
+     * @param id
+     * @param committee
+     * @return
+     * @throws ConstraintViolation
+     * @throws NullDomainReference
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces={"application/json"})
     public Response updateCommitteeDetails(@PathVariable("id") String id, @RequestBody Committee committee) throws ConstraintViolation, NullDomainReference{
-        Committee fromDb = committeeService.findById(id);
-        if (null == fromDb) {
-            throw new NullDomainReference.NullCommittee(id);
-        }
-
-        fromDb.setName(committee.getName());
-
-        committeeService.update(fromDb);
+        committeeService.update(id, committee);
         return Response.successGeneric();
-
     }
 
+    /**
+     * Deletes the Committee with the ID if it exists.
+     * @param id
+     * @return
+     * @throws ConstraintViolation
+     * @throws NullDomainReference
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces={"application/json"})
     public Response deleteCommittee(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference {
-        Committee committee = committeeService.findById(id);
-        try {
-            committeeService.delete(committee);
-            return Response.successGeneric();
-        } catch (NullDomainReference e) {
-            throw new NullDomainReference.NullCommittee(id, e);
-        }
+        committeeService.delete(id);
+        return Response.successGeneric();
     }
 
+    /**
+     * Gets a Committee by its UUID
+     * @param id
+     * @return
+     * @throws NullDomainReference.NullCommittee
+     */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={"application/json"})
     @JsonView(Views.CommitteeDetails.class)
-    public Committee getCommittee(@PathVariable("id") String id) {
+    public Committee getCommittee(@PathVariable("id") String id) throws NullDomainReference.NullCommittee {
         return committeeService.findById(id);
     }
 

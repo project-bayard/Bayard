@@ -14,8 +14,7 @@ public abstract class DonationAssigningService extends BasicService {
     protected DonationService donationService;
 
     protected Donation convertToDonation(DonationDto dto) {
-        Donation donation = new Donation();
-        donation = DtoTransformer.fromDto(dto, donation);
+        Donation donation = DtoTransformer.fromDto(dto);
         if (null != dto.getBudgetItemId()) {
             donation.setBudgetItem(donationService.findBudgetItem(dto.getBudgetItemId()));
         } else {

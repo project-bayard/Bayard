@@ -28,7 +28,7 @@ public interface GrantService {
     void updateGrantDetails(Grant grant, GrantDto newDetails) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
-    void delete(Grant grant) throws ConstraintViolation;
+    void delete(String id) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     void deleteAll();

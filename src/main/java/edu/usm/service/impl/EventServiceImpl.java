@@ -1,9 +1,6 @@
 package edu.usm.service.impl;
 
-import edu.usm.domain.Committee;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Donation;
-import edu.usm.domain.Event;
+import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
@@ -15,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -45,10 +42,18 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
     }
 
     @Override
-    public Event findById(String id) {
+    @Transactional
+    public Event findById(String id) throws NullDomainReference.NullEvent {
         if (null == id) {
             return null;
         }
+        Event event = findEvent(id);
+
+        if (event.getGroups() == null) {
+            event.setGroups(new HashSet<>());
+        }
+
+        event.getGroups().size();
         return eventDao.findOne(id);
     }
 
@@ -103,19 +108,10 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
 
     }
 
-    private void uncheckedDelete(Event event) {
-        try {
-            delete(event);
-        } catch (NullDomainReference e) {
-            throw new RuntimeException(e);
-        } catch (ConstraintViolation e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
-    public void delete(Event event) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullContact {
-
+    public void delete(String id) throws ConstraintViolation, NullDomainReference {
+        Event event = eventDao.findOne(id);
         if (null ==  event) {
             throw new NullDomainReference.NullEvent();
         }
@@ -123,7 +119,7 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
         Set<Contact> attendees = new HashSet<>(event.getAttendees());
 
         for (Contact contact : attendees) {
-            contactService.unattendEvent(contact,event);
+            contactService.unattendEvent(contact.getId(),event.getId());
         }
         eventDao.delete(event);
     }
@@ -143,7 +139,7 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
     }
 
     @Override
-    public void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent{
+    public void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullCommittee {
 
         if (eventDto.getCommitteeId() != null && !eventDto.getCommitteeId().isEmpty()) {
             event.setCommittee(committeeService.findById(eventDto.getCommitteeId()));
@@ -158,17 +154,14 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
         update(event);
     }
 
+
     @Override
-    public void addDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent {
+    public void addDonation(String id, DonationDto dto) throws ConstraintViolation, NullDomainReference.NullEvent {
+        Donation donation = convertToDonation(dto);
+        Event event = eventDao.findOne(id);
         event.addDonation(donation);
         updateLastModified(donation);
         update(event);
-    }
-
-    @Override
-    public void addDonation(Event event, DonationDto dto) throws ConstraintViolation, NullDomainReference.NullEvent {
-        Donation donation = convertToDonation(dto);
-        addDonation(event, donation);
     }
 
     @Override
@@ -181,6 +174,23 @@ public class EventServiceImpl extends DonationAssigningService implements EventS
     }
 
     @Override
+    @Transactional
+    public Set<Group> getAllEventGroups(String eventId) throws NullDomainReference.NullEvent {
+        Event event = findById(eventId);
+        Set<Group> groups = event.getGroups();
+        groups.size();
+        return groups;
+    }
+
+    private Event findEvent(String id) throws NullDomainReference.NullEvent {
+        Event event = eventDao.findOne(id);
+
+        if (event == null) {
+            throw new NullDomainReference.NullEvent(id);
+        }
+        return event;
+    }
+
     public Event findEventWithDonation(Donation donation) {
         return eventDao.findByDonations_id(donation.getId());
     }

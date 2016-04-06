@@ -1,8 +1,5 @@
 package edu.usm.it.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
@@ -14,24 +11,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by andrew on 2/25/16.
@@ -96,7 +85,7 @@ public class DonationControllerTest extends WebAppConfigurationAware {
 
         Donation fromDb = donationService.findById(donation.getId());
         assertEquals(donation, fromDb);
-        assertEquals(donation.getBudgetItem(), fromDb.getBudgetItem());
+        assertEquals(donation.getBudgetItem().getName(), fromDb.getBudgetItem().getName());
     }
 
     @Test

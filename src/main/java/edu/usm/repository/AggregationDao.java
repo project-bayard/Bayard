@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Created by andrew on 10/10/15.
+ * Repository for {@link Aggregation}
  */
 @Repository
 public interface AggregationDao extends CrudRepository<Aggregation, String>{
