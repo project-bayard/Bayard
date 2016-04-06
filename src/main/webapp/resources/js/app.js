@@ -9,13 +9,22 @@
 
     app.config(function ($routeProvider, $httpProvider) {
 
-        var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService) {
+        var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService, PermissionService) {
+
+            var setShowingDevelopment = function() {
+                if (null != $rootScope.user) {
+                    var permissions = PermissionService.getPermissionInterpreter($rootScope.user);
+                    $rootScope.showingDevelopment = $rootScope.bayardConfig.developmentEnabled && permissions.isDevelopmentUser();
+                }
+            };
 
             if ($rootScope.bayardConfig != null) {
+                setShowingDevelopment();
                 return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
             } else {
                 ConfigService.getImplementationConfig({}, function(config) {
                     $rootScope.bayardConfig = config;
+                    setShowingDevelopment();
                     return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
                 }, function(err) {
                     console.log(err);
@@ -78,7 +87,10 @@
             })
             .when('/login', {
                 templateUrl: 'resources/partials/login.html',
-                controller: 'LoginCtrl'
+                controller: 'LoginCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
             })
             .when('/configuration', {
                 templateUrl: 'resources/partials/configurationOptions.html',
