@@ -11,15 +11,20 @@
 
         var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService, PermissionService) {
 
-            if ($rootScope.bayardConfig != null) {
+            var setShowingDevelopment = function() {
                 if (null != $rootScope.user) {
                     var permissions = PermissionService.getPermissionInterpreter($rootScope.user);
                     $rootScope.showingDevelopment = $rootScope.bayardConfig.developmentEnabled && permissions.isDevelopmentUser();
                 }
+            };
+
+            if ($rootScope.bayardConfig != null) {
+                setShowingDevelopment();
                 return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
             } else {
                 ConfigService.getImplementationConfig({}, function(config) {
                     $rootScope.bayardConfig = config;
+                    setShowingDevelopment();
                     return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
                 }, function(err) {
                     console.log(err);
