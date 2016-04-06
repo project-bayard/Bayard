@@ -1,18 +1,23 @@
 package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Donation;
-import edu.usm.domain.Organization;
+import edu.usm.domain.*;
+import edu.usm.dto.DtoTransformer;
+import edu.usm.repository.BudgetItemDao;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.Set;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.*;
 
 /**
@@ -29,16 +34,25 @@ public class DonationServiceTest extends WebAppConfigurationAware {
     @Autowired
     OrganizationService organizationService;
 
+    @Autowired
+    BudgetItemDao budgetItemDao;
+
     Donation donation;
     Organization organization;
     Contact contact;
+    BudgetItem budgetItem;
+
 
     @Before
     public void setup() {
+
+        budgetItem = new BudgetItem("Misc");
+        budgetItemDao.save(budgetItem);
+
         donation = new Donation();
         donation.setAmount(20);
         donation.setAnonymous(true);
-        donation.setBudgetItem("Misc");
+        donation.setBudgetItem(budgetItem);
         donation.setDateOfDeposit(LocalDate.of(2015, 12, 12));
         donation.setDateOfReceipt(LocalDate.of(2015, 11, 11));
         donation.setMethod("Credit Card");
@@ -57,6 +71,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
     public void tearDown() {
         contactService.deleteAll();
         organizationService.deleteAll();
+        donationService.deleteAllBudgetItems();
         donationService.deleteAll();
     }
 
@@ -79,7 +94,7 @@ public class DonationServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testDeleteDonation() {
+    public void testDeleteDonation() throws Exception{
         donationService.create(donation);
         donation = donationService.findById(donation.getId());
 
@@ -89,34 +104,91 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         assertNull(donation);
     }
 
+
     @Test
-    public void testCreateAndDeleteDonationMultipleSources() throws Exception {
-        contactService.create(contact);
-        organizationService.create(organization);
+    public void testCreateBudgetItem() {
+        BudgetItem budgetItem = new BudgetItem("Test Budget Item");
+        donationService.createBudgetItem(budgetItem);
+        budgetItem = donationService.findBudgetItem(budgetItem.getId());
+        assertNotNull(budgetItem);
+    }
 
-        contactService.addDonation(contact.getId(), donation);
-        contact = contactService.findById(contact.getId());
-        donation = contact.getDonorInfo().getDonations().iterator().next();
-        organizationService.addDonation(organization.getId(), donation);
+    @Test
+    public void testDeleteBudgetItem() throws Exception {
+        BudgetItem budgetItem = new BudgetItem("Test Budget Item");
+        donationService.createBudgetItem(budgetItem);
+        budgetItem = donationService.findBudgetItem(budgetItem.getId());
+        donation.setBudgetItem(budgetItem);
+        donationService.create(donation);
 
-        contact = contactService.findById(contact.getId());
         donation = donationService.findById(donation.getId());
-        organization = organizationService.findById(organization.getId());
-        assertTrue(contact.getDonorInfo().getDonations().contains(donation));
-        assertTrue(organization.getDonations().contains(donation));
+        assertNotNull(donation);
 
-        contactService.removeDonation(contact.getId(), donation.getId());
-        contact = contactService.findById(contact.getId());
-        organization = organizationService.findById(organization.getId());
-        assertFalse(contact.getDonorInfo().getDonations().contains(donation));
-        assertTrue(organization.getDonations().contains(donation));
-
+        donationService.deleteBudgetItem(budgetItem);
+        budgetItem = budgetItemDao.findOne(budgetItem.getId());
+        assertNull(budgetItem);
+        organizationService.create(organization);
         organizationService.removeDonation(organization.getId(), donation.getId());
         organization = organizationService.findById(organization.getId());
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
-        assertFalse(organization.getDonations().contains(donation));
     }
 
+    @Test
+    public void testDeleteAllBudgetItems() {
+        BudgetItem secondBudgetItem = new BudgetItem("Second Budget Item");
+        donationService.createBudgetItem(budgetItem);
+        donationService.createBudgetItem(secondBudgetItem);
 
+        donation.setBudgetItem(budgetItem);
+        Donation secondDonation = new Donation(100, "Credit Card", LocalDate.now(), LocalDate.now());
+        secondDonation.setBudgetItem(secondBudgetItem);
+        Donation thirdDonation = new Donation(150, "Credit Card", LocalDate.now(), LocalDate.now());
+        thirdDonation.setBudgetItem(secondBudgetItem);
+
+        donationService.create(donation);
+        donationService.create(secondDonation);
+        donationService.create(thirdDonation);
+
+        Set<Donation> firstBudgetItemDonations = donationService.findByBudgetItem(budgetItem);
+        assertEquals(1, firstBudgetItemDonations.size());
+        Set<Donation> secondBudgetItemDonations = donationService.findByBudgetItem(secondBudgetItem);
+        assertEquals(2, secondBudgetItemDonations.size());
+
+        donationService.deleteAllBudgetItems();
+
+        firstBudgetItemDonations = donationService.findByBudgetItem(budgetItem);
+        assertTrue(firstBudgetItemDonations.isEmpty());
+        secondBudgetItemDonations = donationService.findByBudgetItem(secondBudgetItem);
+        assertTrue(secondBudgetItemDonations.isEmpty());
+    }
+
+    @Test
+    public void testUpdateBudgetItemName() throws Exception {
+        donationService.createBudgetItem(budgetItem);
+        donation.setBudgetItem(budgetItem);
+        donationService.create(donation);
+
+        donation = donationService.findById(donation.getId());
+        assertEquals(budgetItem.getName(), donation.getBudgetItem().getName());
+
+        String newBudgetItemName = "Updated name";
+        donationService.updateBudgetItemName(budgetItem, newBudgetItemName);
+
+        donation = donationService.findById(donation.getId());
+        assertEquals(budgetItem.getName(), newBudgetItemName);
+
+    }
+
+    @Test
+    public void testGetDonationsByBudgetItemPageable() throws Exception {
+        donationService.createBudgetItem(budgetItem);
+        donation.setBudgetItem(budgetItem);
+        donationService.create(donation);
+
+        Pageable pageable = new PageRequest(0, 5);
+        Page<Donation> donations = donationService.findDonationsByBudgetItem(budgetItem.getId(), pageable);
+        assertTrue(donations.getTotalElements() == 1);
+        assertTrue(donations.getContent().contains(donation));
+    }
 }

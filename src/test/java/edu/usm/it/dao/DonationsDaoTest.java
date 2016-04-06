@@ -25,6 +25,9 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     DonationDao donationDao;
 
     @Autowired
+    BudgetItemDao budgetItemDao;
+
+    @Autowired
     DonorInfoDao donorInfoDao;
 
     @Autowired
@@ -38,6 +41,8 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
 
     private Donation donation;
 
+    private BudgetItem budgetItem;
+
     @After
     public void tearDown() {
         contactDao.deleteAll();
@@ -45,13 +50,17 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
         donationDao.deleteAll();
         eventDao.deleteAll();
         organizationDao.deleteAll();
+        budgetItemDao.deleteAll();
     }
 
     @Before
     public void setup() {
+        budgetItem = new BudgetItem("Budget Item");
+        budgetItemDao.save(budgetItem);
+
         donation = new Donation();
         donation.setAmount(100);
-        donation.setBudgetItem("Budget Item");
+        donation.setBudgetItem(budgetItem);
         donation.setRestrictedToCategory("Restricted To");
         donation.setStandalone(true);
         donation.setAnonymous(true);
@@ -65,7 +74,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
         donationDao.save(donation);
         Donation fromDb = donationDao.findOne(donation.getId());
         assertEquals(donation.getAmount(), fromDb.getAmount());
-        assertEquals(donation.getBudgetItem(), fromDb.getBudgetItem());
+        assertEquals(donation.getBudgetItem().getName(), fromDb.getBudgetItem().getName());
         assertEquals(donation.getRestrictedToCategory(), fromDb.getRestrictedToCategory());
         assertEquals(donation.isStandalone(), fromDb.isStandalone());
         assertEquals(donation.isAnonymous(), fromDb.isAnonymous());
@@ -112,6 +121,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
         donorInfo.addDonation(donation);
         donorInfoDao.save(donorInfo);
 
+        donorInfo = donorInfoDao.findOne(donorInfo.getId());
         donation = donorInfo.getDonations().iterator().next();
         int newAmount = donation.getAmount() + 1;
         donation.setAmount(newAmount);
@@ -280,6 +290,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
 
     @Test
     public void testUpdateEventDonation() {
+//        donationDao.save(donation);
         Event e = new Event();
         e.setName("Test Event");
         e.setDateHeld("2016-12-12");

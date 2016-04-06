@@ -1,5 +1,6 @@
 package edu.usm.dto;
 
+import edu.usm.domain.Donation;
 import edu.usm.domain.Grant;
 import edu.usm.domain.InteractionRecord;
 import edu.usm.domain.SustainerPeriod;
@@ -46,7 +47,6 @@ public class DtoTransformer {
     public static InteractionRecord fromDto(InteractionRecordDto dto, InteractionRecord record) {
         record.setPersonContacted(dto.getPersonContacted());
         record.setDateOfInteraction(dto.getDateOfInteraction());
-        record.setInteractionType(dto.getInteractionType());
         record.setNotes(dto.getNotes());
         record.setRequiresFollowUp(dto.isRequiresFollowUp());
         return record;
@@ -56,7 +56,7 @@ public class DtoTransformer {
         InteractionRecordDto dto = new InteractionRecordDto();
         dto.setPersonContacted(record.getPersonContacted());
         dto.setDateOfInteraction(record.getDateOfInteraction());
-        dto.setInteractionType(record.getInteractionType());
+        dto.setInteractionTypeId(record.getInteractionType().getId());
         dto.setNotes(record.getNotes());
         dto.setRequiresFollowUp(record.isRequiresFollowUp());
 
@@ -82,5 +82,44 @@ public class DtoTransformer {
         sustainerPeriod.setPeriodStartDate(dto.getPeriodStartDate());
         return sustainerPeriod;
     }
+
+    public static DonationDto fromEntity(Donation donation) {
+        DonationDto dto = new DonationDto();
+        dto.setAmount(donation.getAmount());
+        dto.setMethod(donation.getMethod());
+        dto.setDateOfReceipt(donation.getDateOfReceipt());
+        dto.setDateOfDeposit(donation.getDateOfDeposit());
+        dto.setRestrictedToCategory(donation.getRestrictedToCategory());
+        dto.setAnonymous(donation.isAnonymous());
+        dto.setStandalone(donation.isStandalone());
+        if (null != donation.getBudgetItem()) {
+            dto.setBudgetItemId(donation.getBudgetItem().getId());
+        }
+        return dto;
+    }
+
+    public static Donation fromDto(DonationDto dto) {
+        Donation donation = new Donation();
+        donation.setAmount(dto.getAmount());
+        donation.setMethod(dto.getMethod());
+        donation.setDateOfReceipt(dto.getDateOfReceipt());
+        donation.setDateOfDeposit(dto.getDateOfDeposit());
+        donation.setRestrictedToCategory(dto.getRestrictedToCategory());
+        donation.setAnonymous(dto.isAnonymous());
+        donation.setStandalone(dto.isStandalone());
+        return donation;
+    }
+
+    public static void fromDto(Donation donation, DonationDto dto) {
+        donation.setAmount(dto.getAmount());
+        donation.setMethod(dto.getMethod());
+        donation.setDateOfReceipt(dto.getDateOfReceipt());
+        donation.setDateOfDeposit(dto.getDateOfDeposit());
+        donation.setRestrictedToCategory(dto.getRestrictedToCategory());
+        donation.setAnonymous(dto.isAnonymous());
+        donation.setStandalone(dto.isStandalone());
+    }
+
+
 
 }

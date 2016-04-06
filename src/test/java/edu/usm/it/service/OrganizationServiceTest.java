@@ -6,6 +6,7 @@ import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
@@ -141,7 +142,7 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
     @Test
     public void testAddDonation() throws Exception{
         organizationService.create(organization);
-        organizationService.addDonation(organization.getId(), donation);
+        organizationService.addDonation(organization.getId(), DtoTransformer.fromEntity(donation));
 
         organization = organizationService.findById(organization.getId());
         String donationId = organizationService.getDonations(organization.getId()).iterator().next().getId();
@@ -166,5 +167,17 @@ public class OrganizationServiceTest extends WebAppConfigurationAware {
 
         organization = organizationService.findById(organization.getId());
         assertTrue(organizationService.getDonations(organization.getId()).isEmpty());
+    }
+
+    @Test
+    public void findOrganizationWithDonation() throws Exception {
+        organizationService.create(organization);
+        organizationService.addDonation(organization.getId(), DtoTransformer.fromEntity(donation));
+
+        organization = organizationService.findById(organization.getId());
+        donation = organizationService.getDonations(organization.getId()).iterator().next();
+
+        Organization withDonation = organizationService.findOrganizationWithDonation(donation);
+        assertEquals(organization, withDonation);
     }
 }

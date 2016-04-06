@@ -6,6 +6,7 @@ import edu.usm.domain.Event;
 import edu.usm.domain.Group;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.EventDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -43,12 +44,15 @@ public interface EventService {
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void update(Event event, EventDto eventDto) throws ConstraintViolation, NullDomainReference.NullEvent, NullDomainReference.NullCommittee;
 
-    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent;
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void addDonation(String id, DonationDto dto) throws ConstraintViolation, NullDomainReference.NullEvent;
 
-    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Group> getAllEventGroups(String eventId) throws NullDomainReference.NullEvent;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Event findEventWithDonation(Donation donation);
 }

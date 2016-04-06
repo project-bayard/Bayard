@@ -124,40 +124,11 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
         contact = contactDao.findOne(contact.getId());
 
         assertTrue(contact.getDonorInfo().getSustainerPeriods().contains(sustainerPeriod));
-        assertTrue(contact.getDonorInfo().getSustainerPeriods().contains(secondPeriod));
+        assertEquals(contact.getDonorInfo().getSustainerPeriods().size(), 2);
 
     }
 
-    @Test
-    @Transactional // Must be transactional due to lazy loading
-    public void testSustainerPeriodsOrdering() {
 
-        SustainerPeriod olderSustainerPeriod = new SustainerPeriod();
-        olderSustainerPeriod.setMonthlyAmount(1);
-        olderSustainerPeriod.setPeriodStartDate(LocalDate.of(2014, Month.JANUARY, 1));
-        olderSustainerPeriod.setDonorInfo(donorInfo);
-        donorInfo.addSustainerPeriod(olderSustainerPeriod);
-
-        SustainerPeriod mostRecentPeriod = new SustainerPeriod();
-        mostRecentPeriod.setMonthlyAmount(2);
-        mostRecentPeriod.setPeriodStartDate(LocalDate.of(2016, Month.JANUARY, 1));
-        mostRecentPeriod.setDonorInfo(donorInfo);
-        donorInfo.addSustainerPeriod(mostRecentPeriod);
-
-        contactDao.save(contact);
-        contact = contactDao.findOne(contact.getId());
-        Iterator<SustainerPeriod> it = contact.getDonorInfo().getSustainerPeriods().iterator();
-
-        SustainerPeriod first = it.next();
-        assertEquals(mostRecentPeriod, first);
-
-        SustainerPeriod second = it.next();
-        assertEquals(sustainerPeriod, second);
-
-        SustainerPeriod third = it.next();
-        assertEquals(olderSustainerPeriod, third);
-
-    }
 
     @Test
     @Transactional

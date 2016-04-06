@@ -150,9 +150,9 @@
     }]);
 
     controllers.controller('DetailsCtrl', ['$scope', '$routeParams', 'ContactService', '$timeout', '$location', 'OrganizationService',
-        'EventService', 'CommitteeService', 'DateFormatter', '$window', 'EncounterTypeService', 'GroupService', 'DemographicService',
+        'EventService', 'CommitteeService', 'DateFormatter', '$window', 'EncounterTypeService', 'GroupService', 'DemographicService', 'RouteChangeService',
         function ($scope, $routeParams, ContactService, $timeout, $location, OrganizationService, EventService, CommitteeService, DateFormatter,
-                  $window, EncounterTypeService, GroupService, DemographicService) {
+                  $window, EncounterTypeService, GroupService, DemographicService, RouteChangeService) {
 
             var setup = function () {
                 $scope.errorMessage = "";
@@ -219,7 +219,15 @@
                     console.log(err);
                 });
 
-                $scope.modelHolder = {};
+                $scope.modelHolder = {
+                    donationModel : {
+                        dates: {
+                            dateOfDeposit: new Date(),
+                            dateOfReceipt: new Date()
+                        }
+                    }
+                };
+
                 $scope.formHolder = {};
 
             };
@@ -818,6 +826,11 @@
                 $scope.modelHolder.sustainerPeriodModel = {};
             };
 
+            $scope.viewSustainerPeriod = function(id) {
+                RouteChangeService.set($scope.contact);
+                $location.path("/sustainerPeriod/"+id);
+            }
+
         }]);
 
     controllers.controller('EventsCtrl', ['$scope', 'EventService', 'CommitteeService', 'DateFormatter', function ($scope, EventService, CommitteeService, DateFormatter) {
@@ -861,7 +874,15 @@
     controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', 'CommitteeService', '$timeout', '$window', '$location', 'DateFormatter',
         function ($scope, EventService, $routeParams, CommitteeService, $timeout, $window, $location, DateFormatter) {
 
-            $scope.modelHolder = {};
+            $scope.modelHolder = {
+                donationModel : {
+                    dates: {
+                        dateOfDeposit: new Date(),
+                        dateOfReceipt: new Date()
+                    }
+                }
+            };
+
             $scope.formHolder = {};
 
             $scope.viewContactDetails = function (contactId) {
@@ -1246,15 +1267,29 @@
 
     }]);
 
-    controllers.controller('DonationFormCtrl', ['$scope', function($scope) {
+    controllers.controller('DonationFormCtrl', ['$scope', 'DonationService', function($scope, DonationService) {
+        DonationService.getBudgetItems({}, function(items) {
+            $scope.budgetItems = items;
+            $scope.budgetItems.push({name: "None"});
+        }, function(err) {
+           console.log(err);
+        });
         $scope.donationMethodOptions = ['PayPal', 'Cash', 'Check', 'Credit Card', 'In-kind'];
+
     }]);
 
     controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout', 'DateFormatter',
         function ($scope, OrganizationService, $routeParams, $location, $window, $timeout, DateFormatter) {
 
             $scope.formHolder = {};
-            $scope.modelHolder = {};
+            $scope.modelHolder = {
+                donationModel : {
+                    dates: {
+                        dateOfDeposit: new Date(),
+                        dateOfReceipt: new Date()
+                    }
+                }
+            };
 
             $scope.contactCollection = {};
 
@@ -1278,11 +1313,6 @@
             };
 
             establishDetails($routeParams.id);
-
-            $scope.showUpdateForm = function () {
-                $scope.updatingOrganizationDetails = true;
-            };
-
             $scope.cancelUpdate = function () {
                 $scope.updatingOrganizationDetails = false;
                 establishDetails($scope.modelHolder.organizationModel.id);
@@ -1528,31 +1558,131 @@
         };
     }]);
 
+    controllers.controller('ConfigurationCtrl', ['$scope', 'EncounterTypeService', function ($scope, EncounterTypeService) {
+
+    }]);
+
+    controllers.controller('InteractionRecordTypeCtrl', ['$scope', 'InteractionService', function ($scope, InteractionService) {
+
+        $scope.showingInteractionTypes = true;
+
+        var setup = function() {
+            $scope.newInteractionType = "";
+            InteractionService.getInteractionTypes({}, function(types) {
+                $scope.interactionTypes = types;
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        setup();
+
+        $scope.showCreateInteractionType = function() {
+            $scope.creatingInteractionType = true;
+        };
+
+        $scope.createInteractionType = function() {
+            InteractionService.createType({}, {name: $scope.newInteractionType}, function(succ) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            });
+        };
+
+        $scope.cancelCreateInteractionType = function() {
+            $scope.creatingInteractionType = false;
+            $scope.newInteractionType = "";
+        };
+
+        $scope.deleteInteractionType = function(interactionType) {
+            InteractionService.deleteType({typeId: interactionType.id}, function(succ) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+    }]);
+
+    controllers.controller('BudgetItemCtrl', ['$scope', 'DonationService', function ($scope, DonationService) {
+
+        $scope.showingBudgetItems = true;
+
+        var setup = function() {
+            DonationService.getBudgetItems({}, function(items) {
+                $scope.budgetItems = items;
+                $scope.newBudgetItem = "";
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        setup();
+
+        $scope.showCreateBudgetItem = function() {
+            $scope.creatingBudgetItem = true;
+        };
+
+        $scope.createBudgetItem = function() {
+            DonationService.createBudgetItem({}, {name: $scope.newBudgetItem}, function(succ) {
+                $scope.creatingBudgetItem = false;
+                setup();
+            }, function(err) {
+               console.log(err);
+            });
+        };
+
+        $scope.cancelCreateBudgetItem = function() {
+            $scope.showCreateBudgetItem = false;
+            $scope.newBudgetItem = "";
+        };
+
+        $scope.deleteBudgetItem = function(budgetItem) {
+            DonationService.deleteBudgetItem({budgetItemId: budgetItem.id}, function(succ) {
+                setup();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+    }]);
+
+
 
     controllers.controller('EncounterTypeCtrl', ['$scope', 'EncounterTypeService', function ($scope, EncounterTypeService) {
 
-        $scope.addEncounterType = {};
+        $scope.newEncounterType = "";
+
+        $scope.showingEncounterTypes = true;
+
         var setup = function () {
             EncounterTypeService.findAll({}, function (data) {
                 $scope.encounterTypes = data;
             }, function (err) {
                 console.log(err);
             });
-
-            $scope.addEncounterType.hidden = true;
         };
 
         setup();
 
+        $scope.showCreateEncounterType = function() {
+            $scope.creatingEncounterType = true;
+        };
 
         $scope.createEncounterType = function (name) {
             var encounterType = {name: name};
             EncounterTypeService.create(encounterType, function (data) {
+                $scope.cancelCreateEncounterType();
                 setup();
             }, function (err) {
                 console.log(err);
             });
 
+        };
+
+        $scope.cancelCreateEncounterType = function() {
+            $scope.creatingEncounterType = false;
+            $scope.newEncounterType = "";
         };
 
         $scope.deleteEncounterType = function (encounterType) {
@@ -1809,6 +1939,13 @@
         $scope.newInteraction = {};
         $scope.interactionRecords = {};
 
+        InteractionService.getInteractionTypes({}, function(types) {
+            $scope.interactionTypes = types;
+            $scope.interactionTypes.push({name: "None"});
+        }, function(err) {
+            console.log(err);
+        });
+
         var fetchInteractions = function(id) {
             FoundationService.getInteractionRecords({id: id}, function(interactions) {
                 $scope.interactionRecords = interactions;
@@ -1909,8 +2046,14 @@
 
             var formatInteractionDates = function(interaction) {
                 interaction.dateOfInteraction = DateFormatter.formatDate(interaction.dates.dateOfInteraction);
-            }
+            };
 
+        $scope.getInteractionTypeDescriptor = function(type) {
+            if (null == type) {
+                return "Unknown";
+            }
+            return type.name;
+        };
 
     }]);
 
@@ -2169,6 +2312,313 @@
 
     }]);
 
+    controllers.controller('DonationListCtrl', ['$scope', 'DonationService', 'DateFormatter', '$location', function($scope, DonationService, DateFormatter, $location) {
+
+        $scope.donationTable = {};
+
+        $scope.queries = {
+            byDepositDate: "By deposit date",
+            byReceiptDate: "By receipt date",
+            byBudgetItem: "By budget item"
+        };
+
+        $scope.activeQuery = "";
+
+        $scope.donations = [];
+        $scope.donationTable = {};
+        $scope.currentPage = 0;
+
+        $scope.selectedOptions = {
+            fromDepositDate: new Date(),
+            toDepositDate: new Date(),
+            fromReceiptDate: new Date(),
+            toReceiptDate: new Date(),
+            budgetItemId : ""
+        };
+
+        $scope.parameters = {
+            fromDepositDateParameter : "",
+            toDepositDateParameter : "",
+            fromReceiptDateParameter : "",
+            toReceiptDateParameter : "",
+            budgetitemIdParameter : ""
+        };
+
+        $scope.totalQueryElements = 0;
+        $scope.numberElementsShown = 0;
+
+        var defaultPageSize = 10;
+
+        $scope.loadMoreDonations = function() {
+            $scope.currentPage += 1;
+            switch ($scope.activeQuery) {
+                case $scope.queries.byDepositDate:
+                    getDepositDatePage();
+                    break;
+                case $scope.queries.byReceiptDate:
+                    getReceiptDatePage();
+                    break;
+                case $scope.queries.byBudgetItem:
+                    getBudgetItemPage();
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        var getReceiptDatePage = function() {
+            var params = rangeQueryParameter($scope.parameters.fromReceiptDateParameter, $scope.parameters.toReceiptDateParameter, $scope.currentPage);
+            DonationService.getDonationsByReceiptRange(params, mergePageResponse, logError);
+        };
+
+        var getDepositDatePage = function() {
+            var params = rangeQueryParameter($scope.parameters.fromDepositDateParameter, $scope.parameters.toDepositDateParameter, $scope.currentPage);
+            DonationService.getDonationsByDepositRange(params, mergePageResponse,logError);
+        };
+
+        var getBudgetItemPage = function() {
+            var params = {item: $scope.parameters.budgetitemIdParameter, page:$scope.currentPage, size:defaultPageSize};
+            DonationService.getDonationsByBudgetItem(params, mergePageResponse,logError);
+        };
+
+        //TODO find a smarter way to handle these various showing conditions
+        $scope.showReceiptOptions = function() {
+            $scope.showingReceiptDateQuery = !$scope.showingReceiptDateQuery;
+            $scope.showingDepositDateQuery = false;
+            $scope.showingBudgetItemQuery = false;
+        };
+
+        $scope.showDepositOptions = function() {
+            $scope.showingDepositDateQuery = !$scope.showingDepositDateQuery;
+            $scope.showingReceiptDateQuery = false;
+            $scope.showingBudgetItemQuery = false;
+        };
+
+        $scope.showBudgetItemOptions = function() {
+            $scope.showingBudgetItemQuery = !$scope.showingBudgetItemQuery;
+            $scope.showingReceiptDateQuery = false;
+            $scope.showingDepositDateQuery = false;
+
+        };
+
+        $scope.submitNewReceiptDateQuery = function() {
+            $scope.activeQuery = $scope.queries.byReceiptDate;
+            $scope.donationTable.orderingProperty = 'dateOfReceipt';
+            $scope.donationTable.reverseSort = true;
+            $scope.parameters.fromReceiptDateParameter = DateFormatter.formatDate($scope.selectedOptions.fromReceiptDate);
+            $scope.parameters.toReceiptDateParameter = DateFormatter.formatDate($scope.selectedOptions.toReceiptDate);
+
+            $scope.currentPage = 0;
+            $scope.donations = [];
+
+            getReceiptDatePage();
+        };
+
+        $scope.submitNewDepositDateQuery = function() {
+            $scope.activeQuery = $scope.queries.byDepositDate;
+            $scope.donationTable.orderingProperty = 'dateOfDeposit';
+            $scope.donationTable.reverseSort = true;
+            $scope.parameters.fromDepositDateParameter = DateFormatter.formatDate($scope.selectedOptions.fromDepositDate);
+            $scope.parameters.toDepositDateParameter = DateFormatter.formatDate($scope.selectedOptions.toDepositDate);
+
+            $scope.currentPage = 0;
+            $scope.donations = [];
+
+            getDepositDatePage();
+        };
+
+        $scope.submitNewBudgetItemQuery = function() {
+            $scope.activeQuery = $scope.queries.byBudgetItem;
+            $scope.donationTable.orderingProperty = 'budgetItem.name';
+            $scope.donationTable.reverseSort = true;
+            $scope.parameters.budgetitemIdParameter = $scope.selectedOptions.budgetItemId;
+
+            $scope.currentPage = 0;
+            $scope.donations = [];
+
+            getBudgetItemPage();
+        };
+
+        var rangeQueryParameter = function(from, to, page, size) {
+            if (null == page) {
+                page = 0
+            }
+            if (null == size) {
+                size = defaultPageSize
+            }
+            return {
+                from: DateFormatter.formatDate(from),
+                to: DateFormatter.formatDate(to),
+                page: page,
+                size: size
+            }
+        };
+
+        var mergePageResponse = function(page) {
+            $scope.donations = $scope.donations.concat(page.content);
+            $scope.totalQueryElements = page.totalElements;
+            $scope.numberElementsShown = $scope.donations.length;
+        };
+
+        var logError = function(err) {
+            console.log(err);
+        };
+
+        var initialSetup = function() {
+            $scope.activeQuery = $scope.queries.byDepositDate;
+            $scope.selectedOptions.fromDepositDate = new Date(new Date().setDate(new Date().getDate()-30));
+            $scope.selectedOptions.toDepositDate = new Date();
+            $scope.submitNewDepositDateQuery();
+        };
+
+        DonationService.getBudgetItems({}, function(items) {
+            $scope.budgetItems = items;
+        }, logError);
+
+        initialSetup();
+
+    }]);
+
+    controllers.controller('DonationDetailsCtrl', ['$scope', 'DonationService', '$routeParams', '$timeout', 'DateFormatter', '$window', function($scope, DonationService, $routeParams, $timeout, DateFormatter, $window) {
+
+        $scope.modelHolder = {};
+        $scope.formHolder = {};
+
+        var establishDetails = function(id) {
+            DonationService.find({id: id}, function(donation) {
+                $scope.modelHolder.donationModel = donation;
+                $scope.modelHolder.donationModel.dates = {
+                    dateOfDeposit : DateFormatter.asDate(donation.dateOfDeposit),
+                    dateOfReceipt : DateFormatter.asDate(donation.dateOfReceipt)
+                };
+
+                console.log($scope.modelHolder.donationModel);
+                console.log(donation);
+                if (null != donation.budgetItem) {
+                    $scope.modelHolder.donationModel.budgetItemId = donation.budgetItem.id;
+                }
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.updateDonationDetails = function() {
+            $scope.modelHolder.donationModel.dateOfReceipt = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfReceipt);
+            $scope.modelHolder.donationModel.dateOfDeposit = DateFormatter.formatDate($scope.modelHolder.donationModel.dates.dateOfDeposit);
+
+            DonationService.update({id: $scope.modelHolder.donationModel.id}, $scope.modelHolder.donationModel, function(succ) {
+                $scope.editingDonationDetails = false;
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                establishDetails($scope.modelHolder.donationModel.id);
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        $scope.cancelUpdateDonationDetails = function() {
+            $scope.editingDonationDetails = false;
+            establishDetails($scope.modelHolder.donationModel.id);
+        };
+
+        $scope.deleteDonation = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this donation?');
+            if (deleteConfirmed) {
+                DonationService.delete({id: $scope.modelHolder.donationModel.id}, function (succ) {
+                    $window.history.back();
+                }, function (err) {
+                    console.log(err);
+                })
+            }
+        }
+
+    }]);
+
+    controllers.controller('DonationTableCtrl', ['$scope', '$location', function($scope, $location) {
+
+        $scope.viewDonationDetails = function(donation) {
+            $location.path("/donations/"+donation.id);
+        }
+
+    }]);
+
+
+    controllers.controller('DonorListCtrl', ['$scope', 'ContactService', 'DateFormatter', '$location', function($scope, ContactService, DateFormatter, $location) {
+
+        var defaultPageSize = 10;
+
+        $scope.contactTable = {
+            quantity : defaultPageSize
+        };
+
+        $scope.queries = {
+            byCurrentSustainer: "By current sustainer"
+        };
+
+        $scope.activeQuery = "";
+
+        $scope.totalElements = 0;
+        $scope.numberElementsShown = 0;
+
+        $scope.viewContactDetails = function (contactId) {
+            $location.path("/contacts/contact/" + contactId);
+        };
+
+        $scope.viewMoreDonors = function() {
+            $scope.contactTable.quantity += defaultPageSize;
+            $scope.numberElementsShown = ($scope.contactTable.quantity >= $scope.totalElements) ? $scope.totalElements : $scope.contactTable.quantity;
+        };
+
+        var getAllCurrentSustainers = function() {
+            ContactService.getAllCurrentSustainers({}, function(contacts) {
+                $scope.contactTable.contacts = contacts;
+                $scope.totalElements = $scope.contactTable.contacts.length;
+                $scope.numberElementsShown = ($scope.contactTable.quantity >= $scope.totalElements) ? $scope.totalElements : $scope.contactTable.quantity;
+            }, logError);
+        };
+
+        $scope.showCurrentSustainers = function() {
+            $scope.showingCurrentSustainerQuery = !$scope.showingCurrentSustainerQuery;
+            if ($scope.showingCurrentSustainerQuery) {
+                $scope.activeQuery = $scope.queries.byCurrentSustainer;
+                $scope.contactTable.orderByField = 'lastName';
+                $scope.contactTable.reverseSort = true;
+
+                getAllCurrentSustainers();
+            }
+        };
+
+        var rangeQueryParameter = function(from, to, page, size) {
+            if (null == page) {
+                page = 0
+            }
+            if (null == size) {
+                size = defaultPageSize
+            }
+            return {
+                from: DateFormatter.formatDate(from),
+                to: DateFormatter.formatDate(to),
+                page: page,
+                size: size
+            }
+        };
+
+        var logError = function(err) {
+            console.log(err);
+        };
+
+        var initialSetup = function() {
+            $scope.showCurrentSustainers();
+        };
+
+        initialSetup();
+
+    }]);
+
     controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function ($scope, $rootScope, $location, $timeout, $window, UserService) {
 
         $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
@@ -2332,6 +2782,81 @@
             });
             saveAs(blob, "table.xls");
         };
+    }]);
+
+    controllers.controller('SustainerPeriodDetailsCtrl', ['$scope', 'ContactService', '$routeParams', '$timeout', 'DateFormatter', 'RouteChangeService', '$window',
+        function($scope, ContactService, $routeParams, $timeout, DateFormatter, RouteChangeService, $window) {
+
+        $scope.contact = RouteChangeService.get();
+
+        $scope.modelHolder = {};
+        $scope.formHolder = {};
+
+        $scope.updateSustainerPeriod = function() {
+            $scope.modelHolder.sustainerPeriodModel.periodStartDate= DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.periodStartDate);
+            if ($scope.modelHolder.sustainerPeriodModel.dates.cancelDate == null) {
+                $scope.modelHolder.sustainerPeriodModel.cancelDate = null;
+            } else {
+                $scope.modelHolder.sustainerPeriodModel.cancelDate = DateFormatter.formatDate($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
+            }
+
+            console.log($scope.modelHolder.sustainerPeriodModel.dates.cancelDate);
+
+            ContactService.updateSustainerPeriod({id: $scope.contact.id, entityId: $scope.modelHolder.sustainerPeriodModel.id}, $scope.modelHolder.sustainerPeriodModel, function(succ) {
+                $scope.requestSuccess = true;
+                $timeout(function() {
+                    $scope.requestSuccess = false;
+                }, 3000);
+                $scope.cancelUpdateSustainerPeriod();
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        var establishDetails = function(id) {
+            ContactService.getSustainerPeriod({id: $scope.contact.id, entityId: id}, function(period) {
+                $scope.modelHolder.sustainerPeriodModel = period;
+                console.log($scope.modelHolder.sustainerPeriodModel);
+                $scope.modelHolder.sustainerPeriodModel.dates = {
+                    periodStartDate : DateFormatter.asDate(period.periodStartDate),
+                    cancelDate : DateFormatter.asDate(period.cancelDate)
+                };
+                if (null == period.cancelDate) {
+                    $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = null;
+                }
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        establishDetails($routeParams.id);
+
+        $scope.cancelUpdateSustainerPeriod = function() {
+            $scope.editingSustainerPeriod = false;
+            establishDetails($scope.modelHolder.sustainerPeriodModel.id);
+        };
+
+        $scope.closePeriod = function() {
+            $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = new Date();
+            $scope.updateSustainerPeriod();
+        };
+
+        $scope.openPeriod = function() {
+            $scope.modelHolder.sustainerPeriodModel.dates.cancelDate = null;
+            $scope.updateSustainerPeriod();
+        };
+
+        $scope.deleteSustainerPeriod = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this sustainer period?');
+            if (deleteConfirmed) {
+                ContactService.deleteSustainerPeriod({id: $scope.contact.id, entityId: $scope.modelHolder.sustainerPeriodModel.id}, function (succ) {
+                    $window.history.back();
+                }, function (err) {
+                    console.log(err);
+                })
+            }
+        }
+
     }]);
 
     controllers.controller('ContactTableCtrl', ['$scope', function($scope) {

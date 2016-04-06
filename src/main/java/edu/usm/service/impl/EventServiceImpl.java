@@ -4,12 +4,10 @@ import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.EventDto;
 import edu.usm.repository.EventDao;
-import edu.usm.service.BasicService;
-import edu.usm.service.CommitteeService;
-import edu.usm.service.ContactService;
-import edu.usm.service.EventService;
+import edu.usm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ import java.util.Set;
  */
 
 @Service
-public class EventServiceImpl extends BasicService implements EventService {
+public class EventServiceImpl extends DonationAssigningService implements EventService {
 
     @Autowired
     private EventDao eventDao;
@@ -156,8 +154,11 @@ public class EventServiceImpl extends BasicService implements EventService {
         update(event);
     }
 
+
     @Override
-    public void addDonation(Event event, Donation donation) throws ConstraintViolation, NullDomainReference.NullEvent {
+    public void addDonation(String id, DonationDto dto) throws ConstraintViolation, NullDomainReference.NullEvent {
+        Donation donation = convertToDonation(dto);
+        Event event = eventDao.findOne(id);
         event.addDonation(donation);
         updateLastModified(donation);
         update(event);
@@ -188,5 +189,9 @@ public class EventServiceImpl extends BasicService implements EventService {
             throw new NullDomainReference.NullEvent(id);
         }
         return event;
+    }
+
+    public Event findEventWithDonation(Donation donation) {
+        return eventDao.findByDonations_id(donation.getId());
     }
 }

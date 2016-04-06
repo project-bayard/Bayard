@@ -2,6 +2,7 @@ package edu.usm.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.InteractionRecord;
+import edu.usm.domain.InteractionRecordType;
 import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
@@ -55,6 +56,42 @@ public class InteractionRecordController {
         interactionService.delete(id);
         return Response.successGeneric();
     }
+
+
+    @RequestMapping(value = "/interactiontypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.InteractionRecordDetails.class)
+    public Set<InteractionRecordType> getAllInteractionRecordTypes() {
+        return interactionService.findAllInteractionRecordTypes();
+    }
+
+    @RequestMapping(value = "/interactiontypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response createInteractionRecordType(@RequestBody InteractionRecordType type) {
+        return new Response(interactionService.createInteractionRecordType(type), Response.SUCCESS);
+    }
+
+    @RequestMapping(value = "/interactiontypes/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Response deleteInteractionRecordType(@PathVariable("id")String id) {
+        InteractionRecordType type = interactionService.findInteractionRecordType(id);
+        if (null == type) {
+            //TODO 404 refactor
+        }
+        interactionService.deleteInteractionRecordType(type);
+        return Response.successGeneric();
+    }
+
+    @RequestMapping(value = "/interactiontypes/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Response changeInteractionRecordTypeName(@PathVariable("id") String id, @RequestBody InteractionRecordType updated) {
+        InteractionRecordType type = interactionService.findInteractionRecordType(id);
+        if (null == type) {
+            //TODO 404 refactor
+        }
+        interactionService.changeInteractionRecordTypeName(type, updated.getName());
+        return Response.successGeneric();    }
+
 
     private InteractionRecord retrieveInteractionRecord(String id) throws NullDomainReference{
         InteractionRecord record = interactionService.findById(id);

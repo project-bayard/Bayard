@@ -1,8 +1,12 @@
 package edu.usm.repository;
 
 import edu.usm.domain.Contact;
+import edu.usm.domain.DonorInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
@@ -59,4 +63,9 @@ public interface ContactDao extends CrudRepository<Contact, String> {
      * @return {@link Contact}
      */
     Contact findOneByFirstNameAndPhoneNumber2(String firstName, String phoneNumber2);
+
+    Set<Contact> findByDonorInfoCurrentSustainer(boolean status);
+
+    Contact findOneByDonorInfo(DonorInfo donorInfo);
+
 }

@@ -6,6 +6,7 @@ import edu.usm.domain.Organization;
 import edu.usm.domain.Views;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.Response;
 import edu.usm.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,15 +97,15 @@ public class OrganizationController {
     /**
      * Associates a donation with an Organization
      * @param id
-     * @param donation
+     * @param donationDto
      * @return {@link Response}
      * @throws NullDomainReference
      * @throws ConstraintViolation
      */
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/donations", produces={"application/json"})
-    public Response addDonation(@PathVariable("id")String id, @RequestBody Donation donation) throws NullDomainReference, ConstraintViolation{
-        organizationService.addDonation(id, donation);
+    public Response addDonation(@PathVariable("id")String id, @RequestBody DonationDto donationDto) throws NullDomainReference, ConstraintViolation{
+        organizationService.addDonation(id, donationDto);
         return Response.successGeneric();
     }
 

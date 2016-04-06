@@ -1,0 +1,28 @@
+
+<br>
+<table class="bootstrap-table table table-striped table-hover table-responsive"
+       data-toggle="table"
+       data-pagination="true"
+       data-search="true">
+    <tr>
+        <th>Date of Receipt</th>
+        <th>Date of Deposit</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Details</th>
+    </tr>
+    <tr dir-paginate="donation in donations| filter:donationTable.searchParam | orderBy:orderByField:reverseSort | itemsPerPage:defaultPageSize">
+        <td>{{donation.dateOfReceipt | date: 'MMMM d, y'}}</td>
+        <td>{{donation.dateOfDeposit | date: 'MMMM d, y'}}</td>
+        <td>${{donation.amount}}</td>
+        <td>{{donation.method}}</td>
+        <td><a class="btn btn-md btn-info" href="#/donations/{{donation.id}}">View Details</a></td>
+    </tr>
+    <dir-pagination-controls
+            id="donation-pagination-controls"
+            max-size="5"
+            auto-hide="false"
+            direction-links="true"
+            boundary-links="true" >
+    </dir-pagination-controls>
+</table>

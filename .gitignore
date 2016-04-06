@@ -16,4 +16,4 @@ hs_err_pid*
 target/
 
 smwc/src/main/webapp/WEB-INF/views/
-smwc/src/main/webapp/resources/js/dependencies
+smwc/src/main/webapp/resources/js/bower_components

@@ -1,6 +1,7 @@
 package edu.usm.repository;
 
 import edu.usm.domain.InteractionRecord;
+import edu.usm.domain.InteractionRecordType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.HashSet;
@@ -16,5 +17,7 @@ public interface InteractionRecordDao extends CrudRepository<InteractionRecord, 
      */
     @Override
     HashSet<InteractionRecord> findAll();
+
+    HashSet<InteractionRecord> findByInteractionType(InteractionRecordType type);
 
 }

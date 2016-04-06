@@ -23,6 +23,7 @@ public class EncounterType extends BasicEntity implements Serializable {
     }
 
     public EncounterType() {
+
     }
 
     public String getName() {

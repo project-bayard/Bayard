@@ -6,10 +6,12 @@ import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.repository.OrganizationDao;
-import edu.usm.service.BasicService;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
+import edu.usm.service.DonationAssigningService;
+
 import edu.usm.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 
 @Service
-public class OrganizationServiceImpl extends BasicService implements OrganizationService {
+public class OrganizationServiceImpl extends DonationAssigningService implements OrganizationService {
 
     @Autowired
     private ContactService contactService;
@@ -105,8 +107,9 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
 
     @Override
     @Transactional
-    public void addDonation(String id, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation {
+    public void addDonation(String id, DonationDto donationDto) throws NullDomainReference.NullOrganization, ConstraintViolation {
         Organization organization = findOrganization(id);
+        Donation donation = convertToDonation(donationDto);
         organization.addDonation(donation);
         updateLastModified(donation);
         update(organization);
@@ -123,6 +126,8 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             update(organization);
         }
     }
+
+
 
     @Override
     public String create(Organization organization) throws ConstraintViolation, NullDomainReference.NullOrganization{
@@ -153,6 +158,10 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             organization.setMembers(fromDb.getMembers());
         }
         update(organization);
+    }
+
+    public Organization findOrganizationWithDonation(Donation donation) {
+        return organizationDao.findByDonations_id(donation.getId());
     }
 
     private void update(Organization organization) throws NullDomainReference.NullOrganization, ConstraintViolation{
@@ -200,4 +209,6 @@ public class OrganizationServiceImpl extends BasicService implements Organizatio
             return organization;
         }
     }
+
+
 }

@@ -27,4 +27,6 @@ public interface EventDao extends CrudRepository<Event,String> {
      */
     HashSet<Event> findByName(String name);
 
+    Event findByDonations_id(String id);
+
 }

@@ -10,9 +10,11 @@ import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.FoundationDto;
 import edu.usm.dto.GrantDto;
+import edu.usm.dto.InteractionRecordDto;
 import edu.usm.dto.Response;
 import edu.usm.service.FoundationService;
 import edu.usm.service.GrantService;
+import edu.usm.service.InteractionRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
@@ -90,9 +92,9 @@ public class FoundationController {
 
     @RequestMapping(value = "/{id}/interactions", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createInteractionRecord(@PathVariable("id")String id, @RequestBody InteractionRecord interaction) throws ConstraintViolation, NullDomainReference {
+    public Response createInteractionRecord(@PathVariable("id")String id, @RequestBody InteractionRecordDto dto) throws ConstraintViolation, NullDomainReference {
         Foundation foundation = retrieveFoundationReference(id);
-        foundationService.createInteractionRecord(foundation, interaction);
+        foundationService.createInteractionRecord(foundation, dto);
         return Response.successGeneric();
     }
 

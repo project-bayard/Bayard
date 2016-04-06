@@ -11,8 +11,10 @@
                         <div class="col-xs-6">
                             <div ng-show="donorPanel.creatingDonation">
                                 <div ng-include="'resources/partials/forms/donationForm.html'"></div>
-                                <button class="btn btn-success" ng-click="createDonation()" ng-disabled="formHolder.donationForm.$invalid">Submit</button>
-                                <button class="btn btn-danger" ng-click="cancelCreateDonation()">Cancel</button>
+                                <div class="btn-group btn-group-justified" role="group">
+                                    <a href="" type="button" class="btn btn-success" ng-click="createDonation()" ng-disabled="formHolder.donationForm.$invalid">Submit</a>
+                                    <a href="" type="button" class="btn btn-danger" ng-click="cancelCreateDonation()">Cancel</a>
+                                </div>
                             </div>
                             <button class="btn btn-success" ng-click="donorPanel.creatingDonation = true" ng-show="!donorPanel.creatingDonation">Create a Donation</button>
                             <div ng-show="!donorPanel.creatingDonation && donations.length > 0">
@@ -23,8 +25,10 @@
                         <div class="col-xs-6">
                             <div ng-show="donorPanel.creatingSustainerPeriod">
                                 <div ng-include="'resources/partials/forms/sustainerPeriodForm.html'"></div>
-                                <button class="btn btn-success" ng-click="createSustainerPeriod()" ng-disabled="formHolder.sustainerPeriodForm.$invalid">Submit</button>
-                                <button class="btn btn-danger" ng-click="cancelCreateSustainerPeriod()">Cancel</button>
+                                <div class="btn-group btn-group-justified" role="group">
+                                    <a href="" type="button" class="btn btn-success" ng-click="createSustainerPeriod()" ng-disabled="formHolder.sustainerPeriodForm.$invalid">Submit</a>
+                                    <a href="" type="button" class="btn btn-danger" ng-click="cancelCreateSustainerPeriod()">Cancel</a>
+                                </div>
                             </div>
                             <button class="btn btn-success" ng-click="donorPanel.creatingSustainerPeriod = true" ng-show="!donorPanel.creatingSustainerPeriod">Create a Sustainer Period</button>
                             <div ng-show="!donorPanel.creatingSustainerPeriod && sustainerPeriods.length > 0">

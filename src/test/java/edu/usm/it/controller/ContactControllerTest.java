@@ -69,6 +69,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     private EncounterType encounterType;
     private Group group;
     private Donation donation;
+    private BudgetItem budgetItem;
     private SustainerPeriod sustainerPeriod;
 
     @Before
@@ -111,10 +112,14 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         group = new Group();
         group.setGroupName("Test Group");
 
+        budgetItem = new BudgetItem("Test Budget Item");
+        donationService.createBudgetItem(budgetItem);
+
         donation = new Donation();
         donation.setAmount(200);
         donation.setDateOfDeposit(LocalDate.now());
         donation.setDateOfDeposit(LocalDate.of(2015, 1, 1));
+        donation.setBudgetItem(budgetItem);
 
         sustainerPeriod = new SustainerPeriod();
         sustainerPeriod.setPeriodStartDate(LocalDate.of(2015, 1, 1));
@@ -131,6 +136,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contactService.deleteAll();
         eventService.deleteAll();
         encounterTypeService.deleteAll();
+        donationService.deleteAllBudgetItems();
         donationService.deleteAll();
     }
 
@@ -727,17 +733,20 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     @Test
     public void testAddDonation() throws Exception {
         contactService.create(contact);
-        BayardTestUtilities.performEntityPost("/contacts/" + contact.getId() + "/donations", donation, mockMvc);
+        BayardTestUtilities.performEntityPost("/contacts/" + contact.getId() + "/donations", DtoTransformer.fromEntity(donation), mockMvc);
 
         contact = contactService.findById(contact.getId());
         DonorInfo donorInfo = contactService.getDonorInfo(contact.getId());
         assertFalse(donorInfo.getDonations().isEmpty());
+        Donation fromDb = contactService.getDonorInfo(contact.getId()).getDonations().iterator().next();
+        assertEquals(donation.getAmount(), fromDb.getAmount());
+        assertEquals(budgetItem.getName(), fromDb.getBudgetItem().getName());
     }
 
     @Test
     public void testRemoveDonation() throws Exception {
         contactService.create(contact);
-        contactService.addDonation(contact.getId(), donation);
+        contactService.addDonation(contact.getId(), DtoTransformer.fromEntity(donation));
         contact = contactService.findById(contact.getId());
         Set<Donation> donations = contactService.getAllContactDonations(contact.getId());
         donation = donations.iterator().next();
@@ -819,6 +828,17 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         BayardTestUtilities.performEntityDelete(url, mockMvc);
         contact = contactService.findById(contact.getId());
         assertTrue(contactService.getDonorInfo(contact.getId()).getSustainerPeriods().isEmpty());
+    }
+
+    @Test
+    public void testGetCurrentSustainers() throws Exception {
+        contactService.create(contact);
+        contactService.createSustainerPeriod(contact.getId(), DtoTransformer.fromEntity(sustainerPeriod));
+
+        mockMvc.perform(get("/contacts/currentSustainers")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
     }
 
 }

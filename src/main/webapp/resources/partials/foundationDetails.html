@@ -24,7 +24,7 @@
                         <li class="list-group-item"
                             ng-repeat="record in interactionRecords | orderBy: '-dateOfInteraction' | limitTo: 5"
                             ng-click="viewInteractionDetails(record.id)">
-                            <a href="#/interactions/{{record.id}}">{{record.dateOfInteraction |  date: 'MMMM d, y'}} : {{record.interactionType}}</a>
+                            <a href="#/interactions/{{record.id}}">{{record.dateOfInteraction |  date: 'MMMM d, y'}} : {{getInteractionTypeDescriptor(record.interactionType)}}</a>
                         </li>
                     </ul>
                 </div>
@@ -36,21 +36,27 @@
                 <h3>New Interaction</h3>
                 <form id="interactionForm" name="interactionForm" novalidate>
                     <div class="row">
-                        <div class="form-group col-xs-12" >
+                        <div class="form-group col-xs-12 required" ng-class="{ 'has-error' : interactionForm.interactionDate.$invalid && !interactionForm.interactionDate.$pristine }">
                             <label class="control-label">Date</label>
-                            <input name="interactionDate" type="date" class="form-control" ng-model="newInteraction.dates.dateOfInteraction">
+                            <input name="interactionDate" type="date" class="form-control" ng-model="newInteraction.dates.dateOfInteraction" required>
+                            <p ng-show="interactionForm.interactionDate.$error.required && !interactionForm.interactionDate.$pristine" class="help-block">An date is required</p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-xs-12">
+                        <div class="form-group col-xs-12 required" ng-class="{ 'has-error' : interactionForm.personContacted.$invalid && !interactionForm.personContacted.$pristine }">
                             <label class="control-label">Person Contacted</label>
-                            <input name="personContacted" type="text" class="form-control" ng-model="newInteraction.personContacted">
+                            <input name="personContacted" type="text" class="form-control" ng-model="newInteraction.personContacted" ng-maxlength="200" ng-minlength="2" required>
+                            <p ng-show="interactionForm.personContacted.$error.required && !interactionForm.personContacted.$pristine" class="help-block">The person contacted is required</p>
+                            <p ng-show="interactionForm.personContacted.$error.maxlength" class="help-block">The name too long</p>
+                            <p ng-show="interactionForm.personContacted.$error.minlength" class="help-block">The name too short</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-xs-12">
                             <label class="control-label">Type</label>
-                            <input name="interactionType" type="text" class="form-control" ng-model="newInteraction.interactionType">
+                            <select name="interactionType" class="form-control input-small" ng-model="newInteraction.interactionTypeId">
+                                <option ng-repeat="type in interactionTypes" value="{{type.id}}">{{type.name}}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -73,7 +79,7 @@
                         </div>
                     </div>
                 </form>
-                <button class="btn btn-success" ng-click="createInteractionRecord()" ng-disabled="interactionForm.form.$invalid">Submit</button>
+                <button class="btn btn-success" ng-click="createInteractionRecord()" ng-disabled="interactionForm.$invalid || interactionForm.$pristine">Submit</button>
                 <button class="btn btn-danger" ng-click="cancelCreateInteractionRecord()">Cancel</button>
             </div>            
         </div>

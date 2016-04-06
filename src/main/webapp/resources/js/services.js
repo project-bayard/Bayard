@@ -23,6 +23,21 @@
         }
     }]);
 
+    services.factory('RouteChangeService', function() {
+        var routeChangeData = {};
+        function set(data) {
+            routeChangeData = data;
+        }
+        function get() {
+            return routeChangeData;
+        }
+
+        return {
+            set: set,
+            get: get
+        }
+    });
+
     services.factory('ContactService',[ '$resource', function ($resource) {
         return $resource('../contacts/:id', {id : '@id', entityId : '@entityId'}, {
             update : {
@@ -151,46 +166,33 @@
                 method : "POST",
                 url : "/contacts/:id/sustainer"
             },
+            updateSustainerPeriod: {
+                method: 'PUT',
+                url: "/contacts/:id/sustainer/:entityId"
+            },
             getSustainerPeriods: {
                 method: 'GET',
                 isArray: true,
                 url: "/contacts/:id/sustainer"
-            }
-        });
-    }]);
-
-    services.factory('FoundationService',[ '$resource', function ($resource) {
-        return $resource('../foundations/:id', {id : '@id'}, {
-            update : {
-                method: 'PUT',
-                params: {
-                    id: "@id"
-                }
             },
-            find : {
+            getSustainerPeriod: {
                 method: 'GET',
-                params: {
-                    id : "@id"
-                }
+                url: "/contacts/:id/sustainer/:entityId"
             },
-            findAll : {
-                method: 'GET',
-                isArray : true
-            },
-            create : {
-                method: 'POST'
-            },
-            delete : {
+            deleteSustainerPeriod: {
                 method: 'DELETE',
-                params: {
-                    id: "@id"
-                }
+                url: "/contacts/:id/sustainer/:entityId"
+            },
+            getAllCurrentSustainers: {
+                method: 'GET',
+                url: "/contacts/currentSustainers",
+                isArray: true
             }
         });
     }]);
 
-    services.factory('FoundationService',[ '$resource', function ($resource) {
-        return $resource('../foundations/:id', {id : '@id'}, {
+    services.factory('GrantService',[ '$resource', function ($resource) {
+        return $resource('../grants/:id', {id : '@id'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -208,7 +210,11 @@
                 isArray : true
             },
             create : {
-                method: 'POST'
+                method: 'POST',
+                url: "../foundations/:foundationId/grants",
+                params: {
+                    foundationId : "@foundationId"
+                }
             },
             delete : {
                 method: 'DELETE',
@@ -253,38 +259,9 @@
         });
     }]);
 
-    services.factory('FoundationService',[ '$resource', function ($resource) {
-        return $resource('../foundations/:id', {id : '@id'}, {
-            update : {
-                method: 'PUT',
-                params: {
-                    id: "@id"
-                }
-            },
-            find : {
-                method: 'GET',
-                params: {
-                    id : "@id"
-                }
-            },
-            findAll : {
-                method: 'GET',
-                isArray : true
-            },
-            create : {
-                method: 'POST'
-            },
-            delete : {
-                method: 'DELETE',
-                params: {
-                    id: "@id"
-                }
-            }
-        });
-    }]);
 
-    services.factory('GrantService',[ '$resource', function ($resource) {
-        return $resource('../grants/:id', {id : '@id'}, {
+    services.factory('DonationService',[ '$resource', function ($resource) {
+        return $resource('../donations/:id', {id : '@id', budgetItemId: '@budgetItemId'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -297,22 +274,36 @@
                     id : "@id"
                 }
             },
-            findAll : {
-                method: 'GET',
-                isArray : true
-            },
-            create : {
-                method: 'POST',
-                url: "../foundations/:foundationId/grants",
-                params: {
-                    foundationId : "@foundationId"
-                }
-            },
             delete : {
                 method: 'DELETE',
                 params: {
                     id: "@id"
                 }
+            },
+            getBudgetItems : {
+                method: 'GET',
+                url: '../donations/budgetitems',
+                isArray: true
+            },
+            createBudgetItem : {
+                method: 'POST',
+                url: '../donations/budgetitems'
+            },
+            deleteBudgetItem : {
+                method: 'DELETE',
+                url: '../donations/budgetitems/:budgetItemId'
+            },
+            getDonationsByDepositRange : {
+                method: 'GET',
+                url: '../donations/bydepositdate'
+            },
+            getDonationsByReceiptRange : {
+                method: 'GET',
+                url: '../donations/byreceiptdate'
+            },
+            getDonationsByBudgetItem : {
+                method: 'GET',
+                url: '../donations/bybudgetitem'
             }
         });
     }]);
@@ -360,7 +351,7 @@
     }]);
 
     services.factory('InteractionService',[ '$resource', function ($resource) {
-        return $resource('../interactions/:id', {id : '@id'}, {
+        return $resource('../interactions/:id', {id : '@id', typeId: '@typeId'}, {
             update : {
                 method: 'PUT',
                 params: {
@@ -381,6 +372,22 @@
                 method: 'DELETE',
                 params: {
                     id: "@id"
+                }
+            },
+            getInteractionTypes : {
+                method: 'GET',
+                url: '/interactions/interactiontypes',
+                isArray : true
+            },
+            createType : {
+                method: 'POST',
+                url: '/interactions/interactiontypes'
+            },
+            deleteType : {
+                method: 'DELETE',
+                url: '/interactions/interactiontypes/:typeId',
+                params: {
+                    typeId: "@typeId"
                 }
             }
         });

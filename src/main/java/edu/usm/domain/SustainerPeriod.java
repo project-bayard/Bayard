@@ -12,7 +12,7 @@ import java.time.Period;
  * A contiguous period of time over which a Contact has made monthly monetary contributions.
  */
 @Entity(name = "sustainer_period")
-public class SustainerPeriod extends BasicEntity implements MonetaryContribution, Comparable<SustainerPeriod>, Serializable {
+public class SustainerPeriod extends BasicEntity implements MonetaryContribution, Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @NotNull
@@ -53,14 +53,6 @@ public class SustainerPeriod extends BasicEntity implements MonetaryContribution
         this.donorInfo = donorInfo;
         this.periodStartDate = periodStartDate;
         this.monthlyAmount = monthlyAmount;
-    }
-
-    @Override
-    public int compareTo(SustainerPeriod o) {
-        if (o.getPeriodStartDate().isEqual(this.getPeriodStartDate())) {
-            return 0;
-        }
-        return (this.getPeriodStartDate().isBefore(o.getPeriodStartDate())) ? 1 : -1;
     }
 
     /*Calculates the total contributions represented by this SustainerPeriod. The difference between periodStartDate

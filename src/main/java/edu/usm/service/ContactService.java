@@ -4,13 +4,13 @@ import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.SignInDto;
 import edu.usm.dto.SustainerPeriodDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -104,7 +104,7 @@ public interface ContactService {
     Contact findByFirstEmailPhone(SignInDto signInDto) throws NotFoundException;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addDonation(String contactId, Donation donation) throws  NullDomainReference.NullContact;
+    void addDonation(String contactId, DonationDto donationDto) throws  NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void removeDonation(String contactId, String donationId) throws  NullDomainReference;
@@ -128,6 +128,12 @@ public interface ContactService {
     void deleteSustainerPeriod(String contactId, String sustainerPeriodId) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    SortedSet<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference;
+    Set<SustainerPeriod> getAllContactSustainerPeriods(String contactId) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Contact> findAllCurrentSustainers();
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Contact findContactWithDonation(Donation donation);
 
 }

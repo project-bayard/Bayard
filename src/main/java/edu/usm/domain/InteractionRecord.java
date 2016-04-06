@@ -25,10 +25,10 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class, Views.FoundationDetails.class})
     private LocalDate dateOfInteraction;
 
-    @Column
-    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_item_id")
     @JsonView({Views.InteractionRecordDetails.class, Views.InteractionRecordList.class})
-    private String interactionType;
+    private InteractionRecordType interactionType;
 
     @Lob
     @Column
@@ -56,15 +56,15 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     /**
      * @param personContacted the person contacted at the Foundation
      * @param dateOfInteraction when the interaction took place
-     * @param interactionType the type of the interaction
+     * @param type the type of the interaction
      * @param foundation the Foundation
      */
-    public InteractionRecord(String personContacted, LocalDate dateOfInteraction, String interactionType, Foundation foundation) {
+    public InteractionRecord(String personContacted, LocalDate dateOfInteraction, InteractionRecordType type, Foundation foundation) {
         super();
         this.foundation = foundation;
         this.personContacted = personContacted;
         this.dateOfInteraction = dateOfInteraction;
-        this.interactionType = interactionType;
+        this.interactionType = type;
     }
 
     public Foundation getFoundation() {
@@ -102,11 +102,11 @@ public class InteractionRecord extends BasicEntity implements Serializable {
         this.dateOfInteraction = dateOfInteraction;
     }
 
-    public String getInteractionType() {
+    public InteractionRecordType getInteractionType() {
         return interactionType;
     }
 
-    public void setInteractionType(String interactionType) {
+    public void setInteractionType(InteractionRecordType interactionType) {
         this.interactionType = interactionType;
     }
 

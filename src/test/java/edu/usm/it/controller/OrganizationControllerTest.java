@@ -2,10 +2,12 @@ package edu.usm.it.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usm.config.WebAppConfigurationAware;
+import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
 import edu.usm.service.OrganizationService;
@@ -44,6 +46,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     private Organization organization;
     private Contact contact;
     private Contact initiator;
+    private BudgetItem budgetItem;
     private Donation donation;
 
     @Before
@@ -66,17 +69,22 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
         organization.setPrimaryContactName("Theo McCeo");
         organization.setDescription("A very good organization");
 
+        budgetItem = new BudgetItem("Test Budget Item");
+        donationService.createBudgetItem(budgetItem);
+
         donation = new Donation();
         donation.setAmount(300);
         donation.setDateOfDeposit(LocalDate.now());
         donation.setDateOfReceipt(LocalDate.of(2015, 1, 1));
         donation.setMethod("Credit Card");
+        donation.setBudgetItem(budgetItem);
     }
 
     @After
     public void teardown() {
         contactService.deleteAll();
         organizationService.deleteAll();
+        donationService.deleteAllBudgetItems();
         donationService.deleteAll();
     }
 
@@ -194,16 +202,17 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
     public void testAddDonation() throws Exception {
         organizationService.create(organization);
         String url = ORGANIZATIONS_BASE_URL + organization.getId() + "/donations";
-        BayardTestUtilities.performEntityPost(url, donation, mockMvc);
+        BayardTestUtilities.performEntityPost(url, DtoTransformer.fromEntity(donation), mockMvc);
 
         organization = organizationService.findById(organization.getId());
         assertFalse(organizationService.getDonations(organization.getId()).isEmpty());
+        assertEquals(budgetItem.getName(), organizationService.getDonations(organization.getId()).iterator().next().getBudgetItem().getName());
     }
 
     @Test
     public void testRemoveDonation() throws Exception {
         organizationService.create(organization);
-        organizationService.addDonation(organization.getId(), donation);
+        organizationService.addDonation(organization.getId(), DtoTransformer.fromEntity(donation));
         organization = organizationService.findById(organization.getId());
         donation = organizationService.getDonations(organization.getId()).iterator().next();
 

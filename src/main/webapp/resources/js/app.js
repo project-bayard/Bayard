@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors']);
+    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors', 'angularUtils.directives.dirPagination']);
 
     app.config(["$httpProvider", function ($httpProvider) {
         $httpProvider.interceptors.push("baseInterceptor");
@@ -80,9 +80,9 @@
                 templateUrl: 'resources/partials/login.html',
                 controller: 'LoginCtrl'
             })
-            .when('/encountertypes', {
-                templateUrl: 'resources/partials/encounterTypes.html',
-                controller: 'EncounterTypeCtrl'
+            .when('/configuration', {
+                templateUrl: 'resources/partials/configurationOptions.html',
+                controller: 'ConfigurationCtrl'
             })
             .when('/groups', {
                 templateUrl: 'resources/partials/groupList.html',
@@ -140,12 +140,28 @@
             })
             .when('/donations', {
                 templateUrl: 'resources/partials/donationList.html',
+                controller: 'DonationListCtrl',
                 resolve: {
                     enabled: resolveDevelopmentEnabled
                 }
             })
             .when('/donations/:id', {
-                templateUrl: 'resources/partials/donationList.html',
+                templateUrl: 'resources/partials/donationDetails.html',
+                controller: 'DonationDetailsCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
+            })
+            .when('/donors', {
+                templateUrl: 'resources/partials/donorList.html',
+                controller: 'DonorListCtrl',
+                resolve: {
+                    enabled: resolveDevelopmentEnabled
+                }
+            })
+            .when('/sustainerPeriod/:id', {
+                templateUrl: 'resources/partials/sustainerPeriodDetails.html',
+                controller: 'SustainerPeriodDetailsCtrl',
                 resolve: {
                     enabled: resolveDevelopmentEnabled
                 }

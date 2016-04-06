@@ -1,0 +1,64 @@
+<div class="container-fluid" ng-controller="EncounterTypeCtrl">
+    <div class="row">
+        <div class="col-xs-9 col-sm-9 col-md-9">
+            <div name="donor-info-panel" class="panel panel-default">
+                <div class="panel-heading" ng-click="showingEncounterTypes = !showingEncounterTypes">
+                    <h3 class="panel-title">Encounter Types</h3>
+                </div>
+                <div class="panel-body" ng-show="showingEncounterTypes">
+                    <div class="row">
+                        <!-- Donations -->
+                        <div class="col-xs-12">
+                            <div ng-show="!creatingEncounterType">
+                                <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                    <label class="control-label"> </label>
+                                    <div class="input-group">
+                                        <button class="btn btn-success" ng-click="showCreateEncounterType()">Create a Type</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="creatingEncounterType">
+                                <div class="form-group col-xs-2 col-sm-2 col-md-2">
+                                    <label class="control-label"> </label>
+                                    <div class="input-group">
+                                        <button class="btn btn-success" ng-click="createEncounterType(newEncounterType)">Create</button>
+                                    </div>
+                                </div>
+                                <div class="form-group col-xs-5 col-sm-5 col-md-5">
+                                    <label class="control-label"> </label>
+                                    <div class="input-group">
+                                        <input ng-model="newEncounterType" type="text" class="form-control" placeholder="New type...">
+                                        <span class="input-group-addon" aria-hidden="true" ng-click="cancelCreateEncounterType()"> X </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="bootstrap-table table table-striped table-hover"
+                                   data-toggle="table"
+                                   data-query-params="queryParams"
+                                   data-pagination="true"
+                                   data-search="true"
+                                   data-height="300">
+
+                                <th>Name</th>
+                                <th >Delete</th>
+                                <tr ng-repeat="encounterType in encounterTypes">
+                                    <td class="col-xs-8">{{encounterType.name}}</td>
+                                    <td class="col-xs-4">
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="deleteEncounterType(encounterType)">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

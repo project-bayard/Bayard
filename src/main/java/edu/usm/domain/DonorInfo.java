@@ -1,7 +1,5 @@
 package edu.usm.domain;
 
-import org.hibernate.annotations.SortNatural;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -23,8 +21,7 @@ public class DonorInfo extends BasicEntity implements Serializable {
     private Set<Donation> donations;
 
     @OneToMany(mappedBy = "donorInfo", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @SortNatural
-    private SortedSet<SustainerPeriod> sustainerPeriods = new TreeSet<>();
+    private Set<SustainerPeriod> sustainerPeriods;
 
     public DonorInfo() {
         super();
@@ -62,16 +59,19 @@ public class DonorInfo extends BasicEntity implements Serializable {
     /**
      * @return the set of SustainerPeriods this Contact has committed to
      */
-    public SortedSet<SustainerPeriod> getSustainerPeriods() {
+    public Set<SustainerPeriod> getSustainerPeriods() {
+        if (null == sustainerPeriods) {
+            sustainerPeriods = new HashSet<>();
+        }
         return sustainerPeriods;
     }
 
-    public void setSustainerPeriods(SortedSet<SustainerPeriod> sustainerPeriods) {
+    public void setSustainerPeriods(Set<SustainerPeriod> sustainerPeriods) {
         this.sustainerPeriods.clear();
         this.sustainerPeriods.addAll(sustainerPeriods);
     }
 
     public void addSustainerPeriod(SustainerPeriod sustainerPeriod) {
-        this.sustainerPeriods.add(sustainerPeriod);
+        this.getSustainerPeriods().add(sustainerPeriod);
     }
 }

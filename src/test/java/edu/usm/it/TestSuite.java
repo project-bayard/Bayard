@@ -45,7 +45,8 @@ import org.springframework.test.context.ActiveProfiles;
         DonationControllerTest.class,
         FoundationControllerTest.class,
         GrantControllerTest.class,
-        InteractionRecordControllerTest.class
+        InteractionRecordControllerTest.class,
+        DonationServiceTest.class
 })
 @ActiveProfiles("test")
 public class TestSuite {

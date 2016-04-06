@@ -1,13 +1,11 @@
 package edu.usm.it.dao;
 
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Foundation;
-import edu.usm.domain.Grant;
-import edu.usm.domain.InteractionRecord;
-import edu.usm.domain.UserFileUpload;
+import edu.usm.domain.*;
 import edu.usm.repository.FoundationDao;
 import edu.usm.repository.GrantDao;
 import edu.usm.repository.InteractionRecordDao;
+import edu.usm.service.InteractionRecordService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +31,9 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
     private FoundationDao foundationDao;
 
     @Autowired
+    private InteractionRecordService recordService;
+
+    @Autowired
     private GrantDao grantDao;
 
     @Autowired
@@ -42,6 +43,7 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
     private Grant grant;
     private InteractionRecord interactionRecord;
     private UserFileUpload userFileUpload;
+    private InteractionRecordType type;
 
     private int fileLength = 10;
     private byte[] fileData = new byte[fileLength];
@@ -71,11 +73,14 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
 
         foundation.addGrant(grant);
 
+        type = new InteractionRecordType("Test interaction record type");
+        recordService.createInteractionRecordType(type);
+
         interactionRecord = new InteractionRecord();
         interactionRecord.setDateOfInteraction(LocalDate.now());
         interactionRecord.setFoundation(foundation);
         interactionRecord.setPersonContacted("John Smith");
-        interactionRecord.setInteractionType("Interaction Type");
+        interactionRecord.setInteractionType(type);
         foundation.addInteractionRecord(interactionRecord);
 
     }
@@ -84,6 +89,7 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
     public void teardown() {
         foundationDao.deleteAll();
         grantDao.deleteAll();
+        recordService.deleteAllInteractionRecordTypes();
         interactionRecordDao.deleteAll();
     }
 
@@ -177,7 +183,9 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
         foundation = foundationDao.findOne(foundation.getId());
 
         interactionRecord = foundation.getInteractionRecords().iterator().next();
-        String newInteractionType = "Test Type";
+        InteractionRecordType newInteractionType = new InteractionRecordType("Test Type");
+        recordService.createInteractionRecordType(newInteractionType);
+
         interactionRecord.setInteractionType(newInteractionType);
 
         foundationDao.save(foundation);
@@ -192,7 +200,8 @@ public class FoundationPersistenceTest extends WebAppConfigurationAware {
         foundationDao.save(foundation);
         interactionRecord = interactionRecordDao.findOne(interactionRecord.getId());
 
-        String newInteractionType = "Test Type";
+        InteractionRecordType newInteractionType = new InteractionRecordType("Test Type");
+        recordService.createInteractionRecordType(newInteractionType);
         interactionRecord.setInteractionType(newInteractionType);
         interactionRecordDao.save(interactionRecord);
 

@@ -3,8 +3,7 @@ package edu.usm.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -36,9 +35,10 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     @JsonView(Views.DonationDetails.class)
     private String restrictedToCategory;
 
-    @Column
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_item_id")
     @JsonView(Views.DonationDetails.class)
-    private String budgetItem;
+    private BudgetItem budgetItem;
 
     @Column
     @JsonView(Views.DonationDetails.class)
@@ -125,11 +125,11 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     /**
      * @return the budget item this Donation is associated with
      */
-    public String getBudgetItem() {
+    public BudgetItem getBudgetItem() {
         return budgetItem;
     }
 
-    public void setBudgetItem(String budgetItem) {
+    public void setBudgetItem(BudgetItem budgetItem) {
         this.budgetItem = budgetItem;
     }
 
@@ -137,7 +137,7 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
      * @return whether or not this Donation is associated with a particular budget item
      */
     public boolean isForBudgetItem() {
-        return !(this.budgetItem == null) && !(this.budgetItem.isEmpty());
+        return !(this.budgetItem == null);
     }
 
     /**

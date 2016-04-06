@@ -6,11 +6,11 @@ import edu.usm.domain.Donation;
 import edu.usm.domain.Event;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EventDto;
 import edu.usm.service.CommitteeService;
 import edu.usm.service.DonationService;
 import edu.usm.service.EventService;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,7 +166,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Test
     public void testAddDonation() throws Exception {
         eventService.create(event);
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
 
         event = eventService.findById(event.getId());
         assertFalse(event.getDonations().isEmpty());
@@ -176,7 +176,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Test
     public void testRemoveDonation() throws Exception {
         eventService.create(event);
-        eventService.addDonation(event, donation);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
         event = eventService.findById(event.getId());
         donation = event.getDonations().iterator().next();
         assertNotNull(donation);
@@ -187,6 +187,18 @@ public class EventServiceTest extends WebAppConfigurationAware {
 
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
+    }
+
+    @Test
+    public void testFindEventWithDonation() throws Exception {
+        eventService.create(event);
+        eventService.addDonation(event.getId(), DtoTransformer.fromEntity(donation));
+
+        event = eventService.findById(event.getId());
+        donation = event.getDonations().iterator().next();
+
+        Event withDonation = eventService.findEventWithDonation(donation);
+        assertEquals(event, withDonation);
     }
 
     private Event generateDuplicate(Event event) {

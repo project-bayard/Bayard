@@ -296,8 +296,8 @@ public class ContactController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/{id}/donations", method = RequestMethod.POST, consumes={"application/json"}, produces = {"application/json"})
-    public Response addDonation(@PathVariable("id")String id, @RequestBody Donation donation) throws NullDomainReference, ConstraintViolation {
-        contactService.addDonation(id, donation);
+    public Response addDonation(@PathVariable("id")String id, @RequestBody DonationDto donationDto) throws NullDomainReference, ConstraintViolation {
+        contactService.addDonation(id, donationDto);
         return Response.successGeneric();
     }
 
@@ -325,7 +325,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/sustainer", produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(Views.SustainerPeriodDetails.class)
-    public SortedSet<SustainerPeriod> getSustainerPeriodsForContact(@PathVariable("id")String id) throws NullDomainReference {
+    public Set<SustainerPeriod> getSustainerPeriodsForContact(@PathVariable("id")String id) throws NullDomainReference {
         return contactService.getAllContactSustainerPeriods(id);
     }
 
@@ -353,6 +353,11 @@ public class ContactController {
 
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/currentSustainers", produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(Views.ContactList.class)
+    public Set<Contact> getAllCurrentSustainers() {
+        return contactService.findAllCurrentSustainers();
+    }
 
 }
 

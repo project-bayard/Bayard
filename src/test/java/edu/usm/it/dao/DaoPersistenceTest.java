@@ -93,7 +93,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         donation.setDateOfReceipt(LocalDate.of(2015, 01, 01));
         donation.setAmount(100);
         donation.setRestrictedToCategory("Category");
-        donation.setBudgetItem("Budget Item 1");
         donation.setAnonymous(true);
         donation.setStandalone(false);
 
@@ -168,7 +167,6 @@ public class DaoPersistenceTest extends WebAppConfigurationAware{
         assertEquals(fromDbDonation.getId(),donation.getId());
         assertEquals(fromDbDonation.isAnonymous(),donation.isAnonymous());
         assertEquals(fromDbDonation.isStandalone(),donation.isStandalone());
-        assertEquals(fromDbDonation.getBudgetItem(),donation.getBudgetItem());
         assertEquals(fromDbDonation.getRestrictedToCategory(),donation.getRestrictedToCategory());
         assertEquals(fromDbDonation.getDateOfDeposit(),donation.getDateOfDeposit());
         assertEquals(fromDbDonation.getDateOfReceipt(),donation.getDateOfReceipt());

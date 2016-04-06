@@ -26,4 +26,6 @@ public interface OrganizationDao extends CrudRepository<Organization, String> {
      * @return {@link Organization}
      */
     Organization findOneByName(String name);
+
+    Organization findByDonations_id(String id);
 }

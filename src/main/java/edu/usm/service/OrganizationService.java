@@ -4,6 +4,7 @@ import edu.usm.domain.Donation;
 import edu.usm.domain.Organization;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.dto.DonationDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -56,7 +57,7 @@ public interface OrganizationService {
      * @throws ConstraintViolation
      */
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addDonation (String id, Donation donation) throws NullDomainReference.NullOrganization, ConstraintViolation;
+    void addDonation (String id, DonationDto donationDto) throws NullDomainReference.NullOrganization, ConstraintViolation;
 
     /**
      * Disassociates a donation with an organization.
@@ -76,6 +77,10 @@ public interface OrganizationService {
      */
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Donation> getDonations(String id) throws NullDomainReference.NullOrganization;
+
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Organization findOrganizationWithDonation(Donation donation);
 
     /**
      * Creates a new Organization.
