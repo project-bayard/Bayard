@@ -24,39 +24,6 @@
         };
     }
 
-    function PermissionInterpreter(currentUser) {
-        this.user = currentUser;
-
-        this.getId = function () {
-            return this.user.id;
-        };
-
-        this.isSuperUser = function () {
-            return this.user.role == "ROLE_SUPERUSER";
-        };
-
-        this.isElevatedUser = function () {
-            return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
-        };
-
-        this.isDevelopmentUser = function() {
-            return this.user.role == "ROLE_DEVELOPMENT" || this.isSuperUser() || this.isElevatedUser();
-        };
-
-        this.isUser = function () {
-            return this.user.role == "ROLE_USER" || this.isElevatedUser() || this.isSuperUser();
-        };
-
-        this.canChangeRole = function (other) {
-            var otherPermissions = new PermissionInterpreter(other);
-            if (this.isSuperUser()) {
-                return true;
-            }
-            return this.isElevatedUser() && !otherPermissions.isSuperUser();
-        }
-
-    }
-
     var controllers = angular.module('controllers', []);
 
     controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$location', function ($scope, ContactService, $location) {
@@ -1525,16 +1492,6 @@
 
                     $rootScope.authenticated = true;
                     $rootScope.user = data;
-
-                    var permissions = new PermissionInterpreter($rootScope.user);
-                    $rootScope.showingDevelopment = $rootScope.bayardConfig.developmentEnabled && permissions.isDevelopmentUser();
-
-                    ConfigService.getImplementationConfig({}, function (config) {
-                        $rootScope.config = config;
-                    }, function (err) {
-                        console.log(err);
-                    });
-
                 } else {
                     sessionStorage.setItem('bayard-user-authenticated', 'false');
                     $rootScope.authenticated = false;
@@ -2625,9 +2582,10 @@
 
     }]);
 
-    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function ($scope, $rootScope, $location, $timeout, $window, UserService) {
+    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', 'PermissionService',
+        function ($scope, $rootScope, $location, $timeout, $window, UserService, PermissionService) {
 
-        $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
+        $scope.userPermissionLevel = PermissionService.getPermissionInterpreter($rootScope.user);
         $scope.newUser = {};
         $scope.passwordChange = {};
         $scope.viewingUser = true;

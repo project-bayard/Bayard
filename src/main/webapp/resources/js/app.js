@@ -9,9 +9,13 @@
 
     app.config(function ($routeProvider, $httpProvider) {
 
-        var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService) {
+        var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService, PermissionService) {
 
-            if ($rootScope.bayardConfig != null && $rootScope.bayardConfig.implementationName != "Login") {
+            if ($rootScope.bayardConfig != null) {
+                if (null != $rootScope.user) {
+                    var permissions = PermissionService.getPermissionInterpreter($rootScope.user);
+                    $rootScope.showingDevelopment = $rootScope.bayardConfig.developmentEnabled && permissions.isDevelopmentUser();
+                }
                 return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
             } else {
                 ConfigService.getImplementationConfig({}, function(config) {
