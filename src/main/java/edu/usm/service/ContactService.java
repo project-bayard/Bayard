@@ -139,4 +139,7 @@ public interface ContactService {
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Contact findContactWithDonation(Donation donation);
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    MemberInfo getContactMemberInfo(String id) throws NullDomainReference;
+
 }

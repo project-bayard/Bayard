@@ -10,8 +10,6 @@ import edu.usm.dto.*;
 import edu.usm.service.ContactService;
 import edu.usm.service.EncounterService;
 import edu.usm.service.EncounterTypeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,8 +35,6 @@ public class ContactController {
     @Autowired
     private EncounterTypeService encounterTypeService;
 
-
-    private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
 
     /**
@@ -213,15 +209,8 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/memberinfo")
     @JsonView(Views.MemberInfo.class)
-    public MemberInfo getMemberInfo(@PathVariable("id") String id) throws NullDomainReference{
-
-        Contact c = contactService.findById(id);
-        if (null == c) {
-            throw new NullDomainReference.NullContact(id);
-        }
-        //TODO
-        return c.getMemberInfo();
-
+    public MemberInfo getMemberInfo(@PathVariable("id") String id) throws NullDomainReference {
+        return contactService.getContactMemberInfo(id);
     }
 
     @ResponseStatus(HttpStatus.OK)

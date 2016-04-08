@@ -261,7 +261,7 @@ public class Contact extends BasicEntity implements Serializable {
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 

@@ -739,10 +739,24 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         }
     }
 
+    @Override
+    @Transactional
+    public MemberInfo getContactMemberInfo(String id) throws NullDomainReference {
+        Contact contact = findContact(id);
+        MemberInfo memberInfo = contact.getMemberInfo();
+        if (memberInfo == null) {
+            return null;
+        } else {
+            memberInfo.getStatus();
+            return memberInfo;
+        }
+
+    }
+
     private Contact findContact(String id) throws NullDomainReference {
         Contact contact = contactDao.findOne(id);
         if (contact == null) {
-            throw new NullDomainReference.NullContact();
+            throw new NullDomainReference.NullContact(id);
         }
         return contact;
     }
