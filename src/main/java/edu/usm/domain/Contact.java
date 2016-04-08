@@ -265,7 +265,7 @@ public class Contact extends BasicEntity implements Serializable {
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
-    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},

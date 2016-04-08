@@ -573,7 +573,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         Contact contactFromDb = contactService.findById(contact.getId());
-        assertFalse(contactFromDb.getAttendedEvents().contains(event));
+        assertFalse(contactService.getAllContactEvents(contactFromDb.getId()).contains(event));
 
         Event eventFromDb = eventService.findById(event.getId());
         assertFalse(eventFromDb.getAttendees().contains(contact));
@@ -692,7 +692,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertTrue(groups.contains(secondGroup));
 
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getAttendedEvents().contains(event));
+        assertTrue(contactService.getAllContactEvents(contact.getId()).contains(event));
     }
 
     @Test

@@ -3,6 +3,7 @@ package edu.usm.it;
 import edu.usm.it.controller.*;
 import edu.usm.it.dao.*;
 import edu.usm.it.service.*;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.springframework.test.context.ActiveProfiles;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
  * Created by scottkimball on 4/11/15.
  */
 
+@Ignore
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         ContactControllerTest.class,

@@ -73,7 +73,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces={"application/json"})
     @JsonView(Views.ContactDetails.class)
-    public Contact getContactById(@PathVariable("id") String id) throws NullDomainReference.NullContact {
+    public Contact getContactById(@PathVariable("id") String id) throws NullDomainReference {
         return contactService.findById(id);
     }
 
@@ -95,9 +95,8 @@ public class ContactController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/events")
     @JsonView(Views.EventList.class)
-    public Set<Event> getAttendedEvents(@PathVariable("id") String id) throws NullDomainReference{
-        Contact contact = contactService.findById(id);
-        return contact.getAttendedEvents(); //TODO
+    public Set<Event> getAttendedEvents(@PathVariable("id") String id) throws NullDomainReference {
+        return contactService.getAllContactEvents(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -235,7 +234,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/demographics")
     @JsonView(Views.DemographicDetails.class)
-    public Contact getDemographicDetails(@PathVariable("id") String id) throws NullDomainReference.NullContact {
+    public Contact getDemographicDetails(@PathVariable("id") String id) throws NullDomainReference {
         return contactService.findById(id);
     }
 
@@ -282,7 +281,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/groups/{groupId}")
     public Response removeContactFromGroup(@PathVariable("id") String id, @PathVariable("groupId") String groupId)
-            throws NullDomainReference.NullContact, NullDomainReference.NullGroup {
+            throws NullDomainReference.NullContact, NullDomainReference {
         contactService.removeFromGroup(id, groupId);
         return Response.successGeneric();
     }

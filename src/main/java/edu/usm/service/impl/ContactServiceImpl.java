@@ -47,7 +47,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
     @Override
-    public void attendEvent(String contactId, String eventId) throws NullDomainReference.NullContact, NullDomainReference.NullEvent {
+    @Transactional
+    public void attendEvent(String contactId, String eventId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Event event = eventService.findById(eventId);
 
@@ -75,7 +76,20 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public Contact findById(String id) throws NullDomainReference.NullContact  {
+    @Transactional
+    public Set<Event> getAllContactEvents(String contactId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        Set<Event> events = contact.getAttendedEvents();
+        if (events == null) {
+            events = new HashSet<>();
+        }
+        events.size();
+        return events;
+
+    }
+
+    @Override
+    public Contact findById(String id) throws NullDomainReference {
         return findContact(id);
     }
 
@@ -225,7 +239,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public void removeFromGroup(String contactId, String groupId) throws NullDomainReference.NullContact, NullDomainReference.NullGroup {
+    public void removeFromGroup(String contactId, String groupId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Group group = groupService.findById(groupId);
         if (group == null) {
@@ -239,7 +253,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public void addToGroup(String contactId, String groupId) throws NullDomainReference.NullContact, NullDomainReference.NullGroup {
+    public void addToGroup(String contactId, String groupId) throws NullDomainReference{
         Group group = groupService.findById(groupId);
         Contact contact = findContact(contactId);
         group.getTopLevelMembers().add(contact);
@@ -252,7 +266,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public Set<Group> getAllContactGroups(String contactId) throws NullDomainReference.NullContact {
+    public Set<Group> getAllContactGroups(String contactId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Set<Group> groups = contact.getGroups();
         if (groups == null) {
@@ -303,7 +317,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public Set<Donation> getAllContactDonations(String contactId) throws NullDomainReference.NullContact {
+    public Set<Donation> getAllContactDonations(String contactId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Set<Donation> donations = contact.getDonorInfo().getDonations();
         if (donations == null) {
@@ -418,7 +432,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact{
+    public void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Organization organization = organizationService.findById(organizationId);
         if (null == organization) {
@@ -447,7 +461,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization{
+    public void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Organization organization = organizationService.findById(organizationId);
         if (null == organization) {
@@ -468,7 +482,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public Set<Organization> getAllContactOrganizations(String id) throws NullDomainReference.NullContact {
+    public Set<Organization> getAllContactOrganizations(String id) throws NullDomainReference {
         Contact contact = findContact(id);
         Set<Organization> organizations = contact.getOrganizations();
         if (organizations == null) {
@@ -481,7 +495,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public Set<Committee> getAllContactCommittees(String contactId) throws NullDomainReference.NullContact {
+    public Set<Committee> getAllContactCommittees(String contactId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Set<Committee> committees = contact.getCommittees();
         if (committees == null) {
@@ -493,7 +507,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public void addContactToCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+    public void addContactToCommittee(String contactId, String committeeId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Committee committee = committeeService.findById(committeeId);
 
@@ -523,7 +537,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
     @Override
     @Transactional
-    public void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee{
+    public void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference {
         Contact contact = contactDao.findOne(contactId);
         if (null == contact) {
             throw new NullDomainReference.NullContact();
@@ -547,7 +561,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void updateBasicDetails(String contactId, Contact details) throws ConstraintViolation, NullDomainReference.NullContact {
+    public void updateBasicDetails(String contactId, Contact details) throws ConstraintViolation, NullDomainReference {
         Contact contact = findContact(contactId);
         contact.setFirstName(details.getFirstName());
         contact.setMiddleName(details.getMiddleName());
@@ -570,7 +584,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void unattendEvent(String contactId, String eventId) throws  ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEvent {
+    @Transactional
+    public void unattendEvent(String contactId, String eventId) throws  ConstraintViolation, NullDomainReference {
         Contact contact = findContact(contactId);
         Event event = eventService.findById(eventId);
 
@@ -587,7 +602,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void updateDemographicDetails(String contactId, Contact details) throws  NullDomainReference.NullContact {
+    public void updateDemographicDetails(String contactId, Contact details) throws  NullDomainReference {
         Contact contact = findContact(contactId);
         contact.setRace(details.getRace());
         contact.setEthnicity(details.getEthnicity());
@@ -600,8 +615,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void addEncounter(String contactId, String initiatorId, EncounterType encounterType, EncounterDto dto)
-            throws ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEncounterType {
+    public void addEncounter(String contactId, String initiatorId, EncounterType encounterType, EncounterDto dto) throws ConstraintViolation, NullDomainReference {
 
         Contact contact = findContact(contactId);
         Contact initiator = findContact(initiatorId);
@@ -641,7 +655,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public int getUpdatedAssessment(String contactId) throws NullDomainReference.NullContact {
+    public int getUpdatedAssessment(String contactId) throws NullDomainReference {
         /*Sets assessment to most recent encounter assessment */
         Contact contact = findContact(contactId);
         if (null == contact.getEncounters() || contact.getEncounters().isEmpty()) {
@@ -653,14 +667,14 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void updateNeedsFollowUp(String contactId, boolean followUp) throws NullDomainReference.NullContact{
+    public void updateNeedsFollowUp(String contactId, boolean followUp) throws NullDomainReference {
         Contact contact = findContact(contactId);
         contact.setNeedsFollowUp(followUp);
         update(contact);
     }
 
     @Override
-    public void removeEncounter(String contactId, String encounterId) throws NullDomainReference.NullContact, NullDomainReference.NullEncounter{
+    public void removeEncounter(String contactId, String encounterId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Encounter encounter = encounterService.findById(encounterId);
         contact.getEncounters().remove(encounter);
@@ -677,7 +691,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void removeInitiator(String initiatorId, String encounterId) throws NullDomainReference.NullContact, NullDomainReference.NullEncounter  {
+    public void removeInitiator(String initiatorId, String encounterId) throws NullDomainReference {
         Contact initiator = findContact(initiatorId);
         Encounter encounter = encounterService.findById(encounterId);
         initiator.getEncountersInitiated().remove(encounter);
@@ -686,14 +700,14 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void updateMemberInfo(String contactId, MemberInfo memberInfo) throws NullDomainReference.NullContact{
+    public void updateMemberInfo(String contactId, MemberInfo memberInfo) throws NullDomainReference {
         Contact contact = findContact(contactId);
         contact.setMemberInfo(memberInfo);
         update(contact);
     }
 
     @Override
-    public void updateAssessment(String contactId, int assessment) throws NullDomainReference.NullContact {
+    public void updateAssessment(String contactId, int assessment) throws NullDomainReference {
         Contact contact = findContact(contactId);
         contact.setAssessment(assessment);
         update(contact);
@@ -725,7 +739,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         }
     }
 
-    private Contact findContact(String id) throws NullDomainReference.NullContact {
+    private Contact findContact(String id) throws NullDomainReference {
         Contact contact = contactDao.findOne(id);
         if (contact == null) {
             throw new NullDomainReference.NullContact();

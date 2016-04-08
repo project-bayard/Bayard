@@ -57,8 +57,7 @@ public class EncounterServiceImpl extends BasicService implements EncounterServi
     * will also update that Contact's needsFollowUp and assessment fields
     */
     @Override
-    public void updateEncounter(Encounter existingEncounter,EncounterType encounterType,EncounterDto dto)
-            throws NullDomainReference.NullEncounter, NullDomainReference.NullContact, NullDomainReference.NullEncounterType{
+    public void updateEncounter(Encounter existingEncounter,EncounterType encounterType,EncounterDto dto) throws NullDomainReference {
 
         if (null == existingEncounter) {
             throw new NullDomainReference.NullEncounter();

@@ -15,8 +15,7 @@ public interface EncounterService {
     Encounter findById(String id);
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void updateEncounter(Encounter existingEncounter,EncounterType encounterType, EncounterDto dto)
-            throws NullDomainReference.NullEncounter, NullDomainReference.NullContact, NullDomainReference.NullEncounterType;
+    void updateEncounter(Encounter existingEncounter,EncounterType encounterType, EncounterDto dto) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     void delete(String id) throws NullDomainReference;
