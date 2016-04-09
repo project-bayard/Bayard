@@ -2733,11 +2733,6 @@
             }, 3000);
         };
 
-        $scope.showUpdateForm = function () {
-            $scope.updatingUser = true;
-            $scope.viewingUser = false;
-        };
-
         $scope.submitUpdate = function () {
 
             UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function (succ) {
@@ -2811,7 +2806,6 @@
         $scope.cancelPasswordChange = function () {
             $scope.violations = {};
             $scope.changingPassword = false;
-            $scope.viewingUser = true;
             $scope.passwordChange = {};
         };
 
