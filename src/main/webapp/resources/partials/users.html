@@ -87,7 +87,7 @@
                                 </div>
                                 <div ng-if="changingPassword">
                                     <form id="changePasswordForm" name="changePasswordForm" novalidate>
-                                        <div class="row">
+                                        <div class="row" ng-if="!userPermissionLevel.isSuperUser()">
                                             <div class="form-group col-md-12 required">
                                                 <label class="control-label">Current Password</label>
                                                 <input name="currentPassword" type="password" class="form-control" ng-model="passwordChange.currentPassword">
@@ -109,7 +109,7 @@
                                     </form>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <button class="btn btn-success btn-block bayard-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid">Ok</button>
+                                            <button class="btn btn-success btn-block bayard-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid || passwordChange.newPassword !== passwordChange.repeat">Ok</button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -155,7 +155,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3" ng-show="userPermissionLevel.isElevatedUser()">
+        <div class="col-md-4" ng-show="userPermissionLevel.isElevatedUser()">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-xs-12">

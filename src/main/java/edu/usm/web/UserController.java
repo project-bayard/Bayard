@@ -65,7 +65,11 @@ public class UserController {
         if (null == user) {
             throw new InvalidApiRequestException("User with ID " + userId + " does not exist.");
         }
-        userService.updatePassword(user, dto.getCurrentPassword(), dto.getNewPassword());
+        if (null == dto.getCurrentPassword()) {
+            userService.updateWithoutCurrentPassword(user, dto.getNewPassword());
+        } else {
+            userService.updatePassword(user, dto.getCurrentPassword(), dto.getNewPassword());
+        }
         return Response.successGeneric();
     }
 

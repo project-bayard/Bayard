@@ -93,11 +93,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(User user, String currentPassword, String newPassword) throws ConstraintViolation, SecurityConstraintException{
-
         boolean matches = new BCryptPasswordEncoder().matches(currentPassword, user.getPasswordHash());
         if (!matches) {
             throw new SecurityConstraintException("The current password does not match.");
         }
+        setNewPassword(user, newPassword);
+    }
+
+    @Override
+    public void updateWithoutCurrentPassword(User user, String newPassword) throws ConstraintViolation, SecurityConstraintException {
+        setNewPassword(user, newPassword);
+    }
+
+    private void setNewPassword(User user, String newPassword) throws ConstraintViolation{
         validatePassword(newPassword);
         user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
         updateUser(user);
