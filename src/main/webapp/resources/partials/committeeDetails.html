@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="page-header">
-        <h1>Committee Details: {{committee.name}}</h1>
+        <h3><a ng-href="#/committees">Committees</a> > {{committee.name}}</h3>
     </div>
     <div class="row">
         <div id="group-detail-left-panel" class="col-md-3">
@@ -19,6 +19,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <button class="btn btn-primary btn-block bayard-margined" ng-click="showUpdateForm()">Change Committee Name</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="!updatingCommittee && showingElevatedOptions">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-danger btn-block bayard-margined" ng-click="deleteCommittee()">Delete this Committee</button>
                     </div>
                 </div>
             </div>
