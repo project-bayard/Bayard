@@ -1,0 +1,14 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="panel panel-default">
+                <div class="panel-heading" ng-click="showingContactAdmin = !showingContactAdmin">
+                    <h3 class="panel-title">Admin</h3>
+                </div>
+                <div class="panel-body" ng-show="showingContactAdmin">
+                    <button class="btn btn-md btn-danger" ng-click="deleteContact()">Delete this Contact</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

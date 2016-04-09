@@ -34,7 +34,7 @@
                         <button class="btn btn-success bayard-margined" ng-click="showDonationForm()" ng-disabled="addingDonation">Add a Donation</button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" ng-if="showingElevatedOptions">
                     <div class="col-xs-2">
                         <button class="btn btn-danger" ng-click="deleteEvent()">Delete Event</button>
                     </div>

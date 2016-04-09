@@ -91,7 +91,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         Contact contact = findContact(id);
         /*Remove from organizations */
         if (contact.getOrganizations() != null) {
-            for(Organization organization : contact.getOrganizations()) {
+            Set<Organization> organizations = new HashSet<>(contact.getOrganizations());
+            for(Organization organization : organizations) {
                 organization.getMembers().remove(contact);
                 removeContactFromOrganization(contact.getId(),organization.getId());
             }
@@ -99,7 +100,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
         /*Remove from committees*/
         if (contact.getCommittees() != null) {
-            for(Committee committee : contact.getCommittees()) {
+            Set<Committee> committees = new HashSet<>(contact.getCommittees());
+            for(Committee committee : committees) {
                 committee.getMembers().remove(contact);
                 committeeService.update(committee.getId(),committee);
             }
@@ -107,14 +109,16 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
          /*Remove from attended events*/
         if (contact.getAttendedEvents() != null) {
-            for(Event event : contact.getAttendedEvents()) {
+            Set<Event> events = new HashSet<>(contact.getAttendedEvents());
+            for(Event event : events) {
                 event.getAttendees().remove(contact);
                 eventService.update(event);
             }
         }
 
         if (contact.getGroups() != null) {
-            for (Group group: contact.getGroups()) {
+            Set<Group> groups = new HashSet<>(contact.getGroups());
+            for (Group group: groups) {
                 group.getTopLevelMembers().remove(contact);
                 groupService.update(group);
             }
@@ -125,7 +129,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         }
 
         if (contact.getEncountersInitiated() != null) {
-            for (Encounter encounter : contact.getEncountersInitiated()) {
+            Set<Encounter> encounters = new HashSet<>(contact.getEncountersInitiated());
+            for (Encounter encounter : encounters) {
                 encounter.setInitiator(null);
                 encounterService.updateEncounter(encounter,null, null);
             }

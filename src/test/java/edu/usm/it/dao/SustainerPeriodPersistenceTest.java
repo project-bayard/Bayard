@@ -9,6 +9,7 @@ import edu.usm.repository.DonorInfoDao;
 import edu.usm.repository.SustainerPeriodDao;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,6 +110,7 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Ignore
     @Transactional
     public void testCreateMultipleSustainerPeriods() {
         contactDao.save(contact);

@@ -6,6 +6,7 @@ import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.*;
 import edu.usm.service.*;
 import org.junit.After;
@@ -151,6 +152,19 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Set<Contact> fromDb = contactService.findAll();
         assertEquals(fromDb.size(), 1);
 
+    }
+
+    @Test(expected = NullDomainReference.class)
+    @Transactional
+    public void testDeleteContact() throws Exception {
+        String contactId = contactService.create(contact);
+        assertNotNull(contactService.findById(contactId));
+
+        mockMvc.perform(delete("/contacts/"+contactId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        contactService.findById(contactId);
     }
 
 

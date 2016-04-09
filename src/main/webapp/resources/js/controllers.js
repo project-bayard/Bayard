@@ -55,7 +55,7 @@
         $location.path("/login");
     }]);
 
-    controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', function ($scope, ContactService, $location, $timeout) {
+    controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', '$window', function ($scope, ContactService, $location, $timeout, $window) {
 
         $scope.crudRequest = {
             success: false,
@@ -800,6 +800,17 @@
             $scope.viewSustainerPeriod = function(id) {
                 RouteChangeService.set($scope.contact);
                 $location.path("/sustainerPeriod/"+id);
+            };
+
+            $scope.deleteContact = function() {
+                var deleteConfirmed = $window.confirm('WARNING: Are you sure you want to delete this contact?');
+                if (deleteConfirmed) {
+                    ContactService.delete({id: $scope.contact.id}, function () {
+                        $location.path("/contacts");
+                    }, function (err) {
+                        console.log(err);
+                    });
+                }
             }
 
         }]);
