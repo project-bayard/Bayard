@@ -562,6 +562,11 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         contact.setCity(details.getCity());
         contact.setState(details.getState());
         contact.setZipCode(details.getZipCode());
+        contact.setMailingStreetAddress(details.getMailingStreetAddress());
+        contact.setMailingAptNumber(details.getMailingAptNumber());
+        contact.setMailingCity(details.getMailingCity());
+        contact.setMailingState(details.getMailingState());
+        contact.setMailingZipCode(details.getMailingZipCode());
         contact.setPhoneNumber1(details.getPhoneNumber1());
         contact.setPhoneNumber2(details.getPhoneNumber2());
         contact.setEmail(details.getEmail());

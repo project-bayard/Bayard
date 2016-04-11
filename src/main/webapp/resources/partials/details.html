@@ -11,6 +11,18 @@
                 <div class="panel-heading" ng-click="hideBasicDetails=!hideBasicDetails">
                     <h3 class="panel-title">Basic Details</h3>
                 </div>
+                <div class="row" ng-if="basicDetailsPanel.updateRequest.constraintViolation">
+                    <div class="col-xs-4">
+                        <div class="alert alert-dismissable alert-danger">
+                            {{basicDetailsPanel.updateRequest.constraintViolation}}
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <button class="btn btn-primary" ng-if="basicDetailsPanel.updateRequest.clashingDomainId" ng-click="viewDetails(basicDetailsPanel.updateRequest.clashingDomainId)">
+                            Go to existing contact
+                        </button>
+                    </div>
+                </div>
                 <div class="panel-body" ng-show="!hideBasicDetails">
                     <form id="contactDetailsForm" name="contactDetailsForm" novalidate>
                         <fieldset ng-disabled="!basicDetailsPanel.editingBasicDetails">
@@ -25,10 +37,8 @@
                                     <label class="control-label">Assessment</label>
                                     <input type="text" class="form-control  " ng-model="contact.assessment" ng-disabled="true">
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="alert alert-dismissable alert-danger" ng-if="basicDetailsPanel.updateRequest.constraintViolation">
-                                        {{basicDetailsPanel.updateRequest.constraintViolation}}
-                                    </div>
+                                <div class="col-xs-4 form-group" style="text-align: center">
+                                    <label class="control-label">Mailing Address</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -40,10 +50,9 @@
                                     <label class="control-label">Street Address</label>
                                     <input type="text" class="form-control  " ng-model="contact.streetAddress">
                                 </div>
-                                <div class="col-xs-4">
-                                    <button class="btn btn-primary" ng-show="basicDetailsPanel.updateRequest.clashingDomainId" ng-click="viewDetails(basicDetailsPanel.updateRequest.clashingDomainId)">
-                                        Go to existing contact
-                                    </button>
+                                <div class="form-group col-xs-4">
+                                    <label class="control-label">Street Address</label>
+                                    <input name="mailingStreetAddress" type="text" class="form-control" ng-model="contact.mailingStreetAddress">
                                 </div>
                             </div>
                             <div class="row">
@@ -55,7 +64,10 @@
                                     <label class="control-label">Apartment Number</label>
                                     <input type="text" class="form-control  " ng-model="contact.aptNumber">
                                 </div>
-
+                                <div class="form-group col-xs-4">
+                                    <label class="control-label">Apt Number</label>
+                                    <input name="mailingAptNumber" type="text" class="form-control" ng-model="contact.mailingAptNumber">
+                                </div>
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
@@ -67,7 +79,10 @@
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">City</label>
                                     <input type="text" class="form-control  " ng-model="contact.city">
-                                    </label>
+                                </div>
+                                <div class="form-group col-xs-4">
+                                    <label class="control-label">City</label>
+                                    <input name="mailingCity" type="text" class="form-control" ng-model="contact.mailingCity">
                                 </div>
                             </div>
                             <div class="row">
@@ -79,6 +94,10 @@
                                     <label class="control-label">State</label>
                                     <input type="text" class="form-control  " ui-mask="AA" ng-model="contact.state">
                                 </div>
+                                <div class="form-group col-xs-4">
+                                    <label class="control-label">State</label>
+                                    <input name="mailingState" type="text" ui-mask="AA" class="form-control" ng-model="contact.mailingState">
+                                </div>
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
@@ -88,6 +107,10 @@
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">Zip Code</label>
                                     <input type="text" class="form-control  " ui-mask="99999" ng-model="contact.zipCode">
+                                </div>
+                                <div class="form-group col-xs-4">
+                                    <label class="control-label">Zip</label>
+                                    <input name="mailingZipCode" type="text" ui-mask="99999" class="form-control" ng-model="contact.mailingZipCode">
                                 </div>
                             </div>
                             <div class="row">
@@ -110,7 +133,8 @@
                                             <input type="checkbox" ng-checked="contact.needsFollowUp" ng-model="contact.needsFollowUp"> This contact needs a follow up
                                         </label>
                                     </div>
-                                </div>                                <div class="col-xs-4">
+                                </div>
+                                <div class="col-xs-4">
                                     <label class="control-label">Phone Number 2</label>
                                     <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber2">
                                 </div>
