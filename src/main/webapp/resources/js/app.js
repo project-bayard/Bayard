@@ -193,6 +193,34 @@
         $rootScope.user = sessionStorage.getItem('bayard-user');
         $rootScope.eventSignInMode = false;
 
+        $rootScope.viewContactDetails = function (contactId) {
+            $location.path("/contacts/contact/" + contactId);
+        };
+
+        $rootScope.viewCommitteeDetails = function(id) {
+            $location.path("/committees/committee/" + id);
+        };
+
+        $rootScope.viewOrganizationDetails = function (id) {
+            $location.path("/organizations/organization/" + id);
+        };
+
+        $rootScope.viewGroupDetails = function (id) {
+            $location.path("/groups/group/" + id);
+        };
+
+        $rootScope.viewEventDetails = function (id) {
+            $location.path("/events/event/" + id);
+        };
+
+        $rootScope.viewFoundationDetails = function (id) {
+            $location.path("/foundations/" + id);
+        };
+
+        $rootScope.viewGrantDetails = function (id) {
+            $location.path("/grants/" + id);
+        };
+
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $rootScope.authenticated = sessionStorage.getItem('bayard-user-authenticated');
             var eventSignInMode = sessionStorage.getItem('event-sign-in-mode');

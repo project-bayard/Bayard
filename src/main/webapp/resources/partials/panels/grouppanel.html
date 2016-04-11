@@ -23,28 +23,26 @@
                         </div>
                     </div>
 
-                    <div ng-if="contact.groups.length > 0">
-                        <table class="bootstrap-table table table-striped table-hover table-responsive"
-                               data-toggle="table"
-                               data-pagination="true"
-                               data-search="true">
-                            <tr>
-                                <th>Name</th>
-                                <th>Remove from Group</th>
-                                <th>Details</th>
-                            </tr>
-                            <tr ng-repeat="group in contact.groups">
-                                <td>{{group.groupName}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromGroup(group.id)">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
-                                    </button>
-                                </td>
-                                <td><a class="btn btn-md btn-info" href="#/groups/group/{{group.id}}">View
-                                    Details</a></td>
-                                <td>
-                            </tr>
-                        </table>
+                    <div class="row" ng-if="contact.groups.length > 0">
+                        <div class="col-xs-8">
+                            <table class="bootstrap-table table table-striped table-hover table-responsive"
+                                   data-toggle="table"
+                                   data-pagination="true"
+                                   data-search="true">
+                                <tr>
+                                    <th class="col-xs-4">Group Name</th>
+                                    <th class="col-xs-1">Remove from Group</th>
+                                </tr>
+                                <tr ng-repeat="group in contact.groups" ng-click="viewGroupDetails(group.id)">
+                                    <td>{{group.groupName}}</td>
+                                    <td align="center">
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromGroup(group.id)">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

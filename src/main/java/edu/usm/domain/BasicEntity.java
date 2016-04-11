@@ -45,9 +45,11 @@ public abstract class BasicEntity {
     private String id;
 
     @Column
+    @JsonView({Views.ContactDetails.class})
     private String created;
 
     @Column
+    @JsonView({Views.ContactDetails.class})
     private String lastModified;
 
     @Column

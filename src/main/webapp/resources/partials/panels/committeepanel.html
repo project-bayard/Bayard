@@ -25,26 +25,26 @@
                     <div ng-show="committeeSuccess == false" class="alert alert-danger alert-dismissable" role="alert">Unable to
                         add Committee
                     </div>
-                    <div ng-if="contact.committees.length > 0">
-                        <table class="bootstrap-table table table-striped table-hover table-responsive"
-                               data-toggle="table"
-                               data-pagination="true"
-                               data-search="true">
-                            <tr>
-                                <th>Name</th>
-                                <th>Remove from Committee</th>
-                                <th>Details</th>
-                            </tr>
-                            <tr ng-repeat="committee in contact.committees">
-                                <td>{{committee.name}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromCommittee(committee.id)">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
-                                    </button>
-                                </td>
-                                <td><a class="btn btn-md btn-info" href="#/committees/committee/{{committee.id}}">View Details</a></td>
-                            </tr>
-                        </table>
+                    <div class="row" ng-if="contact.committees.length > 0">
+                        <div class="col-xs-8">
+                            <table class="bootstrap-table table table-striped table-hover table-responsive"
+                                   data-toggle="table"
+                                   data-pagination="true"
+                                   data-search="true">
+                                <tr>
+                                    <th class="col-xs-4">Committee Name</th>
+                                    <th class="col-xs-1">Remove from Committee</th>
+                                </tr>
+                                <tr ng-repeat="committee in contact.committees" ng-click="viewCommitteeDetails(committee.id)">
+                                    <td>{{committee.name}}</td>
+                                    <td align="center">
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromCommittee(committee.id)">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

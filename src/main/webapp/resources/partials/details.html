@@ -1,11 +1,11 @@
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-9">
             <div ng-if="basicDetailsPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Contact Updated</div>
             <div ng-if="basicDetailsPanel.updateRequest.failure" class="alert alert-danger alert-dismissable" role="alert">Error: {{errorMessage}}</div>
             <div class="page-header">
-                <h1>Contact Details</h1>
+                <h3><a ng-href="#/contacts">Contacts</a> > {{contact.firstName}} {{contact.lastName}}</h3>
+                <p class="help-block">Created: {{contact.created | date: 'MMMM d, y' }}, Last modified: {{contact.lastModified | date: 'MMMM d, y' }}</p>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading" ng-click="hideBasicDetails=!hideBasicDetails">

@@ -17,11 +17,11 @@
                     <div ng-if="newEncounterRequestFailure" class="alert alert-danger" role="alert">Failed to add encounter...</div>
                     <div ng-if="newEncounterRequestSuccess" class="alert alert-success alert-dismissable" role="alert">Encounter Added</div>
 
-                    <div ng-if="encountersTable.length > 0">
-                        <div ng-include src=" 'resources/partials/tables/encountersTable.html' "></div>
+                    <div class="row" ng-if="encountersTable.length > 0">
+                        <div class="col-xs-8">
+                            <div ng-include src=" 'resources/partials/tables/encountersTable.html' "></div>
+                        </div>
                     </div>
-
-
                 </div>
             </div>
         </div>

@@ -34,10 +34,6 @@
             console.log(err);
         });
 
-        $scope.viewContactDetails = function (contactId) {
-            $location.path("/contacts/contact/" + contactId);
-        };
-
     }]);
 
     controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', function($scope, $location, ConfigService) {
@@ -602,6 +598,9 @@
             };
 
             /* Committees */
+
+
+
             $scope.getContactCommittees = function () {
                 $scope.showingCommittees = !$scope.showingCommittees;
 
@@ -869,10 +868,6 @@
             };
 
             $scope.formHolder = {};
-
-            $scope.viewContactDetails = function (contactId) {
-                $location.path("/contacts/contact/" + contactId);
-            };
 
             var formatEvent = function (event) {
                 event.jsDate = DateFormatter.asDate(event.dateHeld);
@@ -1340,10 +1335,6 @@
                 })
             };
 
-            $scope.viewContactDetails = function (contactId) {
-                $location.path("/contacts/contact/" + contactId);
-            };
-
             $scope.showDonationForm = function() {
                 $scope.addingDonation = true;
             };
@@ -1425,14 +1416,6 @@
             }, function (err) {
                 console.log(err);
             });
-        };
-
-        $scope.viewContactDetails = function (id) {
-            $location.path("/contacts/contact/" + id);
-        };
-
-        $scope.viewEventDetails = function (id) {
-            $location.path("/events/event/" + id);
         };
 
         var setup = function () {
@@ -1731,10 +1714,6 @@
 
             $scope.formHolder = {};
             $scope.modelHolder = {};
-
-            $scope.viewContactDetails = function (contactId) {
-                $location.path("/contacts/contact/" + contactId);
-            };
 
             var establishGroupMembers = function () {
                 GroupService.getAllContacts({id: $scope.modelHolder.groupModel.id}, function (contacts) {
@@ -2596,10 +2575,6 @@
 
         $scope.totalElements = 0;
         $scope.numberElementsShown = 0;
-
-        $scope.viewContactDetails = function (contactId) {
-            $location.path("/contacts/contact/" + contactId);
-        };
 
         $scope.viewMoreDonors = function() {
             $scope.contactTable.quantity += defaultPageSize;

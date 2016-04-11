@@ -27,30 +27,28 @@
                         </div>
                     </div>
 
-                    <div ng-if="contact.organizations.length > 0">
-                        <table class="bootstrap-table table table-striped table-hover table-responsive"
-                               data-toggle="table"
-                               data-pagination="true"
-                               data-search="true">
-                            <tr>
-                                <th>Name</th>
-                                <th>Remove from Organization</th>
-                                <th>Details</th>
-                            </tr>
+                    <div class="row" ng-if="contact.organizations.length > 0">
+                        <div class="col-xs-8">
+                            <table class="bootstrap-table table table-striped table-hover table-responsive"
+                                   data-toggle="table"
+                                   data-pagination="true"
+                                   data-search="true">
+                                <tr>
+                                    <th class="col-xs-4">Org. Name</th>
+                                    <th class="col-xs-1">Remove from Organization</th>
+                                </tr>
 
-                            <tr ng-repeat="organization in contact.organizations">
-                                <td>{{organization.name}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromOrganization(organization.id)">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
-                                    </button>
-                                </td>
-                                <td><a class="btn btn-md btn-info" href="#/organizations/organization/{{organization.id}}">View
-                                    Details</a></td>
-                            </tr>
-                        </table>
+                                <tr ng-repeat="organization in contact.organizations" ng-click="viewOrganizationDetails(organization.id)">
+                                    <td>{{organization.name}}</td>
+                                    <td align="center">
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="removeFromOrganization(organization.id)">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-
                 </div>
             </div>
 
