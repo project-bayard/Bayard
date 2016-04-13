@@ -51,9 +51,6 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private boolean requiresFollowUp;
 
-    @OneToOne(fetch=FetchType.LAZY)
-    private Form form;
-
     @Override
     public int compareTo(Encounter o2) {
         if (this.getEncounterDate() == null && o2.getEncounterDate() == null) {
@@ -87,14 +84,6 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.initiator = initiator;
         this.encounterDate = date;
         this.type = type;
-    }
-
-    public Form getForm() {
-        return form;
-    }
-
-    public void setForm(Form form) {
-        this.form = form;
     }
 
     /**
