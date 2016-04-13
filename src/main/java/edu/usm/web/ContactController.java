@@ -26,7 +26,7 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
-    
+
     /**
      * Returns a set of all existing contacts.
      * @return {@link Set} of {@link Contact}

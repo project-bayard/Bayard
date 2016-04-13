@@ -277,7 +277,7 @@ public class Contact extends BasicEntity implements Serializable {
     @SortNatural
     private SortedSet<Encounter> encounters = new TreeSet<>();
 
-    @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="initiator", fetch = FetchType.LAZY)
     @SortNatural
     private SortedSet<Encounter> encountersInitiated;
 
