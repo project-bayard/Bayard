@@ -8,7 +8,7 @@
         <th>Date</th>
         <th>Committee</th>
         <th># Attendees</th>
-        <th ng-if="showingEvents">Remove from Event?</th>
+        <th ng-if="showingEvents">Remove from Event</th>
     </tr>
     <tr ng-repeat="event in eventsTable" ng-click="viewEventDetails(event.id)">
         <td>{{event.name}}</td>
