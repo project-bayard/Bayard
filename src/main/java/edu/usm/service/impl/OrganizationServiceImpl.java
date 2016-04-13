@@ -70,7 +70,7 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
 
     @Override
     @Transactional
-    public void delete(String id) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact {
+    public void delete(String id) throws NullDomainReference {
         if (id == null) {
             throw new NullDomainReference.NullOrganization();
         }

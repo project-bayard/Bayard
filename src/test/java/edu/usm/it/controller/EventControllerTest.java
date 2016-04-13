@@ -178,7 +178,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         assertEquals("Updated Name", eventFromDb.getName());
 
         Contact contactFromDb = contactService.findById(attendee.getId());
-        assertTrue(contactFromDb.getAttendedEvents().contains(eventFromDb));
+        assertTrue(contactService.getAllContactEvents(contactFromDb.getId()).contains(eventFromDb));
 
     }
 
@@ -228,7 +228,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
         Assert.assertEquals("New Committee", eventFromDb.getCommittee().getName());
 
         Contact contactFromDb = contactService.findById(attendee.getId());
-        assertTrue(contactFromDb.getAttendedEvents().contains(eventFromDb));
+        assertTrue(contactService.getAllContactEvents(contactFromDb.getId()).contains(eventFromDb));
 
     }
 
