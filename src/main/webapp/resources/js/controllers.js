@@ -1297,6 +1297,11 @@
             };
 
             establishDetails($routeParams.id);
+
+            $scope.showUpdateForm = function() {
+                $scope.updatingOrganizationDetails = true;
+            };
+
             $scope.cancelUpdate = function () {
                 $scope.updatingOrganizationDetails = false;
                 establishDetails($scope.modelHolder.organizationModel.id);
