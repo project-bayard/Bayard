@@ -1,10 +1,7 @@
 package edu.usm.service.impl;
 
 import edu.usm.domain.*;
-import edu.usm.domain.exception.ConstraintMessage;
-import edu.usm.domain.exception.ConstraintViolation;
-import edu.usm.domain.exception.NotFoundException;
-import edu.usm.domain.exception.NullDomainReference;
+import edu.usm.domain.exception.*;
 import edu.usm.dto.*;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.DonorInfoDao;
@@ -17,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -43,6 +41,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     private DonationService donationService;
     @Autowired
     private SustainerPeriodService sustainerPeriodService;
+    @Autowired
+    private EncounterTypeService encounterTypeService;
 
     private Logger logger = LoggerFactory.getLogger(ContactServiceImpl.class);
 
@@ -138,17 +138,15 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
             contact.getEncounters().clear();
         }
 
+
         if (contact.getEncountersInitiated() != null) {
-            for (Encounter encounter : contact.getEncountersInitiated()) {
-                encounter.setInitiator(null);
-                encounterService.updateEncounter(encounter,null, null);
-            }
             contact.getEncountersInitiated().clear();
         }
 
         updateLastModified(contact);
         contactDao.delete(contact);
     }
+
 
     private void update(Contact contact) {
         updateLastModified(contact);
@@ -615,10 +613,11 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public void addEncounter(String contactId, String initiatorId, EncounterType encounterType, EncounterDto dto) throws ConstraintViolation, NullDomainReference {
-
+    @Transactional
+    public void addEncounter(String contactId,  EncounterDto dto) throws ConstraintViolation, NullDomainReference {
         Contact contact = findContact(contactId);
-        Contact initiator = findContact(initiatorId);
+        Contact initiator = findContact(dto.getInitiatorId());
+        EncounterType encounterType = encounterTypeService.findById(dto.getType());
 
         if (!initiator.isInitiator()) {
             throw new ConstraintViolation(ConstraintMessage.ENCOUNTER_CONTACT_NOT_INITIATOR);
@@ -655,6 +654,27 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
+    @Transactional
+    public void updateEncounter(String contactId, String encounterId, EncounterDto dto) throws ConstraintViolation, NullDomainReference, InvalidApiRequestException {
+        encounterService.updateEncounter(contactId, encounterId, dto);
+    }
+
+
+    @Override
+    @Transactional
+    public SortedSet<Encounter> getAllContactEncounters(String contactId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        SortedSet<Encounter> encounters = contact.getEncounters();
+
+        if (encounters == null) {
+            encounters = new TreeSet<>();
+        }
+
+        encounters.size();
+        return encounters;
+    }
+
+    @Override
     public int getUpdatedAssessment(String contactId) throws NullDomainReference {
         /*Sets assessment to most recent encounter assessment */
         Contact contact = findContact(contactId);
@@ -674,6 +694,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
+    @Transactional
     public void removeEncounter(String contactId, String encounterId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Encounter encounter = encounterService.findById(encounterId);

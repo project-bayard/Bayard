@@ -9,10 +9,7 @@ import edu.usm.dto.DtoTransformer;
 import edu.usm.dto.EncounterDto;
 import edu.usm.dto.SignInDto;
 import edu.usm.repository.SustainerPeriodDao;
-import edu.usm.service.CommitteeService;
-import edu.usm.service.ContactService;
-import edu.usm.service.DonationService;
-import edu.usm.service.OrganizationService;
+import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +43,9 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
     @Autowired
     SustainerPeriodDao sustainerPeriodDao;
+
+    @Autowired
+    EncounterTypeService encounterTypeService;
 
     private Contact contact;
     private Contact contact2;
@@ -102,6 +102,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         organizationService.deleteAll();
         committeeService.deleteAll();
         donationService.deleteAll();
+        encounterTypeService.deleteAll();
     }
 
     @Test
@@ -263,8 +264,12 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         EncounterDto dto = new EncounterDto();
         dto.setEncounterDate("2012-01-01");
         dto.setNotes("Notes!");
+        dto.setInitiatorId(initiatorId);
         EncounterType encounterType = new EncounterType("CALL");
-        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, dto);
+        encounterTypeService.create(encounterType);
+
+        dto.setType(encounterType.getId());
+        contactService.addEncounter(contact.getId(), dto);
 
         Contact fromDb = contactService.findById(contact.getId());
 
@@ -286,8 +291,11 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         EncounterDto dto = new EncounterDto();
         dto.setNotes("Notes!");
+        dto.setInitiatorId(contact2.getId());
         EncounterType encounterType = new EncounterType("CALL");
-        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, dto);
+        encounterTypeService.create(encounterType);
+        dto.setType(encounterType.getId());
+        contactService.addEncounter(contact.getId(), dto);
 
     }
 
@@ -298,7 +306,8 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         EncounterDto dto = new EncounterDto();
         dto.setNotes("Notes!");
-        contactService.addEncounter(contact.getId(), contact2.getId(), null, dto);
+        dto.setInitiatorId(contact2.getId());
+        contactService.addEncounter(contact.getId(), dto);
 
     }
 
@@ -311,7 +320,10 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         EncounterDto dto = new EncounterDto();
         dto.setNotes("Notes!");
         EncounterType encounterType = new EncounterType("CALL");
-        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, dto);
+        encounterTypeService.create(encounterType);
+        dto.setType(encounterType.getName());
+        dto.setInitiatorId(contact2.getId());
+        contactService.addEncounter(contact.getId(), dto);
 
     }
 
@@ -326,11 +338,13 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         firstEncounter.setNotes("Notes!");
         firstEncounter.setAssessment(10);
         firstEncounter.setRequiresFollowUp(false);
+        firstEncounter.setInitiatorId(contact2.getId());
 
         EncounterType encounterType = new EncounterType("CALL");
+        encounterTypeService.create(encounterType);
+        firstEncounter.setType(encounterType.getId());
 
-
-        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, firstEncounter);
+        contactService.addEncounter(contact.getId(), firstEncounter);
 
         EncounterDto secondEncounter = new EncounterDto();
         int mostRecentAssessment = 5;
@@ -339,15 +353,19 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         secondEncounter.setAssessment(mostRecentAssessment);
         secondEncounter.setNotes("More notes!");
         secondEncounter.setRequiresFollowUp(mostRecentFollowUpIndicator);
+        secondEncounter.setType(encounterType.getId());
+        secondEncounter.setInitiatorId(contact2.getId());
 
-        contactService.addEncounter(contact.getId(), contact2.getId(), encounterType, secondEncounter);
+        contactService.addEncounter(contact.getId(), secondEncounter);
 
         EncounterDto thirdEncounter = new EncounterDto();
         thirdEncounter.setEncounterDate("2013-01-01");
         thirdEncounter.setRequiresFollowUp(false);
         thirdEncounter.setAssessment(7);
+        thirdEncounter.setInitiatorId(contact2.getId());
+        thirdEncounter.setType(encounterType.getId());
 
-        contactService.addEncounter(contact.getId(), contact2.getId(),encounterType, thirdEncounter);
+        contactService.addEncounter(contact.getId(), thirdEncounter);
 
         Contact fromDb = contactService.findById(id);
         assertEquals(mostRecentAssessment, fromDb.getAssessment());

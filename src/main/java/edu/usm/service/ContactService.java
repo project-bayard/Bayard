@@ -2,6 +2,7 @@ package edu.usm.service;
 
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
@@ -11,6 +12,7 @@ import edu.usm.dto.SustainerPeriodDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -73,8 +75,13 @@ public interface ContactService {
     void updateDemographicDetails(String contactId, Contact details) throws  NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addEncounter (String contactId, String initiatorId,EncounterType encounterType, EncounterDto dto)
-            throws ConstraintViolation, NullDomainReference.NullContact, NullDomainReference;
+    void addEncounter (String contactId, EncounterDto dto) throws ConstraintViolation, NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void updateEncounter (String contactId, String encounterId, EncounterDto dto) throws ConstraintViolation, NullDomainReference, InvalidApiRequestException;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    SortedSet<Encounter> getAllContactEncounters(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateMemberInfo(String contactId, MemberInfo memberInfo) throws  NullDomainReference;

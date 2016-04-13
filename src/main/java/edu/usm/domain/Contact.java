@@ -273,7 +273,7 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Event> attendedEvents;
 
-    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @SortNatural
     private SortedSet<Encounter> encounters = new TreeSet<>();
 

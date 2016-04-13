@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -360,16 +361,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .content(json))
                 .andExpect(status().isOk());
 
-        Contact contactFromDb = contactService.findById(id);
-        Encounter encounter = contactFromDb.getEncounters().first();
+        SortedSet<Encounter> encounters = contactService.getAllContactEncounters(id);
+        Encounter encounter = encounters.first();
 
         mockMvc.perform(delete("/contacts/" + id + "/encounters/" + encounter.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        contactFromDb = contactService.findById(id);
-        assertEquals(0, contactFromDb.getEncounters().size());
+        encounters = contactService.getAllContactEncounters(id);
+        assertEquals(0, encounters.size());
     }
 
     @Test
