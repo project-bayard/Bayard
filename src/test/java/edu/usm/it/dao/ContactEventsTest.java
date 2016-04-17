@@ -3,13 +3,13 @@ package edu.usm.it.dao;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.Contact;
 import edu.usm.domain.Event;
-import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.EventDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 
@@ -57,23 +57,9 @@ public class ContactEventsTest extends WebAppConfigurationAware{
         eventDao.deleteAll();
     }
 
-    //Cannot be marked as transactional in order for join-table to be populated / hibernate cascading to occur
-    @Test
-    public void testAttendEvent() throws Exception {
-        contactDao.save(contact);
-        eventDao.save(event);
-
-        contact.setAttendedEvents(new HashSet<>());
-        contact.getAttendedEvents().add(event);
-        contactDao.save(contact);
-
-        Event persistedEvent = eventDao.findOne(event.getId());
-        assertNotNull(persistedEvent.getAttendees());
-        assertEquals(1, persistedEvent.getAttendees().size());
-
-    }
 
     @Test
+    @Transactional
     public void testAttendDuplicateEvent() throws Exception {
         contactDao.save(contact);
         eventDao.save(event);
@@ -91,6 +77,7 @@ public class ContactEventsTest extends WebAppConfigurationAware{
     }
 
     @Test
+    @Transactional
     public void testAddContactToEvent() throws Exception {
 
         eventDao.save(event);
@@ -99,10 +86,12 @@ public class ContactEventsTest extends WebAppConfigurationAware{
         event.setAttendees(new HashSet<>());
         event.getAttendees().add(contact);
         eventDao.save(event);
-
+        contact.setAttendedEvents(new HashSet<>());
+        contact.getAttendedEvents().add(event);
+        contactDao.save(contact);
         contact = contactDao.findOne(contact.getId());
         assertNotNull(contact.getAttendedEvents());
-        assertEquals(0, contact.getAttendedEvents().size());
+        assertEquals(1, contact.getAttendedEvents().size());
 
     }
 

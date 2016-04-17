@@ -167,6 +167,13 @@ public abstract class NullDomainReference extends Exception {
 
     }
 
+    public static class NullMemberInfo extends NullDomainReference {
+        public NullMemberInfo(String id) {
+            super("Membership information for Contact with id:" + id + " does not exist");
+        }
+    }
+
+
     protected static String messageConstructor(String domainClass, String id) {
         return domainClass+" with id : "+id+" does not exist";
     }

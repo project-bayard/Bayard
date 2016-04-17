@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -375,16 +376,16 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .content(json))
                 .andExpect(status().isOk());
 
-        Contact contactFromDb = contactService.findById(id);
-        Encounter encounter = contactFromDb.getEncounters().first();
+        SortedSet<Encounter> encounters = contactService.getAllContactEncounters(id);
+        Encounter encounter = encounters.first();
 
         mockMvc.perform(delete("/contacts/" + id + "/encounters/" + encounter.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        contactFromDb = contactService.findById(id);
-        assertEquals(0, contactFromDb.getEncounters().size());
+        encounters = contactService.getAllContactEncounters(id);
+        assertEquals(0, encounters.size());
     }
 
     @Test
@@ -588,10 +589,10 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         Contact contactFromDb = contactService.findById(contact.getId());
-        assertFalse(contactFromDb.getAttendedEvents().contains(event));
+        assertFalse(contactService.getAllContactEvents(contactFromDb.getId()).contains(event));
 
         Event eventFromDb = eventService.findById(event.getId());
-        assertFalse(eventFromDb.getAttendees().contains(contact));
+        assertFalse(eventService.getAllAttendees(event.getId()).contains(contact));
 
     }
 
@@ -707,7 +708,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertTrue(groups.contains(secondGroup));
 
         contact = contactService.findById(contact.getId());
-        assertTrue(contact.getAttendedEvents().contains(event));
+        assertTrue(contactService.getAllContactEvents(contact.getId()).contains(event));
     }
 
     @Test

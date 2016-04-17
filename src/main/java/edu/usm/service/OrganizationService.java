@@ -36,7 +36,7 @@ public interface OrganizationService {
      * @throws NullDomainReference.NullContact
      */
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void delete (String id) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
+    void delete (String id) throws NullDomainReference;
 
     /**
      * Updates the details of an {@link Organization}. Assumes that a null set of members is an omission

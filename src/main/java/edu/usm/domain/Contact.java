@@ -301,11 +301,11 @@ public class Contact extends BasicEntity implements Serializable {
     @JoinColumn(name = "donorinfo_id")
     private DonorInfo donorInfo;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @JoinColumn(name = "memberinfo_id")
     private MemberInfo memberInfo;
 
-    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
             name="contact_events",
             joinColumns={@JoinColumn(name="contact_id", referencedColumnName = "id")},
@@ -313,11 +313,11 @@ public class Contact extends BasicEntity implements Serializable {
     )
     private Set<Event> attendedEvents;
 
-    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy="contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @SortNatural
     private SortedSet<Encounter> encounters = new TreeSet<>();
 
-    @OneToMany(mappedBy="initiator", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="initiator", fetch = FetchType.LAZY)
     @SortNatural
     private SortedSet<Encounter> encountersInitiated;
 

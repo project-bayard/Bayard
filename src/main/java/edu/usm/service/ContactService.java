@@ -2,6 +2,7 @@ package edu.usm.service;
 
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
@@ -11,6 +12,7 @@ import edu.usm.dto.SustainerPeriodDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -19,13 +21,16 @@ import java.util.Set;
 public interface ContactService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void attendEvent(String contactId, String eventId) throws NullDomainReference.NullContact, NullDomainReference.NullEvent;
+    void attendEvent(String contactId, String eventId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void unattendEvent (String contactId, String eventId) throws ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEvent;
+    void unattendEvent (String contactId, String eventId) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Contact findById (String id) throws NullDomainReference.NullContact;
+    Set<Event> getAllContactEvents(String contactId) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Contact findById (String id) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Contact> findAll();
@@ -46,59 +51,64 @@ public interface ContactService {
     Set<Contact> findAllInitiators();
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference.NullOrganization, NullDomainReference.NullContact;
+    void addContactToOrganization(String contactId, String organizationId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference.NullContact, NullDomainReference.NullOrganization;
+    void removeContactFromOrganization(String contactId, String organizationId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Set<Organization> getAllContactOrganizations(String contactId) throws NullDomainReference.NullContact;
+    Set<Organization> getAllContactOrganizations(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addContactToCommittee(String contactId, String committeeId) throws  NullDomainReference.NullContact, NullDomainReference.NullCommittee;
+    void addContactToCommittee(String contactId, String committeeId) throws  NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference.NullContact, NullDomainReference.NullCommittee;
+    void removeContactFromCommittee(String contactId, String committeeId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Set<Committee> getAllContactCommittees(String contactId) throws NullDomainReference.NullContact;
+    Set<Committee> getAllContactCommittees(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateBasicDetails(String contactId, Contact details) throws  ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void updateDemographicDetails(String contactId, Contact details) throws  NullDomainReference.NullContact;
+    void updateDemographicDetails(String contactId, Contact details) throws  NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addEncounter (String contactId, String initiatorId,EncounterType encounterType, EncounterDto dto)
-            throws ConstraintViolation, NullDomainReference.NullContact, NullDomainReference.NullEncounterType;
+    void addEncounter (String contactId, EncounterDto dto) throws ConstraintViolation, NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void updateMemberInfo(String contactId, MemberInfo memberInfo) throws  NullDomainReference.NullContact;
+    void updateEncounter (String contactId, String encounterId, EncounterDto dto) throws ConstraintViolation, NullDomainReference, InvalidApiRequestException;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeEncounter(String contactId, String encounterId)  throws NullDomainReference.NullContact, NullDomainReference.NullEncounter;
+    SortedSet<Encounter> getAllContactEncounters(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeInitiator(String initiatorId, String encounterId)  throws NullDomainReference.NullContact, NullDomainReference.NullEncounter;
+    void updateMemberInfo(String contactId, MemberInfo memberInfo) throws  NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void updateNeedsFollowUp(String contactId, boolean followUp) throws NullDomainReference.NullContact;
+    void removeEncounter(String contactId, String encounterId)  throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    int getUpdatedAssessment(String contactId) throws NullDomainReference.NullContact;
+    void removeInitiator(String initiatorId, String encounterId)  throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void updateAssessment(String contactId, int assessment) throws NullDomainReference.NullContact ;
+    void updateNeedsFollowUp(String contactId, boolean followUp) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeFromGroup(String contactId, String groupId) throws NullDomainReference.NullContact, NullDomainReference.NullGroup;
+    int getUpdatedAssessment(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void addToGroup(String contactId, String groupId) throws NullDomainReference.NullContact, NullDomainReference.NullGroup;
+    void updateAssessment(String contactId, int assessment) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Set<Group> getAllContactGroups(String contactId) throws NullDomainReference.NullContact;
+    void removeFromGroup(String contactId, String groupId) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    void addToGroup(String contactId, String groupId) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Group> getAllContactGroups(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Contact findByFirstEmailPhone(SignInDto signInDto) throws NotFoundException;
@@ -135,5 +145,8 @@ public interface ContactService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Contact findContactWithDonation(Donation donation);
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    MemberInfo getContactMemberInfo(String id) throws NullDomainReference;
 
 }

@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
@@ -109,11 +108,25 @@ public class SustainerPeriodPersistenceTest extends WebAppConfigurationAware{
         assertNull(sustainerPeriod);
     }
 
-    @Test
     @Ignore
     @Transactional
     public void testCreateMultipleSustainerPeriods() {
+        DonorInfo donorInfo = new DonorInfo();
+        donorInfo.setCurrentSustainer(true);
+
+        Contact contact = new Contact();
+        contact.setFirstName("Test");
+        contact.setEmail("Test Email");
+
+        SustainerPeriod sustainerPeriod = new SustainerPeriod();
+        sustainerPeriod.setPeriodStartDate(LocalDate.of(2015, Month.JANUARY, 1));
+        sustainerPeriod.setMonthlyAmount(50);
+
+        sustainerPeriod.setDonorInfo(donorInfo);
+        donorInfo.addSustainerPeriod(sustainerPeriod);
+        contact.setDonorInfo(donorInfo);
         contactDao.save(contact);
+
         contact = contactDao.findOne(contact.getId());
 
         SustainerPeriod secondPeriod = new SustainerPeriod();

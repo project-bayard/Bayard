@@ -18,7 +18,7 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
 
     public static final int DEFAULT_ASSESSMENT = 0;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "contact_id")
     @JsonView(Views.ContactEncounterDetails.class)
@@ -33,7 +33,7 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String notes;
 
-    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.EAGER )
     @JoinColumn(name = "initiator_id")
     @JsonView(Views.ContactEncounterDetails.class)
     private Contact initiator;
@@ -50,9 +50,6 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     @Column
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private boolean requiresFollowUp;
-
-    @OneToOne(fetch=FetchType.LAZY)
-    private Form form;
 
     @Override
     public int compareTo(Encounter o2) {
@@ -87,14 +84,6 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
         this.initiator = initiator;
         this.encounterDate = date;
         this.type = type;
-    }
-
-    public Form getForm() {
-        return form;
-    }
-
-    public void setForm(Form form) {
-        this.form = form;
     }
 
     /**

@@ -258,6 +258,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional
     public void testCreateEventWithDonation() {
         Event e = new Event();
         e.setName("Test Event");
@@ -289,8 +290,8 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional
     public void testUpdateEventDonation() {
-//        donationDao.save(donation);
         Event e = new Event();
         e.setName("Test Event");
         e.setDateHeld("2016-12-12");
