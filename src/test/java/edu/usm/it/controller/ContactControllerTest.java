@@ -577,7 +577,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         assertFalse(contactService.getAllContactEvents(contactFromDb.getId()).contains(event));
 
         Event eventFromDb = eventService.findById(event.getId());
-        assertFalse(eventFromDb.getAttendees().contains(contact));
+        assertFalse(eventService.getAllAttendees(event.getId()).contains(contact));
 
     }
 

@@ -32,12 +32,12 @@ public class Event extends Aggregation implements Serializable {
     @JsonView({Views.EventList.class})
     private String location;
 
-    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "committee_id")
     @JsonView({Views.EventList.class})
     private Committee committee;
 
-    @ManyToMany(mappedBy = "attendedEvents", cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "attendedEvents", fetch = FetchType.LAZY)
     @JsonView({Views.EventList.class,
             Views.GroupDetails.class})
     private Set<Contact> attendees;
@@ -48,7 +48,7 @@ public class Event extends Aggregation implements Serializable {
             Views.CommitteeDetails.class})
     private String dateHeld;
 
-    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Set<Donation> donations;
 

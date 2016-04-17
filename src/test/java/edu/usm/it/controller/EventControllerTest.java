@@ -3,10 +3,6 @@ package edu.usm.it.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.usm.config.WebAppConfigurationAware;
-import edu.usm.domain.Committee;
-import edu.usm.domain.Contact;
-import edu.usm.domain.Donation;
-import edu.usm.domain.Event;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DtoTransformer;
@@ -15,7 +11,6 @@ import edu.usm.service.CommitteeService;
 import edu.usm.service.ContactService;
 import edu.usm.service.DonationService;
 import edu.usm.service.EventService;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,9 +99,6 @@ public class EventControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.[0].name", is(event.getName())))
                 .andExpect(jsonPath("$.[0].location", is(event.getLocation())))
                 .andExpect(jsonPath("$.[0].dateHeld", is(event.getDateHeld())))
-                .andExpect(jsonPath("$.[0].attendees.[0].id", is(contact.getId())))
-                .andExpect(jsonPath("$.[0].attendees.[0].firstName", is(contact.getFirstName())))
-                .andExpect(jsonPath("$.[0].attendees.[0].lastName", is(contact.getLastName())))
                 .andReturn();
 
     }
@@ -174,7 +166,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
                 .andReturn();
 
         Event eventFromDb = eventService.findById(eventId);
-        assertTrue(eventFromDb.getAttendees().contains(attendee));
+        assertTrue(eventService.getAllAttendees(eventId).contains(attendee));
         assertEquals("Updated Name", eventFromDb.getName());
 
         Contact contactFromDb = contactService.findById(attendee.getId());
@@ -223,10 +215,10 @@ public class EventControllerTest extends WebAppConfigurationAware {
                 .andReturn();
 
         Event eventFromDb = eventService.findById(eventId);
-        assertTrue(eventFromDb.getAttendees().contains(attendee));
+        assertTrue(eventService.getAllAttendees(eventId).contains(attendee));
         assertEquals("Updated Name", eventFromDb.getName());
-        Assert.assertEquals("New Committee", eventFromDb.getCommittee().getName());
-
+        Committee committeeFromDb = eventService.getEventCommittee(eventId);
+        assertEquals("New Committee", committeeFromDb.getName());
         Contact contactFromDb = contactService.findById(attendee.getId());
         assertTrue(contactService.getAllContactEvents(contactFromDb.getId()).contains(eventFromDb));
 

@@ -123,7 +123,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         if (contact.getAttendedEvents() != null) {
             for(Event event : contact.getAttendedEvents()) {
                 event.getAttendees().remove(contact);
-                eventService.update(event);
+                eventService.removeContactFromEvent(contact.getId(),event.getId());
             }
         }
 
@@ -595,7 +595,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
             contact.getAttendedEvents().remove(event);
             event.getAttendees().remove(contact);
             update(contact);
-            eventService.update(event);
+            eventService.removeContactFromEvent(contactId,eventId);
         }
     }
 
