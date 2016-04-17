@@ -99,27 +99,30 @@ public class EventServiceTest extends WebAppConfigurationAware {
     @Test
     public void testUpdateEvent() throws ConstraintViolation, NullDomainReference {
         eventService.create(event);
-        event.setName("New Name");
-        event.setCommittee(null);
-        eventService.update(event);
+        EventDto dto = new EventDto();
+        dto.setName("New Name");
+        dto.setDateHeld(event.getDateHeld());
+        eventService.update(event.getId(), dto);
 
         Event fromDb = eventService.findById(event.getId());
         assertEquals("New Name", fromDb.getName());
-        assertNull(fromDb.getCommittee());
     }
 
     @Test(expected = ConstraintViolation.class)
     public void testUpdateEventNullName() throws ConstraintViolation, NullDomainReference {
         eventService.create(event);
-        event.setName(null);
-        eventService.update(event);
+        EventDto dto = new EventDto();
+        dto.setName(null);
+        eventService.update(event.getId(), dto);
     }
 
     @Test(expected = ConstraintViolation.class)
-    public void testUpdateEventNullDate() throws ConstraintViolation, NullDomainReference {
+    public void testUpdateEventNullDate() throws Exception {
         eventService.create(event);
-        event.setDateHeld(null);
-        eventService.update(event);
+        EventDto dto = new EventDto();
+        dto.setDateHeld(null);
+        dto.setName(event.getName());
+        eventService.update(event.getId(), dto);
     }
 
     @Test(expected = ConstraintViolation.class)
@@ -135,9 +138,12 @@ public class EventServiceTest extends WebAppConfigurationAware {
         Event duplicate = generateDuplicate(event);
         duplicate.setName("Initially unique name");
         eventService.create(duplicate);
-
         duplicate.setName(event.getName());
-        eventService.update(duplicate);
+
+        EventDto dto = new EventDto();
+        dto.setDateHeld(duplicate.getDateHeld());
+        dto.setName(duplicate.getName());
+        eventService.update(duplicate.getId(), dto);
     }
 
     @Test
@@ -153,7 +159,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
         dto.setLocation(event.getLocation());
         dto.setNotes(event.getNotes());
 
-        eventService.update(event, dto);
+        eventService.update(event.getId(), dto);
 
         event = eventService.findById(event.getId());
         assertNull(event.getCommittee());
@@ -181,7 +187,7 @@ public class EventServiceTest extends WebAppConfigurationAware {
         donation = event.getDonations().iterator().next();
         assertNotNull(donation);
 
-        eventService.removeDonation(event, donation);
+        eventService.removeDonation(event.getId(), donation.getId());
         event = eventService.findById(event.getId());
         assertTrue(event.getDonations().isEmpty());
 

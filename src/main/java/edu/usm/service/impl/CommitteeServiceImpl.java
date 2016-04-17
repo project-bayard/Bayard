@@ -109,8 +109,7 @@ public class CommitteeServiceImpl extends BasicService implements CommitteeServi
         if (committee.getEvents() != null) {
             Set<Event> events = new HashSet<>(committee.getEvents());
             for (Event event : events) {
-                event.setCommittee(null);
-                eventService.update(event);
+                eventService.removeCommitteeFromEvent(event.getId());
                 committee.getEvents().remove(event);
             }
         }

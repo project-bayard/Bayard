@@ -57,21 +57,6 @@ public class ContactEventsTest extends WebAppConfigurationAware{
         eventDao.deleteAll();
     }
 
-    //Cannot be marked as transactional in order for join-table to be populated / hibernate cascading to occur
-    @Test
-    public void testAttendEvent() throws Exception {
-        contactDao.save(contact);
-        eventDao.save(event);
-
-        contact.setAttendedEvents(new HashSet<>());
-        contact.getAttendedEvents().add(event);
-        contactDao.save(contact);
-
-        Event persistedEvent = eventDao.findOne(event.getId());
-        assertNotNull(persistedEvent.getAttendees());
-        assertEquals(1, persistedEvent.getAttendees().size());
-
-    }
 
     @Test
     @Transactional

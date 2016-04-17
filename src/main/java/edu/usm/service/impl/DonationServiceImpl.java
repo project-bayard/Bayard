@@ -112,7 +112,7 @@ public class DonationServiceImpl extends BasicService implements DonationService
             }
             Event event = eventService.findEventWithDonation(donation);
             if (null != event) {
-                eventService.removeDonation(event, donation);
+                eventService.removeDonation(event.getId(), donation.getId());
             }
             Contact contact = contactService.findContactWithDonation(donation);
             if (null != contact) {
