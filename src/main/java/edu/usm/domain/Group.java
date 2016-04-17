@@ -21,7 +21,7 @@ public class Group extends BasicEntity implements Serializable {
             Views.GroupPanel.class})
     private String groupName;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
             name="alinskygroup_aggregation",
             joinColumns={@JoinColumn(name="alinskygroup_id", referencedColumnName = "id")},
@@ -31,7 +31,7 @@ public class Group extends BasicEntity implements Serializable {
             Views.GroupDetails.class})
     private Set<Aggregation> aggregations = new HashSet<>();
 
-    @ManyToMany(mappedBy = "groups", cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     @JsonView({Views.GroupList.class,
             Views.GroupDetails.class})
     private Set<Contact> topLevelMembers = new HashSet<>();
