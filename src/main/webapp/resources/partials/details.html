@@ -129,7 +129,7 @@
             </div>
         </div>
     </div>
-    <div ng-include src=" 'resources/partials/panels/donorInfoPanel.html' "></div>
+    <div ng-if="showingDevelopment" ng-include src=" 'resources/partials/panels/donorInfoPanel.html' "></div>
     <div ng-if="contact != null" ng-include src=" 'resources/partials/panels/demographicpanel.html' "></div>
     <div ng-include src=" 'resources/partials/panels/memberinfopanel.html' "></div>
     <div ng-include src=" 'resources/partials/panels/encounterpanel.html' "></div>

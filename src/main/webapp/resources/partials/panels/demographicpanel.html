@@ -7,6 +7,9 @@
                 </div>
                 <div class="panel-body" ng-show="demographicPanel.showingDemographics">
                     <div ng-show="demographicPanel.updateRequest.success" class="alert alert-success alert-dismissable" role="alert">Demographics Updated</div>
+                    <div ng-show="!demographicPanel.editingDemographics">
+                        <button class="btn btn-primary" ng-click="toggleEditingDemographics()">Edit Demographics</button>
+                    </div>
                     <form id="demographicPanel.form" name="demographicPanel.form" novalidate>
                         <fieldset ng-disabled="!demographicPanel.editingDemographics">
                             <div class="row">
@@ -190,10 +193,6 @@
                             </div>
                         </fieldset>
                     </form>
-
-                    <div ng-show="!demographicPanel.editingDemographics">
-                        <button class="btn btn-primary" ng-click="toggleEditingDemographics()">Edit Demographics</button>
-                    </div>
                     <div ng-show="demographicPanel.editingDemographics">
                         <button class="btn btn-success" ng-click="updateDemographics()">Update</button>
                         <button class="btn btn-danger" ng-click="cancelUpdateDemographics()">Cancel</button>

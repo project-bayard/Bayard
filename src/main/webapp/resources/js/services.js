@@ -560,6 +560,49 @@
         });
     }]);
 
+    services.factory('PermissionService', function() {
+
+        function PermissionInterpreter(currentUser) {
+            this.user = currentUser;
+
+            this.getId = function () {
+                return this.user.id;
+            };
+
+            this.isSuperUser = function () {
+                return this.user.role == "ROLE_SUPERUSER";
+            };
+
+            this.isElevatedUser = function () {
+                return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
+            };
+
+            this.isDevelopmentUser = function() {
+                return this.user.role == "ROLE_DEVELOPMENT" || this.isSuperUser() || this.isElevatedUser();
+            };
+
+            this.isUser = function () {
+                return this.user.role == "ROLE_USER" || this.isElevatedUser() || this.isSuperUser();
+            };
+
+            this.canChangeRole = function (other) {
+                var otherPermissions = new PermissionInterpreter(other);
+                if (this.isSuperUser()) {
+                    return true;
+                }
+                return this.isElevatedUser() && !otherPermissions.isSuperUser();
+            }
+
+        }
+
+        return {
+            getPermissionInterpreter : function(user) {
+                return new PermissionInterpreter(user);
+            }
+        };
+
+    });
+
     services.factory('GroupService',[ '$resource', function ($resource) {
         return $resource('../groups/:id', {id : '@id', entityId : '@entityId'}, {
             find : {

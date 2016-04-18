@@ -24,35 +24,6 @@
         };
     }
 
-    function PermissionInterpreter(currentUser) {
-        this.user = currentUser;
-
-        this.getId = function () {
-            return this.user.id;
-        };
-
-        this.isSuperUser = function () {
-            return this.user.role == "ROLE_SUPERUSER";
-        };
-
-        this.isElevatedUser = function () {
-            return this.user.role == "ROLE_ELEVATED" || this.isSuperUser();
-        };
-
-        this.isUser = function () {
-            return this.user.role == "ROLE_USER" || this.isElevatedUser() || this.isSuperUser();
-        };
-
-        this.canChangeRole = function (other) {
-            var otherPermissions = new PermissionInterpreter(other);
-            if (this.isSuperUser()) {
-                return true;
-            }
-            return this.isElevatedUser() && !otherPermissions.isSuperUser();
-        }
-
-    }
-
     var controllers = angular.module('controllers', []);
 
     controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$location', function ($scope, ContactService, $location) {
@@ -871,8 +842,8 @@
     }]);
 
 
-    controllers.controller('EventDetailsCtrl', ['$scope', 'EventService', '$routeParams', 'CommitteeService', '$timeout', '$window', '$location', 'DateFormatter',
-        function ($scope, EventService, $routeParams, CommitteeService, $timeout, $window, $location, DateFormatter) {
+    controllers.controller('EventDetailsCtrl', ['$scope', '$rootScope', 'EventService', '$routeParams', 'CommitteeService', '$timeout', '$window', '$location', 'DateFormatter',
+        function ($scope, $rootScope, EventService, $routeParams, CommitteeService, $timeout, $window, $location, DateFormatter) {
 
             $scope.modelHolder = {
                 donationModel : {
@@ -905,12 +876,14 @@
                 console.log(err);
             });
 
-            EventService.getDonations({id: $routeParams.id}, function(donations) {
-                $scope.donations = donations;
-            }, function(err) {
-                console.log(err);
-            });
-
+            if ($rootScope.showingDevelopment) {
+                EventService.getDonations({id: $routeParams.id}, function(donations) {
+                    $scope.donations = donations;
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+            
             $scope.showUpdateForm = function () {
                 $scope.updatingEventDetails = true;
             };
@@ -1278,8 +1251,8 @@
 
     }]);
 
-    controllers.controller('OrganizationDetailsCtrl', ['$scope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout', 'DateFormatter',
-        function ($scope, OrganizationService, $routeParams, $location, $window, $timeout, DateFormatter) {
+    controllers.controller('OrganizationDetailsCtrl', ['$scope', '$rootScope', 'OrganizationService', '$routeParams', '$location', '$window', '$timeout', 'DateFormatter',
+        function ($scope, $rootScope, OrganizationService, $routeParams, $location, $window, $timeout, DateFormatter) {
 
             $scope.formHolder = {};
             $scope.modelHolder = {
@@ -1302,11 +1275,13 @@
                     $scope.organization = $scope.modelHolder.organizationModel;
                     $scope.contactCollection = $scope.organization.members;
 
-                    OrganizationService.getDonations({id: $scope.modelHolder.organizationModel.id}, function(donations) {
-                        $scope.donations = donations;
-                    }, function(err) {
-                        console.log(err);
-                    });
+                    if ($rootScope.showingDevelopment) {
+                        OrganizationService.getDonations({id: $scope.modelHolder.organizationModel.id}, function(donations) {
+                            $scope.donations = donations;
+                        }, function(err) {
+                            console.log(err);
+                        });
+                    }
                 }, function (err) {
                     console.log(err);
                 });
@@ -1498,11 +1473,6 @@
 
     controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'UserService', '$http', 'ConfigService', function ($scope, $rootScope, $location, UserService, $http, ConfigService) {
 
-        //Placeholder title before login is successful and implementation name is fetched from the server
-        if ($rootScope.config == null) {
-            $rootScope.config = {implementationName: "Login"}
-        }
-
         $scope.error = false;
 
         var authenticate = function (credentials, callback) {
@@ -1522,13 +1492,6 @@
 
                     $rootScope.authenticated = true;
                     $rootScope.user = data;
-
-                    ConfigService.getImplementationConfig({}, function (config) {
-                        $rootScope.config = config;
-                    }, function (err) {
-                        console.log(err);
-                    });
-
                 } else {
                     sessionStorage.setItem('bayard-user-authenticated', 'false');
                     $rootScope.authenticated = false;
@@ -2619,18 +2582,27 @@
 
     }]);
 
-    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', function ($scope, $rootScope, $location, $timeout, $window, UserService) {
+    controllers.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$timeout', '$window', 'UserService', 'PermissionService',
+        function ($scope, $rootScope, $location, $timeout, $window, UserService, PermissionService) {
 
-        $scope.userPermissionLevel = new PermissionInterpreter($rootScope.user);
+        $scope.userPermissionLevel = PermissionService.getPermissionInterpreter($rootScope.user);
         $scope.newUser = {};
         $scope.passwordChange = {};
         $scope.viewingUser = true;
         $scope.violations = {};
 
-        $scope.roles = ["ROLE_USER", "ROLE_ELEVATED"];
+        $scope.roles = ["ROLE_USER"];
 
         if ($scope.userPermissionLevel.isSuperUser()) {
             $scope.roles.push("ROLE_SUPERUSER");
+        }
+        
+        if ($scope.userPermissionLevel.isElevatedUser()) {
+            $scope.roles.push("ROLE_ELEVATED");
+        }
+        
+        if ($scope.userPermissionLevel.isDevelopmentUser()) {
+            $scope.roles.push("ROLE_DEVELOPMENT");
         }
 
         $scope.getUserList = function () {
