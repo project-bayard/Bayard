@@ -2,6 +2,7 @@ package edu.usm.it.service;
 
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.repository.BudgetItemDao;
 import edu.usm.service.ContactService;
@@ -76,14 +77,14 @@ public class DonationServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    public void testCreateDonation() {
+    public void testCreateDonation() throws Exception {
         donationService.create(donation);
         donation = donationService.findById(donation.getId());
         assertNotNull(donation);
     }
 
     @Test
-    public void testUpdateDonation() {
+    public void testUpdateDonation() throws Exception {
         donationService.create(donation);
         int newDonationAmount = donation.getAmount() + 10;
         donation.setAmount(newDonationAmount);
@@ -93,15 +94,13 @@ public class DonationServiceTest extends WebAppConfigurationAware {
         assertEquals(newDonationAmount, donation.getAmount());
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullDonation.class)
     public void testDeleteDonation() throws Exception{
         donationService.create(donation);
         donation = donationService.findById(donation.getId());
 
         donationService.delete(donation.getId());
         donation = donationService.findById(donation.getId());
-
-        assertNull(donation);
     }
 
 

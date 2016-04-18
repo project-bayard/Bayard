@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -39,8 +40,14 @@ public class DonationServiceImpl extends BasicService implements DonationService
     private ContactService contactService;
 
     @Override
-    public Donation findById(String id) {
-        return donationDao.findOne(id);
+    @Transactional
+    public Donation findById(String id) throws NullDomainReference {
+        Donation donation = findDonation(id);
+
+        if (donation.getBudgetItem() != null) {
+            donation.getBudgetItem().getName();
+        }
+       return donation;
     }
 
     @Override
@@ -183,5 +190,15 @@ public class DonationServiceImpl extends BasicService implements DonationService
     public Page<Donation> findDonationsByBudgetItem(String budgetItemId, Pageable pageable) {
         BudgetItem item = budgetItemDao.findOne(budgetItemId);
         return donationDao.findByBudgetItem(item, pageable);
+    }
+
+    private Donation findDonation (String donationId) throws NullDomainReference {
+        Donation donation = donationDao.findOne(donationId);
+
+        if (donation == null) {
+            throw new NullDomainReference.NullDonation(donationId);
+        }
+
+        return donation;
     }
 }
