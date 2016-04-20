@@ -740,8 +740,8 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         DonorInfo donorInfo = contactService.getDonorInfo(contact.getId());
         assertFalse(donorInfo.getDonations().isEmpty());
         Donation fromDb = contactService.getDonorInfo(contact.getId()).getDonations().iterator().next();
-        assertEquals(donation.getAmount(), fromDb.getAmount());
-        assertEquals(budgetItem.getName(), fromDb.getBudgetItem().getName());
+        assertEquals(donationService.findById(fromDb.getId()).getAmount(), fromDb.getAmount());
+        assertEquals(budgetItem.getName(), fromDb.getBudgetItemName());
     }
 
     @Test

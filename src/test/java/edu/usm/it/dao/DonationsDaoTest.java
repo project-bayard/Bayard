@@ -70,6 +70,7 @@ public class DonationsDaoTest extends WebAppConfigurationAware {
     }
 
     @Test
+    @Transactional
     public void testCreateDonation() {
         donationDao.save(donation);
         Donation fromDb = donationDao.findOne(donation.getId());

@@ -18,7 +18,7 @@ import java.util.Set;
 public interface DonationService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Donation findById(String id);
+    Donation findById(String id) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     Set<Donation> findAll();

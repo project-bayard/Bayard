@@ -231,7 +231,7 @@ public class EventControllerTest extends WebAppConfigurationAware {
 
         event = eventService.findById(event.getId());
         assertFalse(event.getDonations().isEmpty());
-        assertEquals(budgetItem.getName(), event.getDonations().iterator().next().getBudgetItem().getName());
+        assertEquals(budgetItem.getName(), event.getDonations().iterator().next().getBudgetItemName());
     }
 
     @Test

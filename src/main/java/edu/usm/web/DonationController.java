@@ -9,7 +9,8 @@ import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DonationDto;
 import edu.usm.dto.Response;
 import edu.usm.service.DonationService;
-import org.omg.PortableInterceptor.SUCCESSFUL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.domain.Page;
@@ -22,8 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -34,6 +33,8 @@ import java.util.Set;
 @ConditionalOnExpression("${bayard.implementation.enableDevelopmentFeatures:true}")
 public class DonationController {
 
+    private Logger logger = LoggerFactory.getLogger(DonationController.class);
+
     @Autowired
     private DonationService donationService;
 
@@ -41,7 +42,7 @@ public class DonationController {
     @RequestMapping(value= "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.DonationDetails.class)
-    public Donation getDonation(@PathVariable("id")String id) {
+    public Donation getDonation(@PathVariable("id")String id) throws NullDomainReference {
         Donation d = donationService.findById(id);
         if (null == d) {
             //TODO: refactor 404s
@@ -51,7 +52,7 @@ public class DonationController {
 
     @RequestMapping(value= "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Response updateDonation(@PathVariable("id")String id, @RequestBody DonationDto dto) {
+    public Response updateDonation(@PathVariable("id")String id, @RequestBody DonationDto dto) throws NullDomainReference {
         Donation existing = donationService.findById(id);
         if (null == existing) {
             //TODO: refactor 404s
@@ -123,6 +124,7 @@ public class DonationController {
     public Page<Donation> getDonationsReceivedWithinDateRange(@PageableDefault(sort= "dateOfReceipt", direction = Sort.Direction.DESC)Pageable pageable,
                                                   @RequestParam("from")@DateTimeFormat(pattern="yyyy-MM-dd") LocalDate from,
                                                   @RequestParam("to")@DateTimeFormat(pattern="yyyy-MM-dd")LocalDate to) {
+
         return donationService.findDonationsReceivedBetween(from, to, pageable);
     }
 
