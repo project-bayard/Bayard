@@ -34,10 +34,6 @@
             console.log(err);
         });
 
-        $scope.viewContactDetails = function (contactId) {
-            $location.path("/contacts/contact/" + contactId);
-        };
-
     }]);
 
     controllers.controller('MainCtrl', ['$scope', '$location', 'ConfigService', function($scope, $location, ConfigService) {
@@ -55,7 +51,7 @@
         $location.path("/login");
     }]);
 
-    controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', function ($scope, ContactService, $location, $timeout) {
+    controllers.controller('CreateContactCtrl', ['$scope', 'ContactService', '$location', '$timeout', '$window', function ($scope, ContactService, $location, $timeout, $window) {
 
         $scope.crudRequest = {
             success: false,
@@ -602,6 +598,9 @@
             };
 
             /* Committees */
+
+
+
             $scope.getContactCommittees = function () {
                 $scope.showingCommittees = !$scope.showingCommittees;
 
@@ -800,6 +799,20 @@
             $scope.viewSustainerPeriod = function(id) {
                 RouteChangeService.set($scope.contact);
                 $location.path("/sustainerPeriod/"+id);
+            };
+
+            $scope.currentEntity = "Contact";
+            $scope.deleteWarning = "Deleting a Contact will delete any Donations, Sustainer Periods, Encounters and memberships they may have. ";
+
+            $scope.deleteCurrentEntity = function() {
+                var deleteConfirmed = $window.confirm('WARNING: Are you sure you want to delete this contact?');
+                if (deleteConfirmed) {
+                    ContactService.delete({id: $scope.contact.id}, function () {
+                        $location.path("/contacts");
+                    }, function (err) {
+                        console.log(err);
+                    });
+                }
             }
 
         }]);
@@ -855,10 +868,6 @@
             };
 
             $scope.formHolder = {};
-
-            $scope.viewContactDetails = function (contactId) {
-                $location.path("/contacts/contact/" + contactId);
-            };
 
             var formatEvent = function (event) {
                 event.jsDate = DateFormatter.asDate(event.dateHeld);
@@ -1288,6 +1297,11 @@
             };
 
             establishDetails($routeParams.id);
+
+            $scope.showUpdateForm = function() {
+                $scope.updatingOrganizationDetails = true;
+            };
+
             $scope.cancelUpdate = function () {
                 $scope.updatingOrganizationDetails = false;
                 establishDetails($scope.modelHolder.organizationModel.id);
@@ -1324,10 +1338,6 @@
                     }, 3000);
                     console.log(err);
                 })
-            };
-
-            $scope.viewContactDetails = function (contactId) {
-                $location.path("/contacts/contact/" + contactId);
             };
 
             $scope.showDonationForm = function() {
@@ -1402,7 +1412,7 @@
 
     }]);
 
-    controllers.controller('CommitteeDetailsCtrl', ['$scope', 'CommitteeService', '$location', '$routeParams', function ($scope, CommitteeService, $location, $routeParams) {
+    controllers.controller('CommitteeDetailsCtrl', ['$scope', 'CommitteeService', '$location', '$routeParams', '$window', function ($scope, CommitteeService, $location, $routeParams, $window) {
 
         var establishCommittee = function (id) {
             CommitteeService.find({id: id}, function (committee) {
@@ -1411,14 +1421,6 @@
             }, function (err) {
                 console.log(err);
             });
-        };
-
-        $scope.viewContactDetails = function (id) {
-            $location.path("/contacts/contact/" + id);
-        };
-
-        $scope.viewEventDetails = function (id) {
-            $location.path("/events/event/" + id);
         };
 
         var setup = function () {
@@ -1456,6 +1458,17 @@
         $scope.cancelUpdate = function () {
             setup();
         };
+
+        $scope.deleteCommittee = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this committee?');
+            if (deleteConfirmed) {
+                CommitteeService.delete({id: $scope.committee.id}, function () {
+                    $location.path("/committees");
+                }, function (err) {
+                    console.log(err);
+                });
+            }
+        }
 
     }]);
 
@@ -1707,10 +1720,6 @@
             $scope.formHolder = {};
             $scope.modelHolder = {};
 
-            $scope.viewContactDetails = function (contactId) {
-                $location.path("/contacts/contact/" + contactId);
-            };
-
             var establishGroupMembers = function () {
                 GroupService.getAllContacts({id: $scope.modelHolder.groupModel.id}, function (contacts) {
                     $scope.modelHolder.groupModel.groupMembers = contacts;
@@ -1895,7 +1904,7 @@
 
     }]);
 
-    controllers.controller('FoundationDetailsCtrl', ['$scope', 'FoundationService', 'InteractionService', '$routeParams', '$timeout', '$location', 'DateFormatter', function($scope, FoundationService, InteractionService, $routeParams, $timeout, $location, DateFormatter) {
+    controllers.controller('FoundationDetailsCtrl', ['$scope', 'FoundationService', 'InteractionService', '$routeParams', '$timeout', '$location', 'DateFormatter', '$window', function($scope, FoundationService, InteractionService, $routeParams, $timeout, $location, DateFormatter, $window) {
 
         $scope.showingBasicDetails = true;
         $scope.foundation = {};
@@ -2018,6 +2027,21 @@
             return type.name;
         };
 
+        $scope.currentEntity = "Foundation";
+        $scope.deleteWarning = "Deleting a Foundation will delete any Grants or Interaction Records associated with them. ";
+
+        $scope.deleteCurrentEntity = function() {
+            var deleteConfirmed = $window.confirm('Are you sure you want to delete this foundation?');
+            if (deleteConfirmed) {
+                FoundationService.delete({id: $scope.foundation.id}, function () {
+                    $location.path("/foundations");
+                }, function (err) {
+                    console.log(err);
+                });
+            }
+        }
+
+
     }]);
 
     controllers.controller('GrantListCtrl', ['$scope', '$routeParams', 'GrantService', 'FoundationService', 'DateFormatter',
@@ -2076,7 +2100,7 @@
 
     }]);
 
-    controllers.controller('GrantDetailsCtrl', ['$scope', 'FoundationService', 'GrantService', '$routeParams', '$timeout', 'DateFormatter', function($scope, FoundationService, GrantService, $routeParams, $timeout, DateFormatter) {
+    controllers.controller('GrantDetailsCtrl', ['$scope', 'FoundationService', 'GrantService', '$routeParams', '$timeout', 'DateFormatter', '$window', function($scope, FoundationService, GrantService, $routeParams, $timeout, DateFormatter, $window) {
 
         var createGrantDates = function(grant) {
             grant.dates = {
@@ -2129,7 +2153,7 @@
 
     }]);
 
-    controllers.controller('InteractionDetailsCtrl', ['$scope', 'InteractionService', 'DateFormatter', '$timeout', '$routeParams', function($scope, InteractionService, DateFormatter, $timeout, $routeParams) {
+    controllers.controller('InteractionDetailsCtrl', ['$scope', 'InteractionService', 'DateFormatter', '$timeout', '$routeParams', '$window', function($scope, InteractionService, DateFormatter, $timeout, $routeParams, $window) {
 
         var establishDetails = function(id) {
             InteractionService.find({id: id}, function(interaction) {
@@ -2161,7 +2185,23 @@
         $scope.cancelUpdateInteractionDetails = function() {
             $scope.editingInteractionDetails = false;
             establishDetails($scope.interaction.id);
-        }
+        };
+
+        $scope.currentEntity = "Interaction Record";
+        $scope.deleteWarning = "Deleting an Interaction Record will delete any Files associated with them.";
+
+        $scope.deleteCurrentEntity = function() {
+            var deleteConfirmed = $window.confirm('WARNING: Are you sure you want to delete this Interaction Record?');
+            if (deleteConfirmed) {
+                InteractionService.delete({id: $scope.interaction.id}, function () {
+                    $window.history.back();
+                }, function (err) {
+                    console.log(err);
+                });
+            }
+        };
+
+
 
     }]);
 
@@ -2222,7 +2262,7 @@
 
     }]);
 
-    controllers.controller('GrantDetailsCtrl', ['$scope', 'FoundationService', 'GrantService', '$routeParams', '$timeout', 'DateFormatter', function($scope, FoundationService, GrantService, $routeParams, $timeout, DateFormatter) {
+    controllers.controller('GrantDetailsCtrl', ['$scope', 'FoundationService', 'GrantService', '$routeParams', '$timeout', 'DateFormatter', '$window', function($scope, FoundationService, GrantService, $routeParams, $timeout, DateFormatter, $window) {
 
         var createGrantDates = function(grant) {
             grant.dates = {
@@ -2271,7 +2311,21 @@
         $scope.cancelUpdateGrantDetails = function() {
             $scope.editingGrantDetails = false;
             establishDetails($scope.grant.id);
-        }
+        };
+
+        $scope.currentEntity = "Grant";
+        $scope.deleteWarning = "Deleting a Grant will delete any Files associated with them.";
+
+        $scope.deleteCurrentEntity = function() {
+            var deleteConfirmed = $window.confirm('WARNING: Are you sure you want to delete this Grant?');
+            if (deleteConfirmed) {
+                GrantService.delete({id: $scope.grant.id}, function () {
+                    $window.history.back();
+                }, function (err) {
+                    console.log(err);
+                });
+            }
+        };
 
     }]);
 
@@ -2527,10 +2581,6 @@
         $scope.totalElements = 0;
         $scope.numberElementsShown = 0;
 
-        $scope.viewContactDetails = function (contactId) {
-            $location.path("/contacts/contact/" + contactId);
-        };
-
         $scope.viewMoreDonors = function() {
             $scope.contactTable.quantity += defaultPageSize;
             $scope.numberElementsShown = ($scope.contactTable.quantity >= $scope.totalElements) ? $scope.totalElements : $scope.contactTable.quantity;
@@ -2663,11 +2713,6 @@
             }, 3000);
         };
 
-        $scope.showUpdateForm = function () {
-            $scope.updatingUser = true;
-            $scope.viewingUser = false;
-        };
-
         $scope.submitUpdate = function () {
 
             UserService.updateDetails({id: $scope.userInDetail.id}, $scope.userInDetail, function (succ) {
@@ -2741,7 +2786,6 @@
         $scope.cancelPasswordChange = function () {
             $scope.violations = {};
             $scope.changingPassword = false;
-            $scope.viewingUser = true;
             $scope.passwordChange = {};
         };
 

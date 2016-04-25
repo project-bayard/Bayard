@@ -1,249 +1,238 @@
 <div class="container-fluid">
     <div class="page-header">
-        <h1>{{userInDetail.firstName}} {{userInDetail.lastName}}</h1>
+        <h3><a ng-href=" ">User</a> > {{userInDetail.firstName}} {{userInDetail.lastName}}</h3>
     </div>
     <div class="row">
-        <div id="group-detail-left-panel" class="col-md-3">
-            <div ng-show="requestSuccess && !creatingUser" class="alert alert-success alert-dismissable" role="alert">User Updated</div>
-            <div ng-show="requestFail && !creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to update User...</div>
-            <div ng-show="viewingUser">
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                First: {{userInDetail.firstName}}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                Last: {{userInDetail.lastName}}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                Email: {{userInDetail.email}}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                Role: {{userInDetail.role}}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+        <div class="col-md-4">
+            <div class="alert alert-dismissable alert-danger" ng-show="violations.constraintViolation">
+                {{violations.constraintViolation}}
             </div>
-            <div class="row" ng-show="viewingUser">
-                <div class="col-md-12">
-                    <button class="btn btn-primary btn-block bayard-margined" ng-click="showUpdateForm()">Update</button>
-                </div>
+            <div class="alert alert-dismissable alert-danger" ng-show="violations.securityViolation">
+                {{violations.securityViolation}}
             </div>
-            <div class="row" ng-show="viewingUser">
-                <div class="col-md-12">
-                    <button class="btn btn-primary btn-block bayard-margined" ng-click="showPasswordChangeForm()">Change Password</button>
-                </div>
-            </div>
-            <div class="row" ng-show="userPermissionLevel.isSuperUser() && viewingUser && userInDetail.id !== userPermissionLevel.getId()">
-                <div class="col-md-12">
-                    <button class="btn btn-danger btn-block bayard-margined" ng-click="deleteUser(userInDetail.id)">Delete</button>
-                </div>
-            </div>
-
-            <div ng-if="changingPassword">
-                <form id="changePasswordForm" name="changePasswordForm" novalidate>
-                    <div class="row">
-                        <div class="form-group col-md-12 required">
-                            <label class="control-label">Current Password</label>
-                            <input name="currentPassword" type="password" class="form-control" ng-model="passwordChange.currentPassword">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-12 required">
-                            <label class="control-label">New Password</label>
-                            <input name="newPassword" type="password" class="form-control" ng-model="passwordChange.newPassword">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-12 required">
-                            <label class="control-label">Repeat New Password</label>
-                            <input name="repeat" type="password" class="form-control" ng-model="passwordChange.repeat">
-                            <p ng-show="passwordChange.newPassword !== passwordChange.repeat && !changePasswordForm.repeat.$pristine" class="help-block">Passwords do not match</p>
-                        </div>
-                    </div>
-                </form>
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-success btn-block bayard-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid">Ok</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelPasswordChange()">Cancel</button>
-                    </div>
-                </div>
-                
-            </div>
-
-            <div ng-if="updatingUser">
-                <div>
-                    <form id="updateUserForm" name="updateUserForm" novalidate>
-                        <div class="row">
-                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : updateUserForm.firstName.$invalid && !updateUserForm.firstName.name.$pristine }">
-                                <label class="control-label">First Name</label>
-                                <input name="firstName" type="text" class="form-control" ng-model="userInDetail.firstName" ng-minlength="2" required>
-                                <p ng-show="updateUserForm.firstName.$error.required && !updateUserForm.firstName.$pristine" class="help-block">A first name is required</p>
-                                <p ng-show="updateUserForm.firstName.$error.min" class="help-block">First name not long enough</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : updateUserForm.lastName.$invalid && !updateUserForm.lastName.name.$pristine }">
-                                <label class="control-label">Last Name</label>
-                                <input name="lastName" type="text" class="form-control" ng-model="userInDetail.lastName" ng-minlength="2" required>
-                                <p ng-show="updateUserForm.lastName.$error.required && !updateUserForm.lastName.$pristine" class="help-block">A Last name is required</p>
-                                <p ng-show="updateUserForm.lastName.$error.min" class="help-block">Last name not long enough</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.email.$invalid && !newUserForm.email.$pristine }">
-                                <label class="control-label">Email</label>
-                                <input name="email" type="email" class="form-control" ng-model="userInDetail.email">
-                                <p ng-show="updateUserForm.$error.email" class="help-block">Enter a valid email address</p>
-                            </div>
-                        </div>
-                        <div class="row" ng-show="userPermissionLevel.canChangeRole(userInDetail)">
-                            <div class="form-group col-md-12">
-                                <label class="control-label">Role</label>
-                                <select name="role" class="form-control input-small" ng-model="userInDetail.role" ng-options="role for role in roles" ng-selected="userInDetail.role === role">
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-success btn-block bayard-margined" ng-click="submitUpdate()" ng-disabled="updateUserForm.$invalid">Ok</button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelUpdate()">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-                <br/>
-            </div>
-
         </div>
-        <div class="col-md-3">
-            <div class="row" ng-show="userPermissionLevel.isElevatedUser()">
-                <div class="col-md-12">
-                    <h3>All Users</h3>
-                    <ul class="list-group">
-                        <li class="list-group-item" ng-repeat="user in users">
-                            <a href="" ng-click="viewInDetail(user)">
-                                {{user.firstName}} {{user.lastName}}
-                            </a>
-                        </li>
-                    </ul>
+    </div>
+    <div class="row">
+        <div id="group-detail-left-panel" class="col-md-4">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Details</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div ng-show="requestSuccess && !creatingUser" class="alert alert-success alert-dismissable" role="alert">User Updated</div>
+                                <div ng-show="requestFail && !creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to update User...</div>
+                                <div ng-show="!changingPassword">
+                                    <fieldset ng-disabled="!updatingUser">
+                                        <form id="updateUserForm" name="updateUserForm" novalidate>
+                                            <div class="row">
+                                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : updateUserForm.firstName.$invalid && !updateUserForm.firstName.name.$pristine }">
+                                                    <label class="control-label">First Name</label>
+                                                    <input name="firstName" type="text" class="form-control" ng-model="userInDetail.firstName" ng-minlength="2" required>
+                                                    <p ng-show="updateUserForm.firstName.$error.required && !updateUserForm.firstName.$pristine" class="help-block">A first name is required</p>
+                                                    <p ng-show="updateUserForm.firstName.$error.min" class="help-block">First name not long enough</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : updateUserForm.lastName.$invalid && !updateUserForm.lastName.name.$pristine }">
+                                                    <label class="control-label">Last Name</label>
+                                                    <input name="lastName" type="text" class="form-control" ng-model="userInDetail.lastName" ng-minlength="2" required>
+                                                    <p ng-show="updateUserForm.lastName.$error.required && !updateUserForm.lastName.$pristine" class="help-block">A Last name is required</p>
+                                                    <p ng-show="updateUserForm.lastName.$error.min" class="help-block">Last name not long enough</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.email.$invalid && !newUserForm.email.$pristine }">
+                                                    <label class="control-label">Email</label>
+                                                    <input name="email" type="email" class="form-control" ng-model="userInDetail.email">
+                                                    <p ng-show="updateUserForm.$error.email" class="help-block">Enter a valid email address</p>
+                                                </div>
+                                            </div>
+                                            <div class="row" ng-show="userPermissionLevel.canChangeRole(userInDetail)">
+                                                <div class="form-group col-md-12">
+                                                    <label class="control-label">Role</label>
+                                                    <select name="role" class="form-control input-small" ng-model="userInDetail.role" ng-options="role for role in roles" ng-selected="userInDetail.role === role">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="row" ng-if="updatingUser">
+                                            <div class="col-md-12">
+                                                <button class="btn btn-success btn-block bayard-margined" ng-click="submitUpdate()" ng-disabled="updateUserForm.$invalid">Ok</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="updatingUser">
+                                            <div class="col-md-12">
+                                                <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelUpdate()">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="row" ng-show="!updatingUser && !changingPassword">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary btn-block bayard-margined" ng-click="updatingUser = true">Update</button>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="!updatingUser && !changingPassword">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary btn-block bayard-margined" ng-click="changingPassword = true">Change Password</button>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="userPermissionLevel.isSuperUser() && !updatingUser && !changingPassword && userInDetail.id !== userPermissionLevel.getId()">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-danger btn-block bayard-margined" ng-click="deleteUser(userInDetail.id)">Delete</button>
+                                    </div>
+                                </div>
+                                <div ng-if="changingPassword">
+                                    <form id="changePasswordForm" name="changePasswordForm" novalidate>
+                                        <div class="row" ng-if="!userPermissionLevel.isSuperUser()">
+                                            <div class="form-group col-md-12 required">
+                                                <label class="control-label">Current Password</label>
+                                                <input name="currentPassword" type="password" class="form-control" ng-model="passwordChange.currentPassword">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required">
+                                                <label class="control-label">New Password</label>
+                                                <input name="newPassword" type="password" class="form-control" ng-model="passwordChange.newPassword">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required">
+                                                <label class="control-label">Repeat New Password</label>
+                                                <input name="repeat" type="password" class="form-control" ng-model="passwordChange.repeat">
+                                                <p ng-show="passwordChange.newPassword !== passwordChange.repeat && !changePasswordForm.repeat.$pristine" class="help-block">Passwords do not match</p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success btn-block bayard-margined" ng-click="submitPasswordChange()" ng-disabled="updateUserForm.$invalid || passwordChange.newPassword !== passwordChange.repeat">Ok</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelPasswordChange()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="row" ng-show="userPermissionLevel.isElevatedUser()">
-                <div class="row" ng-show="!creatingUser">
-                    <div class="col-md-12">
-                        <button class="btn btn-primary btn-block bayard-margined" ng-click="showNewUserForm()">Create a User</button>
-                    </div>
-                </div>
-                <div ng-if="creatingUser">
-                    <div>
-                        <div ng-show="requestSuccess && creatingUser" class="alert alert-success alert-dismissable" role="alert">User Created</div>
-                        <div ng-show="requestFail && creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to create user...</div>
-                        <form id="newUserForm" name="newUserForm" novalidate>
-                            <div class="row">
-                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.firstName.$invalid && !newUserForm.firstName.$pristine }">
-                                    <label class="control-label">First Name</label>
-                                    <input name="firstName" type="text" class="form-control" ng-model="newUser.firstName" ng-minlength="2" required>
-                                    <p ng-show="newUserForm.firstName.$error.required && !newUserForm.firstName.$pristine" class="help-block">A first name is required</p>
-                                    <p ng-show="newUserForm.firstName.$error.min" class="help-block">First name not long enough</p>
-                                </div>
+        <div class="col-md-4" ng-show="userPermissionLevel.isElevatedUser()">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">All Users</h3>
                             </div>
-                            <div class="row">
-                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.lastName.$invalid && !newUserForm.lastName.$pristine }">
-                                    <label class="control-label">Last Name</label>
-                                    <input name="lastName" type="text" class="form-control" ng-model="newUser.lastName" ng-minlength="2" required>
-                                    <p ng-show="newUserForm.lastName.$error.required && !newUserForm.lastName.$pristine" class="help-block">A Last name is required</p>
-                                    <p ng-show="newUserForm.lastName.$error.min" class="help-block">Last name not long enough</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.email.$invalid && !newUserForm.email.$pristine }">
-                                    <label class="control-label">Email</label>
-                                    <input name="email" type="email" class="form-control" ng-model="newUser.email">
-                                    <p ng-show="newUserForm.$error.email" class="help-block">Enter a valid email address</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12 required">
-                                    <label class="control-label">Role</label>
-                                    <select name="role" class="form-control input-small" ng-model="newUser.role" required>
-                                        <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
-                                    </select>
-                                    <p ng-show="newUserForm.role.$error.required && !newUserForm.role.$pristine" class="help-block">A role is required</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12 required">
-                                    <label class="control-label">Password</label>
-                                    <input name="password" type="password" class="form-control" ng-model="newUser.password">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12 required">
-                                    <label class="control-label">Repeat Password</label>
-                                    <input name="repeatPassword" type="password" class="form-control" ng-model="newUser.repeatPassword">
-                                    <p ng-show="newUser.password !== newUser.repeatPassword && !newUserForm.repeatPassword.$pristine" class="help-block">Passwords do not match</p>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button class="btn btn-success btn-block bayard-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid && newUser.password !== newUser.repeatPassword">Create</button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelNewUserForm()">Cancel</button>
+                            <div class="panel-body">
+                                <br>
+                                <table class="bootstrap-table table table-striped table-hover table-responsive"
+                                       data-toggle="table"
+                                       data-pagination="true"
+                                       data-search="true">
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                    </tr>
+                                    <tr ng-repeat="user in users" ng-click="viewInDetail(user)">
+                                        <td>{{user.firstName}}</td>
+                                        <td>{{user.lastName}}</td>
+                                        <td>{{user.email}}</td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <br/>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-dismissable alert-danger" ng-show="violations.constraintViolation">
-                        {{violations.constraintViolation}}
-                    </div>
-                    <div class="alert alert-dismissable alert-danger" ng-show="violations.securityViolation">
-                        {{violations.securityViolation}}
+        <div class="col-md-4" ng-show="userPermissionLevel.isElevatedUser()">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">New Users</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div ng-if="!creatingUser">
+                                    <button class="btn btn-success btn-block bayard-margined" ng-click="showNewUserForm()">Create a User</button>
+                                </div>
+                                <div ng-if="creatingUser">
+                                    <div ng-show="requestSuccess && creatingUser" class="alert alert-success alert-dismissable" role="alert">User Created</div>
+                                    <div ng-show="requestFail && creatingUser" class="alert alert-danger alert-dismissable" role="alert">Unable to create user...</div>
+                                    <form id="newUserForm" name="newUserForm" novalidate>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.firstName.$invalid && !newUserForm.firstName.$pristine }">
+                                                <label class="control-label">First Name</label>
+                                                <input name="firstName" type="text" class="form-control" ng-model="newUser.firstName" ng-minlength="2" required>
+                                                <p ng-show="newUserForm.firstName.$error.required && !newUserForm.firstName.$pristine" class="help-block">A first name is required</p>
+                                                <p ng-show="newUserForm.firstName.$error.min" class="help-block">First name not long enough</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.lastName.$invalid && !newUserForm.lastName.$pristine }">
+                                                <label class="control-label">Last Name</label>
+                                                <input name="lastName" type="text" class="form-control" ng-model="newUser.lastName" ng-minlength="2" required>
+                                                <p ng-show="newUserForm.lastName.$error.required && !newUserForm.lastName.$pristine" class="help-block">A Last name is required</p>
+                                                <p ng-show="newUserForm.lastName.$error.min" class="help-block">Last name not long enough</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.email.$invalid && !newUserForm.email.$pristine }">
+                                                <label class="control-label">Email</label>
+                                                <input name="email" type="email" class="form-control" ng-model="newUser.email">
+                                                <p ng-show="newUserForm.$error.email" class="help-block">Enter a valid email address</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required">
+                                                <label class="control-label">Role</label>
+                                                <select name="role" class="form-control input-small" ng-model="newUser.role" required>
+                                                    <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
+                                                </select>
+                                                <p ng-show="newUserForm.role.$error.required && !newUserForm.role.$pristine" class="help-block">A role is required</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required">
+                                                <label class="control-label">Password</label>
+                                                <input name="password" type="password" class="form-control" ng-model="newUser.password">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required">
+                                                <label class="control-label">Repeat Password</label>
+                                                <input name="repeatPassword" type="password" class="form-control" ng-model="newUser.repeatPassword">
+                                                <p ng-show="newUser.password !== newUser.repeatPassword && !newUserForm.repeatPassword.$pristine" class="help-block">Passwords do not match</p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success btn-block bayard-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid && newUser.password !== newUser.repeatPassword">Create</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelNewUserForm()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>

@@ -1,6 +1,6 @@
 <div class="container-fluid" ng-cloak>
     <div class="page-header">
-        <h1><a ng-href="#/foundations/{{grant.foundation.id}}">{{grant.foundation.name}}</a> > Grant: {{grant.name}}</h1>
+        <h3><a ng-href="#/foundations">Foundations</a> > <a ng-href="#/foundations/{{grant.foundation.id}}">{{grant.foundation.name}}</a> > Grant: {{grant.name}}</h3>
     </div>
     <div class="row">
         <div class="col-md-7">
@@ -110,6 +110,11 @@
                     </ul>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <div ng-if="showingElevatedOptions" ng-include src=" 'resources/partials/panels/adminpanel.html' "></div>
         </div>
     </div>
 </div>

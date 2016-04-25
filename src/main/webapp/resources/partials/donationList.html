@@ -49,6 +49,11 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <button class="btn btn-primary" ng-click="showBudgetItemOptions()" ng-class="{ 'btn-success': showingBudgetItemQuery}">Search by Budget Item</button>
+        </div>
+    </div>
     <div ng-if="showingBudgetItemQuery">
         <div class="row">
             <div class="form-group col-xs-2">
@@ -62,11 +67,6 @@
             <div class="form-group col-xs-4">
                 <button class="btn btn-success" ng-click="submitNewBudgetItemQuery()">Search</button>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-4">
-            <button class="btn btn-primary" ng-click="showBudgetItemOptions()" ng-class="{ 'btn-success': showingBudgetItemQuery}">Search by Budget Item</button>
         </div>
     </div>
     <div class="row">

@@ -6,6 +6,7 @@ import edu.usm.config.DateFormatConfig;
 import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.*;
 import edu.usm.service.*;
 import org.junit.After;
@@ -83,6 +84,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact.setCity("Portland");
         contact.setZipCode("04101");
         contact.setEmail("email@gmail.com");
+        contact.setMailingStreetAddress("A Mailing Street Address");
         contact.setDisabled(true);
         contact.setGender("Female");
         contact.setDateOfBirth(dateFormatConfig.formatDomainDate(LocalDate.now()));
@@ -154,6 +156,19 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     }
 
+    @Test(expected = NullDomainReference.class)
+    @Transactional
+    public void testDeleteContact() throws Exception {
+        String contactId = contactService.create(contact);
+        assertNotNull(contactService.findById(contactId));
+
+        mockMvc.perform(delete("/contacts/"+contactId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        contactService.findById(contactId);
+    }
+
 
     @Test
     @Transactional
@@ -173,6 +188,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         Contact details = new Contact();
         details.setFirstName("newFirstName");
         details.setEmail("email@email.com");
+        details.setMailingStreetAddress("MAILING");
 
         String json = new ObjectMapper().writeValueAsString(details);
 
@@ -182,9 +198,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
         assertEquals(fromDb.getFirstName(), details.getFirstName());
-
-        //TODO: Test all fields
-
+        assertEquals(fromDb.getMailingStreetAddress(), details.getMailingStreetAddress());
     }
 
 
@@ -203,6 +217,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(jsonPath("$.aptNumber", is(contact.getAptNumber())))
                 .andExpect(jsonPath("$.city", is(contact.getCity())))
                 .andExpect(jsonPath("$.zipCode", is(contact.getZipCode())))
+                .andExpect(jsonPath("$.mailingStreetAddress", is(contact.getMailingStreetAddress())))
                 .andExpect(jsonPath("$.email", is(contact.getEmail())));
 
     }

@@ -52,6 +52,20 @@ public class ContactController {
     }
 
     /**
+     * Deletes a Contact with the given UUID
+     * @param id The id of the Contact to delete
+     * @return
+     * @throws ConstraintViolation
+     * @throws NullDomainReference
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value="/{id}", method = RequestMethod.DELETE, produces = {"application/json"})
+    public Response deleteContact(@PathVariable("id") String id) throws ConstraintViolation, NullDomainReference {
+        contactService.delete(id);
+        return new Response(id, Response.SUCCESS);
+    }
+
+    /**
      * Find a Contact by it's UUID
      * @param id
      * @return {@link Contact}

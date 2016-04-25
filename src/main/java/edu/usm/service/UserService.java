@@ -30,6 +30,9 @@ public interface UserService {
     void updatePassword(User user, String currentPassword, String newPassword) throws ConstraintViolation, SecurityConstraintException;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
+    void updateWithoutCurrentPassword(User user, String newPassword) throws ConstraintViolation, SecurityConstraintException;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_SUPERUSER')")
     long createAdministrativeUser(User user) throws ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")

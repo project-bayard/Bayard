@@ -105,7 +105,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         Contact contact = findContact(id);
         /*Remove from organizations */
         if (contact.getOrganizations() != null) {
-            for(Organization organization : contact.getOrganizations()) {
+            Set<Organization> organizations = new HashSet<>(contact.getOrganizations());
+            for(Organization organization : organizations) {
                 organization.getMembers().remove(contact);
                 removeContactFromOrganization(contact.getId(),organization.getId());
             }
@@ -113,7 +114,8 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
         /*Remove from committees*/
         if (contact.getCommittees() != null) {
-            for(Committee committee : contact.getCommittees()) {
+            Set<Committee> committees = new HashSet<>(contact.getCommittees());
+            for(Committee committee : committees) {
                 committee.getMembers().remove(contact);
                 committeeService.update(committee.getId(),committee);
             }
@@ -121,14 +123,16 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
 
          /*Remove from attended events*/
         if (contact.getAttendedEvents() != null) {
-            for(Event event : contact.getAttendedEvents()) {
+            Set<Event> events = new HashSet<>(contact.getAttendedEvents());
+            for(Event event : events) {
                 event.getAttendees().remove(contact);
                 eventService.removeContactFromEvent(contact.getId(),event.getId());
             }
         }
 
         if (contact.getGroups() != null) {
-            for (Group group: contact.getGroups()) {
+            Set<Group> groups = new HashSet<>(contact.getGroups());
+            for (Group group: groups) {
                 group.getTopLevelMembers().remove(contact);
                 groupService.update(group);
             }
@@ -569,6 +573,11 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         contact.setCity(details.getCity());
         contact.setState(details.getState());
         contact.setZipCode(details.getZipCode());
+        contact.setMailingStreetAddress(details.getMailingStreetAddress());
+        contact.setMailingAptNumber(details.getMailingAptNumber());
+        contact.setMailingCity(details.getMailingCity());
+        contact.setMailingState(details.getMailingState());
+        contact.setMailingZipCode(details.getMailingZipCode());
         contact.setPhoneNumber1(details.getPhoneNumber1());
         contact.setPhoneNumber2(details.getPhoneNumber2());
         contact.setEmail(details.getEmail());

@@ -1,43 +1,66 @@
 <div class="container-fluid">
-    <h1>Committees</h1>
-    <button class="btn btn-md btn-primary" ng-show="hideForm" ng-click="showCommitteeForm()">Create Committee</button>
-
-    <div ng-if="!hideForm">
-        <form id="committeeForm" name="committeeForm" novalidate>
-            <div class="row">
-                <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : committeeForm.name.$invalid && !committeeForm.name.$pristine }">
-                    <label class="control-label">Name of Group</label>
-                    <input name="name" type="text" class="form-control" ng-model="newCommittee.name" ng-minlength="2" required>
-                    <p ng-show="committeeForm.name.$error.required && !committeeForm.name.$pristine" class="help-block">The committee name is required</p>
-                    <p ng-show="committeeForm.name.$error.min" class="help-block">Committee name not long enough</p>
-                </div>
-                <div class="col-md-3"  >
-                    <div class="alert alert-dismissable alert-danger" ng-if="newCommittee.constraintViolation">
-                        {{newCommittee.constraintViolation}}
+    <h3>Committees</h3>
+    <br><br>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="bootstrap-table table table-striped table-hover table-responsive"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true">
+                <tr>
+                    <th>Committee Name</th>
+                </tr>
+                <tr ng-repeat="committee in committees" ng-click="viewCommitteeDetails(committee.id)">
+                    <td>{{committee.name}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">New Committees</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div ng-if="hideForm">
+                                    <button class="btn btn-success btn-block bayard-margined" ng-click="showCommitteeForm()">Create a Committee</button>
+                                </div>
+                                <div ng-if="!hideForm">
+                                    <form id="committeeForm" name="committeeForm" novalidate>
+                                        <div class="row" ng-if="newCommittee.constraintViolation">
+                                            <div class="col-md-12">
+                                                <div class="alert alert-dismissable alert-danger">
+                                                    {{newCommittee.constraintViolation}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : committeeForm.name.$invalid && !committeeForm.name.$pristine }">
+                                                <label class="control-label">Name of Committee</label>
+                                                <input name="name" type="text" class="form-control" ng-model="newCommittee.name" ng-minlength="2" required>
+                                                <p ng-show="committeeForm.name.$error.required && !committeeForm.name.$pristine" class="help-block">The committee name is required</p>
+                                                <p ng-show="committeeForm.name.$error.min" class="help-block">Committee name not long enough</p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success btn-block bayard-margined" ng-click="createCommittee()" ng-disabled="committeeForm.$invalid">Submit</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelCreateCommittee()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </form>
-        <div class="row">
-            <div class="col-md-3">
-                <button class="btn btn-md btn-success" ng-click="createCommittee()" ng-disabled="committeeForm.$invalid">Submit</button>
-                <button class="btn btn-md btn-danger" ng-click="cancelCreateCommittee()">Cancel</button>
-            </div>
         </div>
     </div>
-    <br><br>
-
-    <table class="bootstrap-table table table-striped table-hover table-responsive"
-           data-toggle="table"
-           data-pagination="true"
-           data-search="true">
-        <tr>
-            <th>Name</th>
-            <th>Details</th>
-        </tr>
-        <tr ng-repeat="committee in committees">
-            <td>{{committee.name}}</td>
-            <td><a class="btn btn-md btn-info" href="#/committees/committee/{{committee.id}}">View Details</a></td>
-        </tr>
-    </table>
 </div>

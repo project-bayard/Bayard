@@ -6,10 +6,9 @@
         <th>Name</th>
         <th>Location</th>
         <th>Date</th>
-        <th ng-if="showingEvents">Remove from Event?</th>
-        <th>Details</th>
+        <th ng-if="showingEvents">Remove from Event</th>
     </tr>
-    <tr ng-repeat="event in eventsTable">
+    <tr ng-repeat="event in eventsTable" ng-click="viewEventDetails(event.id)">
         <td>{{event.name}}</td>
         <td>{{event.location}}</td>
         <td>{{event.dateHeld | date: 'MMMM d, y'}}</td>
@@ -18,6 +17,5 @@
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
             </button>
         </td>
-        <td><a class="btn btn-md btn-info" href="#/events/event/{{event.id}}">View Details</a></td>
     </tr>
 </table>

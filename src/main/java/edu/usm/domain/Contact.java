@@ -106,6 +106,46 @@ public class Contact extends BasicEntity implements Serializable {
             Views.OrganizationList.class,
             Views.CommitteeList.class,
             Views.EventList.class,
+            Views.ContactDetails.class})
+    private String mailingStreetAddress;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
+    private String mailingAptNumber;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
+    private String mailingCity;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
+    private String mailingState;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
+            Views.ContactDetails.class})
+    private String mailingZipCode;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
             Views.ContactDetails.class,
             Views.GroupDetails.class,
             Views.CommitteeDetails.class})
@@ -351,6 +391,46 @@ public class Contact extends BasicEntity implements Serializable {
 
     public void setStreetAddress(String streetAddress) {
         this.streetAddress = streetAddress;
+    }
+
+    public String getMailingStreetAddress() {
+        return mailingStreetAddress;
+    }
+
+    public void setMailingStreetAddress(String mailingStreetAddress) {
+        this.mailingStreetAddress = mailingStreetAddress;
+    }
+
+    public String getMailingAptNumber() {
+        return mailingAptNumber;
+    }
+
+    public void setMailingAptNumber(String mailingAptNumber) {
+        this.mailingAptNumber = mailingAptNumber;
+    }
+
+    public String getMailingCity() {
+        return mailingCity;
+    }
+
+    public void setMailingCity(String mailingCity) {
+        this.mailingCity = mailingCity;
+    }
+
+    public String getMailingState() {
+        return mailingState;
+    }
+
+    public void setMailingState(String mailingState) {
+        this.mailingState = mailingState;
+    }
+
+    public String getMailingZipCode() {
+        return mailingZipCode;
+    }
+
+    public void setMailingZipCode(String mailingZipCode) {
+        this.mailingZipCode = mailingZipCode;
     }
 
     public String getPhoneNumber1() {

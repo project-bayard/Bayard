@@ -59,6 +59,12 @@
             create : {
                 method: 'POST'
             },
+            delete : {
+                method: 'DELETE',
+                params : {
+                    id : '@id'
+                }
+            },
             attend: {
                 method: 'PUT',
                 url: "../contacts/:id/events"

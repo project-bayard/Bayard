@@ -1,15 +1,38 @@
 <div class="container-fluid">
-    <h1>Events</h1>
-    <button class="btn btn-md btn-primary" ng-model="addEvent.hidden" ng-click="addEvent.hidden = !addEvent.hidden">Create Event</button>
-    <br/>
-    <div ng-if="addEvent.hidden == false">
-        <div ng-include src=" 'resources/partials/forms/eventForm.html' "></div>
-        <div class="row">
-            <div class="col-md-8">
-                <button class="btn btn-md btn-success" ng-click="createEvent()" ng-disabled="formHolder.eventForm.$invalid">Submit</button>
+    <h3>Events</h3>
+    <br><br>
+    <div class="row">
+        <div class="col-md-8">
+            <div ng-include src=" 'resources/partials/tables/eventsTable.html' "></div>
+        </div>
+        <div class="col-md-4">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">New Events</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div>
+                                    <button class="btn btn-success btn-block bayard-margined" ng-model="addEvent.hidden" ng-click="addEvent.hidden = false">Create an Event</button>
+                                </div>
+                                <div ng-if="!addEvent.hidden">
+                                    <div ng-include src=" 'resources/partials/forms/eventForm.html' "></div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success btn-block bayard-margined" ng-click="createEvent()" ng-disabled="formHolder.eventForm.$invalid">Submit</button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button class="btn btn-danger btn-block bayard-margined" ng-click="addEvent.hidden = true">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <br><br>
-    <div ng-include src=" 'resources/partials/tables/eventsTable.html' "></div>
 </div>

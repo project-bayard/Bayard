@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="page-header">
-        <h1>Group Details: {{modelHolder.groupModel.groupName}}</h1>
+        <h3><a ng-href="#/groups">Groups</a> > {{modelHolder.groupModel.groupName}}</h3>
     </div>
     <div class="row">
         <div id="group-detail-left-panel" class="col-md-3">
@@ -27,7 +27,7 @@
                         <button class="btn btn-primary btn-block bayard-margined" ng-click="showAggregationForm()">Add to the Group</button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" ng-if="showingElevatedOptions">
                     <div class="col-md-12">
                         <button class="btn btn-danger btn-block bayard-margined" ng-click="deleteGroup()">Delete Group</button>
                     </div>
@@ -114,7 +114,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <ul class="list-group">
-                        <p>Group Constituents</p>
+                        <h4>Group Constituents</h4>
                         <li class="list-group-item" ng-repeat="agg in modelHolder.groupModel.aggregations">
                             {{agg.aggregationType}} : {{agg.name}}
                         </li>
@@ -123,10 +123,12 @@
             </div>
         </div>
     </div>
-    
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <h4 style="text-align: center">Members</h4>
+            <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
+        </div>
 
-    <br><br>
-    <h2>Members:</h2>
-    <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
-
+    </div>
 </div>

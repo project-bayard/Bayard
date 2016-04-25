@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="page-header">
-        <h1>Organization Details</h1>
+        <h3><a ng-href="#/organizations">Organizations</a> > {{modelHolder.organizationModel.name}}</h3>
     </div>
     <div class="row">
         <div class="col-xs-7">
@@ -46,7 +46,7 @@
                         <button class="btn btn-success bayard-margined" ng-click="showDonationForm()" ng-disabled="addingDonation">Add a Donation</button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" ng-if="showingElevatedOptions">
                     <div class="col-xs-2">
                         <button class="btn btn-danger bayard-margined" ng-click="deleteOrganization()">Delete Organization</button>
                     </div>
@@ -67,7 +67,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <h2 style="text-align: center">Members:</h2>
+                    <h4 style="text-align: center">Members</h4>
                     <div ng-include src=" 'resources/partials/tables/simpleContactTable.html' "></div>
                 </div>
             </div>

@@ -1,111 +1,135 @@
 <div class="container-fluid">
-    <h1>Foundations</h1>
-    <button class="btn btn-md btn-primary" ng-show="!creatingFoundation" ng-click="creatingFoundation = !creatingFoundation">Create Foundation</button>
+    <h3>Foundations</h3>
     <br/>
-    <div ng-if="creatingFoundation">
-        <form id="foundationForm" name="foundationForm" novalidate>
-            <div class="row">
-                <div class="form-group col-md-3 required"  ng-class="{ 'has-error' : foundationForm.name.$invalid && !foundationForm.name.$pristine }">
-                    <label class="control-label">Name of Foundation</label>
-                    <input name="name" type="text" class="form-control" ng-model="newFoundation.name" ng-maxlength="80" ng-minlength="2" required>
-                    <p ng-show="foundationForm.name.$error.required && !foundationForm.name.$pristine" class="help-block">The foundation name is required</p>
-                    <p ng-show="foundationForm.name.$error.maxlength" class="help-block">Foundation name too long</p>
-                    <p ng-show="foundationForm.name.$error.minlength" class="help-block">Foundation name too short</p>
-                </div>
-                <div class="col-md-3">
-                    <div class="alert alert-dismissable alert-danger" ng-if="newFoundation.constraintViolation">
-                        {{newFoundation.constraintViolation}}
+    <div class="row">
+        <div class="col-md-8">
+            <div ng-show="foundations.length > 0" ng-include src=" 'resources/partials/tables/foundationsTable.html' "></div>
+        </div>
+        <div class="col-md-4">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">New Foundations</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div>
+                                    <button class="btn btn-success btn-block bayard-margined" ng-click="creatingFoundation = true">Create a Foundation</button>
+                                </div>
+                                <div ng-if="creatingFoundation">
+                                    <form id="foundationForm" name="foundationForm" novalidate>
+                                        <div class="row">
+                                            <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : foundationForm.name.$invalid && !foundationForm.name.$pristine }">
+                                                <label class="control-label">Name of Foundation</label>
+                                                <input name="name" type="text" class="form-control" ng-model="newFoundation.name" ng-maxlength="80" ng-minlength="2" required>
+                                                <p ng-show="foundationForm.name.$error.required && !foundationForm.name.$pristine" class="help-block">The foundation name is required</p>
+                                                <p ng-show="foundationForm.name.$error.maxlength" class="help-block">Foundation name too long</p>
+                                                <p ng-show="foundationForm.name.$error.minlength" class="help-block">Foundation name too short</p>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="alert alert-dismissable alert-danger" ng-if="newFoundation.constraintViolation">
+                                                    {{newFoundation.constraintViolation}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Address</label>
+                                                <input name="address" type="text" class="form-control" ng-model="newFoundation.address">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Website</label>
+                                                <input name="city" type="text" class="form-control" ng-model="newFoundation.website">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Phone Number</label>
+                                                <input name="state" type="text" ui-mask="(999)-999-9999" class="form-control" ng-model="newFoundation.phoneNumber">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="text-align: center">
+                                                <hr>
+                                                Primary Contact
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Name</label>
+                                                <input name="primaryContactName" type="text" class="form-control" ng-model="newFoundation.primaryContactName">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Title</label>
+                                                <input name="primaryContactTitle" type="text" class="form-control" ng-model="newFoundation.primaryContactTitle">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Phone</label>
+                                                <input name="primaryContactPhoneNumber" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newFoundation.primaryContactPhone">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Email</label>
+                                                <input name="primaryContactEmail" type="email" class="form-control" ng-model="newFoundation.primaryContactEmail">
+                                                <p ng-show="foundationForm.$error.primaryContactEmail" class="help-block">Enter a valid email address</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12" style="text-align: center">
+                                                <hr>
+                                                Secondary Contact
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Name</label>
+                                                <input name="secondaryContactName" type="text" class="form-control" ng-model="newFoundation.secondaryContactName">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Title</label>
+                                                <input name="secondaryContactTitle" type="text" class="form-control" ng-model="newFoundation.secondaryContactTitle">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Phone</label>
+                                                <input name="secondaryContactPhone" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newFoundation.secondaryContactPhone">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="control-label">Email</label>
+                                                <input name="secondaryContactEmail" type="email" class="form-control" ng-model="newFoundation.secondaryContactEmail">
+                                                <p ng-show="foundationForm.$error.secondaryContactEmail" class="help-block">Enter a valid email address</p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-success btn-block bayard-margined" ng-click="createFoundation()" ng-disabled="foundationForm.$invalid">Submit</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-danger btn-block bayard-margined" ng-click="cancelCreateFoundation()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Address</label>
-                    <input name="address" type="text" class="form-control" ng-model="newFoundation.address">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Website</label>
-                    <input name="city" type="text" class="form-control" ng-model="newFoundation.website">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Phone Number</label>
-                    <input name="state" type="text" ui-mask="(999)-999-9999" class="form-control" ng-model="newFoundation.phoneNumber">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3" style="text-align: center">
-                    <hr>
-                    Primary Contact
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Name</label>
-                    <input name="primaryContactName" type="text" class="form-control" ng-model="newFoundation.primaryContactName">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Title</label>
-                    <input name="primaryContactTitle" type="text" class="form-control" ng-model="newFoundation.primaryContactTitle">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Phone</label>
-                    <input name="primaryContactPhoneNumber" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newFoundation.primaryContactPhone">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Email</label>
-                    <input name="primaryContactEmail" type="email" class="form-control" ng-model="newFoundation.primaryContactEmail">
-                    <p ng-show="foundationForm.$error.primaryContactEmail" class="help-block">Enter a valid email address</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3" style="text-align: center">
-                    <hr>
-                    Secondary Contact
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Name</label>
-                    <input name="secondaryContactName" type="text" class="form-control" ng-model="newFoundation.secondaryContactName">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Title</label>
-                    <input name="secondaryContactTitle" type="text" class="form-control" ng-model="newFoundation.secondaryContactTitle">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Phone</label>
-                    <input name="secondaryContactPhone" ui-mask="(999)-999-9999" type="text" class="form-control" ng-model="newFoundation.secondaryContactPhone">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label">Email</label>
-                    <input name="secondaryContactEmail" type="email" class="form-control" ng-model="newFoundation.secondaryContactEmail">
-                    <p ng-show="foundationForm.$error.secondaryContactEmail" class="help-block">Enter a valid email address</p>
-                </div>
-            </div>
-        </form>
-        <div class="row">
-            <div class="col-md-6">
-                <button class="btn btn-success" ng-click="createFoundation()" ng-disabled="foundationForm.$invalid">Submit</button>
-                <button class="btn btn-danger" ng-click="cancelCreateFoundation()">Cancel</button>
-            </div>
         </div>
     </div>
-    <br><br>
-    <div ng-show="!creatingFoundation && foundations.length > 0" ng-include src=" 'resources/partials/tables/foundationsTable.html' "></div>
 </div>

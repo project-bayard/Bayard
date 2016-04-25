@@ -13,15 +13,13 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Assessment</th>
-                <th>Details</th>
             </tr>
-            <tr ng-repeat="member in contactCollection" ng-clck="viewContactDetails(member.id)">
+            <tr ng-repeat="member in contactCollection" ng-click="viewContactDetails(member.id)">
                 <td>{{member.firstName}}</td>
                 <td>{{member.lastName}}</td>
                 <td>{{member.email}}</td>
                 <td>{{member.phoneNumber1}}</td>
                 <td>{{member.assessment}}</td>
-                <td><a class="btn btn-md btn-info" ng-click="viewContactDetails(member.id)">View Details</a></td>
             </tr>
         </table>
     </div>

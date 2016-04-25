@@ -11,20 +11,21 @@
 
         var resolveDevelopmentEnabled = function($q, $rootScope, ConfigService, PermissionService) {
 
-            var setShowingDevelopment = function() {
+            var establishUserVisibility = function() {
                 if (null != $rootScope.user) {
                     var permissions = PermissionService.getPermissionInterpreter($rootScope.user);
                     $rootScope.showingDevelopment = $rootScope.bayardConfig.developmentEnabled && permissions.isDevelopmentUser();
+                    $rootScope.showingElevatedOptions = permissions.isElevatedUser();
                 }
             };
 
             if ($rootScope.bayardConfig != null) {
-                setShowingDevelopment();
+                establishUserVisibility();
                 return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
             } else {
                 ConfigService.getImplementationConfig({}, function(config) {
                     $rootScope.bayardConfig = config;
-                    setShowingDevelopment();
+                    establishUserVisibility();
                     return ($rootScope.bayardConfig.developmentEnabled == true) ? $q.defer().resolve() : $q.reject("development is disabled");
                 }, function(err) {
                     console.log(err);
@@ -191,6 +192,34 @@
     app.run(function($rootScope, $location) {
         $rootScope.user = sessionStorage.getItem('bayard-user');
         $rootScope.eventSignInMode = false;
+
+        $rootScope.viewContactDetails = function (contactId) {
+            $location.path("/contacts/contact/" + contactId);
+        };
+
+        $rootScope.viewCommitteeDetails = function(id) {
+            $location.path("/committees/committee/" + id);
+        };
+
+        $rootScope.viewOrganizationDetails = function (id) {
+            $location.path("/organizations/organization/" + id);
+        };
+
+        $rootScope.viewGroupDetails = function (id) {
+            $location.path("/groups/group/" + id);
+        };
+
+        $rootScope.viewEventDetails = function (id) {
+            $location.path("/events/event/" + id);
+        };
+
+        $rootScope.viewFoundationDetails = function (id) {
+            $location.path("/foundations/" + id);
+        };
+
+        $rootScope.viewGrantDetails = function (id) {
+            $location.path("/grants/" + id);
+        };
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $rootScope.authenticated = sessionStorage.getItem('bayard-user-authenticated');
