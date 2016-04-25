@@ -206,7 +206,7 @@ public class OrganizationControllerTest extends WebAppConfigurationAware {
 
         organization = organizationService.findById(organization.getId());
         assertFalse(organizationService.getDonations(organization.getId()).isEmpty());
-        assertEquals(budgetItem.getName(), organizationService.getDonations(organization.getId()).iterator().next().getBudgetItem().getName());
+        assertEquals(budgetItem.getName(), organizationService.getDonations(organization.getId()).iterator().next().getBudgetItemName());
     }
 
     @Test

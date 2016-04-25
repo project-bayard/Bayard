@@ -4,6 +4,7 @@ import edu.usm.config.WebAppConfigurationAware;
 import edu.usm.domain.BudgetItem;
 import edu.usm.domain.Donation;
 import edu.usm.domain.Views;
+import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.DtoTransformer;
 import edu.usm.service.DonationService;
 import org.junit.After;
@@ -64,8 +65,9 @@ public class DonationControllerTest extends WebAppConfigurationAware {
 
         Donation fromDb = donationService.findAll().iterator().next();
         assertEquals(donation.getRestrictedToCategory(), fromDb.getRestrictedToCategory());
+        donation = donationService.findById(fromDb.getId());
         assertEquals(donation.getDateOfDeposit(), fromDb.getDateOfDeposit());
-        assertEquals(donation.getBudgetItem(), fromDb.getBudgetItem());
+        assertEquals(donation.getBudgetItemName(), fromDb.getBudgetItemName());
     }
 
     @Test
@@ -95,14 +97,13 @@ public class DonationControllerTest extends WebAppConfigurationAware {
         BayardTestUtilities.performEntityGetSingle(Views.DonationDetails.class, DONATIONS_BASE_URL + donation.getId(), mockMvc, donation);
     }
 
-    @Test
+    @Test(expected = NullDomainReference.NullDonation.class)
     public void testDeleteDonation() throws Exception {
         String id = donationService.create(donation);
         donation = donationService.findById(id);
 
         BayardTestUtilities.performEntityDelete(DONATIONS_BASE_URL + donation.getId(), mockMvc);
         donation = donationService.findById(donation.getId());
-        assertNull(donation);
     }
 
     @Test
@@ -177,7 +178,7 @@ public class DonationControllerTest extends WebAppConfigurationAware {
         LocalDate from = donation.getDateOfDeposit().minus(7, ChronoUnit.DAYS);
         LocalDate to = donation.getDateOfDeposit().plus(7, ChronoUnit.DAYS);
 
-        mockMvc.perform(get(DONATIONS_BASE_URL + "/bydreceiptdate")
+        mockMvc.perform(get(DONATIONS_BASE_URL + "/byreceiptdate")
                 .param("from", from.toString())
                 .param("to", to.toString())
                 .param("page.page", "0")

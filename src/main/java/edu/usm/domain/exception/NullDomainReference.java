@@ -174,6 +174,7 @@ public abstract class NullDomainReference extends Exception {
     }
 
 
+
     protected static String messageConstructor(String domainClass, String id) {
         return domainClass+" with id : "+id+" does not exist";
     }

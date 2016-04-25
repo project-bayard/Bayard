@@ -117,7 +117,7 @@ public class OrganizationServiceImpl extends DonationAssigningService implements
 
     @Override
     @Transactional
-    public void removeDonation(String id, String donationId) throws NullDomainReference.NullOrganization, ConstraintViolation {
+    public void removeDonation(String id, String donationId) throws NullDomainReference, ConstraintViolation {
         Organization organization = findOrganization(id);
         Donation donation = donationService.findById(donationId);
         if (null != organization.getDonations()) {

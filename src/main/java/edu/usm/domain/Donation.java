@@ -35,7 +35,7 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     @JsonView(Views.DonationDetails.class)
     private String restrictedToCategory;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_item_id")
     @JsonView(Views.DonationDetails.class)
     private BudgetItem budgetItem;
@@ -47,6 +47,10 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     @Column
     @JsonView(Views.DonationDetails.class)
     private boolean standalone;
+
+    @Column
+    @JsonView(Views.DonationDetails.class)
+    private String budgetItemName;
 
     public Donation() {
         super();
@@ -130,6 +134,7 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
     }
 
     public void setBudgetItem(BudgetItem budgetItem) {
+        this.budgetItemName = budgetItem != null ? budgetItem.getName() : null;
         this.budgetItem = budgetItem;
     }
 
@@ -160,5 +165,13 @@ public class Donation extends BasicEntity implements MonetaryContribution, Seria
 
     public void setStandalone(boolean standalone) {
         this.standalone = standalone;
+    }
+
+    public String getBudgetItemName() {
+        return budgetItemName;
+    }
+
+    public void setBudgetItemName(String budgetItemName) {
+        this.budgetItemName = budgetItemName;
     }
 }

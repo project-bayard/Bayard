@@ -67,7 +67,7 @@ public interface OrganizationService {
      * @throws ConstraintViolation
      */
     @PreAuthorize(value = "hasAnyRole('ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    void removeDonation (String id, String donationId) throws NullDomainReference.NullOrganization, ConstraintViolation;
+    void removeDonation (String id, String donationId) throws NullDomainReference, ConstraintViolation;
 
     /**
      * Returns a set of donations associated with an organization.
