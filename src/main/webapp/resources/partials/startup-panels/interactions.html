@@ -1,0 +1,46 @@
+<div class="row" ng-controller="StartupInteractionsCtrl">
+    <div class="col-xs-12">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Interaction Records</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <form role="form">
+                                    <div class="form-group">
+                                        <label for="newType" class="control-label">Interaction Types</label>
+                                        <div>
+                                            <input id="newType" ng-model="newInteractionType" type="text" class="form-control" placeholder="Grant application, informal call, etc...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-success" ng-click="addInteractionType()">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row" ng-if="interactions.types.length > 0">
+                                <div class="col-md-10 col-xs-10">
+                                    <ul class="list-group">
+                                        <li class="list-group-item" ng-repeat="type in interactions.types">
+                                            {{type.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            Bayard can also help you keep track of foundations and grants.<br/><br/>
+
+                            Like encounters, any communication with a foundation can be recorded as an <strong>Interaction Record</strong>.<br/><br/>
+
+                            Add the types of Interaction Records your organization will track.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

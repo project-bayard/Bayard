@@ -1,0 +1,47 @@
+<form id="newUserForm" name="newUserForm" novalidate>
+    <div class="row">
+        <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.firstName.$invalid && !newUserForm.firstName.$pristine }">
+            <label class="control-label">First Name</label>
+            <input name="firstName" type="text" class="form-control" ng-model="newUser.firstName" ng-minlength="2" required>
+            <p ng-show="newUserForm.firstName.$error.required && !newUserForm.firstName.$pristine" class="help-block">A first name is required</p>
+            <p ng-show="newUserForm.firstName.$error.min" class="help-block">First name not long enough</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.lastName.$invalid && !newUserForm.lastName.$pristine }">
+            <label class="control-label">Last Name</label>
+            <input name="lastName" type="text" class="form-control" ng-model="newUser.lastName" ng-minlength="2" required>
+            <p ng-show="newUserForm.lastName.$error.required && !newUserForm.lastName.$pristine" class="help-block">A Last name is required</p>
+            <p ng-show="newUserForm.lastName.$error.min" class="help-block">Last name not long enough</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : newUserForm.email.$invalid && !newUserForm.email.$pristine }">
+            <label class="control-label">Email</label>
+            <input name="email" type="email" class="form-control" ng-model="newUser.email">
+            <p ng-show="newUserForm.$error.email" class="help-block">Enter a valid email address</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-12 required">
+            <label class="control-label">Role</label>
+            <select name="role" class="form-control input-small" ng-model="newUser.role" required>
+                <option ng-repeat="role in roles" value="{{role}}">{{role}}</option>
+            </select>
+            <p ng-show="newUserForm.role.$error.required && !newUserForm.role.$pristine" class="help-block">A role is required</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-12 required">
+            <label class="control-label">Password</label>
+            <input name="password" type="password" class="form-control" ng-model="newUser.password">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-12 required">
+            <label class="control-label">Repeat Password</label>
+            <input name="repeatPassword" type="password" class="form-control" ng-model="newUser.repeatPassword">
+            <p ng-show="newUser.password !== newUser.repeatPassword && !newUserForm.repeatPassword.$pristine" class="help-block">Passwords do not match</p>
+        </div>
+    </div>
+</form>

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors', 'angularUtils.directives.dirPagination']);
+    var app = angular.module('app', ['ui.mask', 'ngRoute', 'controllers','services','filters', 'interceptors', 'angularUtils.directives.dirPagination', 'ngAnimate']);
 
     app.config(["$httpProvider", function ($httpProvider) {
         $httpProvider.interceptors.push("baseInterceptor");
@@ -189,7 +189,7 @@
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
     });
 
-    app.run(function($rootScope, $location) {
+    app.run(function($rootScope, $location, $http) {
         $rootScope.user = sessionStorage.getItem('bayard-user');
         $rootScope.eventSignInMode = false;
 
@@ -219,6 +219,34 @@
 
         $rootScope.viewGrantDetails = function (id) {
             $location.path("/grants/" + id);
+        };
+
+        $rootScope.authenticate = function(credentials, callback) {
+            var headers = credentials ? {
+                authorization: "Basic "
+                + btoa(credentials.username + ":" + credentials.password)
+            } : {};
+
+            $http.get('/users/authenticate', {headers: headers}).success(function (data) {
+                if (data.email) {
+
+                    sessionStorage.setItem('bayard-user-authenticated', 'true');
+                    sessionStorage.setItem('bayard-user', data);
+                    sessionStorage.setItem('event-sign-in-mode', $rootScope.eventSignInMode);
+                    sessionStorage.setItem('event-sign-in-id', $rootScope.eventSignInId);
+
+                    $rootScope.authenticated = true;
+                    $rootScope.user = data;
+                } else {
+                    sessionStorage.setItem('bayard-user-authenticated', 'false');
+                    $rootScope.authenticated = false;
+                }
+                callback && callback();
+            }).error(function () {
+                sessionStorage.setItem('bayard-user-authenticated', 'false');
+                $rootScope.authenticated = false;
+                callback && callback();
+            });
         };
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {

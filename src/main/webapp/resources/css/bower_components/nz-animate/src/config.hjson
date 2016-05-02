@@ -1,0 +1,155 @@
+{
+    "vendors": [
+        "official",
+        "webkit",
+        // "moz",
+        // "ms",
+        // "o"
+    ],
+    "ieSupport": false,
+    "speed": {
+        "default": 700,
+        "start": 0,
+        "end": 4000,
+        "increment": 50
+    },
+    "stagger": {
+        "start": 0,
+        "end": 1000,
+        "increment": 50
+    },
+    "animations": [
+
+        /* ---- Attention Seekers ---- */
+
+        "bounce",
+        "flash",
+        "flip",
+        "pulse",
+        "rubberBand",
+        "shake",
+        "swing",
+        "tada",
+        "wobble",
+
+        /* ---- Enter/Exit ---- */
+
+        "puffIn",
+        "puffOut",
+
+        "vanishIn",
+        "vanishOut",
+
+        "bombLeftOut",
+        "bombRightOut",
+
+        "bounceIn",
+        "bounceInDown",
+        "bounceInLeft",
+        "bounceInRight",
+        "bounceInUp",
+        "bounceOut",
+        "bounceOutDown",
+        "bounceOutLeft",
+        "bounceOutRight",
+        "bounceOutUp",
+
+        "fadeIn",
+        "fadeInDown",
+        "fadeInDownBig",
+        "fadeInLeft",
+        "fadeInLeftBig",
+        "fadeInRight",
+        "fadeInRightBig",
+        "fadeInUp",
+        "fadeInUpBig",
+        "fadeOut",
+        "fadeOutDown",
+        "fadeOutDownBig",
+        "fadeOutLeft",
+        "fadeOutLeftBig",
+        "fadeOutRight",
+        "fadeOutRightBig",
+        "fadeOutUp",
+        "fadeOutUpBig",
+
+        "flipInX",
+        "flipInY",
+        "flipOutX",
+        "flipOutY",
+
+        "lightSpeedIn",
+        "lightSpeedOut",
+
+        "magicOut",
+
+        "swapIn",
+        "swapOut",
+
+        "twisterInDown",
+        "twisterInUp",
+
+        "foolishIn",
+        "foolishOut",
+
+        "holeIn",
+        "holeOut",
+
+        "swashIn",
+        "swashOut",
+
+        "flopInDown",
+        "flopInLeft",
+        "flopInRight",
+        "flopInUp",
+        "flopOutDown",
+        "flopOutLeft",
+        "flopOutRight",
+        "flopOutUp",
+
+        "rotateIn",
+        "rotateInDownLeft",
+        "rotateInDownRight",
+        "rotateInUpLeft",
+        "rotateInUpRight",
+        "rotateOut",
+        "rotateOutDownLeft",
+        "rotateOutDownRight",
+        "rotateOutUpLeft",
+        "rotateOutUpRight",
+
+        "slideInDown",
+        "slideInLeft",
+        "slideInRight",
+        "slideInUp",
+        "slideOutDown",
+        "slideOutLeft",
+        "slideOutRight",
+        "slideOutUp",
+
+        "hingeOut",
+
+        "rollIn",
+        "rollOut",
+
+        "tinInDown",
+        "tinInLeft",
+        "tinInRight",
+        "tinInUp",
+        "tinOutDown",
+        "tinOutLeft",
+        "tinOutRight",
+        "tinOutUp",
+
+        "zoomIn",
+        "zoomInDown",
+        "zoomInLeft",
+        "zoomInRight",
+        "zoomInUp",
+        "zoomOut",
+        "zoomOutDown",
+        "zoomOutLeft",
+        "zoomOutRight",
+        "zoomOutUp",
+    ],
+}

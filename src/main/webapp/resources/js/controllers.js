@@ -1484,45 +1484,23 @@
     }]);
 
 
-    controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'UserService', '$http', 'ConfigService', function ($scope, $rootScope, $location, UserService, $http, ConfigService) {
+    controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'UserService', 'ConfigService', function ($scope, $rootScope, $location, UserService, ConfigService) {
 
         $scope.error = false;
 
-        var authenticate = function (credentials, callback) {
+        ConfigService.getStartupMode({}, function(config) {
+            if (config.startupMode) {
+                $rootScope.bayardConfig = config;
+            }
+        }, function(err) {
+            console.log(err);
+        });
 
-            var headers = credentials ? {
-                authorization: "Basic "
-                + btoa(credentials.username + ":" + credentials.password)
-            } : {};
-
-            $http.get('/users/authenticate', {headers: headers}).success(function (data) {
-                if (data.email) {
-
-                    sessionStorage.setItem('bayard-user-authenticated', 'true');
-                    sessionStorage.setItem('bayard-user', data);
-                    sessionStorage.setItem('event-sign-in-mode', $rootScope.eventSignInMode);
-                    sessionStorage.setItem('event-sign-in-id', $rootScope.eventSignInId);
-
-                    $rootScope.authenticated = true;
-                    $rootScope.user = data;
-                } else {
-                    sessionStorage.setItem('bayard-user-authenticated', 'false');
-                    $rootScope.authenticated = false;
-                }
-                callback && callback();
-            }).error(function () {
-                sessionStorage.setItem('bayard-user-authenticated', 'false');
-                $rootScope.authenticated = false;
-                callback && callback();
-            });
-
-        };
-
-        authenticate();
+        $rootScope.authenticate();
         $scope.credentials = {};
 
         $scope.login = function () {
-            authenticate($scope.credentials, function () {
+            $rootScope.authenticate($scope.credentials, function () {
                 if (sessionStorage.getItem('bayard-user-authenticated') == 'true') {
                     $location.path("/");
                     $scope.error = false;
@@ -1532,6 +1510,141 @@
                 }
             });
         };
+    }]);
+
+    controllers.controller('StartupModeCtrl', ['$scope', '$rootScope', 'ConfigService', 'UserService', 'DemographicService', 'EncounterTypeService', '$location',
+        function ($scope, $rootScope, ConfigService, UserService, DemographicService, EncounterTypeService, $location) {
+
+        $scope.showingSplash = true;
+        $scope.startupState = 1;
+        $scope.numberOfStates = 6;
+        $scope.startupModel = {};
+        $scope.startupUserCreated = false;
+        $scope.demographics = {};
+        $scope.encounters = {};
+
+        $scope.newUser = {};
+            $scope.initialUserCreated = false;
+
+        $scope.roles = ["ROLE_SUPERUSER"];
+
+        $scope.navigateBack = function() {
+            $scope.startupState--;
+        };
+
+        $scope.navigateForward = function() {
+            $scope.startupState++;
+        };
+
+            $scope.doneStartup = function() {
+
+                $rootScope.bayardConfig.startupMode = false;
+                $rootScope.bayardConfig.implementationName = $scope.startupModel.implementationName;
+
+                ConfigService.updateConfig({}, $rootScope.bayardConfig, function(succ) {
+                    ConfigService.getImplementationConfig({}, function(config) {
+                        $rootScope.bayardConfig = config;
+                        $location.path("/");
+                    }, function(err) {
+                        console.log(err);
+                    })
+                }, function(err) {
+                    console.log(err);
+                })
+
+            };
+
+        $scope.createNewUser = function() {
+            UserService.createStartupUser({}, $scope.newUser, function(succ) {
+                var credentials = {username: $scope.newUser.email, password: $scope.newUser.password};
+                $rootScope.authenticate(credentials, function () {
+                    if (sessionStorage.getItem('bayard-user-authenticated') == 'true') {
+                        $scope.initialUserCreated = true;
+                        $scope.startupUserCreated = true;
+                        setupAfterLogin();
+                        $scope.navigateForward()
+                    } else {
+                        console.log("Error authenticating on startup user creation");
+                    }
+                });
+            }, function(err) {
+                console.log(err);
+            })
+        };
+
+        var setupAfterLogin = function() {
+
+            ConfigService.getImplementationConfig({}, function(config) {
+                $rootScope.bayardConfig = config;
+            }, function(err) {
+                console.log(err);
+            });
+
+            DemographicService.findAll({}, function(categories) {
+                $scope.demographics.demographicCategories = categories;
+            }, function(err) {
+                console.log(err);
+            });
+
+            EncounterTypeService.findAll({}, function(types) {
+                $scope.encounters.types = types;
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+    }]);
+
+    controllers.controller('StartupDemographicsCtrl', ['$scope', 'DemographicService', function ($scope, DemographicService) {
+
+        $scope.addingDemo = {};
+
+        $scope.addOption = function(categoryName) {
+            console.log("Category "+categoryName);
+            console.log("Option "+$scope.demographics.newOption);
+            DemographicService.createOption({categoryName: categoryName}, {name: $scope.addingDemo.newOption}, function(succ) {
+                $scope.addingDemo.selectedCategory.options.push({name: $scope.addingDemo.newOption});
+                $scope.addingDemo.newOption = "";
+            }, function(err) {
+                console.log(err);
+            })
+        }
+    }]);
+
+    controllers.controller('StartupInteractionsCtrl', ['$scope', 'InteractionService', function ($scope, InteractionService) {
+
+        $scope.interactions = [];
+
+        $scope.addInteractionType = function() {
+            InteractionService.createType({name: $scope.newInteractionType}, function(succ) {
+                InteractionService.getInteractionTypes({}, function(types) {
+                    $scope.newInteractionType = "";
+                    $scope.interactions.types = types
+                }, function(err) {
+                    console.log(err);
+                })
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
+    }]);
+
+    controllers.controller('StartupEncountersCtrl', ['$scope', 'EncounterTypeService', function ($scope, EncounterTypeService) {
+
+        $scope.addEncounterType = function() {
+            EncounterTypeService.create({name: $scope.newEncounterType}, function(succ) {
+                EncounterTypeService.findAll({}, function(types) {
+                    $scope.newEncounterType = "";
+                    $scope.encounters.types = types
+                }, function(err) {
+                    console.log(err);
+                })
+            }, function(err) {
+                console.log(err);
+            })
+        }
+
     }]);
 
     controllers.controller('ConfigurationCtrl', ['$scope', 'EncounterTypeService', function ($scope, EncounterTypeService) {

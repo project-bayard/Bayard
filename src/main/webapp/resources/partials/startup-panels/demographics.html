@@ -1,0 +1,53 @@
+<div class="row" ng-controller="StartupDemographicsCtrl">
+    <div class="col-xs-12">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Demographic Options</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <form role="form">
+                                    <div class="form-group">
+                                        <label for="category" class="control-label">Category</label>
+                                        <div>
+                                            <select id="category" name="race" class="form-control" ng-model="addingDemo.selectedCategory" ng-options="category as category.name for category in demographics.demographicCategories">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="option" class="control-label">Option</label>
+                                        <div>
+                                            <input id="option" ng-model="addingDemo.newOption" type="text" class="form-control" placeholder="New option...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-success" ng-click="addOption(addingDemo.selectedCategory.name)">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row" ng-if="addingDemo.selectedCategory.options.length > 0">
+                                <div class="col-md-10 col-xs-10">
+                                    <ul class="list-group">
+                                        <li class="list-group-item" ng-repeat="option in addingDemo.selectedCategory.options">
+                                            {{option.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <p>
+                                Now let's do some configuration for <strong>{{startupModel.implementationName}}</strong>.<br/><br/>
+                                Bayard tracks all sorts of information about your members and the general public.<br/><br/>
+                                Add any options you'd like to have for these demographic categories.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

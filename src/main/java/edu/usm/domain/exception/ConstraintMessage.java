@@ -24,6 +24,7 @@ public enum ConstraintMessage {
     GROUP_REQUIRED_NAME("A group must have a name associated with it."),
     DEMOGRAPHIC_OPTION_REQUIRED_NAME("A demographic option must have a name associated with it."),
     DEMOGRAPHIC_CATEGORY_REQUIRED_NAME("A demographic category must have a name associated with it."),
+    DEMOGRAPHIC_CATEGORY_DUPLICATE("A demographic category with this name already exists."),
     USER_DUPLICATE_EMAIL("A user registered with this email already exists."),
     USER_NO_PASSWORD("A user must have a password associated with it."),
     USER_PASSWORD_TOO_SHORT("The password provided was not long enough."),
