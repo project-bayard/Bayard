@@ -337,7 +337,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testCreateEncounter() throws Exception {
         String id = contactService.create(contact);
         String initiatorId = contactService.create(generateSecondcontact("Initiator", "initiatorEmail"));
@@ -389,7 +388,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testUpdateEncounter() throws Exception {
         String id = contactService.create(contact);
         String initiatorId = contactService.create(generateSecondcontact("Second", "secondEmail"));
@@ -409,7 +407,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk());
 
         Contact contactFromDb = contactService.findById(id);
-        Encounter encounterFromDb = contactFromDb.getEncounters().first();
+        Encounter encounterFromDb = contactService.getAllContactEncounters(contactFromDb.getId()).first();
         String newInitiatorId = contactService.create(generateSecondcontact("Third", "thirdEmail"));
 
         dto = new EncounterDto();

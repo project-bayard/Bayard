@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.junit.Assert.*;
 
@@ -332,7 +333,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testAddEncounter () throws Exception {
         String id = contactService.create(contact);
         String initiatorId = contactService.create(contact2);
@@ -349,14 +349,15 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
 
+        SortedSet<Encounter> encounters = contactService.getAllContactEncounters(contact.getId());
+
         assertNotNull(fromDb.getEncounters());
-        assertEquals(fromDb.getEncounters().first().getContact().getId(), contact.getId());
-        assertEquals(fromDb.getEncounters().first().getInitiator().getId(), contact2.getId());
-        assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
+        assertEquals(encounters.first().getContact().getId(), contact.getId());
+        assertEquals(encounters.first().getInitiator().getId(), contact2.getId());
+        assertEquals(encounters.first().getAssessment(), dto.getAssessment());
 
         Contact initiatorFromDb = contactService.findById(initiatorId);
-        assertNotNull(initiatorFromDb.getEncountersInitiated());
-        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
+        assertEquals(1, contactService.getAllContactEncountersInitiated(initiatorFromDb.getId()).size());
 
     }
 
@@ -404,7 +405,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testAddMultipleEncounters() throws Exception {
         String id = contactService.create(contact);
         contactService.create(contact2);

@@ -139,11 +139,17 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         }
 
         if (contact.getEncounters() != null) {
+            for (Encounter en: new HashSet<>(contact.getEncounters())) {
+                removeEncounter(contact.getId(), en.getId());
+            }
             contact.getEncounters().clear();
         }
 
 
         if (contact.getEncountersInitiated() != null) {
+            for (Encounter en: new HashSet<>(contact.getEncountersInitiated())) {
+                removeInitiator(contact.getId(), en.getId());
+            }
             contact.getEncountersInitiated().clear();
         }
 
@@ -684,6 +690,20 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
+    @Transactional
+    public SortedSet<Encounter> getAllContactEncountersInitiated(String contactId) throws NullDomainReference {
+        Contact contact = findContact(contactId);
+        SortedSet<Encounter> encounters = contact.getEncountersInitiated();
+
+        if (encounters == null) {
+            encounters = new TreeSet<>();
+        }
+
+        encounters.size();
+        return encounters;
+    }
+
+    @Override
     public int getUpdatedAssessment(String contactId) throws NullDomainReference {
         /*Sets assessment to most recent encounter assessment */
         Contact contact = findContact(contactId);
@@ -707,16 +727,16 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     public void removeEncounter(String contactId, String encounterId) throws NullDomainReference {
         Contact contact = findContact(contactId);
         Encounter encounter = encounterService.findById(encounterId);
+        Contact initiator = encounter.getInitiator();
+
         contact.getEncounters().remove(encounter);
         contact.setAssessment(getUpdatedAssessment(contact.getId()));
-        encounter.setContact(null);
 
-        Contact initiator = encounter.getInitiator();
         if (null != initiator) {
             initiator.getEncountersInitiated().remove(encounter);
-            encounter.setInitiator(null);
             update(initiator);
         }
+
         update(contact);
     }
 
@@ -724,9 +744,13 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     public void removeInitiator(String initiatorId, String encounterId) throws NullDomainReference {
         Contact initiator = findContact(initiatorId);
         Encounter encounter = encounterService.findById(encounterId);
+        Contact contact = encounter.getContact();
+
         initiator.getEncountersInitiated().remove(encounter);
-        encounter.setInitiator(null);
+        contact.getEncounters().remove(encounter);
+
         update(initiator);
+        update(contact);
     }
 
     @Override
