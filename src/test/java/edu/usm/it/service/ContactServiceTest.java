@@ -181,6 +181,82 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
+    public void testDeleteContactsWithEncountersInitiatorFirst() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+        createEncounter();
+
+        contactService.delete(contact2.getId());
+        contactService.delete(contact.getId());
+
+    }
+
+    private void createEncounter() throws Exception{
+
+        EncounterType type = encounterTypeService.findByName("Test Type");
+        if (null == type) {
+            type = new EncounterType("Test Type");
+            encounterTypeService.create(type);
+        }
+
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setEncounterDate("2015-01-10");
+        encounterDto.setInitiatorId(contact2.getId());
+        encounterDto.setType(type.getId());
+        contactService.addEncounter(contact.getId(), encounterDto);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 1);
+    }
+
+    @Test
+    public void testDeleteContactsWithEncountersSubjectFirst() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+        createEncounter();
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 1);
+
+        contactService.delete(contact.getId());
+        contactService.delete(contact2.getId());
+
+    }
+
+    @Test
+    public void testDeleteContactsMultipleEncounters() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+
+        EncounterType type = encounterTypeService.findByName("Test Type");
+        if (null == type) {
+            type = new EncounterType("Test Type");
+            encounterTypeService.create(type);
+        }
+
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setEncounterDate("2015-01-10");
+        encounterDto.setInitiatorId(contact2.getId());
+        encounterDto.setType(type.getId());
+        contactService.addEncounter(contact.getId(), encounterDto);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 1);
+
+        encounterDto = new EncounterDto();
+        encounterDto.setEncounterDate("2013-07-07");
+        encounterDto.setInitiatorId(contact2.getId());
+        encounterDto.setType(type.getId());
+        contactService.addEncounter(contact.getId(), encounterDto);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 2);
+
+        contactService.delete(contact.getId());
+        contactService.delete(contact2.getId());
+    }
+
+    @Test
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
         organizationService.create(organization);
