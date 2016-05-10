@@ -95,7 +95,7 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
         assertEquals(demographicCategory.getOptions().size() + 1, fromDb.getOptions().size());
     }
 
-    @Test(expected = ConstraintViolation.class)
+    @Test
     public void testAddOptionSameName() throws Exception{
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
