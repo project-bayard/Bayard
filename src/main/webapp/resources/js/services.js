@@ -38,6 +38,34 @@
         }
     });
 
+    services.factory('LoginService', ['$http', function($http) {
+
+        return {
+            authenticate: function(credentials, callback) {
+                var headers = credentials ? {
+                    authorization: "Basic "
+                    + btoa(credentials.username + ":" + credentials.password)
+                } : {};
+
+                $http.get('/users/authenticate', {headers: headers}).success(function (data) {
+                    if (data.email) {
+                        sessionStorage.setItem('bayard-user-authenticated', 'true');
+                        sessionStorage.setItem('bayard-user', data);
+                        console.log(data);
+                    } else {
+                        sessionStorage.setItem('bayard-user-authenticated', 'false');
+                    }
+                    callback && callback();
+                }).error(function () {
+                    sessionStorage.setItem('bayard-user-authenticated', 'false');
+                    callback && callback();
+                });
+            }
+        }
+    }]);
+
+
+
     services.factory('ContactService',[ '$resource', function ($resource) {
         return $resource('../contacts/:id', {id : '@id', entityId : '@entityId'}, {
             update : {
@@ -547,6 +575,10 @@
             create : {
                 method: 'POST'
             },
+            createStartupUser : {
+                method: 'POST',
+                url : '/users/startup'
+            },
             delete : {
                 method: 'DELETE',
                 url: '/users/:id'
@@ -698,6 +730,13 @@
         return $resource('../config/:option', {categoryName : '@categoryName'}, {
             getImplementationConfig : {
                 method: 'GET'
+            },
+            getStartupMode : {
+                method: 'GET',
+                url: "/config/startup"
+            },
+            updateConfig : {
+                method: 'PUT'
             }
         });
     }]);

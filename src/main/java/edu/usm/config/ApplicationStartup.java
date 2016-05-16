@@ -1,9 +1,12 @@
 package edu.usm.config;
 
 
+import edu.usm.domain.DemographicCategory;
 import edu.usm.domain.Role;
 import edu.usm.domain.User;
 import edu.usm.domain.exception.ConstraintViolation;
+import edu.usm.service.ConfigService;
+import edu.usm.service.DemographicCategoryService;
 import edu.usm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +20,19 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.util.*;
 
 @Component
 public class ApplicationStartup implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DemographicCategoryService demographicCategoryService;
+
+    @Autowired
+    ConfigService configService;
 
     @Autowired
     Environment env;
@@ -46,17 +55,47 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     @Value("${bayard.dev.basicUser.password}")
     private String devPassword;
 
+    /**
+     * On startup, creates baseline demographic categories, persists an initial implementation config iff none already
+     * exists, and, unless in production environment, creates baseline users
+     * @param event
+     */
     @Override
     public void onApplicationEvent(final ContextRefreshedEvent event){
         configureAuthentication();
+        Set<String> profiles = new HashSet<>(Arrays.asList(env.getActiveProfiles()));
         try {
-            createUsers();
+            createBaselineDemographicCategories();
+            configService.persistStartupConfig();
+            if (!profiles.contains(BayardSpringProfiles.PRODUCTION_PROFILE) && profiles.contains(BayardSpringProfiles.DEV_PROFILE)) {
+                createUsers();
+            }
         } catch (ConstraintViolation e) {
-            System.err.print("Error creating users on startup");
+            System.err.print("Error on startup");
         }
         clearAuthentication();
     }
 
+    /**
+     * Creates startup DemographicCategories if they do not already exist
+     * @throws ConstraintViolation
+     */
+    private void createBaselineDemographicCategories() throws ConstraintViolation{
+        String[] startupDemographicCategories = configService.getStartupDemographicCategories();
+        for (String category: startupDemographicCategories) {
+            DemographicCategory cat = new DemographicCategory(category);
+            try {
+                demographicCategoryService.create(cat);
+            } catch (ConstraintViolation e) {
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Creates a superuser and, if in BayardSpringProfiles.DEV_PROFILE, a baseline dev user
+     * @throws ConstraintViolation
+     */
     private void createUsers() throws ConstraintViolation{
         createSuperuser();
         for (String profile: env.getActiveProfiles()) {
@@ -72,6 +111,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
                 }
             }
         }
+
     }
 
     private void createSuperuser() throws ConstraintViolation{
@@ -83,7 +123,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
             superUser.setEmail(superuserEmail);
             superUser.setRole(Role.ROLE_SUPERUSER);
             userService.createUser(superUser, superuserPassword);
-       }
+        }
     }
 
     private void configureAuthentication () {

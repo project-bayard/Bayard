@@ -5,6 +5,7 @@ import edu.usm.domain.User;
 import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.SecurityConstraintException;
+import edu.usm.dto.NewUserDto;
 import edu.usm.repository.UserDao;
 import edu.usm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userDao.findOneByEmail(email);
+    }
+
+    @Override
+    public long createStartupUser(NewUserDto dto) throws SecurityConstraintException, ConstraintViolation {
+        List<User> allUsers = userDao.findAll();
+        if (!allUsers.isEmpty()) {
+            throw new SecurityConstraintException("Startup user already created.");
+        }
+        validatePassword(dto.getPassword());
+        User user = new User();
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setRole(dto.getRole());
+        user.setPasswordHash(new BCryptPasswordEncoder().encode(dto.getPassword()));
+        return createUser(user);
     }
 
     @Override

@@ -3,18 +3,16 @@ package edu.usm.web;
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.domain.User;
 import edu.usm.domain.Views;
-import edu.usm.domain.exception.ConstraintMessage;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.SecurityConstraintException;
 import edu.usm.dto.NewUserDto;
-import edu.usm.dto.Response;
 import edu.usm.dto.PasswordChangeDto;
+import edu.usm.dto.Response;
 import edu.usm.service.UserService;
 import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
@@ -40,6 +38,13 @@ public class UserController {
         newUser.setEmail(dto.getEmail());
         newUser.setRole(dto.getRole());
         long id = userService.createUser(newUser, dto.getPassword());
+        return new Response(Long.toString(id),Response.SUCCESS);
+    }
+
+    @RequestMapping(value = "/startup", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response createStartupUser(@RequestBody NewUserDto dto) throws ConstraintViolation, SecurityConstraintException {
+        long id = userService.createStartupUser(dto);
         return new Response(Long.toString(id),Response.SUCCESS);
     }
 

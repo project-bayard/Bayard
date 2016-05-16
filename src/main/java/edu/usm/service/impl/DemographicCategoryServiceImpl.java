@@ -27,6 +27,10 @@ public class DemographicCategoryServiceImpl implements DemographicCategoryServic
             throw new ConstraintViolation(ConstraintMessage.DEMOGRAPHIC_CATEGORY_REQUIRED_NAME);
         }
 
+        if (findByName(demographicCategory.getName()) != null) {
+            throw new ConstraintViolation(ConstraintMessage.DEMOGRAPHIC_CATEGORY_DUPLICATE);
+        }
+
         for (DemographicOption option: demographicCategory.getOptions()) {
             option.setCategory(demographicCategory);
         }

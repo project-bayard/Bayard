@@ -1,0 +1,47 @@
+<div class="row" ng-controller="StartupEncountersCtrl">
+    <div class="col-xs-12">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Encounters</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <form role="form">
+                                    <div class="form-group">
+                                        <label for="newType" class="control-label">Encounter Types</label>
+                                        <div>
+                                            <input id="newType" ng-model="newEncounterType" type="text" class="form-control" placeholder="Call, email, canvassing...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-success" ng-click="addEncounterType()">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row" ng-if="encounters.types.length > 0">
+                                <div class="col-md-10 col-xs-10">
+                                    <ul class="list-group">
+                                        <li class="list-group-item" ng-repeat="type in encounters.types">
+                                            {{type.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            Interactions with members of <strong>{{startupModel.implementationName}}</strong> and the general public are recorded as <strong>Encounters</strong>.<br/><br/>
+
+                                An Encounter could be a phone call, an email, a conversation with someone while canvassing - anything you consider to be a meaningful interaction.<br/><br/>
+
+                                Add the types of Encounters your organization will track.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

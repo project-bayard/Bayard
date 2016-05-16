@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Create a user</h3>
+                    </div>
+                    <div class="panel-body" ng-if="!startupUserCreated">
+                        <div class="col-xs-6">
+                            <div ng-include src=" 'resources/partials/forms/userForm.html' "></div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-success btn-block bayard-margined" ng-click="createNewUser()" ng-disabled="newUserForm.$invalid && newUser.password !== newUser.repeatPassword">Create</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <p>Let's set up a first user for Bayard.<br/><br/>
+                                User accounts are needed to do anything within Bayard,
+                                and accounts can have varying levels of access to viewing or modifying data.<br/><br/>
+                                You'll be able to create additional users at any time once we're done.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel-body" ng-if="startupUserCreated">
+                        <div class="alert alert-success">Our startup user - <strong>{{user.firstName}} {{user.lastName}}</strong> - has already been created.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

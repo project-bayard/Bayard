@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Implementation Name</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-6">
+                            <form id="implementationNameForm" name="implementationNameForm"novalidate>
+                                <div class="row">
+                                    <div class="form-group col-md-12 required"  ng-class="{ 'has-error' : implementationNameForm.name.$invalid && !implementationNameForm.name.$pristine }">
+                                        <label class="control-label">What is your organization's name?</label>
+                                        <input name="name" type="text" class="form-control" ng-model="startupModel.implementationName" ng-maxlength="80" ng-minlength="2" required>
+                                        <p ng-show="implementationNameForm.name.$error.required && !implementationNameForm.name.$pristine" class="help-block">You must have an implementation name!</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                       <div class="col-xs-6">
+                           <div class="alert alert-success">Great!</div><br/>
+                           <p>Our startup user - <strong>{{user.firstName}} {{user.lastName}}</strong> - has been created.<br/><br/>
+                           </p>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -84,6 +84,9 @@ public interface ContactService {
     SortedSet<Encounter> getAllContactEncounters(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    SortedSet<Encounter> getAllContactEncountersInitiated(String contactId) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void updateMemberInfo(String contactId, MemberInfo memberInfo) throws  NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")

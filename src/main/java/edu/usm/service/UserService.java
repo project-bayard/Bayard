@@ -3,6 +3,7 @@ package edu.usm.service;
 import edu.usm.domain.User;
 import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.SecurityConstraintException;
+import edu.usm.dto.NewUserDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 public interface UserService {
 
     User findByEmail(String email);
+
+    long createStartupUser(NewUserDto dto) throws SecurityConstraintException, ConstraintViolation;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ELEVATED','ROLE_SUPERUSER')")
     long createUser(User user, String password) throws ConstraintViolation;

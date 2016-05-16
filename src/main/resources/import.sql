@@ -283,8 +283,8 @@ INSERT INTO interactionrecordtype (id, created, deleted, lastmodified, name) VAL
 -- Data for Name: interaction_record; Type: TABLE DATA; Schema: public; Owner: bayard_postgres
 --
 
-INSERT INTO interaction_record (id, created, deleted, lastmodified, dateofinteraction, notes, personcontacted, requiresfollowup, foundation_id, budget_item_id) VALUES ('ff808181538fbe7e01538fc8ba730013', '2016-03-19T12:50:10.160', false, '2016-03-19T12:50:10.162', '\xaced00057372000d6a6176612e74696d652e536572955d84ba1b2248b20c00007870770703000007e0030178', '212574', 'Betty White', true, 'ff808181538fbe7e01538fc3d23d000e', 'ff808181538fbe7e01538fbf27a20001');
-INSERT INTO interaction_record (id, created, deleted, lastmodified, dateofinteraction, notes, personcontacted, requiresfollowup, foundation_id, budget_item_id) VALUES ('ff808181538fbe7e01538fc90c770014', '2016-03-19T12:50:31.156', false, '2016-03-19T12:50:31.159', '\xaced00057372000d6a6176612e74696d652e536572955d84ba1b2248b20c00007870770703000007db010178', '212575', 'John Cusack', false, 'ff808181538fbe7e01538fc3d23d000e', 'ff808181538fbe7e01538fbf1c990000');
+INSERT INTO interaction_record (id, created, deleted, lastmodified, dateofinteraction, notes, personcontacted, requiresfollowup, foundation_id, budget_item_id) VALUES ('ff808181538fbe7e01538fc8ba730013', '2016-03-19T12:50:10.160', false, '2016-03-19T12:50:10.162', '\xaced00057372000d6a6176612e74696d652e536572955d84ba1b2248b20c00007870770703000007e0030178', null, 'Betty White', true, 'ff808181538fbe7e01538fc3d23d000e', 'ff808181538fbe7e01538fbf27a20001');
+INSERT INTO interaction_record (id, created, deleted, lastmodified, dateofinteraction, notes, personcontacted, requiresfollowup, foundation_id, budget_item_id) VALUES ('ff808181538fbe7e01538fc90c770014', '2016-03-19T12:50:31.156', false, '2016-03-19T12:50:31.159', '\xaced00057372000d6a6176612e74696d652e536572955d84ba1b2248b20c00007870770703000007db010178', null, 'John Cusack', false, 'ff808181538fbe7e01538fc3d23d000e', 'ff808181538fbe7e01538fbf1c990000');
 
 
 --

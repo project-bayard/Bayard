@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.junit.Assert.*;
 
@@ -181,6 +182,82 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
+    public void testDeleteContactsWithEncountersInitiatorFirst() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+        createEncounter();
+
+        contactService.delete(contact2.getId());
+        contactService.delete(contact.getId());
+
+    }
+
+    private void createEncounter() throws Exception{
+
+        EncounterType type = encounterTypeService.findByName("Test Type");
+        if (null == type) {
+            type = new EncounterType("Test Type");
+            encounterTypeService.create(type);
+        }
+
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setEncounterDate("2015-01-10");
+        encounterDto.setInitiatorId(contact2.getId());
+        encounterDto.setType(type.getId());
+        contactService.addEncounter(contact.getId(), encounterDto);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 1);
+    }
+
+    @Test
+    public void testDeleteContactsWithEncountersSubjectFirst() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+        createEncounter();
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 1);
+
+        contactService.delete(contact.getId());
+        contactService.delete(contact2.getId());
+
+    }
+
+    @Test
+    public void testDeleteContactsMultipleEncounters() throws Exception {
+        contactService.create(contact);
+        contactService.create(contact2);
+
+        EncounterType type = encounterTypeService.findByName("Test Type");
+        if (null == type) {
+            type = new EncounterType("Test Type");
+            encounterTypeService.create(type);
+        }
+
+        EncounterDto encounterDto = new EncounterDto();
+        encounterDto.setEncounterDate("2015-01-10");
+        encounterDto.setInitiatorId(contact2.getId());
+        encounterDto.setType(type.getId());
+        contactService.addEncounter(contact.getId(), encounterDto);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 1);
+
+        encounterDto = new EncounterDto();
+        encounterDto.setEncounterDate("2013-07-07");
+        encounterDto.setInitiatorId(contact2.getId());
+        encounterDto.setType(type.getId());
+        contactService.addEncounter(contact.getId(), encounterDto);
+
+        contact = contactService.findById(contact.getId());
+        assertTrue(contactService.getAllContactEncounters(contact.getId()).size() == 2);
+
+        contactService.delete(contact.getId());
+        contactService.delete(contact2.getId());
+    }
+
+    @Test
     public void testAddAndRemoveContactFromOrganization () throws Exception {
         contactService.create(contact);
         organizationService.create(organization);
@@ -256,7 +333,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testAddEncounter () throws Exception {
         String id = contactService.create(contact);
         String initiatorId = contactService.create(contact2);
@@ -273,14 +349,15 @@ public class ContactServiceTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
 
+        SortedSet<Encounter> encounters = contactService.getAllContactEncounters(contact.getId());
+
         assertNotNull(fromDb.getEncounters());
-        assertEquals(fromDb.getEncounters().first().getContact().getId(), contact.getId());
-        assertEquals(fromDb.getEncounters().first().getInitiator().getId(), contact2.getId());
-        assertEquals(fromDb.getEncounters().first().getAssessment(), dto.getAssessment());
+        assertEquals(encounters.first().getContact().getId(), contact.getId());
+        assertEquals(encounters.first().getInitiator().getId(), contact2.getId());
+        assertEquals(encounters.first().getAssessment(), dto.getAssessment());
 
         Contact initiatorFromDb = contactService.findById(initiatorId);
-        assertNotNull(initiatorFromDb.getEncountersInitiated());
-        assertEquals(1, initiatorFromDb.getEncountersInitiated().size());
+        assertEquals(1, contactService.getAllContactEncountersInitiated(initiatorFromDb.getId()).size());
 
     }
 
@@ -328,7 +405,6 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test
-    @Transactional
     public void testAddMultipleEncounters() throws Exception {
         String id = contactService.create(contact);
         contactService.create(contact2);

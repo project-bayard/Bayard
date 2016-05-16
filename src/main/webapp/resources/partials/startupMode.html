@@ -1,0 +1,20 @@
+<div class="jumbotron" ng-controller="StartupModeCtrl">
+    <div class="container">
+        <div style="text-align: center" ng-show="startupState >= 1">
+            <h2>Welcome to Bayard</h2>
+            <p ng-show="startupState == 1">
+                Bayard is a simple platform for community organizing. Let's get started!
+            </p>
+        </div>
+        <div class="slideInLeft enter-slideInLeft exit-slideOutRight speed-700 stagger-100" ng-show="startupState == 2" ng-include src=" 'resources/partials/startup-panels/firstUser.html' "></div>
+        <div class="slideInLeft enter-slideInLeft exit-slideOutRight speed-700 stagger-100" ng-show="startupState == 3" ng-include src=" 'resources/partials/startup-panels/orgName.html' "></div>
+        <div class="slideInLeft enter-slideInLeft exit-slideOutRight speed-700 stagger-100" ng-show="startupState == 4" ng-include src=" 'resources/partials/startup-panels/demographics.html' "></div>
+        <div class="slideInLeft enter-slideInLeft exit-slideOutRight speed-700 stagger-100" ng-show="startupState == 5" ng-include src=" 'resources/partials/startup-panels/encounters.html' "></div>
+        <div class="slideInLeft enter-slideInLeft exit-slideOutRight speed-700 stagger-100" ng-show="startupState == 6" ng-include src=" 'resources/partials/startup-panels/interactions.html' "></div>
+
+        <button class="btn btn-primary btn-lg" ng-show="startupState > 1" ng-click="navigateBack()" role="button">Back</button>
+        <button class="btn btn-primary btn-lg" ng-show="startupState == 1" ng-click="navigateForward()" role="button">Next</button>
+        <button class="btn btn-primary btn-lg" ng-show="startupState < numberOfStates && startupState != 1" ng-click="navigateForward()" role="button" ng-disabled="!initialUserCreated">Next</button>
+        <button class="btn btn-success btn-lg" ng-show="startupState == numberOfStates" ng-click="doneStartup()" role="button">Done!</button>
+    </div>
+</div>
