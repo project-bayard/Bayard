@@ -29,7 +29,7 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
 
     @Before
     public void setup() {
-
+        service.deleteAll();
         option1 = new DemographicOption();
         option1.setName("Option 1");
 
@@ -80,6 +80,8 @@ public class DemographicCategoryServiceTest extends WebAppConfigurationAware {
 
     @Test
     public void testAddOption() throws Exception{
+        Set<DemographicCategory> categories = service.findAll();
+        assertTrue(categories.isEmpty());
         DemographicCategory demographicCategory = new DemographicCategory();
         demographicCategory.setName(DemographicCategory.CATEGORY_ETHNICITY);
         demographicCategory.setOptions(options);
