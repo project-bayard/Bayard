@@ -67,7 +67,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
         try {
             createBaselineDemographicCategories();
             configService.persistStartupConfig();
-            if (!profiles.contains(BayardSpringProfiles.PRODUCTION_PROFILE)) {
+            if (!profiles.contains(BayardSpringProfiles.PRODUCTION_PROFILE) && profiles.contains(BayardSpringProfiles.DEV_PROFILE)) {
                 createUsers();
             }
         } catch (ConstraintViolation e) {
