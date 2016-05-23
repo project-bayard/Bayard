@@ -60,6 +60,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         contact = new Contact();
         contact.setFirstName("First");
         contact.setLastName("Last");
+        contact.setNickName("Nickname");
         contact.setStreetAddress("123 Fake St");
         contact.setAptNumber("# 4");
         contact.setCity("Portland");
@@ -119,6 +120,7 @@ public class ContactServiceTest extends WebAppConfigurationAware {
         assertEquals(fromDb.getId(), contact.getId());
         assertEquals(fromDb.getLastName(), contact.getLastName());
         assertEquals(fromDb.getFirstName(), contact.getFirstName());
+        assertEquals(fromDb.getNickName(), contact.getNickName());
         assertEquals(fromDb.getEmail(), contact.getEmail());
         assertEquals(fromDb.getStreetAddress(), contact.getStreetAddress());
         assertEquals(fromDb.getAptNumber(), contact.getAptNumber());
@@ -569,39 +571,56 @@ public class ContactServiceTest extends WebAppConfigurationAware {
     }
 
     @Test(expected = NotFoundException.class)
-    public void testFindByFirstLastEmailPhone() throws Exception {
+    public void testFindBySignInDto() throws Exception {
         contactService.create(contact);
 
-        SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getEmail(),
+        SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getNickName(), contact.getEmail(),
                 contact.getPhoneNumber1());
 
-        Contact fromDb = contactService.findByFirstEmailPhone(dto);
+        Contact fromDb = contactService.findBySignInDto(dto);
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());
 
         dto.setEmail(null);
-        fromDb = contactService.findByFirstEmailPhone(dto);
+        fromDb = contactService.findBySignInDto(dto);
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());
 
         dto.setEmail(contact.getEmail());
         dto.setPhoneNumber(null);
-        fromDb = contactService.findByFirstEmailPhone(dto);
+        fromDb = contactService.findBySignInDto(dto);
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());
 
         dto.setEmail(null);
         dto.setPhoneNumber(contact.getPhoneNumber2());
-        fromDb = contactService.findByFirstEmailPhone(dto);
+        fromDb = contactService.findBySignInDto(dto);
         assertNotNull(fromDb);
         assertEquals(fromDb.getId(), contact.getId());
 
         dto.setPhoneNumber(null);
-        fromDb = contactService.findByFirstEmailPhone(dto);
+        fromDb = contactService.findBySignInDto(dto);
 
+        //Sign-in with valid nickname and phone1
         dto.setPhoneNumber(contact.getPhoneNumber1());
-        dto.setFirstName(null);
-        fromDb = contactService.findByFirstEmailPhone(dto);
+        dto.setEmail(null);
+        dto.setFirstName("Erroneous first name");
+        fromDb = contactService.findBySignInDto(dto);
+        assertNotNull(fromDb);
+
+        //Sign-in with valid nickname and phone2
+        dto.setPhoneNumber(contact.getPhoneNumber2());
+        fromDb = contactService.findBySignInDto(dto);
+        assertNotNull(fromDb);
+
+        //Sign-in with valid nickname and email
+        dto.setPhoneNumber(null);
+        dto.setEmail(contact.getEmail());
+        fromDb = contactService.findBySignInDto(dto);
+        assertNotNull(fromDb);
+
+        dto.setNickName(null);
+        fromDb = contactService.findBySignInDto(dto);
 
     }
     public void testAddDonation() throws Exception {

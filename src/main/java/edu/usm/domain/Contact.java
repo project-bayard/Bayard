@@ -66,6 +66,18 @@ public class Contact extends BasicEntity implements Serializable {
             Views.OrganizationList.class,
             Views.CommitteeList.class,
             Views.EventList.class,
+            Views.ContactDetails.class,
+            Views.ContactEncounterDetails.class,
+            Views.GroupList.class,
+            Views.GroupDetails.class,
+            Views.CommitteeDetails.class})
+    private String nickName;
+
+    @Column
+    @JsonView({Views.ContactList.class,
+            Views.OrganizationList.class,
+            Views.CommitteeList.class,
+            Views.EventList.class,
             Views.ContactDetails.class})
     private String streetAddress;
 
@@ -337,6 +349,14 @@ public class Contact extends BasicEntity implements Serializable {
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber1 = phoneNumber1;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     /**

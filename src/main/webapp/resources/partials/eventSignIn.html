@@ -14,7 +14,6 @@
                     <input ng-change="validate()" name="firstName" type="text" class="form-control"
                            ng-model="contactForm.firstName" ng-required="true">
                 </div>
-
             </div>
             <div class="row">
                 <div class="form-group col-md-3 required">
@@ -23,7 +22,13 @@
                            ng-model="contactForm.lastName" ng-required="true">
                 </div>
             </div>
-
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label">Nickname</label>
+                    <input name="nickName" type="text" class="form-control"
+                           ng-model="contactForm.nickName">
+                </div>
+            </div>
             <div class="row">
                 <div class="form-group col-md-3">
                     <label class="control-label">Email</label>
@@ -69,6 +74,10 @@
                                                class="form-control "
                                                ng-model="contact.firstName" ng-maxlength="80" ng-required="true">
                                     </div>
+                                    <div class=" col-xs-4 form-group">
+                                        <label class="control-label">Nickname</label>
+                                        <input type="text" class="form-control" ng-model="contact.nickName">
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class=" col-xs-4 form-group">
@@ -90,7 +99,6 @@
                                         <label class="control-label">Apartment Number</label>
                                         <input type="text" class="form-control" ng-model="contact.aptNumber">
                                     </div>
-
                                 </div>
                                 <div class="row">
                                     <div class=" col-xs-4 form-group">

@@ -9,17 +9,27 @@ import java.io.Serializable;
 public class SignInDto implements Serializable {
     private String firstName;
     private String lastName;
+    private String nickName;
     private String email;
     private String phoneNumber;
 
-    public SignInDto(String firstName, String lastName, String email, String phoneNumber) {
+    public SignInDto(String firstName, String lastName, String nickName, String email, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.nickName = nickName;
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
 
     public SignInDto() {
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getFirstName() {
