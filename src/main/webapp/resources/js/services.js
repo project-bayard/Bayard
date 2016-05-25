@@ -221,6 +221,11 @@
                 method: 'GET',
                 url: "/contacts/currentSustainers",
                 isArray: true
+            },
+            getByQuery : {
+                method : 'POST',
+                url : "/contacts/query",
+                isArray: true
             }
         });
     }]);

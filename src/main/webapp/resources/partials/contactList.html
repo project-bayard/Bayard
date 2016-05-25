@@ -1,63 +1,146 @@
 
 <div class="container-fluid" ng-controller="ContactTableCtrl">
-    <h3>Contacts</h3>
-    <br>
-    <hr>
 
-    <div class="row">
-        <div class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
-            <label class="control-label">Select Field</label>
-            <select name="field" class="form-control input-sm" ng-model="selectedField">
-                <option value="{{field.field}}" ng-repeat="field in fields">{{field.label}}
-                </option>
+
+    <div class="well">
+        <h3>Construct Query:</h3>
+        <br>
+        <div class="row">
+
+            <div class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Field</label>
+                <select name="queryField" class="form-control input-sm" ng-model="selectedQueryField"
+                        ng-options="field.label for field in queryFields | orderBy:'label'" ng-change="selectField(field.field)">
+                    <option style="display:none" value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Operator</label>
+                <select name="queryOperator" class="form-control input-sm" ng-model="predicate.operator"
+                                 ng-options="operator.label for operator in selectedQueryField.operators">
             </select>
+            </div>
+
+
+            <div ng-if="selectedQueryField == null || selectedQueryField.type == 'string' " class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Value</label>
+                <input class="form-control input-sm" type="text" ng-model="predicate.value" >
+            </div>
+
+            <div ng-if="selectedQueryField.type == 'num' " class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Value</label>
+                <input class="form-control input-sm" type="number" ng-model="predicate.value" >
+            </div>
+
+            <div ng-if="selectedQueryField.type == 'bool' " class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Value</label>
+                <select name="booleanSelector" class="form-control input-sm" ng-model="predicate.value">
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                </select>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-info" ng-click="addPredicate()">Add</button>
+                <button type="button" class="btn btn-danger" ng-click="removePredicates()">Clear</button>
+                <button type="button" class="btn btn-warning" ng-click="newQuery()">New</button>
+                <button type="button" class="btn btn-success" ng-disabled="predicates.length == 0" ng-click="query()">Query</button>
+                <button type="button" class="btn btn-default"  ng-click="getAll()">All</button>
+
+
+            </div>
         </div>
-        <div class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
-            <label class="control-label">Search</label>
-            <input class="form-control input-sm" type="text" ng-model="searchValue" >
+        <br>
+
+        <div class="row" ng-if="predicates.length > 0">
+            <div  class="col-xs-6 col-sm-6 col-xs-6 col-sm-6 col-md-6">
+                <table class="table table-striped table-condensed">
+                    <tr>
+                        <th>Field</th>
+                        <th>Operator</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr ng-repeat="predicate in predicates">
+                        <td>{{predicate.field.label}}</td>
+                        <td>{{predicate.operator.label}}</td>
+                        <td>{{predicate.value}}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
+
     </div>
-    <br>
 
-    <div ng-controller="TableCtrl">
-        <button ng-show="user.role == 'ROLE_SUPERUSER' || user.role == 'ROLE_ELEVATED' " class="btn btn-md btn-info" ng-click="exportData()">Export</button>
-        <div id="exportable">
-            <table class="bootstrap-table table table-striped table-hover">
-                <tr data-toggle="tooltip" title="Click Field to Sort">
-                    <th ng-click="orderByField = 'assessment' ; reverseSort =! reverseSort">Assessment</th>
-                    <th ng-click="orderByField = 'firstName' ; reverseSort =! reverseSort">First Name</th>
-                    <th ng-click="orderByField = 'lastName' ; reverseSort =! reverseSort">Last Name</th>
-                    <th ng-click="orderByField = 'streetAddress' ; reverseSort =! reverseSort">Address</th>
-                    <th ng-click="orderByField = 'aptNumber' ; reverseSort =! reverseSort">Apt #</th>
-                    <th ng-click="orderByField = 'city' ; reverseSort =! reverseSort">City</th>
-                    <th ng-click="orderByField = 'state' ; reverseSort =! reverseSort">State</th>
-                    <th ng-click="orderByField = 'phoneNumber1' ; reverseSort =! reverseSort">Primary phone</th>
-                    <th ng-click="orderByField = 'email' ; reverseSort =! reverseSort">Email</th>
-                    <th>Status Fields</th>
-                </tr>
+    <div ng-if="queryError == true" class="alert alert-danger" role="alert">Error Getting Query Results</div>
 
-                <tr ng-click="viewContactDetails(contact.id)" data-toggle="tooltip" title="Click to View Details"
-                    ng-repeat="contact in contacts | byContactField:selectedField:searchValue | orderBy:orderByField:reverseSort">
-                    <td>{{contact.assessment}}</td>
-                    <td>{{contact.firstName}}</td>
-                    <td>{{contact.lastName}}</td>
-                    <td>{{contact.streetAddress}}</td>
-                    <td>{{contact.aptNumber}}</td>
-                    <td>{{contact.city}}</td>
-                    <td>{{contact.state}}</td>
-                    <td>{{contact.phoneNumber1}}</td>
-                    <td>{{contact.email}}</td>
-                    <td>
-                        <span data-toggle="tooltip" title="Needs Follow Up" class="glyphicon glyphicon-earphone" ng-if="contact.needsFollowUp" aria-hidden="true"></span>
-                        <span data-toggle="tooltip" title="Member" class="glyphicon glyphicon-star" ng-if="contact.member"></span>
-                        <span data-toggle="tooltip" title="Donor" class="glyphicon glyphicon-piggy-bank" ng-if="contact.donor && showingDevelopment"></span>
 
-                    </td>
-                </tr>
 
-            </table>
+    <div ng-if="contacts != null">
+
+        <br>
+        <br>
+        <hr>
+        <h3>Contacts</h3>
+
+        <div class="row">
+
+            <div class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Select Field</label>
+                <select name="field" class="form-control input-sm" ng-model="selectedField">
+                    <option value="{{field.field}}" ng-repeat="field in fields">{{field.label}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
+                <label class="control-label">Search</label>
+                <input class="form-control input-sm" type="text" ng-model="searchValue" >
+            </div>
         </div>
 
+        <br>
+
+        <div ng-controller="TableCtrl">
+            <button ng-show="user.role == 'ROLE_SUPERUSER' || user.role == 'ROLE_ELEVATED' " class="btn btn-md btn-info" ng-click="exportData()">Export</button>
+            <div id="exportable">
+                <table class="bootstrap-table table table-striped table-hover">
+                    <tr data-toggle="tooltip" title="Click Field to Sort">
+                        <th ng-click="orderByField = 'assessment' ; reverseSort =! reverseSort">Assessment</th>
+                        <th ng-click="orderByField = 'firstName' ; reverseSort =! reverseSort">First Name</th>
+                        <th ng-click="orderByField = 'lastName' ; reverseSort =! reverseSort">Last Name</th>
+                        <th ng-click="orderByField = 'streetAddress' ; reverseSort =! reverseSort">Address</th>
+                        <th ng-click="orderByField = 'aptNumber' ; reverseSort =! reverseSort">Apt #</th>
+                        <th ng-click="orderByField = 'city' ; reverseSort =! reverseSort">City</th>
+                        <th ng-click="orderByField = 'state' ; reverseSort =! reverseSort">State</th>
+                        <th ng-click="orderByField = 'phoneNumber1' ; reverseSort =! reverseSort">Primary phone</th>
+                        <th ng-click="orderByField = 'email' ; reverseSort =! reverseSort">Email</th>
+                        <th>Status Fields</th>
+                    </tr>
+
+                    <tr ng-click="viewContactDetails(contact.id)" data-toggle="tooltip" title="Click to View Details"
+                        ng-repeat="contact in contacts | byContactField:selectedField:searchValue | orderBy:orderByField:reverseSort">
+                        <td>{{contact.assessment}}</td>
+                        <td>{{contact.firstName}}</td>
+                        <td>{{contact.lastName}}</td>
+                        <td>{{contact.streetAddress}}</td>
+                        <td>{{contact.aptNumber}}</td>
+                        <td>{{contact.city}}</td>
+                        <td>{{contact.state}}</td>
+                        <td>{{contact.phoneNumber1}}</td>
+                        <td>{{contact.email}}</td>
+                        <td>
+                            <span data-toggle="tooltip" title="Needs Follow Up" class="glyphicon glyphicon-earphone" ng-if="contact.needsFollowUp" aria-hidden="true"></span>
+                            <span data-toggle="tooltip" title="Member" class="glyphicon glyphicon-star" ng-if="contact.member"></span>
+                            <span data-toggle="tooltip" title="Donor" class="glyphicon glyphicon-piggy-bank" ng-if="contact.donor && showingDevelopment"></span>
+
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+
+        </div>
     </div>
 
 </div>

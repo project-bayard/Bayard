@@ -5,10 +5,8 @@ import edu.usm.domain.exception.ConstraintViolation;
 import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
-import edu.usm.dto.DonationDto;
-import edu.usm.dto.EncounterDto;
-import edu.usm.dto.SignInDto;
-import edu.usm.dto.SustainerPeriodDto;
+import edu.usm.dto.*;
+import edu.usm.query.QueryBuilderException;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Set;
@@ -151,5 +149,8 @@ public interface ContactService {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     MemberInfo getContactMemberInfo(String id) throws NullDomainReference;
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
+    Set<Contact> findAllByQuery(QueryDto dto) throws QueryBuilderException;
 
 }

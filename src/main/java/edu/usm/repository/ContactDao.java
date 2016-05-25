@@ -1,15 +1,20 @@
 package edu.usm.repository;
 
+import com.mysema.query.types.Predicate;
 import edu.usm.domain.Contact;
 import edu.usm.domain.DonorInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,7 +22,7 @@ import java.util.Set;
  */
 
 @Repository
-public interface ContactDao extends CrudRepository<Contact, String> {
+public interface ContactDao extends CrudRepository<Contact, String> , QueryDslPredicateExecutor<Contact> {
 
     /**
      * Returns all existing Contacts
@@ -68,4 +73,6 @@ public interface ContactDao extends CrudRepository<Contact, String> {
 
     Contact findOneByDonorInfo(DonorInfo donorInfo);
 
+    @Override
+    Set<Contact> findAll(Predicate predicate);
 }

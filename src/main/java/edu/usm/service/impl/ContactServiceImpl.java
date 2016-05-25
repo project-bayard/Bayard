@@ -3,19 +3,18 @@ package edu.usm.service.impl;
 import edu.usm.domain.*;
 import edu.usm.domain.exception.*;
 import edu.usm.dto.*;
+import edu.usm.query.QueryBuilderException;
 import edu.usm.repository.ContactDao;
 import edu.usm.repository.DonorInfoDao;
 import edu.usm.service.*;
+import edu.usm.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by scottkimball on 3/12/15.
@@ -805,6 +804,12 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
             return memberInfo;
         }
 
+    }
+
+    @Override
+    public Set<Contact> findAllByQuery(QueryDto dto) throws QueryBuilderException {
+        QueryBuilder builder = new QueryBuilder();
+        return contactDao.findAll(builder.buildQuery(dto));
     }
 
     private Contact findContact(String id) throws NullDomainReference {

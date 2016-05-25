@@ -7,6 +7,7 @@ import edu.usm.domain.exception.InvalidApiRequestException;
 import edu.usm.domain.exception.NotFoundException;
 import edu.usm.domain.exception.NullDomainReference;
 import edu.usm.dto.*;
+import edu.usm.query.QueryBuilderException;
 import edu.usm.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -310,5 +311,11 @@ public class ContactController {
         return contactService.findAllCurrentSustainers();
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/query", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(Views.ContactList.class)
+    public Set<Contact> getByQuery(@RequestBody QueryDto dto) throws QueryBuilderException {
+        return contactService.findAllByQuery(dto);
+    }
 }
 

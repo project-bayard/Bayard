@@ -26,13 +26,288 @@
 
     var controllers = angular.module('controllers', []);
 
-    controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$location', function ($scope, ContactService, $location) {
+    controllers.controller('ContactsCtrl', ['$scope', 'ContactService', '$route', function ($scope, ContactService, $route) {
+        var numericType = "num";
+        var booleanType = "bool";
+        var stringType = "string";
+        
+        var stringOperators =
+            [
+                {
+                    label:"EQUALS", 
+                    value: "eq"
+                }, 
+                {
+                    label: "NOT EQUALS",
+                    value: "neq"
+                },
+                {
+                    label: "CONTAINS",
+                    value: "co"
+                }
+            ];
+        
+        var booleanOperators = 
+            [
+                {
+                    label: "EQUALS",
+                    value: "eq"
+                }
+            ];
+            
+        
+        var numericOperators = 
+            [
+                {
+                    label: "LESS THAN",
+                    value: "lt"
+                },
+                {
+                    label: "EQUALS",
+                    value: "eq"
+                },
+                {
+                    label: "GREATER THAN",
+                    value: "gt"
+                }
+            ];
 
-        ContactService.findAll({}, function (data) {
-            $scope.contacts = data;
-        }, function (err) {
-            console.log(err);
-        });
+        var createQuery = function () {
+            var predicateDtos = [];
+            for (var i = 0; i < $scope.predicates.length; i++) {
+                var predicate = $scope.predicates[i];
+                predicateDtos.push(
+                    {
+                        field: predicate.field.field,
+                        operator: predicate.operator.value,
+                        value: predicate.value
+                    });
+            }
+
+            return predicateDtos;
+        };
+
+        $scope.queryFields = [
+            {
+                label: "First Name",
+                field: "firstName",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Middle Name",
+                field: "middleName",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Last Name",
+                field: "lastName",
+                type: stringType,
+                operators: stringOperators
+            },
+
+            {
+                label: "Street Address",
+                field: "streetAddress",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "City",
+                field: "city",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "State",
+                field: "state",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Zip Code",
+                field: "zipCode",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Mailing Street Address",
+                field: "mailingStreetAddress",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Mailing Address City",
+                field: "mailingCity",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Mailing Address State",
+                field: "mailingState",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Mailing Zip Code",
+                field: "mailingZipCode",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Phone Number 1",
+                field: "phoneNumber1",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Phone Number 2",
+                field: "phoneNumber2",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Email",
+                field: "email",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Language",
+                field: "language",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Occupation",
+                field: "occupation",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "First Name",
+                field: "firstName",
+                type: stringType,
+                operators: stringOperators
+            },
+
+            {
+                label: "Donor",
+                field: "donor",
+                type: booleanType,
+                operators: booleanOperators
+            },
+            {
+                label: "Initiator",
+                field: "initiator",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Race",
+                field: "race",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Ethnicity",
+                field: "ethnicity",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Disabled",
+                field: "disabled",
+                type: booleanType,
+                operators: booleanOperators
+            },
+            {
+                label: "Sexual Orientation",
+                field: "sexualOrientation",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Gender",
+                field: "gender",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Income Bracket",
+                field: "incomeBracket",
+                type: stringType,
+                operators: stringOperators
+            },
+            {
+                label: "Needs Follow Up",
+                field: "needsFollowUp",
+                type: booleanType,
+                operators: booleanOperators
+            },
+            {
+                label: "Member",
+                field: "member",
+                type: booleanType,
+                operators: booleanOperators
+            },
+            {
+                label: "Assessment",
+                field: "assessment",
+                type: numericType,
+                operators: numericOperators
+            }
+        ];
+
+        $scope.predicates = [];
+        $scope.predicate = {};
+        $scope.queryError = false;
+
+        
+        $scope.addPredicate = function () {
+            if ($scope.predicate.field != null && $scope.predicate.operator != null && $scope.predicate.value != null) {
+                var predicate = angular.copy($scope.predicate);
+                $scope.predicates.push(predicate);
+                $scope.predicate = {};
+            }
+        };
+        
+        $scope.removePredicates = function () {
+            $scope.predicate = {};
+            $scope.selectedQueryField = 0;
+            $scope.predicates = [];
+        };
+        
+        $scope.query = function () {
+            var predicateDtos = createQuery();
+            var queryDto = {predicateDtos: predicateDtos};
+            ContactService.getByQuery( queryDto, function (data) {
+                $scope.contacts = data;
+            }, function (err) {
+                console.log(err);
+                $scope.queryError = true;
+            });
+            
+        };
+
+        $scope.selectField = function () {
+            $scope.predicate.field = this.selectedQueryField;
+        };
+
+        $scope.newQuery = function () {
+            $route.reload();
+        };
+        
+        $scope.getAll = function () {
+            ContactService.findAll( function (data) {
+                $scope.contacts = data;
+            }, function (err) {
+                console.log(err);
+                $scope.queryError = true;
+            });
+        }
+
 
     }]);
 

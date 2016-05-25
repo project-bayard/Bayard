@@ -2,6 +2,7 @@ package edu.usm.web;
 
 import edu.usm.domain.exception.*;
 import edu.usm.dto.Response;
+import edu.usm.query.QueryBuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,13 @@ public class ControllerExceptionHandler {
     public @ResponseBody Response handleNullDomainReference(NullDomainReference e) {
         LOGGER.info(e.toString());
         return new Response(null, e.getMessage(), Response.TYPE_NULL_DOMAIN_REFERENCE);
+    }
+
+    @ExceptionHandler(QueryBuilderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody Response handleQueryBuilderExcepion(QueryBuilderException e) {
+        LOGGER.info(e.toString());
+        return new Response(null,e.getMessage(),Response.INVALID_API_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
