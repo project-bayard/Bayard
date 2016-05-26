@@ -573,6 +573,7 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
         contact.setFirstName(details.getFirstName());
         contact.setMiddleName(details.getMiddleName());
         contact.setLastName(details.getLastName());
+        contact.setNickName(details.getNickName());
         contact.setStreetAddress(details.getStreetAddress());
         contact.setAptNumber(details.getAptNumber());
         contact.setCity(details.getCity());
@@ -767,29 +768,61 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     }
 
     @Override
-    public Contact findByFirstEmailPhone(SignInDto signInDto) throws NotFoundException {
+    public Contact findBySignInDto(SignInDto signInDto) throws NotFoundException {
 
-        if (signInDto.getFirstName() == null || (signInDto.getEmail() == null && signInDto.getPhoneNumber() == null)) {
+        boolean hasEmail = signInDto.getEmail() != null && !signInDto.getEmail().isEmpty();
+        boolean hasPhone = signInDto.getPhoneNumber() != null && !signInDto.getPhoneNumber().isEmpty();
+
+        if (signInDto.getFirstName() == null || (!hasEmail && !hasPhone)) {
             throw NotFoundException.createException();
-
-        }else if (signInDto.getEmail() != null) {
-            return contactDao.findOneByFirstNameAndEmail(signInDto.getFirstName(), signInDto.getEmail());
         }
 
-        Contact contact = contactDao.findOneByFirstNameAndPhoneNumber1(signInDto.getFirstName(), signInDto.getPhoneNumber());
+        Contact contact = null;
 
-        if (contact != null) {
-            return  contact;
-
-        } else {
-            contact = contactDao.findOneByFirstNameAndPhoneNumber2(signInDto.getFirstName(), signInDto.getPhoneNumber());
-
-            if (contact == null) {
-                throw NotFoundException.createException();
-            } else {
+        //Search by first name and email
+        if (hasEmail) {
+            contact = contactDao.findOneByFirstNameAndEmail(signInDto.getFirstName(), signInDto.getEmail());
+            if (contact != null) {
                 return contact;
             }
         }
+
+        //Search by first name and phone1/phone2
+        if (hasPhone) {
+            contact = contactDao.findOneByFirstNameAndPhoneNumber1(signInDto.getFirstName(), signInDto.getPhoneNumber());
+            if (contact != null) {
+                return  contact;
+            }
+            contact = contactDao.findOneByFirstNameAndPhoneNumber2(signInDto.getFirstName(), signInDto.getPhoneNumber());
+            if (contact != null) {
+                return contact;
+            }
+        }
+
+        //Otherwise, if nickname is provided ...
+        if (signInDto.getNickName() != null && !signInDto.getNickName().isEmpty()) {
+            //Search by nickname and email
+            if (hasEmail) {
+                contact = contactDao.findOneByNickNameAndEmail(signInDto.getNickName(), signInDto.getEmail());
+                if (contact != null) {
+                    return contact;
+                }
+            }
+
+            //Search by nickname and phone1/phone2
+            if (hasPhone) {
+                contact = contactDao.findOneByNickNameAndPhoneNumber1(signInDto.getNickName(), signInDto.getPhoneNumber());
+                if (contact != null) {
+                    return  contact;
+                }
+                contact = contactDao.findOneByNickNameAndPhoneNumber2(signInDto.getNickName(), signInDto.getPhoneNumber());
+                if (contact != null) {
+                    return contact;
+                }
+            }
+        }
+
+        throw NotFoundException.createException();
     }
 
     @Override

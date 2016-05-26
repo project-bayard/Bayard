@@ -69,6 +69,30 @@ public interface ContactDao extends CrudRepository<Contact, String> , QueryDslPr
      */
     Contact findOneByFirstNameAndPhoneNumber2(String firstName, String phoneNumber2);
 
+    /**
+     * Finds a contact by nickName and email if it exists
+     * @param nickName
+     * @param email
+     * @return {@link Contact}
+     */
+    Contact findOneByNickNameAndEmail(String nickName, String email);
+
+    /**
+     * Finds a contact by nickName and phoneNumber1 if it exists.
+     * @param nickName
+     * @param phoneNumber1
+     * @return {@link Contact}
+     */
+    Contact findOneByNickNameAndPhoneNumber1(String nickName, String phoneNumber1);
+
+    /**
+     * Finds a contact by nickName and phoneNumber2 if it exists.
+     * @param nickName
+     * @param phoneNumber2
+     * @return {@link Contact}
+     */
+    Contact findOneByNickNameAndPhoneNumber2(String nickName, String phoneNumber2);
+
     Set<Contact> findByDonorInfoCurrentSustainer(boolean status);
 
     Contact findOneByDonorInfo(DonorInfo donorInfo);

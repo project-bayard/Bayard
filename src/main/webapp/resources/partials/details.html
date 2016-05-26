@@ -43,8 +43,8 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Middle Name</label>
-                                    <input type="text" class="form-control  " ng-model="contact.middleName">
+                                    <label class="control-label">Nickname</label>
+                                    <input type="text" class="form-control  " ng-model="contact.nickName">
                                 </div>
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">Street Address</label>
@@ -57,8 +57,8 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Last Name</label>
-                                    <input type="text" class="form-control  " ng-model="contact.lastName">
+                                    <label class="control-label">Middle Name</label>
+                                    <input type="text" class="form-control  " ng-model="contact.middleName">
                                 </div>
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">Apartment Number</label>
@@ -71,10 +71,8 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Email</label>
-                                    <input name="email" type="email" class="form-control" ng-model="contact.email">
-                                    <p ng-show="contactDetailsForm.$error.email" class="help-block">Enter a valid email address</p>
-                                    </label>
+                                    <label class="control-label">Last Name</label>
+                                    <input type="text" class="form-control  " ng-model="contact.lastName">
                                 </div>
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">City</label>
@@ -87,8 +85,10 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Occupation</label>
-                                    <input type="text" class="form-control  " ng-model="contact.occupation">
+                                    <label class="control-label">Email</label>
+                                    <input name="email" type="email" class="form-control" ng-model="contact.email">
+                                    <p ng-show="contactDetailsForm.$error.email" class="help-block">Enter a valid email address</p>
+                                    </label>
                                 </div>
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">State</label>
@@ -101,8 +101,8 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Preferred Language</label>
-                                    <input type="text" class="form-control  " ng-model="contact.language">
+                                    <label class="control-label">Occupation</label>
+                                    <input type="text" class="form-control  " ng-model="contact.occupation">
                                 </div>
                                 <div class=" col-xs-4 form-group">
                                     <label class="control-label">Zip Code</label>
@@ -115,6 +115,20 @@
                             </div>
                             <div class="row">
                                 <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Preferred Language</label>
+                                    <input type="text" class="form-control  " ng-model="contact.language">
+                                </div>
+                                <div class=" col-xs-4 form-group">
+                                    <label class="control-label">Phone Number 1</label>
+                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber1">
+                                </div>
+                                <div class="col-xs-4">
+                                    <label class="control-label">Phone Number 2</label>
+                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber2">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class=" col-xs-4 form-group">
                                     <div class="checkbox">
                                         <label class="control-label">
                                             <input type="checkbox" ng-select="contact.initiator" ng-model="contact.initiator"> This contact can initiate encounters
@@ -122,21 +136,11 @@
                                     </div>
                                 </div>
                                 <div class=" col-xs-4 form-group">
-                                    <label class="control-label">Phone Number 1</label>
-                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber1">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class=" col-xs-4 form-group">
                                     <div class="checkbox">
                                         <label class="control-label">
                                             <input type="checkbox" ng-checked="contact.needsFollowUp" ng-model="contact.needsFollowUp"> This contact needs a follow up
                                         </label>
                                     </div>
-                                </div>
-                                <div class="col-xs-4">
-                                    <label class="control-label">Phone Number 2</label>
-                                    <input type="text" class="form-control  " ui-mask="(999)-999-9999" ng-model="contact.phoneNumber2">
                                 </div>
                             </div>
                         </fieldset>

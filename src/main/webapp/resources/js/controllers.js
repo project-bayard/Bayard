@@ -3276,6 +3276,7 @@
             {label: "First Name" , field:"firstName"},
             {label: "Last Name" , field:"lastName"},
             {label: "Middle Name" , field:"middleName"},
+            {label: "Nickname" , field:"nickName"},
             {label: "Occupation" , field:"occupation"},
             {label: "Phone Number 1" , field:"phoneNumber1"},
             {label: "Phone Number 2" , field:"phoneNumber2"},
