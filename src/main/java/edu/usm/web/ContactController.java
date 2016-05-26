@@ -243,7 +243,7 @@ public class ContactController {
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.ContactDetails.class)
     public Contact findByFirstLastEmailPhone(@RequestBody SignInDto dto) throws NotFoundException {
-        return contactService.findByFirstEmailPhone(dto);
+        return contactService.findBySignInDto(dto);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

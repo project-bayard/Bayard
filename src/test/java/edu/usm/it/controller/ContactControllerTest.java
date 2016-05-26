@@ -79,6 +79,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
         contact = new Contact();
         contact.setFirstName("First");
         contact.setLastName("Last");
+        contact.setNickName("Nickname");
         contact.setStreetAddress("123 Fake St");
         contact.setAptNumber("# 4");
         contact.setCity("Portland");
@@ -187,6 +188,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact details = new Contact();
         details.setFirstName("newFirstName");
+        details.setNickName("NewNickname");
         details.setEmail("email@email.com");
         details.setMailingStreetAddress("MAILING");
 
@@ -198,6 +200,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
         Contact fromDb = contactService.findById(contact.getId());
         assertEquals(fromDb.getFirstName(), details.getFirstName());
+        assertEquals(fromDb.getNickName(), details.getNickName());
         assertEquals(fromDb.getMailingStreetAddress(), details.getMailingStreetAddress());
     }
 
@@ -213,6 +216,7 @@ public class ContactControllerTest extends WebAppConfigurationAware {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())))
                 .andExpect(jsonPath("$.lastName", is(contact.getLastName())))
+                .andExpect(jsonPath("$.nickName", is(contact.getNickName())))
                 .andExpect(jsonPath("$.streetAddress", is(contact.getStreetAddress())))
                 .andExpect(jsonPath("$.aptNumber", is(contact.getAptNumber())))
                 .andExpect(jsonPath("$.city", is(contact.getCity())))
@@ -713,31 +717,31 @@ public class ContactControllerTest extends WebAppConfigurationAware {
     public void testFindContactBySignInDto() throws Exception {
         contactService.create(contact);
 
-        SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(),contact.getEmail(),contact.getPhoneNumber1());
+        SignInDto dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getNickName(), contact.getEmail(),contact.getPhoneNumber1());
         String json = new ObjectMapper().writeValueAsString(dto);
         mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
-        dto = new SignInDto(contact.getFirstName(),contact.getLastName(),contact.getEmail(),null);
+        dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getNickName(), contact.getEmail(),null);
         json = new ObjectMapper().writeValueAsString(dto);
         mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
-        dto = new SignInDto(contact.getFirstName(),contact.getLastName(),null, contact.getPhoneNumber1());
+        dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getNickName(), null, contact.getPhoneNumber1());
         json = new ObjectMapper().writeValueAsString(dto);
         mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
-        dto = new SignInDto(contact.getFirstName(),contact.getLastName(),null,contact.getPhoneNumber2());
+        dto = new SignInDto(contact.getFirstName(),contact.getLastName(), contact.getNickName(), null,contact.getPhoneNumber2());
         json = new ObjectMapper().writeValueAsString(dto);
         mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(contact.getId())));
 
-        dto = new SignInDto(null, null, contact.getEmail(),contact.getPhoneNumber2());
+        dto = new SignInDto(null, null, null, contact.getEmail(),contact.getPhoneNumber2());
         json = new ObjectMapper().writeValueAsString(dto);
         mockMvc.perform(post("/contacts/find").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().is4xxClientError())

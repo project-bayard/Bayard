@@ -114,7 +114,7 @@ public interface ContactService {
     Set<Group> getAllContactGroups(String contactId) throws NullDomainReference;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
-    Contact findByFirstEmailPhone(SignInDto signInDto) throws NotFoundException;
+    Contact findBySignInDto(SignInDto signInDto) throws NotFoundException;
 
     @PreAuthorize(value = "hasAnyRole('ROLE_USER','ROLE_DEVELOPMENT','ROLE_ELEVATED','ROLE_SUPERUSER')")
     void addDonation(String contactId, DonationDto donationDto) throws  NullDomainReference;
