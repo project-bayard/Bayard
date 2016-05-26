@@ -12,8 +12,6 @@ import edu.usm.service.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,7 +37,6 @@ public class ContactControllerTest extends WebAppConfigurationAware {
 
     @Autowired
     ContactService contactService;
-    private Logger logger = LoggerFactory.getLogger(ContactControllerTest.class);
 
     @Autowired
     OrganizationService organizationService;
