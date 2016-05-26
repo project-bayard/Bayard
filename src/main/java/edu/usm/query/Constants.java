@@ -36,6 +36,7 @@ final class Constants {
     static final String SEXUAL_ORIENTATION = "sexualOrientation";
     static final String INCOME_BRACKET = "incomeBracket";
     static final String NEEDS_FOLLOW_UP = "needsFollowUp";
+    static final String NICKNAME = "nickName";
 
     /*Operators*/
     static final String LESS_THAN = "lt";

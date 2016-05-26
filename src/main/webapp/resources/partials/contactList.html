@@ -41,12 +41,12 @@
                 </select>
             </div>
 
-            <div class="btn-group" role="group" aria-label="...">
+            <div class="btn-group" role="group" class="col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
                 <button type="button" class="btn btn-info" ng-click="addPredicate()">Add</button>
-                <button type="button" class="btn btn-danger" ng-click="removePredicates()">Clear</button>
-                <button type="button" class="btn btn-warning" ng-click="newQuery()">New</button>
-                <button type="button" class="btn btn-success" ng-disabled="predicates.length == 0" ng-click="query()">Query</button>
-                <button type="button" class="btn btn-default"  ng-click="getAll()">All</button>
+                <button type="button" class="btn btn-success" ng-disabled="predicates.length == 0" ng-click="query()">Submit</button>
+                <button type="button" class="btn btn-warning"  ng-click="getAll()">All</button>
+                <button type="button" class="btn btn-danger" ng-click="newQuery()">New</button>
+
 
 
             </div>

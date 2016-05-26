@@ -51,6 +51,10 @@ public class QueryBuilder {
                addStringPredicate(QContact.contact.lastName, predicateDto.getOperator(), predicateDto.getValue());
                break;
 
+           case Constants.NICKNAME:
+               addStringPredicate(QContact.contact.nickName, predicateDto.getOperator(), predicateDto.getValue());
+               break;
+
            case Constants.STREET_ADDRESS:
                addStringPredicate(QContact.contact.streetAddress, predicateDto.getOperator(), predicateDto.getValue());
                break;

@@ -106,6 +106,12 @@
                 type: stringType,
                 operators: stringOperators
             },
+            {
+                label: "Nickname",
+                field: "nickName",
+                type: stringType,
+                operators: stringOperators
+            },
 
             {
                 label: "Street Address",
@@ -185,13 +191,6 @@
                 type: stringType,
                 operators: stringOperators
             },
-            {
-                label: "First Name",
-                field: "firstName",
-                type: stringType,
-                operators: stringOperators
-            },
-
             {
                 label: "Donor",
                 field: "donor",
