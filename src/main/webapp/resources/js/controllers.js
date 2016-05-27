@@ -1115,9 +1115,10 @@
 
         var formatDemographicOptions = function (categories) {
             for (var i = 0; i < categories.length; i++) {
-                var key = categories[i].name;
-                var value = categories[i].options;
-                $scope[key] = value;
+                var category = categories[i];
+                var name = category.name;
+                var options = category.options;
+                $scope[name] = options;
             }
         };
 
