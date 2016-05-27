@@ -327,10 +327,12 @@ public class ContactServiceImpl extends DonationAssigningService implements Cont
     @Transactional
     public Set<Donation> getAllContactDonations(String contactId) throws NullDomainReference {
         Contact contact = findContact(contactId);
-        Set<Donation> donations = contact.getDonorInfo().getDonations();
-        if (donations == null) {
-            donations = new HashSet<>();
+
+        Set<Donation> donations = new HashSet<>();
+        if (contact.getDonorInfo() != null && contact.getDonorInfo().getDonations() != null) {
+            donations = contact.getDonorInfo().getDonations();
         }
+
         donations.size();
         return donations;
     }
