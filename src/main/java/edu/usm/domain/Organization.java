@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -55,6 +56,8 @@ public class Organization extends Aggregation implements Serializable {
     @JsonView(Views.OrganizationList.class)
     private String primaryContactName;
 
+    @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     @Column
     @JsonView(Views.OrganizationList.class)
     private String description;

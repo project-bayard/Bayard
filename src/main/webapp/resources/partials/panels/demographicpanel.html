@@ -16,7 +16,7 @@
                                 <div class="form-group col-xs-3 col-sm-3 col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Race</label>
                                         <select name="race" class="form-control input-sm" ng-model="demographics.race">
-                                            <option ng-repeat="option in race"
+                                            <option ng-repeat="option in race" ng-selected="option.name == demographics.race"
                                                     value="{{option.name}}">{{option.name}}
                                             </option>
                                         </select>
@@ -49,7 +49,7 @@
                                 <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Ethnicity</label>
                                     <select name="ethnicity" class="form-control input-sm" ng-model="demographics.ethnicity">
-                                        <option ng-repeat="option in ethnicity"
+                                        <option ng-repeat="option in ethnicity" ng-selected="option.name == demographics.ethnicity"
                                                 value="{{option.name}}">{{option.name}}
                                         </option>
                                     </select>
@@ -96,7 +96,7 @@
                                 <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Gender</label>
                                     <select name="gender" class="form-control input-sm" ng-model="demographics.gender">
-                                        <option ng-repeat="option in gender"
+                                        <option ng-repeat="option in gender" ng-selected="option.name == demographics.gender"
                                                 value="{{option.name}}">{{option.name}}
                                         </option>
                                     </select>
@@ -129,7 +129,7 @@
                                 <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Sexual Orientation</label>
                                     <select name="sexualOrientation" class="form-control input-sm" ng-model="demographics.sexualOrientation">
-                                        <option ng-repeat="option in sexualOrientation"
+                                        <option ng-repeat="option in sexualOrientation" ng-selected="option.name == demographics.sexualOrientation"
                                                 value="{{option.name}}">{{option.name}}
                                         </option>
                                     </select>
@@ -162,7 +162,7 @@
                                 <div class="form-group col-xs-3 col-sm-3 col-md-3">
                                     <label class="control-label">Income Bracket</label>
                                     <select name="incomeBracket" class="form-control input-sm" ng-model="demographics.incomeBracket">
-                                        <option ng-repeat="option in incomeBracket"
+                                        <option ng-repeat="option in incomeBracket" ng-selected="option.name == demographics.incomeBracket"
                                                 value="{{option.name}}">{{option.name}}
                                         </option>
                                     </select>

@@ -2,6 +2,7 @@ package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import edu.usm.config.DateFormatConfig;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -29,6 +30,8 @@ public class Encounter extends BasicEntity implements Serializable, Comparable<E
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String encounterDate;
 
+    @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     @Column
     @JsonView({Views.ContactDetails.class, Views.ContactEncounterDetails.class})
     private String notes;

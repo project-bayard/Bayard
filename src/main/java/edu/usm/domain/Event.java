@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,8 @@ public class Event extends Aggregation implements Serializable {
             Views.CommitteeDetails.class})
     private String name;
 
+    @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     @Column
     @JsonView({Views.EventList.class})
     private String notes;

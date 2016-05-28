@@ -1,6 +1,7 @@
 package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ public class InteractionRecord extends BasicEntity implements Serializable {
     private InteractionRecordType interactionType;
 
     @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     @Column
     @JsonView({Views.InteractionRecordDetails.class})
     private String notes;
