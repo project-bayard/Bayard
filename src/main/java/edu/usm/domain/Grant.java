@@ -2,6 +2,7 @@ package edu.usm.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,10 +33,14 @@ public class Grant extends BasicEntity implements MonetaryContribution, Serializ
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate endPeriod;
 
+    @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     @Column
     @JsonView({Views.GrantDetails.class})
     private String restriction;
 
+    @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     @Column
     @JsonView({Views.GrantDetails.class})
     private String description;
