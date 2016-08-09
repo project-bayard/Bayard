@@ -59,6 +59,7 @@ Default credentials can be found in [config.properties](https://github.com/proje
 - Migrated to PostgreSQL
 
 ### Changed
+
 - Contact's address now includes State
 
 ### Fixed
